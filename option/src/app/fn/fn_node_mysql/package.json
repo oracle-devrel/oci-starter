@@ -1,0 +1,12 @@
+{
+	"name": "fn-starter",
+	"version": "1.0.0",
+	"description": "example function",
+	"main": "func.js",
+	"author": "",
+	"license": "Apache-2.0",
+	"dependencies": {
+		"@fnproject/fdk": ">=0.0.43",
+        "mysql2": "^2.3.3"   
+	}
+}

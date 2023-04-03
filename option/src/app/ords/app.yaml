@@ -1,0 +1,9 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ##PREFIX##-app-service
+spec:
+  type: ExternalName
+  externalName: ##ORDS_HOST##
+  ports:
+    - port: 443

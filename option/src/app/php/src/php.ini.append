@@ -1,0 +1,4 @@
+[app]
+app.cfg.DB_URL = '##DB_URL##'
+app.cfg.DB_USER = '##DB_USER##'
+app.cfg.DB_PASSWORD = '##DB_PASSWORD##'

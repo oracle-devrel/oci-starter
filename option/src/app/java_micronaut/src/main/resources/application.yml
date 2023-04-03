@@ -1,0 +1,19 @@
+micronaut:
+  application:
+    name: demo
+datasources:
+  default:
+    url: ${JDBC_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driverClassName: oracle.jdbc.OracleDriver
+    db-type: oracle
+    dialect: oracle
+netty:
+  default:
+    allocator:
+      max-order: 3
+jpa:
+  default:
+    entity-scan:
+      packages: 'com.example'

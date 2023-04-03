@@ -1,0 +1,14 @@
+{
+    "name": "Starter",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Starter app",
+    "keywords": [
+      "starter"
+    ],
+    "dependencies": {
+        "express": "^4.18.2" 
+    },
+    "author": "You",
+    "license": "MIT"
+  }
