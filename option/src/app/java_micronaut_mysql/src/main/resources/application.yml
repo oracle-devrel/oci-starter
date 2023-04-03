@@ -1,0 +1,18 @@
+micronaut:
+  application:
+    name: demo
+datasources:
+  default:
+    url: ${JDBC_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driverClassName: com.mysql.cj.jdbc.Driver
+    dialect: mysql
+netty:
+  default:
+    allocator:
+      max-order: 3
+jpa:
+  default:
+    entity-scan:
+      packages: 'com.example'

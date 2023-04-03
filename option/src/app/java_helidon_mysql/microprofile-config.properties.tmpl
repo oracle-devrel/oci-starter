@@ -1,0 +1,15 @@
+# Microprofile server properties
+server.port=8080
+server.host=0.0.0.0
+
+# Change the following to true to enable the optional MicroProfile Metrics REST.request metrics
+metrics.rest-request.enabled=false
+
+# Application properties. This is the default greeting
+app.greeting=Hello
+
+# Datasource properties
+javax.sql.DataSource.ds1.dataSourceClassName=com.mysql.cj.jdbc.MysqlDataSource
+javax.sql.DataSource.ds1.dataSource.url=##JDBC_URL##
+javax.sql.DataSource.ds1.dataSource.user=##DB_USER##
+javax.sql.DataSource.ds1.dataSource.password=##DB_PASSWORD##

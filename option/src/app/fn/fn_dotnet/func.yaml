@@ -1,0 +1,8 @@
+schema_version: 20180708
+name: fn-dotnet
+version: 0.0.1
+runtime: dotnet
+build_image: fnproject/dotnet:3.1-1.0.7-dev
+run_image: fnproject/dotnet:3.1-1.0.7
+cmd: Function:Starter:dept
+entrypoint: dotnet Function.dll

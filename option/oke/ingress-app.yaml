@@ -1,0 +1,20 @@
+# Use 2 Ingress since the parameter replacement work differently in NGINX for / and /app (see annotation)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ##PREFIX##-app-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2    
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /##PREFIX##/app(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: ##PREFIX##-app-service
+                port:
+                  number: 80
+

@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ##PREFIX##-app
+  labels:
+    app: ##PREFIX##-app
+spec:
+  containers:
+  - name: app
+    image: ##DOCKER_PREFIX##/##PREFIX##-app
+    ports:
+    - containerPort: 8080
+      name: app-port
+    env:
+    - name: DB_URL
+      valueFrom:
+        secretKeyRef:
+          name: ##PREFIX##-db-secret
+          key: db_url
+    - name: DB_USER
+      valueFrom:
+        secretKeyRef:
+          name: ##PREFIX##-db-secret
+          key: db_user
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: ##PREFIX##-db-secret
+          key: db_password
+  imagePullSecrets:
+  - name: ocirsecret        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ##PREFIX##-app-service
+spec:
+  selector:
+    app: ##PREFIX##-app
+  ports:
+  - name: http-service-port
+    protocol: TCP
+    port: 80
+    targetPort: app-port
+---

@@ -1,0 +1,3603 @@
+[
+{
+  "name": "org.hibernate.dialect.OracleDialect",
+  "methods": [{"name":"<init>","parameterTypes":[]}]
+},
+{
+  "name":"[Lcom.zaxxer.hikari.util.ConcurrentBag$IConcurrentBagEntry;"
+},
+{
+  "name":"[Ljava.lang.Class;"
+},
+{
+  "name":"[Ljava.sql.Statement;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.AutoFlushEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.DeleteEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.DirtyCheckEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.EvictEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.FlushEntityEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.FlushEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.InitializeCollectionEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.LoadEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.LockEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.MergeEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.PersistEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.PostDeleteEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.PostInsertEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.PostLoadEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.PostUpdateEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.PreDeleteEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.PreInsertEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.PreLoadEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.PreUpdateEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.RefreshEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.ReplicateEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.ResolveNaturalIdEventListener;"
+},
+{
+  "name":"[Lorg.hibernate.event.spi.SaveOrUpdateEventListener;"
+},
+{
+  "name":"ch.qos.logback.classic.Logger"
+},
+{
+  "name":"com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean",
+  "allDeclaredFields":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getCheckedActionFactory","parameterTypes":[] }, 
+    {"name":"getCheckedActionFactoryClassName","parameterTypes":[] }, 
+    {"name":"getCommunicationStore","parameterTypes":[] }, 
+    {"name":"getDefaultTimeout","parameterTypes":[] }, 
+    {"name":"getDynamic1PC","parameterTypes":[] }, 
+    {"name":"getMaxTwoPhaseCommitThreads","parameterTypes":[] }, 
+    {"name":"getTxReaperCancelFailWaitPeriod","parameterTypes":[] }, 
+    {"name":"getTxReaperCancelWaitPeriod","parameterTypes":[] }, 
+    {"name":"getTxReaperMode","parameterTypes":[] }, 
+    {"name":"getTxReaperTimeout","parameterTypes":[] }, 
+    {"name":"getTxReaperTraceGracePeriod","parameterTypes":[] }, 
+    {"name":"getTxReaperTraceInterval","parameterTypes":[] }, 
+    {"name":"getTxReaperZombieMax","parameterTypes":[] }, 
+    {"name":"isAllowCheckedActionFactoryOverride","parameterTypes":[] }, 
+    {"name":"isAlternativeRecordOrdering","parameterTypes":[] }, 
+    {"name":"isAsyncAfterSynchronization","parameterTypes":[] }, 
+    {"name":"isAsyncBeforeSynchronization","parameterTypes":[] }, 
+    {"name":"isAsyncCommit","parameterTypes":[] }, 
+    {"name":"isAsyncPrepare","parameterTypes":[] }, 
+    {"name":"isAsyncRollback","parameterTypes":[] }, 
+    {"name":"isBeforeCompletionWhenRollbackOnly","parameterTypes":[] }, 
+    {"name":"isClassicPrepare","parameterTypes":[] }, 
+    {"name":"isCommitOnePhase","parameterTypes":[] }, 
+    {"name":"isEnableStatistics","parameterTypes":[] }, 
+    {"name":"isFinalizeBasicActions","parameterTypes":[] }, 
+    {"name":"isMaintainHeuristics","parameterTypes":[] }, 
+    {"name":"isReadonlyOptimisation","parameterTypes":[] }, 
+    {"name":"isSharedTransactionLog","parameterTypes":[] }, 
+    {"name":"isStartDisabled","parameterTypes":[] }, 
+    {"name":"isTransactionStatusManagerEnable","parameterTypes":[] }, 
+    {"name":"isWriteOptimisation","parameterTypes":[] }, 
+    {"name":"setAllowCheckedActionFactoryOverride","parameterTypes":["boolean"] }, 
+    {"name":"setAlternativeRecordOrdering","parameterTypes":["boolean"] }, 
+    {"name":"setAsyncAfterSynchronization","parameterTypes":["boolean"] }, 
+    {"name":"setAsyncBeforeSynchronization","parameterTypes":["boolean"] }, 
+    {"name":"setAsyncCommit","parameterTypes":["boolean"] }, 
+    {"name":"setAsyncPrepare","parameterTypes":["boolean"] }, 
+    {"name":"setAsyncRollback","parameterTypes":["boolean"] }, 
+    {"name":"setBeforeCompletionWhenRollbackOnly","parameterTypes":["boolean"] }, 
+    {"name":"setCheckedActionFactory","parameterTypes":["com.arjuna.ats.arjuna.coordinator.CheckedActionFactory"] }, 
+    {"name":"setCheckedActionFactoryClassName","parameterTypes":["java.lang.String"] }, 
+    {"name":"setClassicPrepare","parameterTypes":["boolean"] }, 
+    {"name":"setCommitOnePhase","parameterTypes":["boolean"] }, 
+    {"name":"setCommunicationStore","parameterTypes":["java.lang.String"] }, 
+    {"name":"setDefaultTimeout","parameterTypes":["int"] }, 
+    {"name":"setDynamic1PC","parameterTypes":["boolean"] }, 
+    {"name":"setEnableStatistics","parameterTypes":["boolean"] }, 
+    {"name":"setFinalizeBasicActions","parameterTypes":["boolean"] }, 
+    {"name":"setMaintainHeuristics","parameterTypes":["boolean"] }, 
+    {"name":"setMaxTwoPhaseCommitThreads","parameterTypes":["int"] }, 
+    {"name":"setReadonlyOptimisation","parameterTypes":["boolean"] }, 
+    {"name":"setSharedTransactionLog","parameterTypes":["boolean"] }, 
+    {"name":"setStartDisabled","parameterTypes":["boolean"] }, 
+    {"name":"setTransactionStatusManagerEnable","parameterTypes":["boolean"] }, 
+    {"name":"setTxReaperCancelFailWaitPeriod","parameterTypes":["long"] }, 
+    {"name":"setTxReaperCancelWaitPeriod","parameterTypes":["long"] }, 
+    {"name":"setTxReaperMode","parameterTypes":["java.lang.String"] }, 
+    {"name":"setTxReaperTimeout","parameterTypes":["long"] }, 
+    {"name":"setTxReaperTraceGracePeriod","parameterTypes":["long"] }, 
+    {"name":"setTxReaperTraceInterval","parameterTypes":["long"] }, 
+    {"name":"setTxReaperZombieMax","parameterTypes":["int"] }, 
+    {"name":"setWriteOptimisation","parameterTypes":["boolean"] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple",
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple",
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.DelegatingTransactionManager",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[
+    {"name":"begin","parameterTypes":[] }, 
+    {"name":"commit","parameterTypes":[] }, 
+    {"name":"getStatus","parameterTypes":[] }, 
+    {"name":"getTransaction","parameterTypes":[] }, 
+    {"name":"resume","parameterTypes":["jakarta.transaction.Transaction"] }, 
+    {"name":"rollback","parameterTypes":[] }, 
+    {"name":"setRollbackOnly","parameterTypes":[] }, 
+    {"name":"setTransactionTimeout","parameterTypes":["int"] }, 
+    {"name":"suspend","parameterTypes":[] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.DelegatingTransactionSynchronizationRegistry",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[
+    {"name":"getResource","parameterTypes":["java.lang.Object"] }, 
+    {"name":"getRollbackOnly","parameterTypes":[] }, 
+    {"name":"getTransactionKey","parameterTypes":[] }, 
+    {"name":"getTransactionStatus","parameterTypes":[] }, 
+    {"name":"putResource","parameterTypes":["java.lang.Object","java.lang.Object"] }, 
+    {"name":"registerInterposedSynchronization","parameterTypes":["jakarta.transaction.Synchronization"] }, 
+    {"name":"setRollbackOnly","parameterTypes":[] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.NarayanaTransactionManager",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"<init>","parameterTypes":["jakarta.enterprise.inject.Instance","jakarta.enterprise.event.Event","jakarta.enterprise.event.Event","jakarta.enterprise.event.Event"] }, 
+    {"name":"begin","parameterTypes":[] }, 
+    {"name":"commit","parameterTypes":[] }, 
+    {"name":"rollback","parameterTypes":[] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.NarayanaTransactionManager$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.NarayanaTransactionSynchronizationRegistry",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"<init>","parameterTypes":["jakarta.enterprise.inject.Instance"] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.NarayanaTransactionSynchronizationRegistry$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.TransactionExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"afterBeanDiscovery","parameterTypes":["jakarta.enterprise.inject.spi.AfterBeanDiscovery","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"processManagedBean","parameterTypes":["jakarta.enterprise.inject.spi.ProcessManagedBean"] }, 
+    {"name":"register","parameterTypes":["jakarta.enterprise.inject.spi.BeforeBeanDiscovery","jakarta.enterprise.inject.spi.BeanManager"] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorBase",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"intercept","parameterTypes":["jakarta.interceptor.InvocationContext"] }]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorMandatory",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"intercept","parameterTypes":["jakarta.interceptor.InvocationContext"] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorNever",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"intercept","parameterTypes":["jakarta.interceptor.InvocationContext"] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorNotSupported",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"intercept","parameterTypes":["jakarta.interceptor.InvocationContext"] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorRequired",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"intercept","parameterTypes":["jakarta.interceptor.InvocationContext"] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorRequiresNew",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"intercept","parameterTypes":["jakarta.interceptor.InvocationContext"] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorSupports",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"intercept","parameterTypes":["jakarta.interceptor.InvocationContext"] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.common.JTAEnvironmentBean",
+  "allDeclaredFields":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getAsyncCommitPoolSize","parameterTypes":[] }, 
+    {"name":"getCommitMarkableResourceJNDINames","parameterTypes":[] }, 
+    {"name":"getCommitMarkableResourceRecordDeleteBatchSize","parameterTypes":[] }, 
+    {"name":"getCommitMarkableResourceRecordDeleteBatchSizeMap","parameterTypes":[] }, 
+    {"name":"getCommitMarkableResourceTableNameMap","parameterTypes":[] }, 
+    {"name":"getLastResourceOptimisationInterface","parameterTypes":[] }, 
+    {"name":"getLastResourceOptimisationInterfaceClassName","parameterTypes":[] }, 
+    {"name":"getOrphanSafetyInterval","parameterTypes":[] }, 
+    {"name":"getPerformImmediateCleanupOfCommitMarkableResourceBranchesMap","parameterTypes":[] }, 
+    {"name":"getTransactionManager","parameterTypes":[] }, 
+    {"name":"getTransactionManagerClassName","parameterTypes":[] }, 
+    {"name":"getTransactionManagerJNDIContext","parameterTypes":[] }, 
+    {"name":"getTransactionSynchronizationRegistry","parameterTypes":[] }, 
+    {"name":"getTransactionSynchronizationRegistryClassName","parameterTypes":[] }, 
+    {"name":"getTransactionSynchronizationRegistryJNDIContext","parameterTypes":[] }, 
+    {"name":"getUserTransaction","parameterTypes":[] }, 
+    {"name":"getUserTransactionClassName","parameterTypes":[] }, 
+    {"name":"getUserTransactionJNDIContext","parameterTypes":[] }, 
+    {"name":"getUserTransactionOperationsProviderClassName","parameterTypes":[] }, 
+    {"name":"getXaRecoveryNodes","parameterTypes":[] }, 
+    {"name":"getXaResourceIsSameRMClassNames","parameterTypes":[] }, 
+    {"name":"getXaResourceMapClassNames","parameterTypes":[] }, 
+    {"name":"getXaResourceMaps","parameterTypes":[] }, 
+    {"name":"getXaResourceOrphanFilterClassNames","parameterTypes":[] }, 
+    {"name":"getXaResourceOrphanFilters","parameterTypes":[] }, 
+    {"name":"getXaResourceRecordWrappingPluginClassName","parameterTypes":[] }, 
+    {"name":"getXaResourceRecoveries","parameterTypes":[] }, 
+    {"name":"getXaResourceRecoveryClassNames","parameterTypes":[] }, 
+    {"name":"isNotifyCommitMarkableResourceRecoveryModuleOfCompleteBranches","parameterTypes":[] }, 
+    {"name":"isPerformImmediateCleanupOfCommitMarkableResourceBranches","parameterTypes":[] }, 
+    {"name":"isStrictJTA12DuplicateXAENDPROTOErr","parameterTypes":[] }, 
+    {"name":"isSupportSubtransactions","parameterTypes":[] }, 
+    {"name":"isTransactionToThreadListenersEnabled","parameterTypes":[] }, 
+    {"name":"isXaAssumeRecoveryComplete","parameterTypes":[] }, 
+    {"name":"isXaRollbackOptimization","parameterTypes":[] }, 
+    {"name":"isXaTransactionTimeoutEnabled","parameterTypes":[] }, 
+    {"name":"setAsyncCommitPoolSize","parameterTypes":["int"] }, 
+    {"name":"setCommitMarkableResourceJNDINames","parameterTypes":["java.util.List"] }, 
+    {"name":"setCommitMarkableResourceRecordDeleteBatchSize","parameterTypes":["int"] }, 
+    {"name":"setCommitMarkableResourceRecordDeleteBatchSizeMap","parameterTypes":["java.util.Map"] }, 
+    {"name":"setCommitMarkableResourceTableNameMap","parameterTypes":["java.util.Map"] }, 
+    {"name":"setLastResourceOptimisationInterface","parameterTypes":["java.lang.Class"] }, 
+    {"name":"setLastResourceOptimisationInterfaceClassName","parameterTypes":["java.lang.String"] }, 
+    {"name":"setNotifyCommitMarkableResourceRecoveryModuleOfCompleteBranches","parameterTypes":["boolean"] }, 
+    {"name":"setOrphanSafetyInterval","parameterTypes":["int"] }, 
+    {"name":"setPerformImmediateCleanupOfCommitMarkableResourceBranches","parameterTypes":["boolean"] }, 
+    {"name":"setPerformImmediateCleanupOfCommitMarkableResourceBranchesMap","parameterTypes":["java.util.Map"] }, 
+    {"name":"setStrictJTA12DuplicateXAENDPROTOErr","parameterTypes":["boolean"] }, 
+    {"name":"setSupportSubtransactions","parameterTypes":["boolean"] }, 
+    {"name":"setTransactionManager","parameterTypes":["jakarta.transaction.TransactionManager"] }, 
+    {"name":"setTransactionManagerClassName","parameterTypes":["java.lang.String"] }, 
+    {"name":"setTransactionManagerJNDIContext","parameterTypes":["java.lang.String"] }, 
+    {"name":"setTransactionSynchronizationRegistry","parameterTypes":["jakarta.transaction.TransactionSynchronizationRegistry"] }, 
+    {"name":"setTransactionSynchronizationRegistryClassName","parameterTypes":["java.lang.String"] }, 
+    {"name":"setTransactionSynchronizationRegistryJNDIContext","parameterTypes":["java.lang.String"] }, 
+    {"name":"setTransactionToThreadListenersEnabled","parameterTypes":["boolean"] }, 
+    {"name":"setUserTransaction","parameterTypes":["jakarta.transaction.UserTransaction"] }, 
+    {"name":"setUserTransactionClassName","parameterTypes":["java.lang.String"] }, 
+    {"name":"setUserTransactionJNDIContext","parameterTypes":["java.lang.String"] }, 
+    {"name":"setUserTransactionOperationsProviderClassName","parameterTypes":["java.lang.String"] }, 
+    {"name":"setXaAssumeRecoveryComplete","parameterTypes":["boolean"] }, 
+    {"name":"setXaRecoveryNodes","parameterTypes":["java.util.List"] }, 
+    {"name":"setXaResourceIsSameRMClassNames","parameterTypes":["java.util.List"] }, 
+    {"name":"setXaResourceMapClassNames","parameterTypes":["java.util.List"] }, 
+    {"name":"setXaResourceMaps","parameterTypes":["java.util.List"] }, 
+    {"name":"setXaResourceOrphanFilterClassNames","parameterTypes":["java.util.List"] }, 
+    {"name":"setXaResourceOrphanFilters","parameterTypes":["java.util.List"] }, 
+    {"name":"setXaResourceRecordWrappingPluginClassName","parameterTypes":["java.lang.String"] }, 
+    {"name":"setXaResourceRecoveries","parameterTypes":["java.util.List"] }, 
+    {"name":"setXaResourceRecoveryClassNames","parameterTypes":["java.util.List"] }, 
+    {"name":"setXaRollbackOptimization","parameterTypes":["boolean"] }, 
+    {"name":"setXaTransactionTimeoutEnabled","parameterTypes":["boolean"] }
+  ]
+},
+{
+  "name":"com.arjuna.ats.jta.logging.jtaI18NLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"com.arjuna.ats.jta.logging.jtaI18NLogger_$logger_en"
+},
+{
+  "name":"com.arjuna.ats.jta.logging.jtaI18NLogger_$logger_en_US"
+},
+{
+  "name":"com.arjuna.ats.jta.resources.LastResourceCommitOptimisation"
+},
+{
+  "name":"com.arjuna.common.logging.commonI18NLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"com.arjuna.common.logging.commonI18NLogger_$logger_en"
+},
+{
+  "name":"com.arjuna.common.logging.commonI18NLogger_$logger_en_US"
+},
+{
+  "name":"com.fasterxml.jackson.core.Versioned",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"version","parameterTypes":[] }]
+},
+{
+  "name":"com.fasterxml.jackson.databind.ObjectMapper"
+},
+{
+  "name":"com.fasterxml.jackson.databind.ext.Java7HandlersImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.fasterxml.jackson.databind.ext.Java7SupportImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationIntrospector",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.fasterxml.jackson.module.jakarta.xmlbind.deser.DataHandlerDeserializer",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.fasterxml.jackson.module.jakarta.xmlbind.ser.DataHandlerSerializer",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector"
+},
+{
+  "name":"com.mysql.cj.conf.url.SingleConnectionUrl",
+  "methods":[{"name":"<init>","parameterTypes":["com.mysql.cj.conf.ConnectionUrlParser","java.util.Properties"] }]
+},
+{
+  "name":"com.mysql.cj.jdbc.AbandonedConnectionCleanupThread"
+},
+{
+  "name":"com.mysql.cj.jdbc.Clob",
+  "methods":[{"name":"free","parameterTypes":[] }]
+},
+{
+  "name":"com.mysql.cj.jdbc.MysqlDataSource",
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setPassword","parameterTypes":["java.lang.String"] }, 
+    {"name":"setUrl","parameterTypes":["java.lang.String"] }, 
+    {"name":"setUser","parameterTypes":["java.lang.String"] }
+  ]
+},
+{
+  "name":"com.mysql.cj.log.StandardLogger",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"com.mysql.cj.protocol.StandardSocketFactory",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.AESCipher$General",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.ARCFOURCipher",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.ChaCha20Cipher$ChaCha20Poly1305",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.DESCipher",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.DESedeCipher",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.DHParameters",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.GaloisCounterMode$AESGCM",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.TlsKeyMaterialGenerator",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.TlsMasterSecretGenerator",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.TlsPrfGenerator$V12",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.el.ExpressionFactoryImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jndi.url.java.javaURLContextFactory"
+},
+{
+  "name":"com.sun.org.apache.xerces.internal.impl.dv.xs.ExtendedSchemaDVFactoryImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.org.apache.xerces.internal.impl.dv.xs.SchemaDVFactoryImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.xml.internal.stream.XMLInputFactoryImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.xml.internal.stream.events.XMLEventFactoryImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.zaxxer.hikari.HikariConfig",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"seal","parameterTypes":[] }, 
+    {"name":"setDataSourceClassName","parameterTypes":["java.lang.String"] }
+  ]
+},
+{
+  "name":"com.zaxxer.hikari.HikariConfigMXBean",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"com.zaxxer.hikari.HikariDataSource",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.zaxxer.hikari.HikariDataSource$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"com.zaxxer.hikari.metrics.MetricsTrackerFactory",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"create","parameterTypes":["java.lang.String","com.zaxxer.hikari.metrics.PoolStats"] }]
+},
+{
+  "name":"com.zaxxer.hikari.pool.HikariProxyConnection",
+  "methods":[{"name":"getSchema","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.archetypes.tests.jaxb.ObjectFactory"
+},
+{
+  "name":"io.helidon.archetypes.tests.jaxb.Persistence"
+},
+{
+  "name":"io.helidon.archetypes.tests.jaxb.Persistence$PersistenceUnit"
+},
+{
+  "name":"io.helidon.archetypes.tests.jaxb.Persistence$PersistenceUnit$Properties"
+},
+{
+  "name":"io.helidon.archetypes.tests.jaxb.Persistence$PersistenceUnit$Properties$Property"
+},
+{
+  "name":"io.helidon.archetypes.tests.jaxb.PersistenceUnitCachingType"
+},
+{
+  "name":"io.helidon.archetypes.tests.jaxb.PersistenceUnitTransactionType"
+},
+{
+  "name":"io.helidon.archetypes.tests.jaxb.PersistenceUnitValidationModeType"
+},
+{
+  "name":"io.helidon.archetypes.tests.jaxb.package-info"
+},
+{
+  "name":"io.helidon.common.LazyValueImpl",
+  "fields":[
+    {"name":"loaded"}, 
+    {"name":"theLock"}
+  ]
+},
+{
+  "name":"io.helidon.integrations.cdi.hibernate.CDISEJtaPlatform",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":["jakarta.transaction.TransactionManager","jakarta.transaction.UserTransaction"] }, 
+    {"name":"jndiService","parameterTypes":[] }, 
+    {"name":"locateTransactionManager","parameterTypes":[] }, 
+    {"name":"locateUserTransaction","parameterTypes":[] }
+  ]
+},
+{
+  "name":"io.helidon.integrations.cdi.hibernate.CDISEJtaPlatform$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "queryAllPublicMethods":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.CdiTransactionScoped",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.CdiTransactionScopedEntityManager",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"acquireDelegate","parameterTypes":[] }, 
+    {"name":"dispose","parameterTypes":["jakarta.enterprise.inject.Instance"] }, 
+    {"name":"setDelegate","parameterTypes":["jakarta.persistence.EntityManager"] }
+  ]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.CdiTransactionScopedEntityManager$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.ContainerManaged",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.DelegatingEntityManager",
+  "queryAllDeclaredMethods":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"delegate","parameterTypes":[] }
+  ]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.EntityManagerFactory$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.Extended",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.JpaExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"afterBeanDiscovery","parameterTypes":["jakarta.enterprise.inject.spi.AfterBeanDiscovery","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"disableTransactionSupport","parameterTypes":["jakarta.enterprise.inject.spi.ProcessAnnotatedType"] }, 
+    {"name":"discoverManagedClasses","parameterTypes":["jakarta.enterprise.inject.spi.ProcessAnnotatedType"] }, 
+    {"name":"gatherImplicitPersistenceUnits","parameterTypes":["jakarta.enterprise.inject.spi.ProcessAnnotatedType","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"onStartup","parameterTypes":["java.lang.Object","jakarta.enterprise.inject.Instance"] }, 
+    {"name":"rewriteJpaAnnotations","parameterTypes":["jakarta.enterprise.inject.spi.ProcessAnnotatedType"] }, 
+    {"name":"saveEntityManagerFactoryQualifiers","parameterTypes":["jakarta.enterprise.inject.spi.ProcessInjectionPoint"] }, 
+    {"name":"saveEntityManagerQualifiers","parameterTypes":["jakarta.enterprise.inject.spi.ProcessInjectionPoint"] }, 
+    {"name":"validate","parameterTypes":["jakarta.enterprise.inject.spi.AfterDeploymentValidation","jakarta.enterprise.inject.spi.BeanManager"] }
+  ]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.JpaTransactionScoped",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.JpaTransactionScopedEntityManager"
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.JtaDataSourceProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"<init>","parameterTypes":["jakarta.enterprise.inject.Instance","jakarta.transaction.TransactionManager","jakarta.transaction.TransactionSynchronizationRegistry"] }, 
+    {"name":"getDataSource","parameterTypes":["boolean","boolean","java.lang.String"] }, 
+    {"name":"whenApplicationTerminates","parameterTypes":["java.lang.Object"] }, 
+    {"name":"whenTransactionStarts","parameterTypes":["java.lang.Object"] }
+  ]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.JtaDataSourceProvider$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.JtaTransactionSupport",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"<init>","parameterTypes":["jakarta.enterprise.inject.spi.BeanManager","jakarta.transaction.TransactionManager"] }, 
+    {"name":"getContext","parameterTypes":[] }, 
+    {"name":"getStatus","parameterTypes":[] }, 
+    {"name":"isEnabled","parameterTypes":[] }
+  ]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.JtaTransactionSupport$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.NonTransactional",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.NonTransactionalEntityManager",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"acquireDelegate","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.NonTransactionalEntityManager$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.PersistenceUnitInfo$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.PersistenceUnitInfoBean$DataSourceProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"getDataSource","parameterTypes":["boolean","boolean","java.lang.String"] }]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.Synchronized",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.TransactionSupport",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"getContext","parameterTypes":[] }, 
+    {"name":"getStatus","parameterTypes":[] }, 
+    {"name":"isEnabled","parameterTypes":[] }
+  ]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.Unsynchronized",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.jaxb.ObjectFactory",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.jaxb.Persistence",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.jaxb.Persistence$PersistenceUnit",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.jaxb.Persistence$PersistenceUnit$Properties",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.jaxb.Persistence$PersistenceUnit$Properties$Property",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.jaxb.PersistenceUnitCachingType",
+  "allDeclaredFields":true,
+  "fields":[
+    {"name":"ALL"}, 
+    {"name":"DISABLE_SELECTIVE"}, 
+    {"name":"ENABLE_SELECTIVE"}, 
+    {"name":"NONE"}, 
+    {"name":"UNSPECIFIED"}
+  ]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.jaxb.PersistenceUnitTransactionType",
+  "allDeclaredFields":true,
+  "fields":[
+    {"name":"JTA"}, 
+    {"name":"RESOURCE_LOCAL"}
+  ]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.jaxb.PersistenceUnitValidationModeType",
+  "allDeclaredFields":true,
+  "fields":[
+    {"name":"AUTO"}, 
+    {"name":"CALLBACK"}, 
+    {"name":"NONE"}
+  ]
+},
+{
+  "name":"io.helidon.integrations.cdi.jpa.jaxb.package-info"
+},
+{
+  "name":"io.helidon.integrations.cdi.referencecountedcontext.ReferenceCounted",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.integrations.cdi.referencecountedcontext.ReferenceCountedExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"ensureManagedBeanOriginatedDisposalsDecrementReferenceCounts","parameterTypes":["jakarta.enterprise.inject.spi.ProcessInjectionTarget","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"ensureProducerOriginatedDisposalDecrementReferenceCounts","parameterTypes":["jakarta.enterprise.inject.spi.ProcessProducer","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"installReferenceCountedContext","parameterTypes":["jakarta.enterprise.inject.spi.AfterBeanDiscovery"] }, 
+    {"name":"trackReferenceCountedTypes","parameterTypes":["jakarta.enterprise.inject.spi.ProcessBean"] }
+  ]
+},
+{
+  "name":"io.helidon.integrations.datasource.cdi.AbstractDataSourceExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"afterBeanDiscovery","parameterTypes":["jakarta.enterprise.inject.spi.AfterBeanDiscovery"] }]
+},
+{
+  "name":"io.helidon.integrations.datasource.hikaricp.cdi.HikariCPBackedDataSourceExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"processAnnotatedType","parameterTypes":["jakarta.enterprise.inject.spi.ProcessAnnotatedType"] }, 
+    {"name":"processInjectionPoint","parameterTypes":["jakarta.enterprise.inject.spi.ProcessInjectionPoint"] }
+  ]
+},
+{
+  "name":"io.helidon.integrations.datasource.hikaricp.cdi.MicroProfileMetricsTrackerFactory",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"<init>","parameterTypes":["org.eclipse.microprofile.metrics.MetricRegistry"] }, 
+    {"name":"create","parameterTypes":["java.lang.String","com.zaxxer.hikari.metrics.PoolStats"] }
+  ]
+},
+{
+  "name":"io.helidon.integrations.datasource.hikaricp.cdi.MicroProfileMetricsTrackerFactory$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"io.helidon.integrations.jta.cdi.DelegatingTransactionManager"
+},
+{
+  "name":"io.helidon.integrations.jta.cdi.DelegatingTransactionSynchronizationRegistry"
+},
+{
+  "name":"io.helidon.integrations.jta.cdi.NarayanaExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"afterBeanDiscovery","parameterTypes":["jakarta.enterprise.inject.spi.AfterBeanDiscovery","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"onStartup","parameterTypes":["java.lang.Object","jakarta.enterprise.event.Event"] }
+  ]
+},
+{
+  "name":"io.helidon.integrations.jta.cdi.NarayanaTransactionManager"
+},
+{
+  "name":"io.helidon.integrations.jta.weld.NarayanaTransactionServices",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.microprofile.cdi.BuildTimeEnd",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.microprofile.cdi.BuildTimeStart",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.microprofile.cdi.ExecutorServices",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.microprofile.cdi.HelidonContainerImpl$2",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.microprofile.cdi.RuntimeStart",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.microprofile.config.ConfigCdiExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"harvestConfigPropertyInjectionPointsFromEnabledBean","parameterTypes":["jakarta.enterprise.inject.spi.ProcessBean"] }, 
+    {"name":"harvestConfigPropertyInjectionPointsFromEnabledObserverMethod","parameterTypes":["jakarta.enterprise.inject.spi.ProcessObserverMethod","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"processAnnotatedType","parameterTypes":["jakarta.enterprise.inject.spi.ProcessAnnotatedType"] }, 
+    {"name":"registerConfigProducer","parameterTypes":["jakarta.enterprise.inject.spi.AfterBeanDiscovery"] }, 
+    {"name":"validate","parameterTypes":["jakarta.enterprise.inject.spi.AfterDeploymentValidation","jakarta.enterprise.inject.spi.BeanManager"] }
+  ]
+},
+{
+  "name":"io.helidon.microprofile.health.HealthCdiExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"registerProducers","parameterTypes":["jakarta.enterprise.inject.spi.BeforeBeanDiscovery"] }, 
+    {"name":"registerService","parameterTypes":["java.lang.Object","jakarta.enterprise.inject.spi.BeanManager","io.helidon.microprofile.server.ServerCdiExtension"] }
+  ]
+},
+{
+  "name":"io.helidon.microprofile.health.JvmRuntimeProducers",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"produceRuntime","parameterTypes":[] }, 
+    {"name":"produceRuntimeMXBean","parameterTypes":[] }, 
+    {"name":"produceThreadMXBean","parameterTypes":[] }
+  ]
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorConcurrentGauge",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorConcurrentGauge$Binding",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorCounted",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorCounted$Binding",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorMetered",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorMetered$Binding",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorSimplyTimed",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorSimplyTimed$Binding",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorSyntheticRestRequest",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"preInvocation","parameterTypes":["jakarta.interceptor.InvocationContext","io.helidon.microprofile.metrics.SyntheticRestRequestWorkItem"] }, 
+    {"name":"workItems","parameterTypes":["java.lang.reflect.Executable"] }
+  ]
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorTimed",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorTimed$Binding",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.microprofile.metrics.InterceptorTimedBase",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"io.helidon.microprofile.metrics.MetricProducer",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"produceConcurrentGauge","parameterTypes":["org.eclipse.microprofile.metrics.MetricRegistry","jakarta.enterprise.inject.spi.InjectionPoint"] }, 
+    {"name":"produceCounter","parameterTypes":["org.eclipse.microprofile.metrics.MetricRegistry","jakarta.enterprise.inject.spi.InjectionPoint"] }, 
+    {"name":"produceGauge","parameterTypes":["org.eclipse.microprofile.metrics.MetricRegistry","jakarta.enterprise.inject.spi.InjectionPoint"] }, 
+    {"name":"produceHistogram","parameterTypes":["org.eclipse.microprofile.metrics.MetricRegistry","jakarta.enterprise.inject.spi.InjectionPoint"] }, 
+    {"name":"produceMeter","parameterTypes":["org.eclipse.microprofile.metrics.MetricRegistry","jakarta.enterprise.inject.spi.InjectionPoint"] }, 
+    {"name":"produceSimpleTimer","parameterTypes":["org.eclipse.microprofile.metrics.MetricRegistry","jakarta.enterprise.inject.spi.InjectionPoint"] }, 
+    {"name":"produceTimer","parameterTypes":["org.eclipse.microprofile.metrics.MetricRegistry","jakarta.enterprise.inject.spi.InjectionPoint"] }
+  ]
+},
+{
+  "name":"io.helidon.microprofile.metrics.MetricsCdiExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"before","parameterTypes":["jakarta.enterprise.inject.spi.BeforeBeanDiscovery"] }, 
+    {"name":"clearAnnotationInfo","parameterTypes":["jakarta.enterprise.inject.spi.AfterDeploymentValidation"] }, 
+    {"name":"collectRestRequestMetrics","parameterTypes":["jakarta.enterprise.inject.spi.ProcessManagedBean"] }, 
+    {"name":"recordAnnotatedGaugeSite","parameterTypes":["jakarta.enterprise.inject.spi.ProcessManagedBean"] }, 
+    {"name":"recordMetricAnnotatedClass","parameterTypes":["jakarta.enterprise.inject.spi.ProcessAnnotatedType"] }, 
+    {"name":"recordSimplyTimedForRestResources","parameterTypes":["jakarta.enterprise.inject.spi.ProcessAnnotatedType"] }, 
+    {"name":"registerService","parameterTypes":["java.lang.Object","jakarta.enterprise.inject.spi.BeanManager","io.helidon.microprofile.server.ServerCdiExtension"] }
+  ]
+},
+{
+  "name":"io.helidon.microprofile.metrics.MetricsInterceptorBase",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"preInvocation","parameterTypes":["jakarta.interceptor.InvocationContext","io.helidon.microprofile.metrics.BasicMetricWorkItem"] }, 
+    {"name":"workItems","parameterTypes":["java.lang.reflect.Executable"] }
+  ]
+},
+{
+  "name":"io.helidon.microprofile.metrics.MetricsInterceptorBase$WithPostCompletion",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"postCompletion","parameterTypes":["jakarta.interceptor.InvocationContext","java.lang.Throwable","io.helidon.microprofile.metrics.BasicMetricWorkItem"] }]
+},
+{
+  "name":"io.helidon.microprofile.metrics.RegistryProducer",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getApplicationRegistry","parameterTypes":[] }, 
+    {"name":"getBaseRegistry","parameterTypes":[] }, 
+    {"name":"getDefaultRegistry","parameterTypes":[] }, 
+    {"name":"getVendorRegistry","parameterTypes":[] }
+  ]
+},
+{
+  "name":"io.helidon.microprofile.metrics.SyntheticRestRequest",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"io.helidon.microprofile.server.JaxRsCdiExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"collectApplications","parameterTypes":["jakarta.enterprise.inject.spi.ProcessManagedBean"] }, 
+    {"name":"collectProviderClasses","parameterTypes":["jakarta.enterprise.inject.spi.ProcessManagedBean"] }, 
+    {"name":"collectResourceClasses","parameterTypes":["jakarta.enterprise.inject.spi.ProcessManagedBean"] }, 
+    {"name":"fixApps","parameterTypes":["java.lang.Object"] }
+  ]
+},
+{
+  "name":"io.helidon.microprofile.server.JaxRsCdiExtension$1",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"io.helidon.microprofile.server.JaxRsCdiExtension$CatchAllExceptionMapper",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"toResponse","parameterTypes":["java.lang.Exception"] }
+  ]
+},
+{
+  "name":"io.helidon.microprofile.server.ServerCdiExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"listenHost","parameterTypes":["java.lang.String"] }, 
+    {"name":"prepareRuntime","parameterTypes":["io.helidon.config.Config"] }, 
+    {"name":"recordBeanServices","parameterTypes":["jakarta.enterprise.inject.spi.ProcessManagedBean"] }, 
+    {"name":"recordFieldProducedServices","parameterTypes":["jakarta.enterprise.inject.spi.ProcessProducerField"] }, 
+    {"name":"recordMethodProducedServices","parameterTypes":["jakarta.enterprise.inject.spi.ProcessProducerMethod"] }, 
+    {"name":"registerKpiMetricsDeferrableRequestHandlers","parameterTypes":["java.lang.Object","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"startServer","parameterTypes":["java.lang.Object","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"stopServer","parameterTypes":["java.lang.Object"] }
+  ]
+},
+{
+  "name":"io.helidon.microprofile.server.ServerCdiExtension$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"io.helidon.servicecommon.restcdi.HelidonInterceptor",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"aroundConstruct","parameterTypes":["jakarta.interceptor.InvocationContext"] }, 
+    {"name":"aroundConstruction","parameterTypes":["jakarta.interceptor.InvocationContext"] }, 
+    {"name":"aroundInvocation","parameterTypes":["jakarta.interceptor.InvocationContext"] }, 
+    {"name":"aroundInvoke","parameterTypes":["jakarta.interceptor.InvocationContext"] }, 
+    {"name":"preInvocation","parameterTypes":["jakarta.interceptor.InvocationContext","java.lang.Object"] }, 
+    {"name":"workItems","parameterTypes":["java.lang.reflect.Executable"] }
+  ]
+},
+{
+  "name":"io.helidon.servicecommon.restcdi.HelidonInterceptor$Base",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"aroundConstruct","parameterTypes":["jakarta.interceptor.InvocationContext"] }, 
+    {"name":"aroundInvoke","parameterTypes":["jakarta.interceptor.InvocationContext"] }
+  ]
+},
+{
+  "name":"io.helidon.servicecommon.restcdi.HelidonInterceptor$WithPostCompletion",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"aroundConstruction","parameterTypes":["jakarta.interceptor.InvocationContext"] }, 
+    {"name":"aroundInvocation","parameterTypes":["jakarta.interceptor.InvocationContext"] }
+  ]
+},
+{
+  "name":"io.helidon.servicecommon.restcdi.HelidonRestCdiExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"clearAnnotationInfo","parameterTypes":["jakarta.enterprise.inject.spi.AfterDeploymentValidation"] }, 
+    {"name":"observeManagedBeans","parameterTypes":["jakarta.enterprise.inject.spi.ProcessManagedBean"] }
+  ]
+},
+{
+  "name":"io.helidon.webserver.ForwardingHandler",
+  "methods":[
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+  ]
+},
+{
+  "name":"io.helidon.webserver.HttpInitializer"
+},
+{
+  "name":"io.helidon.webserver.jersey.AsyncExecutorProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"dispose","parameterTypes":["java.util.concurrent.ExecutorService"] }, 
+    {"name":"getExecutorService","parameterTypes":[] }
+  ]
+},
+{
+  "name":"io.helidon.webserver.jersey.HelidonHK2InjectionManagerFactory",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.helidon.webserver.jersey.JerseySupport$InternalErrorMapper",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"toResponse","parameterTypes":["jakarta.ws.rs.InternalServerErrorException"] }
+  ]
+},
+{
+  "name":"io.netty.bootstrap.ServerBootstrap$1"
+},
+{
+  "name":"io.netty.bootstrap.ServerBootstrap$ServerBootstrapAcceptor",
+  "methods":[
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+  ]
+},
+{
+  "name":"io.netty.buffer.AbstractByteBufAllocator",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"io.netty.buffer.AbstractReferenceCountedByteBuf",
+  "fields":[{"name":"refCnt"}]
+},
+{
+  "name":"io.netty.channel.ChannelDuplexHandler",
+  "methods":[{"name":"read","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }]
+},
+{
+  "name":"io.netty.channel.ChannelInboundHandlerAdapter",
+  "methods":[
+    {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRegistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelWritabilityChanged","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }
+  ]
+},
+{
+  "name":"io.netty.channel.ChannelInitializer",
+  "methods":[
+    {"name":"channelRegistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+  ]
+},
+{
+  "name":"io.netty.channel.CombinedChannelDuplexHandler",
+  "methods":[
+    {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
+    {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRegistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelWritabilityChanged","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"close","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"connect","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
+    {"name":"deregister","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"disconnect","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
+    {"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"read","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
+  ]
+},
+{
+  "name":"io.netty.channel.DefaultChannelPipeline$HeadContext",
+  "methods":[
+    {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
+    {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRegistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelWritabilityChanged","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"close","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"connect","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
+    {"name":"deregister","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"disconnect","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
+    {"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"read","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
+  ]
+},
+{
+  "name":"io.netty.channel.DefaultChannelPipeline$TailContext",
+  "methods":[
+    {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRegistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelWritabilityChanged","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
+    {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }
+  ]
+},
+{
+  "name":"io.netty.channel.SimpleChannelInboundHandler",
+  "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }]
+},
+{
+  "name":"io.netty.handler.codec.http.HttpServerCodec"
+},
+{
+  "name":"io.netty.handler.logging.LoggingHandler",
+  "methods":[
+    {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
+    {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRegistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelWritabilityChanged","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"close","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"connect","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
+    {"name":"deregister","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"disconnect","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
+    {"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
+  ]
+},
+{
+  "name":"io.netty.util.ReferenceCountUtil",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueColdProducerFields",
+  "fields":[{"name":"producerLimit"}]
+},
+{
+  "name":"io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueConsumerFields",
+  "fields":[{"name":"consumerIndex"}]
+},
+{
+  "name":"io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueProducerFields",
+  "fields":[{"name":"producerIndex"}]
+},
+{
+  "name":"io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueueConsumerIndexField",
+  "fields":[{"name":"consumerIndex"}]
+},
+{
+  "name":"io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueueProducerIndexField",
+  "fields":[{"name":"producerIndex"}]
+},
+{
+  "name":"io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueueProducerLimitField",
+  "fields":[{"name":"producerLimit"}]
+},
+{
+  "name":"jakarta.annotation.PostConstruct",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.annotation.PreDestroy"
+},
+{
+  "name":"jakarta.annotation.Priority",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"value","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.decorator.Decorator",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.decorator.Delegate",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.enterprise.context.ApplicationScoped",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.enterprise.context.BeforeDestroyed",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"value","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.enterprise.context.ConversationScoped",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.enterprise.context.Dependent",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.enterprise.context.Destroyed",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"value","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.enterprise.context.Initialized",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"value","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.enterprise.context.NormalScope",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"passivating","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.enterprise.context.RequestScoped",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.enterprise.context.SessionScoped",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.enterprise.context.control.ActivateRequestContext",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.enterprise.event.Event",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"jakarta.enterprise.event.Observes",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.enterprise.inject.Any",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.enterprise.inject.Decorated",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.enterprise.inject.Default",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.enterprise.inject.Instance",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"jakarta.enterprise.inject.Intercepted",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.enterprise.inject.Produces",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.enterprise.inject.Stereotype",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.enterprise.inject.Vetoed",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.enterprise.inject.spi.BeanManager"
+},
+{
+  "name":"jakarta.enterprise.inject.spi.Extension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.enterprise.inject.spi.WithAnnotations",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.enterprise.util.Nonbinding",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.inject.Inject",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.inject.Named",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"value","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.inject.Provider",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"jakarta.inject.Qualifier",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.inject.Scope",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.inject.Singleton",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.interceptor.AroundConstruct",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.interceptor.AroundInvoke",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.interceptor.AroundTimeout"
+},
+{
+  "name":"jakarta.interceptor.ExcludeClassInterceptors"
+},
+{
+  "name":"jakarta.interceptor.Interceptor",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.interceptor.InterceptorBinding",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.interceptor.Interceptors",
+  "methods":[{"name":"value","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.persistence.Access",
+  "methods":[{"name":"value","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.persistence.Embeddable"
+},
+{
+  "name":"jakarta.persistence.Entity"
+},
+{
+  "name":"jakarta.persistence.EntityManager",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"jakarta.persistence.EntityManagerFactory",
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"addNamedEntityGraph","parameterTypes":["java.lang.String","jakarta.persistence.EntityGraph"] }, 
+    {"name":"addNamedQuery","parameterTypes":["java.lang.String","jakarta.persistence.Query"] }, 
+    {"name":"close","parameterTypes":[] }, 
+    {"name":"createEntityManager","parameterTypes":[] }, 
+    {"name":"createEntityManager","parameterTypes":["jakarta.persistence.SynchronizationType"] }, 
+    {"name":"createEntityManager","parameterTypes":["jakarta.persistence.SynchronizationType","java.util.Map"] }, 
+    {"name":"createEntityManager","parameterTypes":["java.util.Map"] }, 
+    {"name":"getCache","parameterTypes":[] }, 
+    {"name":"getCriteriaBuilder","parameterTypes":[] }, 
+    {"name":"getMetamodel","parameterTypes":[] }, 
+    {"name":"getPersistenceUnitUtil","parameterTypes":[] }, 
+    {"name":"getProperties","parameterTypes":[] }, 
+    {"name":"isOpen","parameterTypes":[] }, 
+    {"name":"unwrap","parameterTypes":["java.lang.Class"] }
+  ]
+},
+{
+  "name":"jakarta.persistence.MappedSuperclass"
+},
+{
+  "name":"jakarta.persistence.NamedQueries",
+  "methods":[{"name":"value","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.persistence.Persistence",
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getPersistenceUtil","parameterTypes":[] }
+  ]
+},
+{
+  "name":"jakarta.persistence.PersistenceContext",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.persistence.PersistenceContextType"
+},
+{
+  "name":"jakarta.persistence.PersistenceUnit",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.persistence.spi.PersistenceProvider",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"jakarta.persistence.spi.PersistenceUnitInfo",
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"addTransformer","parameterTypes":["jakarta.persistence.spi.ClassTransformer"] }, 
+    {"name":"excludeUnlistedClasses","parameterTypes":[] }, 
+    {"name":"getClassLoader","parameterTypes":[] }, 
+    {"name":"getJarFileUrls","parameterTypes":[] }, 
+    {"name":"getJtaDataSource","parameterTypes":[] }, 
+    {"name":"getManagedClassNames","parameterTypes":[] }, 
+    {"name":"getMappingFileNames","parameterTypes":[] }, 
+    {"name":"getNewTempClassLoader","parameterTypes":[] }, 
+    {"name":"getNonJtaDataSource","parameterTypes":[] }, 
+    {"name":"getPersistenceProviderClassName","parameterTypes":[] }, 
+    {"name":"getPersistenceUnitName","parameterTypes":[] }, 
+    {"name":"getPersistenceUnitRootUrl","parameterTypes":[] }, 
+    {"name":"getPersistenceXMLSchemaVersion","parameterTypes":[] }, 
+    {"name":"getProperties","parameterTypes":[] }, 
+    {"name":"getSharedCacheMode","parameterTypes":[] }, 
+    {"name":"getTransactionType","parameterTypes":[] }, 
+    {"name":"getValidationMode","parameterTypes":[] }
+  ]
+},
+{
+  "name":"jakarta.transaction.Transaction"
+},
+{
+  "name":"jakarta.transaction.TransactionManager",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"begin","parameterTypes":[] }, 
+    {"name":"commit","parameterTypes":[] }, 
+    {"name":"getStatus","parameterTypes":[] }, 
+    {"name":"getTransaction","parameterTypes":[] }, 
+    {"name":"resume","parameterTypes":["jakarta.transaction.Transaction"] }, 
+    {"name":"rollback","parameterTypes":[] }, 
+    {"name":"setRollbackOnly","parameterTypes":[] }, 
+    {"name":"setTransactionTimeout","parameterTypes":["int"] }, 
+    {"name":"suspend","parameterTypes":[] }
+  ]
+},
+{
+  "name":"jakarta.transaction.TransactionScoped",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.transaction.TransactionSynchronizationRegistry",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"getResource","parameterTypes":["java.lang.Object"] }, 
+    {"name":"getRollbackOnly","parameterTypes":[] }, 
+    {"name":"getTransactionKey","parameterTypes":[] }, 
+    {"name":"getTransactionStatus","parameterTypes":[] }, 
+    {"name":"putResource","parameterTypes":["java.lang.Object","java.lang.Object"] }, 
+    {"name":"registerInterposedSynchronization","parameterTypes":["jakarta.transaction.Synchronization"] }, 
+    {"name":"setRollbackOnly","parameterTypes":[] }
+  ]
+},
+{
+  "name":"jakarta.transaction.Transactional",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.transaction.UserTransaction",
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"begin","parameterTypes":[] }, 
+    {"name":"commit","parameterTypes":[] }, 
+    {"name":"getStatus","parameterTypes":[] }, 
+    {"name":"rollback","parameterTypes":[] }, 
+    {"name":"setRollbackOnly","parameterTypes":[] }, 
+    {"name":"setTransactionTimeout","parameterTypes":["int"] }
+  ]
+},
+{
+  "name":"jakarta.validation.ConstraintViolation"
+},
+{
+  "name":"jakarta.validation.ValidatorFactory"
+},
+{
+  "name":"jakarta.websocket.server.ServerEndpoint"
+},
+{
+  "name":"jakarta.ws.rs.Consumes",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.ws.rs.DELETE",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.ws.rs.GET",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.ws.rs.HEAD",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.ws.rs.HttpMethod",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.ws.rs.OPTIONS",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.ws.rs.PATCH",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.ws.rs.POST",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.ws.rs.PUT",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.ws.rs.Path",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.ws.rs.Produces",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.ws.rs.core.Application",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.ws.rs.core.Context",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.ws.rs.core.Feature",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"configure","parameterTypes":["jakarta.ws.rs.core.FeatureContext"] }]
+},
+{
+  "name":"jakarta.ws.rs.ext.ExceptionMapper",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"jakarta.ws.rs.ext.MessageBodyReader",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"isReadable","parameterTypes":["java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType"] }, 
+    {"name":"readFrom","parameterTypes":["java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType","jakarta.ws.rs.core.MultivaluedMap","java.io.InputStream"] }
+  ]
+},
+{
+  "name":"jakarta.ws.rs.ext.MessageBodyWriter",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"getSize","parameterTypes":["java.lang.Object","java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType"] }, 
+    {"name":"isWriteable","parameterTypes":["java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType"] }, 
+    {"name":"writeTo","parameterTypes":["java.lang.Object","java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType","jakarta.ws.rs.core.MultivaluedMap","java.io.OutputStream"] }
+  ]
+},
+{
+  "name":"jakarta.ws.rs.ext.Provider",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.xml.bind.annotation.XmlAccessorType",
+  "methods":[{"name":"value","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.xml.bind.annotation.XmlElement",
+  "methods":[{"name":"type","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.xml.bind.annotation.XmlEnum",
+  "methods":[{"name":"value","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.xml.bind.annotation.XmlRegistry"
+},
+{
+  "name":"jakarta.xml.bind.annotation.XmlType",
+  "methods":[{"name":"factoryClass","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter",
+  "methods":[
+    {"name":"type","parameterTypes":[] }, 
+    {"name":"value","parameterTypes":[] }
+  ]
+},
+{
+  "name":"java.io.Closeable",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"java.io.Serializable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"java.lang.AutoCloseable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"close","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.Class",
+  "methods":[{"name":"getModule","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.Deprecated",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"java.lang.FunctionalInterface",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"java.lang.Module",
+  "methods":[{"name":"isNamed","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.Object",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"equals","parameterTypes":["java.lang.Object"] }, 
+    {"name":"hashCode","parameterTypes":[] }, 
+    {"name":"toString","parameterTypes":[] }
+  ]
+},
+{
+  "name":"java.lang.ProcessHandle",
+  "methods":[
+    {"name":"current","parameterTypes":[] }, 
+    {"name":"pid","parameterTypes":[] }
+  ]
+},
+{
+  "name":"java.lang.Runnable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"java.lang.Runtime",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.String",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.annotation.Annotation",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"annotationType","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.annotation.Documented",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"java.lang.annotation.Inherited",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"java.lang.annotation.Repeatable",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"java.lang.annotation.Retention",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"java.lang.annotation.Target",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"java.lang.management.ManagementFactory",
+  "methods":[{"name":"getRuntimeMXBean","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.management.RuntimeMXBean",
+  "methods":[{"name":"getInputArguments","parameterTypes":[] }]
+},
+{
+  "name":"java.nio.Bits",
+  "fields":[{"name":"UNALIGNED"}]
+},
+{
+  "name":"java.nio.Buffer",
+  "fields":[{"name":"address"}]
+},
+{
+  "name":"java.nio.ByteBuffer",
+  "methods":[{"name":"alignedSlice","parameterTypes":["int"] }]
+},
+{
+  "name":"java.nio.DirectByteBuffer",
+  "methods":[{"name":"<init>","parameterTypes":["long","int"] }]
+},
+{
+  "name":"java.nio.channels.spi.SelectorProvider",
+  "methods":[
+    {"name":"openServerSocketChannel","parameterTypes":["java.net.ProtocolFamily"] }, 
+    {"name":"openSocketChannel","parameterTypes":["java.net.ProtocolFamily"] }
+  ]
+},
+{
+  "name":"java.security.AlgorithmParametersSpi"
+},
+{
+  "name":"java.security.SecureRandomParameters"
+},
+{
+  "name":"java.security.interfaces.ECPrivateKey"
+},
+{
+  "name":"java.security.interfaces.ECPublicKey"
+},
+{
+  "name":"java.security.interfaces.RSAPrivateKey"
+},
+{
+  "name":"java.security.interfaces.RSAPublicKey"
+},
+{
+  "name":"java.sql.Connection",
+  "methods":[{"name":"createClob","parameterTypes":[] }]
+},
+{
+  "name":"java.sql.Date"
+},
+{
+  "name":"java.sql.Timestamp"
+},
+{
+  "name":"java.sql.Types",
+  "allPublicFields":true
+},
+{
+  "name":"java.sql.Wrapper",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"java.util.ArrayList",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"javafx.beans.value.ObservableValue"
+},
+{
+  "name":"javax.money.MonetaryAmount"
+},
+{
+  "name":"javax.security.auth.x500.X500Principal",
+  "fields":[{"name":"thisX500Name"}],
+  "methods":[{"name":"<init>","parameterTypes":["sun.security.x509.X500Name"] }]
+},
+{
+  "name":"javax.sql.CommonDataSource",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"javax.sql.DataSource",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"javax.xml.stream.XMLInputFactory"
+},
+{
+  "name":"jdk.internal.misc.Unsafe",
+  "methods":[{"name":"getUnsafe","parameterTypes":[] }]
+},
+{
+  "name":"jdk.internal.vm.annotation.IntrinsicCandidate",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"me.opc.mp.database.Dept",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getDeptno","parameterTypes":[] }, 
+    {"name":"getDname","parameterTypes":[] }, 
+    {"name":"getLoc","parameterTypes":[] }, 
+    {"name":"setDeptno","parameterTypes":["int"] }
+  ]
+},
+{
+  "name":"me.opc.mp.database.DeptResource",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getDept","parameterTypes":[] }, 
+    {"name":"getInfo","parameterTypes":[] }
+  ]
+},
+{
+  "name":"me.opc.mp.database.Dept_"
+},
+{
+  "name":"module-info"
+},
+{
+  "name":"org.apache.log4j.LogManager"
+},
+{
+  "name":"org.apache.logging.log4j.Logger"
+},
+{
+  "name":"org.eclipse.microprofile.config.inject.ConfigProperty",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.eclipse.microprofile.graphql.GraphQLApi"
+},
+{
+  "name":"org.eclipse.microprofile.graphql.Input"
+},
+{
+  "name":"org.eclipse.microprofile.graphql.Interface"
+},
+{
+  "name":"org.eclipse.microprofile.graphql.Type"
+},
+{
+  "name":"org.eclipse.microprofile.health.Liveness",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.eclipse.microprofile.health.Readiness",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.eclipse.microprofile.health.Startup",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.eclipse.microprofile.metrics.MetricRegistry"
+},
+{
+  "name":"org.eclipse.microprofile.metrics.annotation.ConcurrentGauge",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.eclipse.microprofile.metrics.annotation.Counted",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.eclipse.microprofile.metrics.annotation.Metered",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.eclipse.microprofile.metrics.annotation.RegistryType",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"type","parameterTypes":[] }]
+},
+{
+  "name":"org.eclipse.microprofile.metrics.annotation.Timed",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.eclipse.parsson.media.JsonValueBodyReader",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"isReadable","parameterTypes":["java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType"] }, 
+    {"name":"readFrom","parameterTypes":["java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType","jakarta.ws.rs.core.MultivaluedMap","java.io.InputStream"] }
+  ]
+},
+{
+  "name":"org.eclipse.parsson.media.JsonValueBodyWriter",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":["jakarta.ws.rs.core.Configuration"] }, 
+    {"name":"getSize","parameterTypes":["jakarta.json.JsonValue","java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType"] }, 
+    {"name":"init","parameterTypes":[] }, 
+    {"name":"isWriteable","parameterTypes":["java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType"] }, 
+    {"name":"writeTo","parameterTypes":["jakarta.json.JsonValue","java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType","jakarta.ws.rs.core.MultivaluedMap","java.io.OutputStream"] }
+  ]
+},
+{
+  "name":"org.glassfish.hk2.internal.PerThreadContext",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.glassfish.jaxb.core.v2.model.nav.ReflectionNavigator",
+  "methods":[{"name":"getInstance","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jaxb.runtime.v2.ContextFactory",
+  "methods":[{"name":"createContext","parameterTypes":["java.lang.String","java.lang.ClassLoader","java.util.Map"] }]
+},
+{
+  "name":"org.glassfish.jaxb.runtime.v2.runtime.property.ArrayElementLeafProperty",
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["org.glassfish.jaxb.runtime.v2.runtime.JAXBContextImpl","org.glassfish.jaxb.runtime.v2.model.runtime.RuntimeElementPropertyInfo"] }]
+},
+{
+  "name":"org.glassfish.jaxb.runtime.v2.runtime.property.ArrayElementNodeProperty",
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["org.glassfish.jaxb.runtime.v2.runtime.JAXBContextImpl","org.glassfish.jaxb.runtime.v2.model.runtime.RuntimeElementPropertyInfo"] }]
+},
+{
+  "name":"org.glassfish.jaxb.runtime.v2.runtime.property.ArrayReferenceNodeProperty",
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.glassfish.jaxb.runtime.v2.runtime.property.SingleElementLeafProperty",
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["org.glassfish.jaxb.runtime.v2.runtime.JAXBContextImpl","org.glassfish.jaxb.runtime.v2.model.runtime.RuntimeElementPropertyInfo"] }]
+},
+{
+  "name":"org.glassfish.jaxb.runtime.v2.runtime.property.SingleElementNodeProperty",
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["org.glassfish.jaxb.runtime.v2.runtime.JAXBContextImpl","org.glassfish.jaxb.runtime.v2.model.runtime.RuntimeElementPropertyInfo"] }]
+},
+{
+  "name":"org.glassfish.jaxb.runtime.v2.runtime.property.SingleMapNodeProperty",
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.glassfish.jaxb.runtime.v2.runtime.property.SingleReferenceNodeProperty",
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.glassfish.jaxb.runtime.v2.runtime.unmarshaller.StAXExConnector"
+},
+{
+  "name":"org.glassfish.jersey.ext.cdi1x.internal.CdiComponentProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"afterDiscoveryObserver","parameterTypes":["jakarta.enterprise.inject.spi.AfterBeanDiscovery"] }, 
+    {"name":"afterTypeDiscovery","parameterTypes":["jakarta.enterprise.inject.spi.AfterTypeDiscovery"] }, 
+    {"name":"beforeBeanDiscovery","parameterTypes":["jakarta.enterprise.inject.spi.BeforeBeanDiscovery","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"beforeShutDown","parameterTypes":["jakarta.enterprise.inject.spi.BeforeShutdown","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"processInjectionTarget","parameterTypes":["jakarta.enterprise.inject.spi.ProcessInjectionTarget"] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.ext.cdi1x.internal.CdiComponentProviderServerRuntimeSpecifics$JaxRsParamProducer",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getParameterValue","parameterTypes":["jakarta.enterprise.inject.spi.InjectionPoint","jakarta.enterprise.inject.spi.BeanManager"] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.ext.cdi1x.internal.CdiComponentProviderServerRuntimeSpecifics$JaxRsParamProducer$JaxRsParamQualifier",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.glassfish.jersey.ext.cdi1x.internal.CdiServerComponentProvider",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.ext.cdi1x.internal.GenericInjectionManagerStore",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.ext.cdi1x.internal.JerseyVetoed",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.glassfish.jersey.ext.cdi1x.internal.ProcessAllAnnotatedTypes",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"processAnnotatedType","parameterTypes":["jakarta.enterprise.inject.spi.ProcessAnnotatedType","jakarta.enterprise.inject.spi.BeanManager"] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.ext.cdi1x.internal.ProcessJAXRSAnnotatedTypes",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.glassfish.jersey.ext.cdi1x.internal.spi.InjectionManagerStore",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.glassfish.jersey.ext.cdi1x.internal.spi.InjectionTargetListener",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.glassfish.jersey.inject.hk2.ContextInjectionResolverImpl",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.inject.hk2.Hk2InjectionManagerFactory",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.inject.hk2.Hk2RequestScope",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.inject.hk2.InstanceSupplierFactoryBridge",
+  "methods":[{"name":"provide","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.inject.hk2.JerseyErrorService",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.inject.hk2.RequestContext",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["org.glassfish.jersey.process.internal.RequestScope"] }]
+},
+{
+  "name":"org.glassfish.jersey.internal.JaxrsProviders",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.internal.config.ExternalPropertiesAutoDiscoverable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.internal.inject.Custom",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.glassfish.jersey.jackson.JacksonFeature",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"configure","parameterTypes":["jakarta.ws.rs.core.FeatureContext"] }, 
+    {"name":"withExceptionMappers","parameterTypes":[] }, 
+    {"name":"withoutExceptionMappers","parameterTypes":[] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.jackson.internal.DefaultJacksonJaxbJsonProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"findAndRegisterModules","parameterTypes":[] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.jackson.internal.JacksonAutoDiscoverable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.jackson.internal.jackson.jaxrs.base.JsonMappingExceptionMapper",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"toResponse","parameterTypes":["com.fasterxml.jackson.databind.JsonMappingException"] }]
+},
+{
+  "name":"org.glassfish.jersey.jackson.internal.jackson.jaxrs.base.JsonParseExceptionMapper",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"toResponse","parameterTypes":["com.fasterxml.jackson.core.JsonParseException"] }]
+},
+{
+  "name":"org.glassfish.jersey.jackson.internal.jackson.jaxrs.base.ProviderBase",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"addUntouchable","parameterTypes":["java.lang.Class"] }, 
+    {"name":"checkCanDeserialize","parameterTypes":["boolean"] }, 
+    {"name":"checkCanSerialize","parameterTypes":["boolean"] }, 
+    {"name":"configure","parameterTypes":["com.fasterxml.jackson.core.JsonGenerator$Feature","boolean"] }, 
+    {"name":"configure","parameterTypes":["com.fasterxml.jackson.core.JsonParser$Feature","boolean"] }, 
+    {"name":"configure","parameterTypes":["com.fasterxml.jackson.databind.DeserializationFeature","boolean"] }, 
+    {"name":"configure","parameterTypes":["com.fasterxml.jackson.databind.SerializationFeature","boolean"] }, 
+    {"name":"configure","parameterTypes":["org.glassfish.jersey.jackson.internal.jackson.jaxrs.cfg.JaxRSFeature","boolean"] }, 
+    {"name":"disable","parameterTypes":["com.fasterxml.jackson.core.JsonGenerator$Feature"] }, 
+    {"name":"disable","parameterTypes":["com.fasterxml.jackson.core.JsonParser$Feature"] }, 
+    {"name":"disable","parameterTypes":["com.fasterxml.jackson.databind.DeserializationFeature"] }, 
+    {"name":"disable","parameterTypes":["com.fasterxml.jackson.databind.SerializationFeature"] }, 
+    {"name":"disable","parameterTypes":["org.glassfish.jersey.jackson.internal.jackson.jaxrs.cfg.JaxRSFeature"] }, 
+    {"name":"disable","parameterTypes":["org.glassfish.jersey.jackson.internal.jackson.jaxrs.cfg.JaxRSFeature","org.glassfish.jersey.jackson.internal.jackson.jaxrs.cfg.JaxRSFeature[]"] }, 
+    {"name":"enable","parameterTypes":["com.fasterxml.jackson.core.JsonGenerator$Feature"] }, 
+    {"name":"enable","parameterTypes":["com.fasterxml.jackson.core.JsonParser$Feature"] }, 
+    {"name":"enable","parameterTypes":["com.fasterxml.jackson.databind.DeserializationFeature"] }, 
+    {"name":"enable","parameterTypes":["com.fasterxml.jackson.databind.SerializationFeature"] }, 
+    {"name":"enable","parameterTypes":["org.glassfish.jersey.jackson.internal.jackson.jaxrs.cfg.JaxRSFeature"] }, 
+    {"name":"enable","parameterTypes":["org.glassfish.jersey.jackson.internal.jackson.jaxrs.cfg.JaxRSFeature","org.glassfish.jersey.jackson.internal.jackson.jaxrs.cfg.JaxRSFeature[]"] }, 
+    {"name":"getSize","parameterTypes":["java.lang.Object","java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType"] }, 
+    {"name":"isEnabled","parameterTypes":["org.glassfish.jersey.jackson.internal.jackson.jaxrs.cfg.JaxRSFeature"] }, 
+    {"name":"isReadable","parameterTypes":["java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType"] }, 
+    {"name":"isWriteable","parameterTypes":["java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType"] }, 
+    {"name":"locateMapper","parameterTypes":["java.lang.Class","jakarta.ws.rs.core.MediaType"] }, 
+    {"name":"readFrom","parameterTypes":["java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType","jakarta.ws.rs.core.MultivaluedMap","java.io.InputStream"] }, 
+    {"name":"removeUntouchable","parameterTypes":["java.lang.Class"] }, 
+    {"name":"setAnnotationsToUse","parameterTypes":["org.glassfish.jersey.jackson.internal.jackson.jaxrs.cfg.Annotations[]"] }, 
+    {"name":"setDefaultReadView","parameterTypes":["java.lang.Class"] }, 
+    {"name":"setDefaultView","parameterTypes":["java.lang.Class"] }, 
+    {"name":"setDefaultWriteView","parameterTypes":["java.lang.Class"] }, 
+    {"name":"setMapper","parameterTypes":["com.fasterxml.jackson.databind.ObjectMapper"] }, 
+    {"name":"writeTo","parameterTypes":["java.lang.Object","java.lang.Class","java.lang.reflect.Type","java.lang.annotation.Annotation[]","jakarta.ws.rs.core.MediaType","jakarta.ws.rs.core.MultivaluedMap","java.io.OutputStream"] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"setJSONPFunctionName","parameterTypes":["java.lang.String"] }, 
+    {"name":"version","parameterTypes":[] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.jsonp.JsonProcessingFeature",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"configure","parameterTypes":["jakarta.ws.rs.core.FeatureContext"] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.jsonp.internal.JsonProcessingAutoDiscoverable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.logging.LoggingFeatureAutoDiscoverable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.message.internal.AbstractFormProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.glassfish.jersey.message.internal.AbstractMessageReaderWriterProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.glassfish.jersey.message.internal.BasicTypesMessageProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.message.internal.ByteArrayProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.message.internal.EnumMessageProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.message.internal.FileProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.message.internal.FormMultivaluedMapProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.message.internal.FormProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.message.internal.InputStreamProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.message.internal.ReaderProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.message.internal.StreamingOutputProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.message.internal.StringMessageProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.process.Inflector",
+  "methods":[{"name":"apply","parameterTypes":["java.lang.Object"] }]
+},
+{
+  "name":"org.glassfish.jersey.process.internal.RequestScope",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.glassfish.jersey.server.BackgroundScheduler",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.glassfish.jersey.server.ChunkedResponseWriter",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.server.ManagedAsyncExecutor",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.glassfish.jersey.server.ServerExecutorProvidersConfigurator$DefaultBackgroundSchedulerProvider",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.glassfish.jersey.server.ServerExecutorProvidersConfigurator$DefaultManagedAsyncExecutorProvider",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.glassfish.jersey.server.filter.internal.ServerFiltersAutoDiscoverable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.server.internal.JsonWithPaddingInterceptor",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.server.internal.MappableExceptionWrapperInterceptor",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.server.internal.monitoring.MonitoringAutodiscoverable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.server.internal.monitoring.MonitoringContainerListener",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.server.internal.process.RequestProcessingContextReference",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.server.model.Parameter$ServerParameterService",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.server.spi.ComponentProvider"
+},
+{
+  "name":"org.glassfish.jersey.server.spi.ExternalRequestScope",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"close","parameterTypes":[] }, 
+    {"name":"open","parameterTypes":["org.glassfish.jersey.internal.inject.InjectionManager"] }, 
+    {"name":"resume","parameterTypes":["org.glassfish.jersey.server.spi.ExternalRequestContext","org.glassfish.jersey.internal.inject.InjectionManager"] }, 
+    {"name":"suspend","parameterTypes":["org.glassfish.jersey.server.spi.ExternalRequestContext","org.glassfish.jersey.internal.inject.InjectionManager"] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.server.wadl.WadlFeature",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"configure","parameterTypes":["jakarta.ws.rs.core.FeatureContext"] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.server.wadl.internal.WadlAutoDiscoverable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.server.wadl.processor.OptionsMethodProcessor$GenericOptionsInflector",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.glassfish.jersey.server.wadl.processor.OptionsMethodProcessor$PlainTextOptionsInflector",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.glassfish.jersey.spi.AbstractThreadPoolProvider",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.glassfish.jersey.spi.ComponentProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.glassfish.jersey.spi.ExecutorServiceProvider",
+  "methods":[
+    {"name":"dispose","parameterTypes":["java.util.concurrent.ExecutorService"] }, 
+    {"name":"getExecutorService","parameterTypes":[] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.spi.ScheduledThreadPoolExecutorProvider",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"preDestroy","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.spi.ThreadPoolExecutorProvider",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"preDestroy","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.weld.se.WeldInjectionManagerStore",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glassfish.jersey.weld.se.WeldRequestScope",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"close","parameterTypes":[] }, 
+    {"name":"open","parameterTypes":["org.glassfish.jersey.internal.inject.InjectionManager"] }, 
+    {"name":"resume","parameterTypes":["org.glassfish.jersey.server.spi.ExternalRequestContext","org.glassfish.jersey.internal.inject.InjectionManager"] }, 
+    {"name":"suspend","parameterTypes":["org.glassfish.jersey.server.spi.ExternalRequestContext","org.glassfish.jersey.internal.inject.InjectionManager"] }
+  ]
+},
+{
+  "name":"org.glassfish.jersey.weld.se.WeldRequestScope$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"org.hibernate.boot.cfgxml.internal.CfgXmlAccessServiceImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.boot.internal.DefaultSessionFactoryBuilderService",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.hibernate.bytecode.internal.none.BytecodeProviderImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.cache.internal.DisabledCaching",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.cache.internal.NoCachingRegionFactory",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.cfg.beanvalidation.TypeSafeActivator",
+  "methods":[{"name":"activate","parameterTypes":["org.hibernate.cfg.beanvalidation.ActivationContext"] }]
+},
+{
+  "name":"org.hibernate.dialect.MySQL8Dialect",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.hibernate.engine.config.internal.ConfigurationServiceImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"setJndiService","parameterTypes":["org.hibernate.engine.jndi.spi.JndiService"] }]
+},
+{
+  "name":"org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.engine.jdbc.dialect.internal.DialectResolverSet",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.engine.jdbc.internal.JdbcServicesImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.engine.jndi.internal.JndiServiceImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.engine.query.internal.NativeQueryInterpreterStandardImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.engine.spi.Managed",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.hibernate.engine.spi.ManagedEntity",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.hibernate.engine.spi.PersistentAttributeInterceptable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.hibernate.engine.spi.SelfDirtinessTracker",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.hibernate.engine.transaction.jta.platform.internal.AbstractJtaPlatform",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"canCacheTransactionManager","parameterTypes":[] }, 
+    {"name":"canCacheTransactionManagerByDefault","parameterTypes":[] }, 
+    {"name":"canCacheUserTransaction","parameterTypes":[] }, 
+    {"name":"canCacheUserTransactionByDefault","parameterTypes":[] }, 
+    {"name":"canRegisterSynchronization","parameterTypes":[] }, 
+    {"name":"configure","parameterTypes":["java.util.Map"] }, 
+    {"name":"getCurrentStatus","parameterTypes":[] }, 
+    {"name":"getSynchronizationStrategy","parameterTypes":[] }, 
+    {"name":"getTransactionIdentifier","parameterTypes":["jakarta.transaction.Transaction"] }, 
+    {"name":"getTransactionManager","parameterTypes":[] }, 
+    {"name":"injectServices","parameterTypes":["org.hibernate.service.spi.ServiceRegistryImplementor"] }, 
+    {"name":"registerSynchronization","parameterTypes":["jakarta.transaction.Synchronization"] }, 
+    {"name":"retrieveTransactionManager","parameterTypes":[] }, 
+    {"name":"retrieveUserTransaction","parameterTypes":[] }, 
+    {"name":"serviceRegistry","parameterTypes":[] }
+  ]
+},
+{
+  "name":"org.hibernate.engine.transaction.jta.platform.internal.StandardJtaPlatformResolver",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.engine.transaction.jta.platform.internal.TransactionManagerAccess",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"getTransactionManager","parameterTypes":[] }]
+},
+{
+  "name":"org.hibernate.engine.transaction.jta.platform.spi.JtaPlatform",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"canRegisterSynchronization","parameterTypes":[] }, 
+    {"name":"getCurrentStatus","parameterTypes":[] }, 
+    {"name":"getTransactionIdentifier","parameterTypes":["jakarta.transaction.Transaction"] }, 
+    {"name":"registerSynchronization","parameterTypes":["jakarta.transaction.Synchronization"] }, 
+    {"name":"retrieveTransactionManager","parameterTypes":[] }, 
+    {"name":"retrieveUserTransaction","parameterTypes":[] }
+  ]
+},
+{
+  "name":"org.hibernate.event.spi.EventType",
+  "allDeclaredFields":true
+},
+{
+  "name":"org.hibernate.id.Assigned",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.hibernate.internal.CoreMessageLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.internal.CoreMessageLogger_$logger_en"
+},
+{
+  "name":"org.hibernate.internal.CoreMessageLogger_$logger_en_US"
+},
+{
+  "name":"org.hibernate.internal.EntityManagerMessageLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.internal.EntityManagerMessageLogger_$logger_en"
+},
+{
+  "name":"org.hibernate.internal.EntityManagerMessageLogger_$logger_en_US"
+},
+{
+  "name":"org.hibernate.internal.log.DeprecationLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.internal.log.DeprecationLogger_$logger_en"
+},
+{
+  "name":"org.hibernate.internal.log.DeprecationLogger_$logger_en_US"
+},
+{
+  "name":"org.hibernate.jpa.HibernatePersistenceProvider",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getEntityManagerFactoryBuilder","parameterTypes":["jakarta.persistence.spi.PersistenceUnitInfo","java.util.Map"] }, 
+    {"name":"getEntityManagerFactoryBuilder","parameterTypes":["org.hibernate.jpa.boot.spi.PersistenceUnitDescriptor","java.util.Map","java.lang.ClassLoader"] }, 
+    {"name":"getEntityManagerFactoryBuilder","parameterTypes":["org.hibernate.jpa.boot.spi.PersistenceUnitDescriptor","java.util.Map","org.hibernate.boot.registry.classloading.spi.ClassLoaderService"] }, 
+    {"name":"getEntityManagerFactoryBuilderOrNull","parameterTypes":["java.lang.String","java.util.Map"] }, 
+    {"name":"getEntityManagerFactoryBuilderOrNull","parameterTypes":["java.lang.String","java.util.Map","java.lang.ClassLoader"] }, 
+    {"name":"getEntityManagerFactoryBuilderOrNull","parameterTypes":["java.lang.String","java.util.Map","org.hibernate.boot.registry.classloading.spi.ClassLoaderService"] }
+  ]
+},
+{
+  "name":"org.hibernate.jpa.HibernatePersistenceProvider$Proxy$_$$_WeldClientProxy",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"org.hibernate.metamodel.mapping.MappingModelCreationLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.metamodel.mapping.MappingModelCreationLogger_$logger_en"
+},
+{
+  "name":"org.hibernate.metamodel.mapping.MappingModelCreationLogger_$logger_en_US"
+},
+{
+  "name":"org.hibernate.persister.entity.SingleTableEntityPersister",
+  "methods":[{"name":"<init>","parameterTypes":["org.hibernate.mapping.PersistentClass","org.hibernate.cache.spi.access.EntityDataAccess","org.hibernate.cache.spi.access.NaturalIdDataAccess","org.hibernate.metamodel.spi.RuntimeModelCreationContext"] }]
+},
+{
+  "name":"org.hibernate.persister.internal.PersisterFactoryImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.persister.internal.StandardPersisterClassResolver",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.property.access.internal.PropertyAccessStrategyResolverStandardImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.query.QueryLogging_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.query.QueryLogging_$logger_en"
+},
+{
+  "name":"org.hibernate.query.QueryLogging_$logger_en_US"
+},
+{
+  "name":"org.hibernate.query.hql.HqlLogging_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.query.hql.HqlLogging_$logger_en"
+},
+{
+  "name":"org.hibernate.query.hql.HqlLogging_$logger_en_US"
+},
+{
+  "name":"org.hibernate.resource.beans.container.internal.CdiBeanContainerImmediateAccessImpl",
+  "methods":[{"name":"<init>","parameterTypes":["jakarta.enterprise.inject.spi.BeanManager"] }]
+},
+{
+  "name":"org.hibernate.resource.beans.container.spi.ExtendedBeanManager"
+},
+{
+  "name":"org.hibernate.resource.beans.internal.BeansMessageLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.resource.beans.internal.BeansMessageLogger_$logger_en"
+},
+{
+  "name":"org.hibernate.resource.beans.internal.BeansMessageLogger_$logger_en_US"
+},
+{
+  "name":"org.hibernate.resource.beans.internal.ManagedBeanRegistryImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionCoordinatorBuilderImpl",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.hibernate.service.Service",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.hibernate.service.internal.SessionFactoryServiceRegistryFactoryImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.service.spi.Configurable",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"configure","parameterTypes":["java.util.Map"] }]
+},
+{
+  "name":"org.hibernate.service.spi.ServiceRegistryAwareService",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"injectServices","parameterTypes":["org.hibernate.service.spi.ServiceRegistryImplementor"] }]
+},
+{
+  "name":"org.hibernate.sql.ast.tree.SqlAstTreeLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.sql.ast.tree.SqlAstTreeLogger_$logger_en"
+},
+{
+  "name":"org.hibernate.sql.ast.tree.SqlAstTreeLogger_$logger_en_US"
+},
+{
+  "name":"org.hibernate.sql.exec.SqlExecLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.sql.exec.SqlExecLogger_$logger_en"
+},
+{
+  "name":"org.hibernate.sql.exec.SqlExecLogger_$logger_en_US"
+},
+{
+  "name":"org.hibernate.sql.results.LoadingLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.sql.results.LoadingLogger_$logger_en"
+},
+{
+  "name":"org.hibernate.sql.results.LoadingLogger_$logger_en_US"
+},
+{
+  "name":"org.hibernate.sql.results.ResultsLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.sql.results.ResultsLogger_$logger_en"
+},
+{
+  "name":"org.hibernate.sql.results.ResultsLogger_$logger_en_US"
+},
+{
+  "name":"org.hibernate.stat.internal.StatisticsImpl",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.hibernate.type.SqlTypes",
+  "allPublicFields":true
+},
+{
+  "name":"org.hibernate.validator.internal.engine.resolver.JPATraversableResolver",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.hibernate.validator.internal.util.logging.Log_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.hibernate.validator.internal.util.logging.Log_$logger_en"
+},
+{
+  "name":"org.hibernate.validator.internal.util.logging.Log_$logger_en_US"
+},
+{
+  "name":"org.hibernate.validator.internal.util.logging.Messages_$bundle",
+  "fields":[{"name":"INSTANCE"}]
+},
+{
+  "name":"org.hibernate.validator.internal.util.logging.Messages_$bundle_en"
+},
+{
+  "name":"org.hibernate.validator.internal.util.logging.Messages_$bundle_en_US"
+},
+{
+  "name":"org.jboss.jandex.ClassInfo",
+  "methods":[{"name":"setFlags","parameterTypes":["short"] }]
+},
+{
+  "name":"org.jboss.jandex.Index"
+},
+{
+  "name":"org.jboss.logmanager.LogManager"
+},
+{
+  "name":"org.jboss.weld.bean.builtin.WeldInstance$Instance$Provider$_$$_Weld$Proxy$"
+},
+{
+  "name":"org.jboss.weld.bean.proxy.ProxyObject",
+  "methods":[
+    {"name":"weld_getHandler","parameterTypes":[] }, 
+    {"name":"weld_setHandler","parameterTypes":["org.jboss.weld.bean.proxy.MethodHandler"] }
+  ]
+},
+{
+  "name":"org.jboss.weld.bean.proxy.UnsafeProxyInstantiator",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.jboss.weld.bootstrap.WeldExtension",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"beforeBeanDiscovery","parameterTypes":["jakarta.enterprise.inject.spi.BeforeBeanDiscovery","jakarta.enterprise.inject.spi.BeanManager"] }
+  ]
+},
+{
+  "name":"org.jboss.weld.bootstrap.api.helpers.RegistrySingletonProvider",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.jboss.weld.configuration.spi.ExternalConfiguration"
+},
+{
+  "name":"org.jboss.weld.context.activator.ActivateRequestContext",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.jboss.weld.context.bound.Bound",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.jboss.weld.context.unbound.Unbound",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.jboss.weld.contexts.activator.AbstractActivateRequestContextInterceptor",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.jboss.weld.contexts.activator.ActivateRequestContextInterceptor",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.weld.context.RequestContext","org.jboss.weld.manager.BeanManagerImpl"] }]
+},
+{
+  "name":"org.jboss.weld.contexts.activator.CdiRequestContextActivatorInterceptor",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.weld.context.RequestContext","org.jboss.weld.manager.BeanManagerImpl"] }]
+},
+{
+  "name":"org.jboss.weld.environment.deployment.discovery.jandex.JandexDiscoveryStrategy",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.weld.resources.spi.ResourceLoader","org.jboss.weld.bootstrap.api.Bootstrap","java.util.Set"] }]
+},
+{
+  "name":"org.jboss.weld.environment.logging.CommonLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.jboss.weld.environment.logging.CommonLogger_$logger_en"
+},
+{
+  "name":"org.jboss.weld.environment.logging.CommonLogger_$logger_en_US"
+},
+{
+  "name":"org.jboss.weld.environment.se.WeldSEBeanRegistrant",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"registerWeldSEBeans","parameterTypes":["jakarta.enterprise.inject.spi.BeforeBeanDiscovery","jakarta.enterprise.inject.spi.BeanManager"] }, 
+    {"name":"registerWeldSEContexts","parameterTypes":["jakarta.enterprise.inject.spi.AfterBeanDiscovery","jakarta.enterprise.inject.spi.BeanManager"] }
+  ]
+},
+{
+  "name":"org.jboss.weld.environment.se.beans.ParametersFactory",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getArgs","parameterTypes":[] }, 
+    {"name":"getArgsAsArray","parameterTypes":[] }, 
+    {"name":"setArgs","parameterTypes":["java.lang.String[]"] }
+  ]
+},
+{
+  "name":"org.jboss.weld.environment.se.bindings.Parameters",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.jboss.weld.environment.se.contexts.ThreadScoped",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.jboss.weld.environment.se.contexts.activators.ActivateThreadScope",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
+  "name":"org.jboss.weld.environment.se.contexts.activators.ActivateThreadScopeInterceptor",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.weld.environment.se.WeldSEBeanRegistrant"] }]
+},
+{
+  "name":"org.jboss.weld.environment.se.logging.WeldSELogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.jboss.weld.environment.se.logging.WeldSELogger_$logger_en"
+},
+{
+  "name":"org.jboss.weld.environment.se.logging.WeldSELogger_$logger_en_US"
+},
+{
+  "name":"org.jboss.weld.environment.se.threading.RunnableDecorator",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.weld.environment.se.WeldSEBeanRegistrant"] }]
+},
+{
+  "name":"org.jboss.weld.event.WeldEvent$Event$_$$_Weld$Proxy$"
+},
+{
+  "name":"org.jboss.weld.events.WeldEvent",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.jboss.weld.inject.WeldInstance",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.jboss.weld.interceptor.proxy.LifecycleMixin",
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"lifecycle_mixin_$$_postConstruct","parameterTypes":[] }, 
+    {"name":"lifecycle_mixin_$$_preDestroy","parameterTypes":[] }
+  ]
+},
+{
+  "name":"org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy",
+  "methods":[
+    {"name":"weld_getTargetClass","parameterTypes":[] }, 
+    {"name":"weld_getTargetInstance","parameterTypes":[] }
+  ]
+},
+{
+  "name":"org.jboss.weld.logging.BeanLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.jboss.weld.logging.BeanLogger_$logger_en"
+},
+{
+  "name":"org.jboss.weld.logging.BeanLogger_$logger_en_US"
+},
+{
+  "name":"org.jboss.weld.logging.BootstrapLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.jboss.weld.logging.BootstrapLogger_$logger_en"
+},
+{
+  "name":"org.jboss.weld.logging.BootstrapLogger_$logger_en_US"
+},
+{
+  "name":"org.jboss.weld.logging.ConfigurationLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.jboss.weld.logging.ConfigurationLogger_$logger_en"
+},
+{
+  "name":"org.jboss.weld.logging.ConfigurationLogger_$logger_en_US"
+},
+{
+  "name":"org.jboss.weld.logging.ContextLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.jboss.weld.logging.ContextLogger_$logger_en"
+},
+{
+  "name":"org.jboss.weld.logging.ContextLogger_$logger_en_US"
+},
+{
+  "name":"org.jboss.weld.logging.EventLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.jboss.weld.logging.EventLogger_$logger_en"
+},
+{
+  "name":"org.jboss.weld.logging.EventLogger_$logger_en_US"
+},
+{
+  "name":"org.jboss.weld.logging.ReflectionLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.jboss.weld.logging.ReflectionLogger_$logger_en"
+},
+{
+  "name":"org.jboss.weld.logging.ReflectionLogger_$logger_en_US"
+},
+{
+  "name":"org.jboss.weld.logging.ValidatorLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.jboss.weld.logging.ValidatorLogger_$logger_en"
+},
+{
+  "name":"org.jboss.weld.logging.ValidatorLogger_$logger_en_US"
+},
+{
+  "name":"org.jboss.weld.logging.VersionLogger_$logger",
+  "methods":[{"name":"<init>","parameterTypes":["org.jboss.logging.Logger"] }]
+},
+{
+  "name":"org.jboss.weld.logging.VersionLogger_$logger_en"
+},
+{
+  "name":"org.jboss.weld.logging.VersionLogger_$logger_en_US"
+},
+{
+  "name":"org.jboss.weld.module.jta.UserTransaction$_$$_Weld$Proxy$",
+  "allDeclaredFields":true,
+  "unsafeAllocated":true
+},
+{
+  "name":"org.jboss.weld.module.jta.WeldTransactionsModule",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.jboss.weld.proxy.WeldClientProxy",
+  "methods":[{"name":"getMetadata","parameterTypes":[] }]
+},
+{
+  "name":"org.jboss.weld.proxy.WeldConstruct",
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.joda.time.ReadableInstant"
+},
+{
+  "name":"org.jvnet.fastinfoset.stax.FastInfosetStreamReader"
+},
+{
+  "name":"org.jvnet.hk2.internal.DynamicConfigurationServiceImpl",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["org.glassfish.hk2.api.ServiceLocator"] }]
+},
+{
+  "name":"org.jvnet.hk2.internal.ServiceLocatorRuntimeImpl",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["org.glassfish.hk2.api.ServiceLocator"] }]
+},
+{
+  "name":"org.jvnet.staxex.XMLStreamReaderEx"
+},
+{
+  "name":"org.osgi.framework.BundleReference"
+},
+{
+  "name":"sun.misc.Unsafe",
+  "fields":[{"name":"theUnsafe"}],
+  "methods":[
+    {"name":"copyMemory","parameterTypes":["java.lang.Object","long","java.lang.Object","long","long"] }, 
+    {"name":"getAndAddLong","parameterTypes":["java.lang.Object","long","long"] }, 
+    {"name":"getAndSetObject","parameterTypes":["java.lang.Object","long","java.lang.Object"] }, 
+    {"name":"invokeCleaner","parameterTypes":["java.nio.ByteBuffer"] }, 
+    {"name":"storeFence","parameterTypes":[] }
+  ]
+},
+{
+  "name":"sun.misc.VM"
+},
+{
+  "name":"sun.nio.ch.SelectorImpl",
+  "fields":[
+    {"name":"publicSelectedKeys"}, 
+    {"name":"selectedKeys"}
+  ]
+},
+{
+  "name":"sun.reflect.annotation.AnnotationType"
+},
+{
+  "name":"sun.security.provider.DSA$SHA224withDSA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.DSA$SHA256withDSA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.NativePRNG",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.SHA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.SHA2$SHA224",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.SHA2$SHA256",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.SHA5$SHA384",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.SHA5$SHA512",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.X509Factory",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.rsa.PSSParameters",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.rsa.RSAKeyFactory$Legacy",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.rsa.RSAPSSSignature",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.rsa.RSASignature$SHA224withRSA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.rsa.RSASignature$SHA256withRSA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.ssl.KeyManagerFactoryImpl$SunX509",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.ssl.SSLContextImpl$TLSContext",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.ssl.TrustManagerFactoryImpl$PKIXFactory",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.x509.AuthorityKeyIdentifierExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
+},
+{
+  "name":"sun.security.x509.BasicConstraintsExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
+},
+{
+  "name":"sun.security.x509.SubjectKeyIdentifierExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
+}
+]
