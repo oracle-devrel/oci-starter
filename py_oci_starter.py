@@ -754,9 +754,9 @@ def create_output_dir():
             else:
                 apigw_append = "apigw_fn_append.tf"
             if 'apigw_ocid' in params:
-                cp_terraform("apigw_existing.tf", apigw_append)
+                cp_terraform("apigw_existing.tf", "apigw_tags.tf", apigw_append)
             else:
-                cp_terraform("apigw.tf", apigw_append)
+                cp_terraform("apigw.tf", "apigw_tags.tf", apigw_append)
 
         elif params.get('deploy') == "compute":
             cp_terraform("compute.tf")
@@ -858,9 +858,9 @@ def create_group_common_dir():
 
     if 'apigw' in a_group_common:
         if 'apigw_ocid' in params:
-            cp_terraform("apigw_existing.tf")
+            cp_terraform("apigw_existing.tf", "apigw_tags.tf")
         else:
-            cp_terraform("apigw.tf")
+            cp_terraform("apigw.tf", "apigw_tags.tf")
 
     if 'jms' in a_group_common:
         if 'jms_ocid' in params:
