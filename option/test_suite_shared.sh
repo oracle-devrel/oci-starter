@@ -56,16 +56,16 @@ build_test () {
   echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
   if [ -f /tmp/result.html ]; then
     if grep -q -i "starter" /tmp/result.html; then
-      echo "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
+      echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
       CSV_HTML_OK=1
     else
-      echo "${COLOR_RED}RESULT HTML: ***** BAD ******${COLOR_NONE}"
+      echo -e "${COLOR_RED}RESULT HTML: ***** BAD ******${COLOR_NONE}"
     fi
     if grep -q -i "deptno" /tmp/result.json; then
-      echo "${COLOR_GREEN}RESULT JSON: OK${COLOR_NONE}                "`cat /tmp/result.json` | cut -c 1-100  
+      echo -e "${COLOR_GREEN}RESULT JSON: OK${COLOR_NONE}                "`cat /tmp/result.json` | cut -c 1-100  
       CSV_JSON_OK=1
     else
-      echo "${COLOR_RED}RESULT JSON: ***** BAD ******${COLOR_NONE}  "`cat /tmp/result.json` | cut -c 1-100 
+      echo -e "${COLOR_RED}RESULT JSON: ***** BAD ******${COLOR_NONE}  "`cat /tmp/result.json` | cut -c 1-100 
     fi
     echo "RESULT INFO:                   "`cat /tmp/result.info` | cut -c 1-100
   else

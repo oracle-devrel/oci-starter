@@ -9,15 +9,24 @@ loop_ui() {
   build_option
 }
 
+loop_shape() {
+  OPTION_SHAPE=amd 
+  loop_ui
+  # if [ "$OPTION_DEPLOY" == "compute" ] && [ "$OPTION_DB" == "none" ]; then
+  #   OPTION_SHAPE=ampere
+  #   loop_ui
+  # fi
+}
+
 loop_db() {
   # OPTION_DB=database 
   # loop_ui  
   OPTION_DB=atp 
-  loop_ui
+  loop_shape
   OPTION_DB=mysql
-  loop_ui
+  loop_shape
   OPTION_DB=none
-  loop_ui  
+  loop_shape  
 }
 
 loop_java_vm() {

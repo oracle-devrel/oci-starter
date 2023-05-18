@@ -129,23 +129,24 @@ else
     export TF_VAR_bastion_ad=$TF_VAR_ad
   fi 
 
-  # GIT 
-  export GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
-  if [ "$GIT_BRANCH" != "" ]; then
-    export TF_VAR_git_url=`git config --get remote.origin.url`
-    if [[ "$TF_VAR_git_url" == *"github.com"* ]]; then
-      S1=${TF_VAR_git_url/git@github.com:/https:\/\/github.com\/}        
-      export TF_VAR_git_url=${S1/.git/\/blob\/}${GIT_BRANCH}
-    elif [[ "$TF_VAR_git_url" == *"gitlab.com"* ]]; then
-      S1=${TF_VAR_git_url/git@gitlab.com:/https:\/\/gitlab.com\/}        
-      export TF_VAR_git_url=${S1/.git/\/-\/blob\/}${GIT_BRANCH}
-    fi
-
-    cd $ROOT_DIR
-    export GIT_RELATIVE_PATH=`git rev-parse --show-prefix`
-    cd -
-    export TF_VAR_git_url=${TF_VAR_git_url}/${GIT_RELATIVE_PATH}
-    echo $TF_VAR_git_url
+  # GIT
+  if [ -d $ROOT_DIR/.git ]; then 
+    export GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+    if [ "$GIT_BRANCH" != "" ]; then
+      export TF_VAR_git_url=`git config --get remote.origin.url`
+      if [[ "$TF_VAR_git_url" == *"github.com"* ]]; then
+        S1=${TF_VAR_git_url/git@github.com:/https:\/\/github.com\/}        
+        export TF_VAR_git_url=${S1/.git/\/blob\/}${GIT_BRANCH}
+      elif [[ "$TF_VAR_git_url" == *"gitlab.com"* ]]; then
+        S1=${TF_VAR_git_url/git@gitlab.com:/https:\/\/gitlab.com\/}        
+        export TF_VAR_git_url=${S1/.git/\/-\/blob\/}${GIT_BRANCH}
+      fi
+      cd $ROOT_DIR
+      export GIT_RELATIVE_PATH=`git rev-parse --show-prefix`
+      cd -
+      export TF_VAR_git_url=${TF_VAR_git_url}/${GIT_RELATIVE_PATH}
+      echo $TF_VAR_git_url
+    fi  
   fi
 fi
 
