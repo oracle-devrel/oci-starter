@@ -41,6 +41,11 @@ if [ "$TF_VAR_language" == "java" ]; then
       sudo dnf install -y jdk-11  
     elif [ "$TF_VAR_java_version" == 17 ]; then
       sudo dnf install -y jdk-17  
+      # Trick to find the path
+      cd -P "/usr/java/latest"
+      export JAVA_LATEST_PATH=`pwd`
+      cd -
+      sudo update-alternatives --set java $JAVA_LATEST_PATH/bin/java
     fi
   fi
 

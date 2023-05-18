@@ -1,5 +1,7 @@
 
-variable git_url {}
+variable git_url {
+  default = ""
+}
 
 locals {
   api_git_tags = {

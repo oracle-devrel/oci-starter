@@ -68,7 +68,7 @@ else
   append "export TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid"
 fi
 
-cat > ../../../group_common_env.sh <<'EOT' 
+cat >> ../../../group_common_env.sh <<'EOT' 
 
 # API Management
 EOT

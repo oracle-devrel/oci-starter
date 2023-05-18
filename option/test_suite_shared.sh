@@ -3,6 +3,10 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 . $HOME/bin/env_oci_starter_testsuite.sh
 export BUILD_COUNT=1
+export COLOR_RED='\033[0;31m'
+export COLOR_GREEN='\033[0;32m'
+export COLOR_NONE='\033[0m' 
+
 
 # No color for terraforms logs
 export nocolorarg=1
@@ -52,16 +56,16 @@ build_test () {
   echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
   if [ -f /tmp/result.html ]; then
     if grep -q -i "starter" /tmp/result.html; then
-      echo "RESULT HTML: OK"
+      echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
       CSV_HTML_OK=1
     else
-      echo "RESULT HTML: ***** BAD ******"
+      echo -e "${COLOR_RED}RESULT HTML: ***** BAD ******${COLOR_NONE}"
     fi
     if grep -q -i "deptno" /tmp/result.json; then
-      echo "RESULT JSON: OK                "`cat /tmp/result.json` | cut -c 1-100  
+      echo -e "${COLOR_GREEN}RESULT JSON: OK${COLOR_NONE}                "`cat /tmp/result.json` | cut -c 1-100  
       CSV_JSON_OK=1
     else
-      echo "RESULT JSON: ***** BAD ******  "`cat /tmp/result.json` | cut -c 1-100 
+      echo -e "${COLOR_RED}RESULT JSON: ***** BAD ******${COLOR_NONE}  "`cat /tmp/result.json` | cut -c 1-100 
     fi
     echo "RESULT INFO:                   "`cat /tmp/result.info` | cut -c 1-100
   else

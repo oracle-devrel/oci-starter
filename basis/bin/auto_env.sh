@@ -44,7 +44,6 @@ if ! command -v jq &> /dev/null; then
   exit 1
 fi
 
-
 export TARGET_DIR=$ROOT_DIR/target
 if [ ! -d $TARGET_DIR ]; then
   mkdir $TARGET_DIR
@@ -55,38 +54,7 @@ if [ "$OCI_STARTER_VARIABLES_SET" == "$OCI_STARTER_CREATION_DATE" ]; then
   echo "Variables already set"
 else
   export OCI_STARTER_VARIABLES_SET=$OCI_STARTER_CREATION_DATE
-
-  if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
-    # Cloud Shell
-    export TF_VAR_tenancy_ocid=$OCI_TENANCY
-    export TF_VAR_region=$OCI_REGION
-    if [[ "$OCI_CS_USER_OCID" == *"ocid1.saml2idp"* ]]; then
-      # Ex: ocid1.saml2idp.oc1..aaaaaaaaexfmggau73773/user@domain.com -> oracleidentitycloudservice/user@domain.com
-      # Split the string in 2 
-      IFS='/' read -r -a array <<< "$OCI_CS_USER_OCID"
-      IDP_NAME=`oci iam identity-provider get --identity-provider-id=${array[0]} | jq -r .data.name`
-      IDP_NAME_LOWER=${IDP_NAME,,}
-      export TF_VAR_username="$IDP_NAME_LOWER/${array[1]}"
-    else 
-      export TF_VAR_username=$OCI_CS_USER_OCID
-    fi
-  elif [ -f $HOME/.oci/config ]; then
-    ## Get the [DEFAULT] config
-    if [ -z "$OCI_CLI_PROFILE" ]; then
-      OCI_PRO=DEFAULT
-    else 
-      OCI_PRO=$OCI_CLI_PROFILE
-    fi    
-    sed -n -e "/\[$OCI_PRO\]/,$$p" $HOME/.oci/config > /tmp/ociconfig
-    export TF_VAR_user_ocid=`sed -n 's/user=//p' /tmp/ociconfig |head -1`
-    export TF_VAR_fingerprint=`sed -n 's/fingerprint=//p' /tmp/ociconfig |head -1`
-    export TF_VAR_private_key_path=`sed -n 's/key_file=//p' /tmp/ociconfig |head -1`
-    export TF_VAR_region=`sed -n 's/region=//p' /tmp/ociconfig |head -1`
-    export TF_VAR_tenancy_ocid=`sed -n 's/tenancy=//p' /tmp/ociconfig |head -1`  
-    # echo TF_VAR_user_ocid=$TF_VAR_user_ocid
-    # echo TF_VAR_fingerprint=$TF_VAR_fingerprint
-    # echo TF_VAR_private_key_path=$TF_VAR_private_key_path
-  fi
+  get_user_details
 
   # Availability Domain for FreeTier E2.1 Micro
   if [ "$TF_VAR_instance_shape" == "VM.Standard.E2.1.Micro" ]; then
@@ -138,13 +106,6 @@ else
   if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ] || [ -f $ROOT_DIR/src/terraform/oke.tf ]; then
     export TF_VAR_namespace=`oci os ns get | jq -r .data`
     auto_echo TF_VAR_namespace=$TF_VAR_namespace
-    # Find TF_VAR_username based on TF_VAR_user_ocid or the opposite
-    if [ "$TF_VAR_username" != "" ]; then
-      export TF_VAR_user_ocid=`oci iam user list --name $TF_VAR_username | jq -r .data[0].id`
-    elif [ "$TF_VAR_user_ocid" != "" ]; then
-      export TF_VAR_username=`oci iam user get --user-id $TF_VAR_user_ocid | jq -r '.data.name'`
-    fi  
-    auto_echo TF_VAR_username=$TF_VAR_username
     export TF_VAR_email=mail@domain.com
     auto_echo TF_VAR_email=$TF_VAR_email
     export TF_VAR_ocir=${TF_VAR_region}.ocir.io
@@ -168,23 +129,24 @@ else
     export TF_VAR_bastion_ad=$TF_VAR_ad
   fi 
 
-  # GIT 
-  export GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
-  if [ "$GIT_BRANCH" != "" ]; then
-    export TF_VAR_git_url=`git config --get remote.origin.url`
-    if [[ "$TF_VAR_git_url" == *"github.com"* ]]; then
-      S1=${TF_VAR_git_url/git@github.com:/https:\/\/github.com\/}        
-      export TF_VAR_git_url=${S1/.git/\/blob\/}${GIT_BRANCH}
-    elif [[ "$TF_VAR_git_url" == *"gitlab.com"* ]]; then
-      S1=${TF_VAR_git_url/git@gitlab.com:/https:\/\/gitlab.com\/}        
-      export TF_VAR_git_url=${S1/.git/\/-\/blob\/}${GIT_BRANCH}
-    fi
-
-    cd $ROOT_DIR
-    export GIT_RELATIVE_PATH=`git rev-parse --show-prefix`
-    cd -
-    export TF_VAR_git_url=${TF_VAR_git_url}/${GIT_RELATIVE_PATH}
-    echo $TF_VAR_git_url
+  # GIT
+  if [ -d $ROOT_DIR/.git ]; then 
+    export GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+    if [ "$GIT_BRANCH" != "" ]; then
+      export TF_VAR_git_url=`git config --get remote.origin.url`
+      if [[ "$TF_VAR_git_url" == *"github.com"* ]]; then
+        S1=${TF_VAR_git_url/git@github.com:/https:\/\/github.com\/}        
+        export TF_VAR_git_url=${S1/.git/\/blob\/}${GIT_BRANCH}
+      elif [[ "$TF_VAR_git_url" == *"gitlab.com"* ]]; then
+        S1=${TF_VAR_git_url/git@gitlab.com:/https:\/\/gitlab.com\/}        
+        export TF_VAR_git_url=${S1/.git/\/-\/blob\/}${GIT_BRANCH}
+      fi
+      cd $ROOT_DIR
+      export GIT_RELATIVE_PATH=`git rev-parse --show-prefix`
+      cd -
+      export TF_VAR_git_url=${TF_VAR_git_url}/${GIT_RELATIVE_PATH}
+      echo $TF_VAR_git_url
+    fi  
   fi
 fi
 
