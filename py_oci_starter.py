@@ -406,7 +406,7 @@ def readme_contents():
             contents.append(
                 "  - oke         : Contains the deployment files to Kubernetes")
 
-    contents.append("\nHelp (Tutorial + How to customize): https://starter.oracloud.be/help")
+    contents.append("\nHelp (Tutorial + How to customize): https://ocistarter.oracloud.be/help")
 
     contents.append('\n### Next Steps:')
     if TO_FILL in params.values():
