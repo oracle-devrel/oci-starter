@@ -401,10 +401,10 @@ def readme_contents():
                 ]
         if params['deploy'] == 'compute':
             contents.append(
-                "  - compute     : Contains the deployment files to Compute")
+                "    - compute   : Contains the deployment files to Compute")
         elif params['deploy'] == 'kubernetes':
             contents.append(
-                "  - oke         : Contains the deployment files to Kubernetes")
+                "    - oke       : Contains the deployment files to Kubernetes")
 
     contents.append("\nHelp (Tutorial + How to customize): https://ocistarter.oracloud.be/help")
 
