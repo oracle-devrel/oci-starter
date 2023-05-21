@@ -3,7 +3,7 @@
 ## Usage:
 ### 1. Website 
 
-Go to: [ocistarter.oracloud.be](https://ocistarter.oracloud.be/)
+Go to: [www.ocistarter.com](https://www.ocistarter.com/)
 
 - Make your choices.
 - Generate. You will get a zip file. ( ex:starter.zip )
