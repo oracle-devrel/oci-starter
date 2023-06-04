@@ -7,4 +7,4 @@ if [ ! -d $TARGET_DIR ]; then
   mkdir $TARGET_DIR
 fi
 
-bin/build_all.sh 2>&1 | tee $TARGET_DIR/build.log
+bin/build_all.sh $@ 2>&1 | tee $TARGET_DIR/build.log
