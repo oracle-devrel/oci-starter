@@ -29,7 +29,7 @@ BASIS_DIR = "basis"
 output_dir = "output"
 zip_dir = ""
 a_group_common = []
-db_node_count = 1
+db_node_count = "1"
 
 ## functions ################################################################
 
@@ -141,7 +141,7 @@ def longhand(key, abbreviations):
 def db_rules():
     if params.get('database') == 'rac':
         global db_node_count
-        db_node_count = 2
+        db_node_count = "2"
 
     params['database'] = longhand(
         'database', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database'})
@@ -605,6 +605,10 @@ def cp_dir_src_db(db_type):
     print("cp_dir_src_db "+db_type)
     output_copy_tree("option/src/db/"+db_type, "src/db")
 
+def output_replace_db_node_count():
+    global db_node_count
+    output_replace('##db_node_count##', db_node_count, "src/terraform/dbsystem.tf")
+
 # Copy the terraform for APIGW
 def cp_terraform_apigw(append_tf):
     if params['language'] == "ords":
@@ -798,8 +802,7 @@ def create_output_dir():
                 cp_terraform("dbsystem_existing.tf", "dbsystem_append.tf")
             else:
                 cp_terraform("dbsystem.tf", "dbsystem_append.tf")
-                global db_node_count
-                output_replace('##db_node_count##', db_node_count, "src/terraform/dbsystem.tf")
+                output_replace_db_node_count()
 
         if params.get('database') == "pluggable":
             cp_dir_src_db("oracle")
@@ -842,8 +845,7 @@ def create_group_common_dir():
             cp_terraform("dbsystem_existing.tf")
         else:
             cp_terraform("dbsystem.tf")
-            global db_node_count
-            output_replace('##db_node_count##', db_node_count, "src/terraform/dbsystem.tf")
+            output_replace_db_node_count()
 
     if "mysql" in a_group_common:
         if 'mysql_ocid' in params:
