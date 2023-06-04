@@ -29,6 +29,7 @@ BASIS_DIR = "basis"
 output_dir = "output"
 zip_dir = ""
 a_group_common = []
+db_node_count = 1
 
 ## functions ################################################################
 
@@ -98,7 +99,7 @@ allowed_values = {
     '-java_version': {'8', '11', '17'},
     '-kubernetes': {'oke', 'docker'},
     '-ui': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'none'},
-    '-database': {'atp', 'database', 'dbsystem', 'pluggable', 'mysql', 'none'},
+    '-database': {'atp', 'database', 'dbsystem', 'rac', 'pluggable', 'mysql', 'none'},
     '-license': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
@@ -138,8 +139,12 @@ def longhand(key, abbreviations):
 
 
 def db_rules():
+    if params.get('database') == 'rac':
+        global db_node_count
+        db_node_count = 2
+
     params['database'] = longhand(
-        'database', {'atp': 'autonomous', 'dbsystem': 'database'})
+        'database', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database'})
 
     if params.get('database') != 'autonomous' and params.get('language') == 'ords':
         error(f'OCI starter only supports ORDS on ATP (Autonomous)')
@@ -793,6 +798,8 @@ def create_output_dir():
                 cp_terraform("dbsystem_existing.tf", "dbsystem_append.tf")
             else:
                 cp_terraform("dbsystem.tf", "dbsystem_append.tf")
+                global db_node_count
+                output_replace('##db_node_count##', db_node_count, "src/terraform/dbsystem.tf")
 
         if params.get('database') == "pluggable":
             cp_dir_src_db("oracle")
@@ -835,6 +842,8 @@ def create_group_common_dir():
             cp_terraform("dbsystem_existing.tf")
         else:
             cp_terraform("dbsystem.tf")
+            global db_node_count
+            output_replace('##db_node_count##', db_node_count, "src/terraform/dbsystem.tf")
 
     if "mysql" in a_group_common:
         if 'mysql_ocid' in params:

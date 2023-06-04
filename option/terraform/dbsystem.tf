@@ -38,7 +38,7 @@ resource "oci_database_db_system" "starter_dbsystem" {
   hostname                = "${var.prefix}db"
   data_storage_size_in_gb = "256"
   license_model           = var.license_model
-  node_count              = 1
+  node_count              = ##db_node_count##
 
   freeform_tags = local.freeform_tags
 }
