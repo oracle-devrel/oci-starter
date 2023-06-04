@@ -1,6 +1,9 @@
 #!/bin/bash
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR
+if [[ -z "${ROOT_DIR}" ]]; then
+  echo "Error: ROOT_DIR not set"
+  exit
+fi
+cd $ROOT_DIR
 
 # Call the script with --auto-approve to destroy without prompt
 
