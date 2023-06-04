@@ -946,7 +946,9 @@ if 'group_common' in params:
     params['vcn_ocid'] = TO_FILL
     params['public_subnet_ocid'] = TO_FILL
     params['private_subnet_ocid'] = TO_FILL
-    params['bastion_ocid'] = TO_FILL
+    # Use a bastion only for the database
+    if params.get('database')!='none':
+        params['bastion_ocid'] = TO_FILL
     to_ocid = { "atp": "atp_ocid", "database": "db_ocid", "mysql": "mysql_ocid", "oke": "oke_ocid", "fnapp": "fnapp_ocid", "apigw": "apigw_ocid", "jms": "jms_ocid"}
     for x in a_group_common:
         if x in to_ocid:

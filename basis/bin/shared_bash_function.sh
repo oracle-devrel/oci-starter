@@ -204,3 +204,14 @@ get_user_details() {
   auto_echo TF_VAR_username=$TF_VAR_username
   auto_echo TF_VAR_user_ocid=$TF_VAR_user_ocid
 }
+
+# Get the user interface URL
+get_ui_url() {
+  if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
+    get_output_from_tfstate UI_URL ui_url  
+  elif [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
+    export UI_URL=http://`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`/${TF_VAR_prefix}
+  elif [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then  
+    export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
+  fi
+}
