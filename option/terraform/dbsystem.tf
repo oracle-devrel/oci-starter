@@ -23,7 +23,7 @@ resource "oci_database_db_system" "starter_dbsystem" {
     }
 
     // XXX The last version should be dynamic
-    db_version   = "21.7.0.0"
+    db_version   = "21.0.0.0"
     display_name = "${var.prefix}home"
   }
 
