@@ -23,7 +23,7 @@ resource "oci_database_db_system" "starter_dbsystem" {
     }
 
     // XXX The last version should be dynamic
-    db_version   = "21.7.0.0"
+    db_version   = "21.0.0.0"
     display_name = "${var.prefix}home"
   }
 
@@ -38,7 +38,7 @@ resource "oci_database_db_system" "starter_dbsystem" {
   hostname                = "${var.prefix}db"
   data_storage_size_in_gb = "256"
   license_model           = var.license_model
-  node_count              = 1
+  node_count              = ##db_node_count##
 
   freeform_tags = local.freeform_tags
 }
