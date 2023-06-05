@@ -6,7 +6,8 @@ cd group_common
 ./build.sh
 cd $SCRIPT_DIR
 
-for d in */ ; do
+echo "-- Loop in alphabetical order --"
+for d in `ls -d */ | sort -g`; do
     if [ "$d" != "group_common/" ]; then
       echo "-- BUILD_ALL - $d ---------------------------------"
 

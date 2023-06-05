@@ -1,10 +1,7 @@
 #!/bin/bash
 export ROOT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $ROOT_DIR
-
 export TARGET_DIR=$ROOT_DIR/target
-if [ ! -d $TARGET_DIR ]; then
-  mkdir $TARGET_DIR
-fi
 
+cd $ROOT_DIR
+mkdir -p $TARGET_DIR
 bin/build_all.sh $@ 2>&1 | tee $TARGET_DIR/build.log
