@@ -604,12 +604,13 @@ def cp_dir_src_db(db_type):
     output_copy_tree("option/src/db/"+db_type, "src/db")
 
 def output_replace_db_node_count():
-    output_replace('##db_node_count##', db_node_count, "src/terraform/dbsystem.tf")
     if params.get('db_node_count')!="2":
+       output_replace('##db_node_count##', "1", "src/terraform/dbsystem.tf")
        output_replace('##db_edition##', "ENTERPRISE_EDITION", "src/terraform/dbsystem.tf")
        output_replace('##storage_management##', "LVM", "src/terraform/dbsystem.tf")
        output_replace('##cpu_core_count##', "1", "src/terraform/dbsystem.tf")
     else:
+       output_replace('##db_node_count##', "2", "src/terraform/dbsystem.tf")
        output_replace('##db_edition##', "ENTERPRISE_EDITION", "src/terraform/dbsystem.tf")
        output_replace('##storage_management##', "ASM", "src/terraform/dbsystem.tf")
        output_replace('##cpu_core_count##', "4", "src/terraform/dbsystem.tf")
