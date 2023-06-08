@@ -22,10 +22,12 @@
             xhttp.open("GET", "app/continuity?name=" + name, true);
             xhttp.send();
 
-            numRefresh = 105;
-            console.log("numRefresh="+numRefresh);
-            setTimeout(function(){startInsert();}, 1000);
+            window.numRefresh = window.numRefresh - 1;
             document.getElementById("numRefresh").innerHTML = numRefresh;
+            console.log("numRefresh="+numRefresh);
+            if( window.numRefresh>0 ) {
+                setTimeout(function(){loadContinuity();}, 1000);
+            }
         }
         // Load the REST URL 
         function startInsert() {
@@ -36,16 +38,15 @@
             var name = document.getElementById("name").value;
             var poolName = document.getElementById("poolName").value;
             var algorithm = document.getElementById("algorithm").value;
+            var sleepBeforeCommit = document.getElementById("sleepBeforeCommit").value;
             var sleepInSec = document.getElementById("sleepInSec").value;
             var threadNum = document.getElementById("threadNum").value;
-            xhttp.open("GET", "app/insert?threadNum="+threadNum+"&algorithm="+algorithm+"&sleepInSec="+sleepInSec+"&name="+name+"&poolName="+poolName, true);
+            xhttp.open("GET", "app/insert?threadNum="+threadNum+"&algorithm="+algorithm+"&sleepBeforeCommit="+sleepBeforeCommit+"&sleepInSec="+sleepInSec+"&name="+name+"&poolName="+poolName, true);
             xhttp.send();
-            numRefresh = numRefresh - 1;
-            document.getElementById("numRefresh").innerHTML = numRefresh;
-            console.log("numRefresh="+numRefresh);
-            if( numRefresh>0 ) {
-                setTimeout(function(){startInsert();}, 1000);
-            }
+
+            window.numRefresh = 120;
+            console.log("numRefresh="+window.numRefresh);
+            setTimeout(function(){loadContinuity();}, 1000);
         }        
         function initName() {
             var date = new Date();
@@ -78,7 +79,7 @@
                                             <tr>
                                                 <td class="cb-h1"
                                                     style="font-size: 25px; color: rgb(43, 98, 66); line-height: 25px; font-weight: bold; padding-bottom: 10px;">
-                                                    RAC Test: Insert during 100 secs
+                                                    RAC Test: Insert during 60 secs
                                                 </td>
                                             </tr>
                                             <tr>
@@ -109,6 +110,14 @@
                                                                     <option value="30">30 secs</option>
                                                                 </select>
                                                             </td>
+                                                        </tr>                                                         <tr>
+                                                            <td>Sleep Before commit</td>
+                                                            <td>
+                                                                <select id="sleepBeforeCommit" name="sleepBeforeCommit">
+                                                                    <option value="true">true</option>
+                                                                    <option value="false">false</option>
+                                                                </select>
+                                                            </td>
                                                         </tr> 
                                                         <tr>
                                                             <td>Number of Threads</td>
@@ -125,7 +134,7 @@
                                                             <td>
                                                                 <select id="poolName" name="poolName">
                                                                     <option value="jbasic">jbasic</option>
-                                                                    <option value="jtaf">jtaf</option>
+                                                                    <option value="jtac">jtac</option>
                                                                     <option value="jac">jac</option>
                                                                     <option value="jtaf">jtaf</option>
                                                                 </select>
@@ -137,10 +146,10 @@
                                                     <h3>Continuity Table</h3>
                                                     <div id="numRefresh"></div>
                                                     <button onclick="loadContinuity()">Refresh</button>
-                                                    <h3>JSON</h3>
-                                                    <div id="json"></div>
                                                     <h3>Table format</h3>
                                                     <div id="table"></div>
+                                                    <h3>JSON</h3>
+                                                    <div id="json"></div>
                                                     <h3>Help</h3>
 <pre>
 bin/ssh.sh db_node

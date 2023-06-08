@@ -21,19 +21,21 @@ public class RacController {
 
   public class RacRunnable implements Runnable {
     String algorithm;
+    String sleepBeforeCommit;
     int sleepInSec;
     String poolName;
     String name;
 
-    public RacRunnable(String _algorithm, int _sleepInSec, String _poolName, String _name) {
+    public RacRunnable(String _algorithm, String _sleepBeforeCommit, int _sleepInSec, String _poolName, String _name) {
       algorithm = _algorithm;
+      sleepBeforeCommit = _sleepBeforeCommit;
       sleepInSec = _sleepInSec;
       poolName = _poolName;
       name = _name;
     }
 
     public void run() {
-      insertInTable(algorithm, sleepInSec, poolName, name);
+      insertInTable(algorithm, sleepBeforeCommit, sleepInSec, poolName, name);
     }
   }
 
@@ -57,17 +59,27 @@ public class RacController {
     pds.setMaxPoolSize(5);
   }
 
-  public insertInTable(String algorithm, int sleepInSec, String poolName, String name)
+  public void commitAndSleep( String sleepBeforeCommit, int sleepInSec, Connection conn ) throws Exception {
+    if( sleepBeforeCommit.equals("true") ) {
+      Thread.sleep(sleepInSec*1000);
+      conn.commit();
+    } else {
+      conn.commit();  
+      Thread.sleep(sleepInSec*1000);
+    }
+  }
+
+  public void insertInTable( String algorithm, String sleepBeforeCommit, int sleepInSec, String poolName, String name)
   {
     try {
       Connection conn = null;
       PreparedStatement pStmt = null;
-      int loop = 100/sleepInSec;
+      int loop = 60/sleepInSec;
       try {
         resetConnectionPool( poolName );
-        if( algorithm=="1") {
+        if( algorithm.equals("1") ) {
           conn = pds.getConnection();
-          con.setAutoCommit(false);
+          conn.setAutoCommit(false);
           pStmt = conn.prepareStatement(
             """
                 INSERT INTO continuity values( 
@@ -83,14 +95,13 @@ public class RacController {
             pStmt.setString(2, name); 
             pStmt.setString(3, poolName); 
             pStmt.executeUpdate();
-            Thread.sleep(sleepInSec*1000);
-            conn.commit();
+            commitAndSleep( sleepBeforeCommit, sleepInSec, conn );
           }
-        } else if (algorithm==2 ) {
+        } else {
           for( int i=0; i<loop; i++)
           {
             conn = pds.getConnection();
-            con.setAutoCommit(false);
+            conn.setAutoCommit(false);
             pStmt = conn.prepareStatement(
               """
                   INSERT INTO continuity( counter, name, connect_string, instance, creation_time) values( 
@@ -104,8 +115,7 @@ public class RacController {
             pStmt.setString(2, name); 
             pStmt.setString(3, poolName); 
             pStmt.executeUpdate();
-            Thread.sleep(sleepInSec*1000);
-            conn.commit();
+            commitAndSleep( sleepBeforeCommit, sleepInSec, conn );
             pStmt.close();
             pStmt = null;
             conn.close();
@@ -125,13 +135,13 @@ public class RacController {
   }
 
   @RequestMapping(value = "/insert", method = RequestMethod.GET, produces = { "text/plain" })
-  public String insert(int threadNum, String algorithm, int sleepInSec, String poolName, String name) {
-    if (threadNum > 0) {
+  public String insert(int threadNum, String sleepBeforeCommit, String algorithm, int sleepInSec, String poolName, String name) {
+    if (threadNum == 1) {
 
-      insertInTable(algorithm, sleepInSec, poolName, name);
+      insertInTable(algorithm, sleepBeforeCommit, sleepInSec, poolName, name);
     } else {
       for (int i = 0; i < threadNum; i++) {
-        Runnable r = new RacRunnable(algorithm, sleepInSec, poolName, name);
+        Runnable r = new RacRunnable(algorithm, sleepBeforeCommit, sleepInSec, poolName, name + " - Thread " + i );
         new Thread(r).start();
       }
     }
@@ -148,8 +158,8 @@ public class RacController {
       try {
         conn = pds.getConnection();
         pStmt = conn.prepareStatement(
-            "SELECT counter, name, connect_string, instance, creation_time FROM continuity order by creation_time desc where name=?");
-        pStmt.setString(1, name);
+            "SELECT counter, name, connect_string, instance, creation_time FROM continuity where name like ? order by creation_time desc");
+        pStmt.setString(1, name + "%");
         rset = pStmt.executeQuery();
         while (rset.next()) {
           a_cont.add(new Continuity(rset.getInt(1), rset.getString(2), rset.getString(3), rset.getString(4),
@@ -163,8 +173,9 @@ public class RacController {
         if (conn != null)
           conn.close();
       }
-    } catch (SQLException e) {
+    } catch (Exception e) {
       System.err.println(e.getMessage());
+      e.printStackTrace();
     }
     return a_cont;
   }
