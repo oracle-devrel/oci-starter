@@ -1,7 +1,3 @@
-variable db_edition {
-  default = "ENTERPRISE_EDITION"
-}
-
 variable n_character_set {
   default = "AL16UTF16"
 }
@@ -13,7 +9,7 @@ variable character_set {
 resource "oci_database_db_system" "starter_dbsystem" {
   availability_domain = data.oci_identity_availability_domain.ad.name
   compartment_id      = local.lz_database_cmp_ocid
-  database_edition    = var.db_edition
+  database_edition    = "##db_edition##"
 
   db_home {
     database {
@@ -28,10 +24,11 @@ resource "oci_database_db_system" "starter_dbsystem" {
   }
 
   db_system_options {
-    storage_management = "LVM"
+    storage_management = "##storage_management##"
   }
 
-  shape                   = "VM.Standard2.1"
+  shape                   = "VM.Standard.E4.Flex"
+  cpu_core_count          = ##cpu_core_count##
   subnet_id               = data.oci_core_subnet.starter_private_subnet.id
   ssh_public_keys         = [var.ssh_public_key]
   display_name            = "${var.prefix}db"
@@ -51,4 +48,5 @@ data "oci_database_db_homes" "starter_db_homes" {
 
 locals {
   db_compartment_ocid = local.lz_database_cmp_ocid
+  db_ocid = oci_database_db_system.starter_dbsystem.id
 }

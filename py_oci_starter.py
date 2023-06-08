@@ -608,6 +608,14 @@ def cp_dir_src_db(db_type):
 def output_replace_db_node_count():
     global db_node_count
     output_replace('##db_node_count##', db_node_count, "src/terraform/dbsystem.tf")
+    if db_node_count==1:
+       output_replace('##db_edition##', "ENTERPRISE_EDITION", "src/terraform/dbsystem.tf")
+       output_replace('##storage_management##', "LVM", "src/terraform/dbsystem.tf")
+       output_replace('##cpu_core_count##', "1", "src/terraform/dbsystem.tf")
+    else:
+       output_replace('##db_edition##', "ENTERPRISE_EDITION", "src/terraform/dbsystem.tf")
+       output_replace('##storage_management##', "ASM", "src/terraform/dbsystem.tf")
+       output_replace('##cpu_core_count##', "4", "src/terraform/dbsystem.tf")
 
 # Copy the terraform for APIGW
 def cp_terraform_apigw(append_tf):

@@ -6,6 +6,7 @@ variable "db_compartment_ocid" { default="" }
 
 locals {
   db_compartment_ocid = var.db_compartment_ocid == "" ? local.lz_database_cmp_ocid : var.db_compartment_ocid
+  db_ocid = var.db_ocid
 }
 
 data "oci_database_db_homes" "starter_db_homes" {

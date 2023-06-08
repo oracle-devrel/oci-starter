@@ -213,6 +213,10 @@ if [ -f $STATE_FILE ]; then
     get_output_from_tfstate "ORDS_URL" "ords_url"
   fi
 
+  if [ "$TF_VAR_db_strategy" == "database" ]; then
+    get_attribute_from_tfstate "DB_NODE_IP" "starter_node_vnic" "private_ip_address"
+  fi
+
   if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ -f $ROOT_DIR/src/terraform/oke.tf ]; then
     # OKE
     get_output_from_tfstate "OKE_OCID" "oke_ocid"
