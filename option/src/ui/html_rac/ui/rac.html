@@ -1,0 +1,222 @@
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>OCI Starter - RAC Test</title>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        var numRefresh = 0;
+        // Load the REST URL 
+        function loadContinuity() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("json").innerHTML =
+                        this.responseText;
+                    let jsonValue = JSON.parse(this.responseText);
+                    json2table(jsonValue);
+                }
+            };
+            var name = document.getElementById("name").value;
+            xhttp.open("GET", "app/continuity?name=" + name, true);
+            xhttp.send();
+
+            window.numRefresh = window.numRefresh - 1;
+            document.getElementById("numRefresh").innerHTML = numRefresh;
+            console.log("numRefresh="+numRefresh);
+            if( window.numRefresh>0 ) {
+                setTimeout(function(){loadContinuity();}, 1000);
+            }
+        }
+        // Load the REST URL 
+        function startInsert() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                console.log(this.status);
+            };
+            var name = document.getElementById("name").value;
+            var poolName = document.getElementById("poolName").value;
+            var algorithm = document.getElementById("algorithm").value;
+            var sleepBeforeCommit = document.getElementById("sleepBeforeCommit").value;
+            var sleepInSec = document.getElementById("sleepInSec").value;
+            var threadNum = document.getElementById("threadNum").value;
+            xhttp.open("GET", "app/insert?threadNum="+threadNum+"&algorithm="+algorithm+"&sleepBeforeCommit="+sleepBeforeCommit+"&sleepInSec="+sleepInSec+"&name="+name+"&poolName="+poolName, true);
+            xhttp.send();
+
+            window.numRefresh = 120;
+            console.log("numRefresh="+window.numRefresh);
+            setTimeout(function(){loadContinuity();}, 1000);
+        }        
+        function initName() {
+            var date = new Date();
+            document.getElementById("name").value = date.toISOString();
+        }        
+    </script>
+</head>
+
+<body onload="initName()">
+    <table id="mainTable" class="main">
+        <tbody>
+            <tr>
+                <td>
+                    <table width="100%" class="mainHeader">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <img src="img/starter_white.svg" class="icon">
+                                    <span class="title">Oracle Cloud Infrastructure - Starter</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table style="color: rgb(29, 39, 51); line-height: 19.5px; font-size: 15px; padding: 20px">
+                        <tbody>
+                            <tr>
+                                <td valign="top" align="left">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td class="cb-h1"
+                                                    style="font-size: 25px; color: rgb(43, 98, 66); line-height: 25px; font-weight: bold; padding-bottom: 10px;">
+                                                    RAC Test: Insert during 60 secs
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                    <table>
+                                                        <tr>
+                                                            <td>Name</td>
+                                                            <td><input type="text" id="name" name="name"
+                                                                    value="##NAME##" readonly></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Algorithm</td>
+                                                            <td>
+                                                                <select id="algorithm" name="algorithm">
+                                                                    <option value="2">1 connection per insert
+                                                                    </option>
+                                                                    <option value="1">1 connection for all
+                                                                        inserts</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Sleep Time: in seconds</td>
+                                                            <td>
+                                                                <select id="sleepInSec" name="sleepInSec">
+                                                                    <option value="1">1 sec</option>
+                                                                    <option value="10">10 secs</option>
+                                                                    <option value="20">20 secs</option>
+                                                                    <option value="30">30 secs</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>                                                         <tr>
+                                                            <td>Sleep Before commit</td>
+                                                            <td>
+                                                                <select id="sleepBeforeCommit" name="sleepBeforeCommit">
+                                                                    <option value="false">false</option>
+                                                                    <option value="true">true</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr> 
+                                                        <tr>
+                                                            <td>Number of Threads</td>
+                                                            <td>
+                                                                <select id="threadNum" name="threadNum">
+                                                                    <option value="1">1</option>
+                                                                    <option value="5">5</option>
+                                                                    <option value="10">10</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>                                                       
+                                                        <tr>
+                                                            <td>Application Continuity Type</td>
+                                                            <td>
+                                                                <select id="poolName" name="poolName">
+                                                                    <option value="jbasic">jbasic</option>
+                                                                    <option value="jtac">jtac</option>
+                                                                    <option value="jac">jac</option>
+                                                                    <option value="jtaf">jtaf</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <button onclick="startInsert()">Start Insert in Contuinity Table</button>
+                                                    <br>
+                                                    <h3>Continuity Table</h3>
+                                                    <div id="numRefresh"></div>
+                                                    <button onclick="loadContinuity()">Refresh</button>
+                                                    <h3>Table format</h3>
+                                                    <div id="table"></div>
+                                                    <h3>JSON</h3>
+                                                    <div id="json"></div>
+                                                    <h3>Help</h3>
+<pre>
+bin/ssh.sh db_node
+sudo su - oracle
+export PREFIX=starter
+srvctl relocate service -d $ORACLE_UNQNAME -service jbasic -oldinst ${PREFIX}1 -newinst ${PREFIX}2 -drain_timeout 10
+srvctl relocate service -d $ORACLE_UNQNAME -service jbasic -oldinst ${PREFIX}2 -newinst ${PREFIX}1 -drain_timeout 10
+</pre>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <table cellpadding="10">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <table
+                                                                        class="featureContainer devicewidthinner cb-space3"
+                                                                        cellspacing="0" cellpadding="0" border="0"
+                                                                        align="left">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td class="cb-left"
+                                                                                    style="border-collapse: collapse; border: 0px;"
+                                                                                    valign="top"><img
+                                                                                        src="img/questions-webcast-icon.png"
+                                                                                        class="featureImage"
+                                                                                        moz-do-not-send="true"
+                                                                                        alt="Asset image"
+                                                                                        style="outline: none; text-decoration: none; border: none; display: block;"
+                                                                                        height="55" width="42"
+                                                                                        border="0"></td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <table class="devicewidthinner cb-space3"
+                                                                        style=" color: rgb(62, 80, 62); font-size: 14px;">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td class="cb-h3">
+                                                                                    <div class="cb-h2"
+                                                                                        style=" font-size: 18px; color: rgb(43, 98, 66); line-height: 21.600000381469727px; font-weight: bold; padding-bottom: 10px;">
+                                                                                        Questions?</div>
+                                                                                    <div>For any questions and
+                                                                                        concerns, reach out
+                                                                                        to&nbsp;<a
+                                                                                            href="https://github.com/MarcGueury/oci-starter/issues"
+                                                                                            style="color: rgb(174, 86, 44); text-decoration: underline;  word-break: normal !important;">https://github.com/MarcGueury/oci-starter/issues</a>.
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

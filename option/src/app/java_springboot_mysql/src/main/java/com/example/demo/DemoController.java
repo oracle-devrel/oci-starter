@@ -15,6 +15,8 @@ public class DemoController {
   private String dbPassword;
   private String dbInfo;
 
+  public record Dept( int deptno, String dname, String loc ) {}; 
+
   @Autowired
   public DemoController(DbProperties properties) {
     dbInfo = properties.getInfo();

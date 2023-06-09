@@ -12,15 +12,13 @@ import oracle.ucp.jdbc.PoolDataSource;
 @RestController
 
 public class DemoController {
-  private String dbUrl;
-  private String dbUser;
-  private String dbPassword;
-  private String dbInfo;
   static PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
+
+  public record Dept( int deptno, String dname, String loc ) {}; 
 
   @Autowired
   public DemoController(DbProperties properties) throws SQLException {
-    dbInfo = properties.getInfo();
+    // dbInfo = properties.getInfo();
     pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
     pds.setURL(System.getenv("JDBC_URL"));
     pds.setUser(System.getenv("DB_USER"));
@@ -54,6 +52,7 @@ public class DemoController {
       }
     } catch (SQLException e) {
       System.err.println(e.getMessage());
+      e.printStackTrace();
     }
     return depts;
   }
