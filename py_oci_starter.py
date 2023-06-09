@@ -616,9 +616,9 @@ def output_replace_db_node_count():
        output_replace('##cpu_core_count##', "4", "src/terraform/dbsystem.tf")
        output_copy_tree("option/src/db/rac", "src/db")
        if params['language'] == "java" and params['java_framework'] == "springboot":
-           output_copy("option/src/app/java_springboot_rac", "src/app")
+           output_copy_tree("option/src/app/java_springboot_rac", "src/app")
        if params['ui'] == "html":
-           output_copy("option/src/ui/html_rac", "src/ui" )    
+           output_copy_tree("option/src/ui/html_rac", "src/ui" )    
 
 # Copy the terraform for APIGW
 def cp_terraform_apigw(append_tf):
