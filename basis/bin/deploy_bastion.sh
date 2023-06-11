@@ -5,14 +5,14 @@ cd $SCRIPT_DIR/..
 
 # Run something directly on the DB_NODE (ex RAC)
 if [ -f src/db/db_node_init.sh ]; then
-  # Start ssh-agent to do a Jump from the bastion to the DB_NODE_IP
+  # Start ssh-agent to do a Jump from the BASTION to the DB_NODE
   eval "$(ssh-agent -s)"
   ssh-add $TF_VAR_ssh_private_path
   scp -o StrictHostKeyChecking=no -oProxyCommand="ssh -W %h:%p opc@$BASTION_IP" target/db_node_init.sh opc@$DB_NODE_IP:/tmp/.
   ssh -o StrictHostKeyChecking=no -J opc@$BASTION_IP opc@$DB_NODE_IP "chmod +x /tmp/db_node_init.sh; sudo -i -u oracle PREFIX=$PREFIX /tmp/db_node_init.sh 2>&1 | tee -a /tmp/db_node_init.log"
 fi
 
-# In most case, create the DB table from the bastion
+# In most case, create the DB table from the BASTION
 # Using RSYNC allow to reapply the same command several times easily. 
 if command -v rsync &> /dev/null
 then
