@@ -1,4 +1,3 @@
-export PREFIX=##PREFIX##
 export INSTANCE1=${PREFIX}1
 export INSTANCE2=${PREFIX}2
 export PDB=PDB1
