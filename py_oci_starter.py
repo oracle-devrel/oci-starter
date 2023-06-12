@@ -481,6 +481,8 @@ def env_sh_contents():
     else:
         contents.append("if [ -f $SCRIPT_DIR/../group_common_env.sh ]; then")      
         contents.append("  . $SCRIPT_DIR/../group_common_env.sh")      
+    contents.append("elif [ -f $HOME/.oci_starter_profile ]; then")      
+    contents.append("  . $HOME/.oci_starter_profile")   
     contents.append("else")      
     if params.get('compartment_ocid') == None:
         contents.append('  # export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx')       

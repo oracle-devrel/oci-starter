@@ -29,12 +29,14 @@ fi
 # Do not stop if __TO_FILL__ are not replaced if TF_VAR_group_name exist in env variable
 # XXX -> It would be safer to check also for TF_VAR_xxx containing __TO_FILL__ too
 if [ ! -f $ROOT_DIR/../group_common_env.sh ]; then 
-  if grep -q "__TO_FILL__" $ROOT_DIR/env.sh; then
-    echo "Error: missing environment variables."
-    echo
-    echo "Edit the file env.sh. Some variables needs to be filled:" 
-    echo `cat env.sh | grep __TO_FILL__` 
-    exit
+  if [ ! -f $HOME/.oci_starter_profile ]; then 
+    if grep -q "__TO_FILL__" $ROOT_DIR/env.sh; then
+      echo "Error: missing environment variables."
+      echo
+      echo "Edit the file env.sh. Some variables needs to be filled:" 
+      echo `cat env.sh | grep __TO_FILL__` 
+      exit
+  fi
   fi
 fi  
 
