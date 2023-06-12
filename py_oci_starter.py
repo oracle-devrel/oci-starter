@@ -481,6 +481,8 @@ def env_sh_contents():
     else:
         contents.append("if [ -f $SCRIPT_DIR/../group_common_env.sh ]; then")      
         contents.append("  . $SCRIPT_DIR/../group_common_env.sh")      
+    contents.append("elif [ -f $HOME/.oci_starter_profile ]; then")      
+    contents.append("  . $HOME/.oci_starter_profile")   
     contents.append("else")      
     if params.get('compartment_ocid') == None:
         contents.append('  # export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx')       
@@ -615,6 +617,7 @@ def output_replace_db_node_count():
        output_replace('##storage_management##', "ASM", "src/terraform/dbsystem.tf")
        output_replace('##cpu_core_count##', "4", "src/terraform/dbsystem.tf")
        output_copy_tree("option/src/db/rac", "src/db")
+       output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
        if params['language'] == "java" and params['java_framework'] == "springboot":
            output_copy_tree("option/src/app/java_springboot_rac", "src/app")
        if params['ui'] == "html":
