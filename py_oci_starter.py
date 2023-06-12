@@ -617,6 +617,7 @@ def output_replace_db_node_count():
        output_replace('##storage_management##', "ASM", "src/terraform/dbsystem.tf")
        output_replace('##cpu_core_count##', "4", "src/terraform/dbsystem.tf")
        output_copy_tree("option/src/db/rac", "src/db")
+       output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
        if params['language'] == "java" and params['java_framework'] == "springboot":
            output_copy_tree("option/src/app/java_springboot_rac", "src/app")
        if params['ui'] == "html":

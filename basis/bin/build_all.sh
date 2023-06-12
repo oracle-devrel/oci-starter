@@ -16,7 +16,12 @@ src/terraform/apply.sh --auto-approve -no-color
 exit_on_error
 
 . env.sh
-# Build the DB (via Bastion), the APP and the UI
+# Run config command on the DB directly (ex RAC)
+if [ -f bin/deploy_db_node.sh ]; then
+  bin/deploy_db_node.sh
+fi 
+
+# Build the DB tables (via Bastion)
 if [ -d src/db ]; then
   bin/deploy_bastion.sh
 fi  
