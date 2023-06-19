@@ -216,17 +216,6 @@ get_ui_url() {
   fi
 }
 
-find_to_fill_in_env() {
-  if [ ! -f $ROOT_DIR/../group_common_env.sh ]; then 
-    if [ ! -f $HOME/.oci_starter_profile ]; then 
-      if grep -q "__TO_FILL__" $ROOT_DIR/env.sh; then
-        return 0 
-      fi
-    fi
-  fi 
-  return 1
-}
-
 configure() {
   if cat env.sh | grep -q "__TO_FILL__"; then
     echo Found these variables:
