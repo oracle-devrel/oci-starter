@@ -29,9 +29,9 @@ fi
 # Do not stop if __TO_FILL__ are not replaced if TF_VAR_group_name exist in env variable
 # XXX -> It would be safer to check also for TF_VAR_xxx containing __TO_FILL__ too
 
-if set | grep -q "__TO_FILL__"; then
+if declare -p | grep -q "__TO_FILL__"; then
   echo "Error: missing environment variables."
-  set | grep __TO_FILL__
+  declare -p | grep __TO_FILL__
   echo
   echo "Edit the file env.sh. Some variables needs to be filled:" 
   cat env.sh | grep __TO_FILL__
