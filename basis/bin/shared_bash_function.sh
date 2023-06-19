@@ -216,25 +216,35 @@ get_ui_url() {
   fi
 }
 
-check_if_empty() {
-XXXXXXXXXXXX
-  [[ "$TF_VAR_user_ocid" =~ ^[0-9]{8}$ ]] && echo "yes"
+find_to_fill_in_env() {
+  if [ ! -f $ROOT_DIR/../group_common_env.sh ]; then 
+    if [ ! -f $HOME/.oci_starter_profile ]; then 
+      if grep -q "__TO_FILL__" $ROOT_DIR/env.sh; then
+        return 0 
+      fi
+    fi
+  fi 
+  return 1
+}
 
-  if
+configure() {
+  if cat env.sh | grep -q "__TO_FILL__"; then
+    echo Found these variables:
+    cat env.sh | grep -q "__TO_FILL__"
+    echo
+    echo "Configure Mode"
+    echo 
+    echo 
+    if [ "$1" != "--auto-approve" ]; then
+      read -p "Do you want to proceed? (yes/no) " yn
 
-  echo "WARNING"
-  echo 
-  echo "This will destroy all the resources created by Terraform."
-  echo 
-  if [ "$1" != "--auto-approve" ]; then
-    read -p "Do you want to proceed? (yes/no) " yn
-
-    case $yn in 
-      yes ) echo Deleting;;
-    no ) echo Exiting...;
-      exit;;
-    * ) echo Invalid response;
-      exit 1;;
-    esac
+      case $yn in 
+        yes ) echo Configuring;;
+      no ) echo Exiting...;
+        exit;;
+      * ) echo Invalid response;
+        exit 1;;
+      esac
+    fi
   fi
 } 
