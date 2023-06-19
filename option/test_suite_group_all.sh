@@ -105,13 +105,13 @@ loop_lang () {
 }
 
 loop_deploy() {
+  OPTION_DEPLOY=compute
+  loop_lang  
   OPTION_DEPLOY=container_instance 
   loop_lang
   OPTION_DEPLOY=function 
   loop_lang
   OPTION_DEPLOY=kubernetes
-  loop_lang
-  OPTION_DEPLOY=compute
   loop_lang
 }
 
