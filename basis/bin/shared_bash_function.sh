@@ -215,3 +215,26 @@ get_ui_url() {
     export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
   fi
 }
+
+check_if_empty() {
+XXXXXXXXXXXX
+  [[ "$TF_VAR_user_ocid" =~ ^[0-9]{8}$ ]] && echo "yes"
+
+  if
+
+  echo "WARNING"
+  echo 
+  echo "This will destroy all the resources created by Terraform."
+  echo 
+  if [ "$1" != "--auto-approve" ]; then
+    read -p "Do you want to proceed? (yes/no) " yn
+
+    case $yn in 
+      yes ) echo Deleting;;
+    no ) echo Exiting...;
+      exit;;
+    * ) echo Invalid response;
+      exit 1;;
+    esac
+  fi
+} 

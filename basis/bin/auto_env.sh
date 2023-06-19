@@ -132,7 +132,7 @@ else
   fi 
 
   # GIT
-  if [ `git rev-parse --is-inside-work-tree` ]; then   
+  if [ `git rev-parse --is-inside-work-tree 2>/dev/null` ]; then   
     export GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
     if [ "$GIT_BRANCH" != "" ]; then
       export TF_VAR_git_url=`git config --get remote.origin.url`
