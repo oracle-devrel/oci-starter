@@ -9,6 +9,7 @@ resource "oci_core_instance" "starter_instance" {
   shape_config {
     ocpus         = var.instance_ocpus
     memory_in_gbs = var.instance_shape_config_memory_in_gbs
+    # baseline_ocpu_utilization = "BASELINE_1_8"
   }
 
   create_vnic_details {
