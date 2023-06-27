@@ -215,3 +215,25 @@ get_ui_url() {
     export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
   fi
 }
+
+configure() {
+  if cat env.sh | grep -q "__TO_FILL__"; then
+    echo Found these variables:
+    cat env.sh | grep -q "__TO_FILL__"
+    echo
+    echo "Configure Mode"
+    echo 
+    echo 
+    if [ "$1" != "--auto-approve" ]; then
+      read -p "Do you want to proceed? (yes/no) " yn
+
+      case $yn in 
+        yes ) echo Configuring;;
+      no ) echo Exiting...;
+        exit;;
+      * ) echo Invalid response;
+        exit 1;;
+      esac
+    fi
+  fi
+} 

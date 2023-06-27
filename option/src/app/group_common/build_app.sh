@@ -78,6 +78,11 @@ if [ -z "$APIM_HOST" ]; then
 else
   append "export APIM_HOST=$APIM_HOST"
 fi
+if [ -z "$TF_VAR_instance_shape" ]; then
+  append "# export TF_VAR_instance_shape=VM.Standard.E3.Flex"
+else
+  append "export TF_VAR_instance_shape=$TF_VAR_instance_shape"
+fi   
 
 cat >> ../../../group_common_env.sh <<EOT 
 

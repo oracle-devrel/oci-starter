@@ -105,7 +105,7 @@ sudo cp nginx_app.locations /etc/nginx/conf.d/.
 if grep -q nginx_app /etc/nginx/nginx.conf; then
   echo "Include nginx_app.locations is already there"
 else
-    echo "Include nginx_app.locations not found"
+    echo "Adding nginx_app.locations"
     sudo awk -i inplace '/404.html/ && !x {print "        include conf.d/nginx_app.locations;"; x=1} 1' /etc/nginx/nginx.conf
 fi
 
