@@ -8,7 +8,7 @@ cd group_common
 exit_on_error
 cd $SCRIPT_DIR
 
-for d in */ ; do
+for d in `ls -d */ | sort -g`; do
     if [ "$d" != "group_common/" ]; then
       echo "-- BUILD_ALL - $d ---------------------------------"
 
