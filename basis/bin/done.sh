@@ -62,4 +62,6 @@ if [ ! -z "$UI_URL" ]; then
   fi
 fi
 
-
+if [ -f $ROOT_DIR/src/after_done.sh ]; then
+  $ROOT_DIR/src/after_done.sh
+fi
