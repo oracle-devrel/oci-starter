@@ -35,7 +35,7 @@ if declare -p | grep -q "__TO_FILL__"; then
   echo
   echo "Edit the file env.sh. Some variables needs to be filled:" 
   cat env.sh | grep __TO_FILL__
-  exit
+  exit 1
 fi  
 
 if ! command -v jq &> /dev/null; then
@@ -198,9 +198,7 @@ if [ -f $STATE_FILE ]; then
   fi
 
   # Compute
-  if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
-    get_attribute_from_tfstate "COMPUTE_IP" "starter_instance" "public_ip"
-  fi
+  get_attribute_from_tfstate "COMPUTE_IP" "starter_instance" "public_ip"
 
   # Bastion 
   get_attribute_from_tfstate "BASTION_IP" "starter_bastion" "public_ip"
