@@ -8,7 +8,7 @@ if [[ -z "${PROJECT_DIR}" ]]; then
   echo "Error: PROJECT_DIR not set"
   exit
 fi
-APP_DIR=`echo ${PROJECT_DIR} |sed -E "s/(.*)\/(.*)\//\2/g"`
+APP_DIR=`echo ${SCRIPT_DIR} |sed -E "s/(.*)\/(.*)\//\2/g"`
 
 # PROJECT_DIR should be set by the calling scripts 
 cd $PROJECT_DIR
