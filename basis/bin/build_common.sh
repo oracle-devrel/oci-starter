@@ -1,6 +1,6 @@
 # Build_common.sh
 #!/bin/bash
-if [[ -z "${OCI_STARTER_BIN_DIR}" ]] ||; then
+if [[ -z "${OCI_STARTER_BIN_DIR}" ]]; then
   echo "Error: OCI_STARTER_BIN_DIR not set"
   exit
 fi
