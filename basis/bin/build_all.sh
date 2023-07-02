@@ -12,7 +12,7 @@ title "OCI Starter - Build"
 # Build all
 # Generate sshkeys if not part of a Common Resources project 
 if [ "$TF_VAR_ssh_private_path" == "" ]; then
-  . bin/sshkey_generate.sh
+  . $OCI_STARTER_BIN_DIR/sshkey_generate.sh
 fi
 . env.sh
 title "Terraform Apply"
@@ -23,13 +23,13 @@ exit_on_error
 # Run config command on the DB directly (ex RAC)
 if [ -f bin/deploy_db_node.sh ]; then
   title "Deploy DB Node"
-  bin/deploy_db_node.sh
+  $OCI_STARTER_BIN_DIR/deploy_db_node.sh
 fi 
 
 # Build the DB tables (via Bastion)
 if [ -d src/db ]; then
   title "Deploy Bastion"
-  bin/deploy_bastion.sh
+  $OCI_STARTER_BIN_DIR/deploy_bastion.sh
 fi  
 
 # Init target/compute
@@ -54,15 +54,15 @@ fi
 # Deploy
 title "Deploy $TF_VAR_deploy_strategy"
 if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
-    bin/deploy_compute.sh
+    $OCI_STARTER_BIN_DIR/deploy_compute.sh
 elif [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
-    bin/oke_deploy.sh
+    $OCI_STARTER_BIN_DIR/oke_deploy.sh
 elif [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then
-    bin/ci_deploy.sh
+    $OCI_STARTER_BIN_DIR/ci_deploy.sh
 fi
 
-bin/add_api.sh
+$OCI_STARTER_BIN_DIR/add_api.sh
 
 title "Done"
-bin/done.sh
+$OCI_STARTER_BIN_DIR/done.sh
 

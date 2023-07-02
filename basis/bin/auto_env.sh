@@ -7,8 +7,18 @@ if [[ -z "${PROJECT_DIR}" ]]; then
   exit
 fi
 
+# Target DIR
+export TARGET_DIR=$PROJECT_DIR/target
+if [ ! -d $TARGET_DIR ]; then
+  mkdir $TARGET_DIR
+fi
+
 # Shared BASH Functions
 . $OCI_STARTER_BIN_DIR/shared_bash_function.sh
+
+if [ "$1" == "-no-auto" ]; then
+  return
+fi 
 
 # Silent mode (default is not silent)
 if [ "$1" == "-silent" ]; then
@@ -47,11 +57,6 @@ if ! command -v jq &> /dev/null; then
   echo "Command jq could not be found. Please install it"
   echo "Ex on linux: sudo yum install jq -y"
   exit 1
-fi
-
-export TARGET_DIR=$PROJECT_DIR/target
-if [ ! -d $TARGET_DIR ]; then
-  mkdir $TARGET_DIR
 fi
 
 #-- PRE terraform ----------------------------------------------------------
