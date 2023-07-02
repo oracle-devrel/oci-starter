@@ -3,12 +3,13 @@
 #
 # Compute:
 # - build the code 
-# - create a $ROOT/compute/app directory with the compiled files
+# - create a $ROOT/target/compute/$APP_DIR directory with the compiled files
 # - and a start.sh to start the program
 # Docker:
 # - build the image
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-. $SCRIPT_DIR/../../bin/build_common.sh
+. $SCRIPT_DIR/../../env.sh -no-auto
+. $OCI_STARTER_BIN_DIR/build_common.sh
 java_build_common
 
 mvn package
@@ -18,11 +19,11 @@ if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
   cp src/start.sh target/.
   cp src/install.sh target/.
 
-  mkdir -p ../../target/compute/app
+  mkdir -p ../../target/compute/$APP_DIR
   cp nginx_app.locations ../../target/compute
-  cp -r target/* ../../target/compute/app/.
+  cp -r target/* ../../target/compute/$APP_DIR/.
   # Replace the user and password in the start file
-  replace_db_user_password_in_file ../../target/compute/app/start.sh  
+  replace_db_user_password_in_file ../../target/compute/$APP_DIR/start.sh  
 else
   docker image rm ${TF_VAR_prefix}-app:latest
   docker build -t ${TF_VAR_prefix}-app:latest .

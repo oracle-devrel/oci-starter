@@ -3,12 +3,14 @@
 #
 # Compute:
 # - build the code 
-# - create a $ROOT/compute/app directory with the compiled files
+# - create a $ROOT/target/compute/$APP_DIR directory with the compiled files
 # - and a start.sh to start the program
 # Docker:
 # - build the image
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-. $SCRIPT_DIR/../../bin/build_common.sh
+. $SCRIPT_DIR/../../env.sh -no-auto
+. $OCI_STARTER_BIN_DIR/build_common.sh
+
 java_build_common
 
 # XXXX microprofile-config.properties values should all go in start.sh like JDBC_USER
@@ -30,8 +32,8 @@ if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
   fi
   exit_on_error  
   cp start.sh target/.
-  mkdir -p ../../target/compute/app
-  cp -r target/* ../../target/compute/app/.
+  mkdir -p ../../target/compute/$APP_DIR
+  cp -r target/* ../../target/compute/$APP_DIR/.
 else
   docker image rm ${TF_VAR_prefix}-app:latest
   if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then

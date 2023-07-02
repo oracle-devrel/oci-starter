@@ -454,7 +454,8 @@ def env_sh_contents():
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
     contents = ['#!/bin/bash']
     contents.append(
-        'SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )')
+        'PROJECT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )')
+    contents.append(f'export OCI_STARTER_BIN_DIR=$PROJECT_DIR/bin')
     contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
     contents.append(f'export OCI_STARTER_VERSION=1.5')
     contents.append('')
@@ -475,12 +476,10 @@ def env_sh_contents():
             tf_var_comment(contents, param)
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
     contents.append('')
-    if 'group_name' in params:
-        contents.append("if [ -f $SCRIPT_DIR/../../group_common_env.sh ]; then")      
-        contents.append("  . $SCRIPT_DIR/../../group_common_env.sh")      
-    else:
-        contents.append("if [ -f $SCRIPT_DIR/../group_common_env.sh ]; then")      
-        contents.append("  . $SCRIPT_DIR/../group_common_env.sh")      
+    contents.append("if [ -f $PROJECT_DIR/../group_common_env.sh ]; then")      
+    contents.append("  . $PROJECT_DIR/../group_common_env.sh")      
+    contents.append("elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then")      
+    contents.append("  . $PROJECT_DIR/../../group_common_env.sh")      
     contents.append("elif [ -f $HOME/.oci_starter_profile ]; then")      
     contents.append("  . $HOME/.oci_starter_profile")   
     contents.append("else")      
@@ -505,7 +504,7 @@ def env_sh_contents():
     contents.append('')
     contents.append(
         '# Get other env variables automatically (-silent flag can be passed)')
-    contents.append('. $SCRIPT_DIR/bin/auto_env.sh $1')
+    contents.append('. $OCI_STARTER_BIN_DIR/auto_env.sh $1')
     return contents
 
 
@@ -685,8 +684,6 @@ def create_output_dir():
             app = "fn/fn_"+params['language']
         else:
             app = params['language']
-            if params['language'] == "java":
-                app = "java_" + params['java_framework']
 
         if params['database'] == "autonomous" or params['database'] == "database" or params['database'] == "pluggable":
             app_db = "oracle"
@@ -695,9 +692,6 @@ def create_output_dir():
         elif params['database'] == "none":
             app_db = "none"
 
-        app_dir = app+"_"+app_db
-        print("app_dir="+app_dir)
-
         # Function Common
         if params.get('deploy') == "function":
             output_copy_tree("option/src/app/fn/fn_common", "src/app")
@@ -705,8 +699,14 @@ def create_output_dir():
         # Generic version for Oracle DB
         if os.path.exists("option/src/app/"+app):
             output_copy_tree("option/src/app/"+app, "src/app")
+        if params['language'] == "java":
+            # Java Framework
+            app = "java_" + params['java_framework']
+            output_copy_tree("option/src/app/"+app, "src/app")
 
         # Overwrite the generic version (ex for mysql)
+        app_dir = app+"_"+app_db
+        print("app_dir="+app_dir)
         if os.path.exists("option/src/app/"+app_dir):
             output_copy_tree("option/src/app/"+app_dir, "src/app")
 

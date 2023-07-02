@@ -47,8 +47,10 @@ if [ ! -z "$UI_URL" ]; then
   if [ "$TF_VAR_ui_strategy" != "api" ]; then
     echo - User Interface  : $UI_URL/
   fi  
-  echo - Rest DB API     : $UI_URL/app/dept
-  echo - Rest Info API   : $UI_URL/app/info
+  for APP_DIR in `app_dir_list`; do
+    echo - Rest DB API     : $UI_URL/$APP_DIR/dept
+    echo - Rest Info API   : $UI_URL/$APP_DIR/info
+  done
   if [ "$TF_VAR_language" == "php" ]; then
     echo - PHP Page        : $UI_URL/app/index.php
   elif [ "$TF_VAR_language" == "java" ] && [ "$TF_VAR_java_framework" == "tomcat" ] ; then
@@ -62,6 +64,6 @@ if [ ! -z "$UI_URL" ]; then
   fi
 fi
 
-if [ -f $ROOT_DIR/src/after_done.sh ]; then
-  $ROOT_DIR/src/after_done.sh
+if [ -f $PROJECT_DIR/src/after_done.sh ]; then
+  $PROJECT_DIR/src/after_done.sh
 fi

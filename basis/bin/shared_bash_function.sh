@@ -1,4 +1,16 @@
 ### Commmon functions
+title() {
+  line='-------------------------------------------------------------------------'
+  NAME=$1
+  echo
+  echo "-- $NAME ${line:${#NAME}} ($SECONDS secs)"
+  echo  
+}
+
+# Used in for loop for APP_DIR
+app_dir_list() {
+  ls -d $PROJECT_DIR/src/app* | sort -g | sed "s/.*src\///g"
+}
 
 # Java Build Common
 java_build_common() {
@@ -13,8 +25,8 @@ java_build_common() {
     cp $TARGET_DIR/jms_agent_deploy.sh $TARGET_DIR/compute/.
   fi
 
-  if [ -f $ROOT_DIR/../group_common/target/jms_agent_deploy.sh ]; then
-    cp $ROOT_DIR/../group_common/target/jms_agent_deploy.sh $TARGET_DIR/compute/.
+  if [ -f $PROJECT_DIR/../group_common/target/jms_agent_deploy.sh ]; then
+    cp $PROJECT_DIR/../group_common/target/jms_agent_deploy.sh $TARGET_DIR/compute/.
   fi
 }
 
@@ -53,7 +65,7 @@ build_function() {
 
   # First create the Function using terraform
   # Run env.sh to get function image 
-  cd $ROOT_DIR
+  cd $PROJECT_DIR
   . env.sh 
   src/terraform/apply.sh --auto-approve
 }

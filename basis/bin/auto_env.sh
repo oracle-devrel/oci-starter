@@ -1,9 +1,14 @@
 #!/bin/bash
-export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-export ROOT_DIR=${BIN_DIR%/*}
+if [[ -z "${OCI_STARTER_BIN_DIR}" ]]; then
+  export OCI_STARTER_BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+fi
+if [[ -z "${PROJECT_DIR}" ]]; then
+  echo "Error: PROJECT_DIR not set"
+  exit
+fi
 
 # Shared BASH Functions
-. $BIN_DIR/shared_bash_function.sh
+. $OCI_STARTER_BIN_DIR/shared_bash_function.sh
 
 # Silent mode (default is not silent)
 if [ "$1" == "-silent" ]; then
@@ -19,8 +24,8 @@ fi
 
 if [ "$TF_VAR_db_password" == "__TO_FILL__" ]; then
   echo "Generating password for the database"
-  export TF_VAR_db_password=`python3 $BIN_DIR/gen_password.py`
-  sed -i "s&TF_VAR_db_password=\"__TO_FILL__\"&TF_VAR_db_password=\"$TF_VAR_db_password\"&" $ROOT_DIR/env.sh
+  export TF_VAR_db_password=`python3 $OCI_STARTER_BIN_DIR/gen_password.py`
+  sed -i "s&TF_VAR_db_password=\"__TO_FILL__\"&TF_VAR_db_password=\"$TF_VAR_db_password\"&" $PROJECT_DIR/env.sh
   echo "Password stored in env.sh"
   echo "> TF_VAR_db_password=$TF_VAR_db_password"
 fi
@@ -44,7 +49,7 @@ if ! command -v jq &> /dev/null; then
   exit 1
 fi
 
-export TARGET_DIR=$ROOT_DIR/target
+export TARGET_DIR=$PROJECT_DIR/target
 if [ ! -d $TARGET_DIR ]; then
   mkdir $TARGET_DIR
 fi
@@ -103,7 +108,7 @@ else
   auto_echo TF_VAR_region=$TF_VAR_region
 
   # Kubernetes and OCIR
-  if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ] || [ -f $ROOT_DIR/src/terraform/oke.tf ]; then
+  if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     export TF_VAR_namespace=`oci os ns get | jq -r .data`
     auto_echo TF_VAR_namespace=$TF_VAR_namespace
     export TF_VAR_email=mail@domain.com
@@ -113,12 +118,12 @@ else
     
     export DOCKER_PREFIX=${TF_VAR_ocir}/${TF_VAR_namespace}
     auto_echo DOCKER_PREFIX=$DOCKER_PREFIX
-    export KUBECONFIG=$ROOT_DIR/target/kubeconfig_starter
+    export KUBECONFIG=$TARGET_DIR/kubeconfig_starter
   fi
 
   # OpenAPI Spec
-  if [ -f $ROOT_DIR/src/app/openapi_spec.yaml ]; then
-    export TF_VAR_openapi_spec=$(cat $ROOT_DIR/src/app/openapi_spec.yaml)
+  if [ -f $PROJECT_DIR/src/app/openapi_spec.yaml ]; then
+    export TF_VAR_openapi_spec=$(cat $PROJECT_DIR/src/app/openapi_spec.yaml)
   fi
 
   if [ "$TF_VAR_deploy_strategy" == "hpc" ]; then
@@ -141,7 +146,7 @@ else
         S1=${TF_VAR_git_url/git@gitlab.com:/https:\/\/gitlab.com\/}        
         export TF_VAR_git_url=${S1/.git/\/-\/blob\/}${GIT_BRANCH}
       fi
-      cd $ROOT_DIR
+      cd $PROJECT_DIR
       export GIT_RELATIVE_PATH=`git rev-parse --show-prefix`
       cd -
       export TF_VAR_git_url=${TF_VAR_git_url}/${GIT_RELATIVE_PATH}
@@ -215,13 +220,13 @@ if [ -f $STATE_FILE ]; then
     get_attribute_from_tfstate "DB_NODE_IP" "starter_node_vnic" "private_ip_address"
   fi
 
-  if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ -f $ROOT_DIR/src/terraform/oke.tf ]; then
+  if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     # OKE
     get_output_from_tfstate "OKE_OCID" "oke_ocid"
   fi
 
   # JMS
-  if [ -f $ROOT_DIR/src/terraform/jms.tf ]; then 
+  if [ -f $PROJECT_DIR/src/terraform/jms.tf ]; then 
     if [ ! -f $TARGET_DIR/jms_agent_deploy.sh ]; then
       get_output_from_tfstate "FLEET_OCID" "fleet_ocid"
       get_output_from_tfstate "INSTALL_KEY_OCID" "install_key_ocid"

@@ -1,10 +1,19 @@
 # Build_common.sh
-BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+#!/bin/bash
+if [[ -z "${OCI_STARTER_BIN_DIR}" ]] ||; then
+  echo "Error: OCI_STARTER_BIN_DIR not set"
+  exit
+fi
+if [[ -z "${PROJECT_DIR}" ]]; then
+  echo "Error: PROJECT_DIR not set"
+  exit
+fi
+APP_DIR=`echo ${PROJECT_DIR} |sed -E "s/(.*)\/(.*)\//\2/g"`
 
-# SCRIPT_DIR should be set by the calling scripts 
-cd $SCRIPT_DIR
+# PROJECT_DIR should be set by the calling scripts 
+cd $PROJECT_DIR
 if [ -z "$TF_VAR_deploy_strategy" ]; then
-  . $BIN_DIR/../env.sh
+  . $PROJECT_DIR/env.sh
 else 
-  . $BIN_DIR/shared_bash_function.sh
+  . $OCI_STARTER_BIN_DIR/shared_bash_function.sh
 fi 
