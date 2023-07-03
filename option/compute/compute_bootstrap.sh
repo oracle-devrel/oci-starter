@@ -55,6 +55,7 @@ install_java() {
     sudo ./jms_agent_deploy.sh
   fi
 }
+export -f install_java
 
 # -- App --------------------------------------------------------------------
 # Application Specific installation
