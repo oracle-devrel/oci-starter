@@ -2,9 +2,10 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
-# ORACLE Instant Client XXX test db_strategy XXX
+# ORACLE Instant Client 
 if [[ "$JDBC_URL" == *"jdbc:oracle"* ]]; then
-  sudo dnf install -y oracle-instantclient-release-el8 oracle-instantclient-basic oracle-instantclient-sqlplus
+  sudo dnf install -y oracle-instantclient-release-el8 
+  sudo dnf install -y oracle-instantclient-basic oracle-instantclient-sqlplus
 fi
 
 # Install last version of GoLang
