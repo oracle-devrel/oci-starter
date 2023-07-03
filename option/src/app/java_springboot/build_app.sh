@@ -23,7 +23,7 @@ if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
   exit_on_error
 
   # Replace the user and password
-  cp start.sh target/.
+  cp start.sh install.sh target/.
 
   mkdir -p ../../target/compute/$APP_DIR
   cp -r target/* ../../target/compute/$APP_DIR/.
