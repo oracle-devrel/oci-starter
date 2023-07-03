@@ -695,12 +695,15 @@ def create_output_dir():
         # Function Common
         if params.get('deploy') == "function":
             output_copy_tree("option/src/app/fn/fn_common", "src/app")
-        elif os.path.exists("option/src/app/"+app):  
+         
+        # Generic version for Oracle DB
+        if os.path.exists("option/src/app/"+app):
             output_copy_tree("option/src/app/"+app, "src/app")
-            if params['language'] == "java":
-                # Java Framework
-                app = "java_" + params['java_framework']
-                output_copy_tree("option/src/app/"+app, "src/app")
+            
+        if params.get('deploy') != "function" and params['language'] == "java":
+            # Java Framework
+            app = "java_" + params['java_framework']
+            output_copy_tree("option/src/app/"+app, "src/app")
 
         # Overwrite the generic version (ex for mysql)
         app_dir = app+"_"+app_db
