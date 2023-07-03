@@ -1,7 +1,7 @@
 #!/bin/bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $SCRIPT_DIR/../env.sh -no-auto
-. $OCI_STARTER_BIN_DIR/build_common.sh
+. $BIN_DIR/build_common.sh
 cd $SCRIPT_DIR/..
 
 # Call build_common to push the ${TF_VAR_prefix}-app:latest and ${TF_VAR_prefix}-ui:latest to OCIR Docker registry

@@ -4,7 +4,7 @@
 # Build the group_common_env.sh file.
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $SCRIPT_DIR/../../env.sh -no-auto
-. $OCI_STARTER_BIN_DIR/build_common.sh
+. $BIN_DIR/build_common.sh
 
 append () {
    echo "$1" >> ../../../group_common_env.sh

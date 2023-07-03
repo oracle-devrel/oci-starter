@@ -1,6 +1,6 @@
 #!/bin/bash
-if [[ -z "${OCI_STARTER_BIN_DIR}" ]]; then
-  export OCI_STARTER_BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+if [[ -z "${BIN_DIR}" ]]; then
+  export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 fi
 if [[ -z "${PROJECT_DIR}" ]]; then
   echo "Error: PROJECT_DIR not set"
@@ -14,7 +14,7 @@ if [ ! -d $TARGET_DIR ]; then
 fi
 
 # Shared BASH Functions
-. $OCI_STARTER_BIN_DIR/shared_bash_function.sh
+. $BIN_DIR/shared_bash_function.sh
 
 if [ "$1" == "-no-auto" ]; then
   return
@@ -34,7 +34,7 @@ fi
 
 if [ "$TF_VAR_db_password" == "__TO_FILL__" ]; then
   echo "Generating password for the database"
-  export TF_VAR_db_password=`python3 $OCI_STARTER_BIN_DIR/gen_password.py`
+  export TF_VAR_db_password=`python3 $BIN_DIR/gen_password.py`
   sed -i "s&TF_VAR_db_password=\"__TO_FILL__\"&TF_VAR_db_password=\"$TF_VAR_db_password\"&" $PROJECT_DIR/env.sh
   echo "Password stored in env.sh"
   echo "> TF_VAR_db_password=$TF_VAR_db_password"

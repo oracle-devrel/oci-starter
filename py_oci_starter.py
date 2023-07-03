@@ -455,7 +455,7 @@ def env_sh_contents():
     contents = ['#!/bin/bash']
     contents.append(
         'PROJECT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )')
-    contents.append(f'export OCI_STARTER_BIN_DIR=$PROJECT_DIR/bin')
+    contents.append(f'export BIN_DIR=$PROJECT_DIR/bin')
     contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
     contents.append(f'export OCI_STARTER_VERSION=1.5')
     contents.append('')
@@ -504,7 +504,7 @@ def env_sh_contents():
     contents.append('')
     contents.append(
         '# Get other env variables automatically (-silent flag can be passed)')
-    contents.append('. $OCI_STARTER_BIN_DIR/auto_env.sh $1')
+    contents.append('. $BIN_DIR/auto_env.sh $1')
     return contents
 
 

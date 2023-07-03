@@ -1,9 +1,9 @@
 #!/bin/bash
-export OCI_STARTER_BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-export PROJECT_DIR=${OCI_STARTER_BIN_DIR%/*}
+export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+export PROJECT_DIR=${BIN_DIR%/*}
 
 # Shared BASH Functions
-. $OCI_STARTER_BIN_DIR/shared_bash_function.sh
+. $BIN_DIR/shared_bash_function.sh
 
 if grep -q 'TF_VAR_auth_token="__TO_FILL__"' $PROJECT_DIR/env.sh; then
   echo "Generating a new AUTH_TOKEN"
