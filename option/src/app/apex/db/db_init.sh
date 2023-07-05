@@ -29,6 +29,11 @@ quit
 EOF
 
 # Run SQLCl
+# Install the tables
+cat > tnsnames.ora <<EOT
+DB  = $DB_URL
+EOT
+
 export TNS_ADMIN=$HOME/db
 sqlcl/bin/sql $DB_USER/$DB_PASSWORD@DB @import_application.sql
 

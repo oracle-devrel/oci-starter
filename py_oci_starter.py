@@ -844,7 +844,8 @@ def create_output_dir():
         for f in allfiles:
             src_path = os.path.join("src/app/db", f)
             dst_path = os.path.join("src/db", f)
-            output_move(src_path, dst_path)        
+            output_move(src_path, dst_path) 
+        os.remove(output_dir + "/src/app/db")                   
 
 #----------------------------------------------------------------------------
 # Create group_common Directory
