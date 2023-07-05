@@ -839,7 +839,12 @@ def create_output_dir():
                 cp_terraform("mysql.tf", "mysql_append.tf")
 
     if os.path.exists(output_dir + "/src/app/db"):
-        output_move("src/app/db", "src/db")
+        allfiles = os.listdir(output_dir + "/src/app/db")
+        # iterate on all files to move them to destination folder
+        for f in allfiles:
+            src_path = os.path.join("src/app/db", f)
+            dst_path = os.path.join("src/db", f)
+            output_move(src_path, dst_path)        
 
 #----------------------------------------------------------------------------
 # Create group_common Directory
