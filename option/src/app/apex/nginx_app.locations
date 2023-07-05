@@ -1,5 +1,5 @@
 location / {
-    proxy_pass ##ORDS_URL##/r/your-oracle-account/apex-application/home;    
+    proxy_pass ##ORDS_URL##/r/app_dept/dept/home;    
     proxy_set_header Origin "" ;
     proxy_set_header X-Forwarded-Host $host:$server_port;
     proxy_set_header X-Real-IP $remote_addr;

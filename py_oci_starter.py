@@ -91,13 +91,13 @@ def allowed_options():
 
 
 allowed_values = {
-    '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'none'},
+    '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
     '-deploy': {'compute', 'kubernetes', 'function', 'container_instance', 'ci', 'hpc', 'datascience'},
     '-java_framework': {'springboot', 'helidon', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     '-java_version': {'8', '11', '17'},
     '-kubernetes': {'oke', 'docker'},
-    '-ui': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'none'},
+    '-ui': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
     '-database': {'atp', 'database', 'dbsystem', 'rac', 'pluggable', 'mysql', 'none'},
     '-license': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
@@ -144,8 +144,11 @@ def db_rules():
     params['database'] = longhand(
         'database', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database'})
 
-    if params.get('database') != 'autonomous' and params.get('language') == 'ords':
-        error(f'OCI starter only supports ORDS on ATP (Autonomous)')
+    if params.get('database') != 'autonomous':
+        if params.get('language') == 'ords':
+            error(f'OCI starter supports ORDS only on ATP (Autonomous)')
+        if params.get('language') == 'apex':
+            error(f'OCI starter supports APEX only on ATP (Autonomous)')
     if params.get('database') == 'pluggable':
         if (params.get('db_ocid') is None and params.get('pdb_ocid') is None):
             error(f'Pluggable Database needs an existing DB_OCID or PDB_OCID')
@@ -626,6 +629,8 @@ def output_replace_db_node_count():
 def cp_terraform_apigw(append_tf):
     if params['language'] == "ords":
         app_url = "${local.ords_url}/starter/module/$${request.path[pathname]}"
+    elif params['language'] == "apex":
+        app_url = "${local.ords_url}/r/app_dept/dept/$${request.path[pathname]}"
     elif params['language'] == "java" and params['java_framework'] == "tomcat":
         app_url = "http://${local.apigw_dest_private_ip}:8080/starter-1.0/$${request.path[pathname]}"
     else:
