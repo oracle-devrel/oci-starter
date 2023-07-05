@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ##PREFIX##-app-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /ords/starter/module/$2
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/upstream-vhost: "##ORDS_HOST##"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /##PREFIX##/app(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: ##PREFIX##-app-service
+                port:
+                  number: 443
+
+

@@ -699,7 +699,7 @@ def create_output_dir():
         # Generic version for Oracle DB
         if os.path.exists("option/src/app/"+app):
             output_copy_tree("option/src/app/"+app, "src/app")
-            
+
         if params.get('deploy') != "function" and params['language'] == "java":
             # Java Framework
             app = "java_" + params['java_framework']
@@ -833,8 +833,8 @@ def create_output_dir():
             else:
                 cp_terraform("mysql.tf", "mysql_append.tf")
 
-    if os.path.exists(output_dir + "/src/app/oracle.sql"):
-        output_move("src/app/oracle.sql", "src/db/oracle.sql")
+    if os.path.exists(output_dir + "/src/app/db"):
+        output_move("src/app/db/*", "src/db")
 
 #----------------------------------------------------------------------------
 # Create group_common Directory
