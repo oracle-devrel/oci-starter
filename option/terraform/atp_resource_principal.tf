@@ -2,7 +2,7 @@ resource "oci_identity_dynamic_group" "starter-atp-dyngroup" {
   name           = "${var.prefix}-atp-dyngroup"
   description    = "ATP Dyngroup"
   compartment_id = var.tenancy_ocid
-  matching_rule  = "ALL {resource.id = '${data.oci_database_autonomous_database.starter_atp.autonomous_database_id}'"
+  matching_rule  = "resource.id = '${data.oci_database_autonomous_database.starter_atp.autonomous_database_id}'"
 }
 
 resource "oci_identity_policy" "starter-policy" {
