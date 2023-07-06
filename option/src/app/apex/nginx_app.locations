@@ -1,5 +1,5 @@
 location /app {
-    proxy_pass ##ORDS_URL##/r/app_dept/dept/home;    
+    proxy_pass ##ORDS_URL##/r/apex_app/apex_app;    
     proxy_set_header Origin "" ;
     proxy_set_header X-Forwarded-Host $host:$server_port;
     proxy_set_header X-Real-IP $remote_addr;
@@ -9,6 +9,8 @@ location /app {
     proxy_send_timeout          600;
     proxy_read_timeout          600;
     send_timeout                600;
+    proxy_cookie_flags ~ nosecure;
+    proxy_cookie_path /ords/ /app/;
 }
 
 location /ords {

@@ -86,8 +86,8 @@ begin
 wwv_imp_workspace.create_flow(
  p_id=>wwv_flow.g_flow_id
 ,p_owner=>nvl(wwv_flow_application_install.get_schema,'API')
-,p_name=>nvl(wwv_flow_application_install.get_application_name,'DEPT')
-,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'DEPT')
+,p_name=>nvl(wwv_flow_application_install.get_application_name,'APEX_APP')
+,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'APEX_APP')
 ,p_page_view_logging=>'YES'
 ,p_page_protection_enabled_y_n=>'Y'
 ,p_checksum_salt=>'1DA0D1EAE561F713A164F4D18BC852B51E599849AB96789018449C859B90C1B7'
@@ -104,7 +104,7 @@ wwv_imp_workspace.create_flow(
 ,p_authentication_id=>wwv_flow_imp.id(9913988784394483)
 ,p_application_tab_set=>1
 ,p_logo_type=>'T'
-,p_logo_text=>'DEPT'
+,p_logo_text=>'APEX_APP'
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
@@ -117,7 +117,7 @@ wwv_imp_workspace.create_flow(
 ,p_csv_encoding=>'Y'
 ,p_auto_time_zone=>'N'
 ,p_substitution_string_01=>'APP_NAME'
-,p_substitution_value_01=>'DEPT'
+,p_substitution_value_01=>'APEX_APP'
 ,p_last_updated_by=>'API'
 ,p_last_upd_yyyymmddhh24miss=>'20230705055453'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
