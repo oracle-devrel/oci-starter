@@ -85,7 +85,7 @@ prompt --application/create_application
 begin
 wwv_imp_workspace.create_flow(
  p_id=>wwv_flow.g_flow_id
-,p_owner=>nvl(wwv_flow_application_install.get_schema,'API')
+,p_owner=>nvl(wwv_flow_application_install.get_schema,'APEX_APP')
 ,p_name=>nvl(wwv_flow_application_install.get_application_name,'APEX_APP')
 ,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'APEX_APP')
 ,p_page_view_logging=>'YES'
