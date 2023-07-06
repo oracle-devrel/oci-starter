@@ -816,7 +816,7 @@ def create_output_dir():
             else:
                 cp_terraform("atp.tf", "atp_append.tf")
             if params.get('language') == "apex":
-                cp_terraform("atp_resource_manager.tf")
+                cp_terraform("atp_resource_principal.tf")
 
         if params.get('database') == "database":
             cp_dir_src_db("oracle")
