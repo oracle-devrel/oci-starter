@@ -1,5 +1,3 @@
-variable oic_appid {}
-
 resource "oci_identity_dynamic_group" "starter-atp-dyngroup" {
   name           = "${var.prefix}-atp-dyngroup"
   description    = "ATP Dyngroup"
