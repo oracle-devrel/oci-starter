@@ -26,7 +26,7 @@ begin
     apex_application_install.set_application_id(1001);
     apex_application_install.generate_offset();
     apex_application_install.set_schema('APEX_APP');
-    apex_application_install.set_application_alias('DEPT');
+    apex_application_install.set_application_alias('APEX_APP');
     apex_application_install.set_auto_install_sup_obj( true );
 end;
 /
