@@ -28,7 +28,7 @@ if [ ! -z "$UI_URL" ]; then
     x=1
     while [ $x -le 5 ]
     do
-      curl $UI_URL/app/dept -L --retry 5 --retry-max-time 20 -D /tmp/result_json.log > /tmp/result.json
+      curl $UI_URL/app/dept -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_json.log > /tmp/result.json
       if grep -q -i "deptno" /tmp/result.json; then
         echo "OK"
        	break
@@ -38,11 +38,13 @@ if [ ! -z "$UI_URL" ]; then
       x=$(( $x + 1 ))
     done
     if [ "$TF_VAR_ui_strategy" != "api" ]; then
-      curl $UI_URL/         -L --retry 5 --retry-max-time 20 -D /tmp/result_html.log > /tmp/result.html
+      rm /tmp/cookie.txt
+      curl $UI_URL/ -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_html.log > /tmp/result.html
     else 
       echo "OCI Starter" > /tmp/result.html
     fi  
-    curl $UI_URL/app/info -L --retry 5 --retry-max-time 20 -D /tmp/result_info.log > /tmp/result.info
+    rm /tmp/cookie.txt
+    curl $UI_URL/app/info -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_info.log > /tmp/result.info
   fi
   if [ "$TF_VAR_ui_strategy" != "api" ]; then
     echo - User Interface: $UI_URL/
