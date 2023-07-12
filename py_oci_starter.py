@@ -559,33 +559,28 @@ def output_replace(old_string, new_string, filename):
             s = s.replace(old_string, new_string)
             f.write(s)
 
+def append_file(file1, file2):
+    print("append " + file2)
+    # opening first file in append mode and second file in read mode
+    f1 = open(file1, 'a+')
+    f2 = open(file2, 'r')
+    # appending the contents of the second file to the first file
+    f1.write('\n\n')
+    f1.write(f2.read())
+    f1.close()
+    f2.close()                
+
 def cp_terraform(file1, file2=None, file3=None):
     print("cp_terraform " + file1)
     shutil.copy2("option/terraform/"+file1, output_dir + "/src/terraform")
 
     # Append a second file
     if file2 is not None:
-        print("append " + file2)
-        # opening first file in append mode and second file in read mode
-        f1 = open(output_dir + "/src/terraform/"+file1, 'a+')
-        f2 = open("option/terraform/"+file2, 'r')
-        # appending the contents of the second file to the first file
-        f1.write('\n\n')
-        f1.write(f2.read())
-        f1.close()
-        f2.close()
+        append_file( output_dir + "/src/terraform/"+file1, "option/terraform/"+file2 )
 
     # Append a third file
     if file3 is not None:
-        print("append " + file3)
-        # opening first file in append mode and second file in read mode
-        f1 = open(output_dir + "/src/terraform/"+file1, 'a+')
-        f2 = open("option/terraform/"+file3, 'r')
-        # appending the contents of the second file to the first file
-        f1.write('\n\n')
-        f1.write(f2.read())
-        f1.close()
-        f2.close()
+        append_file( output_dir + "/src/terraform/"+file1, "option/terraform/"+file3 )
 
 
 def output_copy_tree(src, target):
@@ -803,6 +798,10 @@ def create_output_dir():
             # output_mkdir src/container_instance
             output_copy_tree("option/container_instance", "bin")
             cp_terraform_apigw("apigw_ci_append.tf")          
+
+    if os.path.exists(output_dir + "/src/app/openapi_spec_append.yaml"):
+        append_file( output_dir + "/src/app/openapi_spec.yaml", output_dir + "/src/app/openapi_spec_append.yaml")
+        os.remove( output_dir + "/src/app/openapi_spec_append.yaml" )
 
     # -- Database ----------------------------------------------------------------
     if params.get('database') != "none":
