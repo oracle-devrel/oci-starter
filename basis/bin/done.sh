@@ -45,17 +45,16 @@ if [ ! -z "$UI_URL" ]; then
     curl $UI_URL/app/info -L --retry 5 --retry-max-time 20 -D /tmp/result_info.log > /tmp/result.info
   fi
   if [ "$TF_VAR_ui_strategy" != "api" ]; then
-    echo - User Interface  : $UI_URL/
+    echo - User Interface: $UI_URL/
   fi  
   for APP_DIR in `app_dir_list`; do
-    echo - Rest DB API     : $UI_URL/$APP_DIR/dept
-    echo - Rest Info API   : $UI_URL/$APP_DIR/info
+    if [ -f  $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml ]; then
+      python3 $BIN_DIR/openapi_list.py $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml $UI_URL
+    fi  
+    # echo - Rest DB API     : $UI_URL/$APP_DIR/dept
+    # echo - Rest Info API   : $UI_URL/$APP_DIR/info
   done
-  if [ "$TF_VAR_language" == "php" ]; then
-    echo - PHP Page        : $UI_URL/app/index.php
-  elif [ "$TF_VAR_language" == "java" ] && [ "$TF_VAR_java_framework" == "tomcat" ] ; then
-    echo - JSP Page        : $UI_URL/app/index.jsp
-  elif [ "$TF_VAR_deploy_strategy" == "compute" ] && [ "$TF_VAR_ui_strategy" == "api" ]; then   
+  if [ "$TF_VAR_deploy_strategy" == "compute" ] && [ "$TF_VAR_ui_strategy" == "api" ]; then   
     export APIGW_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}  
     echo - API Gateway URL : $APIGW_URL/app/dept 
   fi

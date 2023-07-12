@@ -33,14 +33,14 @@ prompt APPLICATION 101 - DEPT
 -- Application Export:
 --   Application:     101
 --   Name:            DEPT
---   Date and Time:   05:55 Wednesday July 5, 2023
+--   Date and Time:   15:02 Wednesday July 12, 2023
 --   Exported By:     API
 --   Flashback:       0
 --   Export Type:     Application Export
---     Pages:                      4
+--     Pages:                      5
 --       Items:                    6
 --       Processes:                7
---       Regions:                  5
+--       Regions:                  6
 --       Buttons:                  6
 --       Dynamic Actions:          2
 --     Shared Components:
@@ -49,7 +49,7 @@ prompt APPLICATION 101 - DEPT
 --       Navigation:
 --         Lists:                  2
 --         Breadcrumbs:            1
---           Entries:              1
+--           Entries:              2
 --       Security:
 --         Authentication:         2
 --         Authorization:          1
@@ -85,9 +85,9 @@ prompt --application/create_application
 begin
 wwv_imp_workspace.create_flow(
  p_id=>wwv_flow.g_flow_id
-,p_owner=>nvl(wwv_flow_application_install.get_schema,'APEX_APP')
-,p_name=>nvl(wwv_flow_application_install.get_application_name,'APEX_APP')
-,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'APEX_APP')
+,p_owner=>nvl(wwv_flow_application_install.get_schema,'API')
+,p_name=>nvl(wwv_flow_application_install.get_application_name,'DEPT')
+,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'DEPT')
 ,p_page_view_logging=>'YES'
 ,p_page_protection_enabled_y_n=>'Y'
 ,p_checksum_salt=>'1DA0D1EAE561F713A164F4D18BC852B51E599849AB96789018449C859B90C1B7'
@@ -104,7 +104,7 @@ wwv_imp_workspace.create_flow(
 ,p_authentication_id=>wwv_flow_imp.id(9913988784394483)
 ,p_application_tab_set=>1
 ,p_logo_type=>'T'
-,p_logo_text=>'APEX_APP'
+,p_logo_text=>'DEPT'
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
@@ -117,9 +117,9 @@ wwv_imp_workspace.create_flow(
 ,p_csv_encoding=>'Y'
 ,p_auto_time_zone=>'N'
 ,p_substitution_string_01=>'APP_NAME'
-,p_substitution_value_01=>'APEX_APP'
+,p_substitution_value_01=>'DEPT'
 ,p_last_updated_by=>'API'
-,p_last_upd_yyyymmddhh24miss=>'20230705055453'
+,p_last_upd_yyyymmddhh24miss=>'20230712150218'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>6
 ,p_print_server_type=>'NATIVE'
@@ -164,6 +164,15 @@ wwv_flow_imp_shared.create_list_item(
 ,p_list_item_link_target=>'f?p=&APP_ID.:1:&APP_SESSION.::&DEBUG.:::'
 ,p_list_item_icon=>'fa-table'
 ,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(11994363038629419)
+,p_list_item_display_sequence=>20
+,p_list_item_link_text=>'INFO'
+,p_list_item_link_target=>'f?p=&APP_ID.:3:&SESSION.::&DEBUG.::::'
+,p_list_item_icon=>'fa-file-o'
+,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
+,p_list_item_current_for_pages=>'3'
 );
 end;
 /
@@ -817,6 +826,12 @@ wwv_flow_imp_shared.create_menu_option(
 ,p_short_name=>'DEPT'
 ,p_link=>'f?p=&APP_ID.:1:&APP_SESSION.::&DEBUG.:::'
 ,p_page_id=>1
+);
+wwv_flow_imp_shared.create_menu_option(
+ p_id=>wwv_flow_imp.id(11995281530629432)
+,p_short_name=>'INFO'
+,p_link=>'f?p=&APP_ID.:3:&SESSION.::&DEBUG.:::'
+,p_page_id=>3
 );
 end;
 /
@@ -17719,7 +17734,7 @@ begin
 wwv_flow_imp_page.create_page(
  p_id=>1
 ,p_name=>'DEPT'
-,p_alias=>'HOME'
+,p_alias=>'DEPT'
 ,p_step_title=>'DEPT'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
@@ -17737,7 +17752,7 @@ wwv_flow_imp_page.create_page(
 '<p>Click the <strong>Reset</strong> button to reset the interactive report back to the default settings.</p>'))
 ,p_page_component_map=>'13'
 ,p_last_updated_by=>'API'
-,p_last_upd_yyyymmddhh24miss=>'20230705055050'
+,p_last_upd_yyyymmddhh24miss=>'20230712150013'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(9902087328387724)
@@ -18085,6 +18100,34 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_name=>'Initialize form Department'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_internal_uid=>9900687459387723
+);
+end;
+/
+prompt --application/pages/page_00003
+begin
+wwv_flow_imp_page.create_page(
+ p_id=>3
+,p_name=>'info'
+,p_alias=>'INFO'
+,p_step_title=>'INFO APEX'
+,p_autocomplete_on_off=>'OFF'
+,p_page_template_options=>'#DEFAULT#'
+,p_protection_level=>'C'
+,p_page_component_map=>'11'
+,p_last_updated_by=>'API'
+,p_last_upd_yyyymmddhh24miss=>'20230712150119'
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(11994865926629430)
+,p_plug_name=>'Breadcrumb'
+,p_region_template_options=>'#DEFAULT#:t-BreadcrumbRegion--useBreadcrumbTitle'
+,p_component_template_options=>'#DEFAULT#'
+,p_plug_template=>wwv_flow_imp.id(9715168434387101)
+,p_plug_display_sequence=>10
+,p_plug_display_point=>'REGION_POSITION_01'
+,p_menu_id=>wwv_flow_imp.id(9599435205386967)
+,p_plug_source_type=>'NATIVE_BREADCRUMB'
+,p_menu_template_id=>wwv_flow_imp.id(9777595150387156)
 );
 end;
 /
