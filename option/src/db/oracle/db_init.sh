@@ -4,8 +4,7 @@ cd $SCRIPT_DIR
 
 # Install SQL*Plus
 sudo dnf install -y oracle-instantclient-release-el8
-sudo dnf install -y oracle-instantclient-basic
-sudo dnf install -y oracle-instantclient-sqlplus
+sudo dnf install -y oracle-instantclient-basic oracle-instantclient-sqlplus
 
 # Install the tables
 cat > tnsnames.ora <<EOT

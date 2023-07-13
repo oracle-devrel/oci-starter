@@ -17,9 +17,9 @@ echo "ARCH=$ARCH"
 sudo setenforce 0
 sudo sed -i s/^SELINUX=.*$/SELINUX=permissive/ /etc/selinux/config
 
-# -- Java --------------------------------------------------------------------
-# Set up the correct Java / VM version
-if [ "$TF_VAR_language" == "java" ]; then
+# -- Shared Install function ------------------------------------------------
+
+install_java() {
   # Install the JVM (jdk or graalvm)
   if [ "$TF_VAR_java_vm" == "graalvm" ]; then
     # graalvm
@@ -39,7 +39,7 @@ if [ "$TF_VAR_language" == "java" ]; then
       sudo dnf install -y java-1.8.0-openjdk
     elif [ "$TF_VAR_java_version" == 11 ]; then
       sudo dnf install -y java-11  
-    elif [ "$TF_VAR_java_version" == 17 ]; then
+    else
       sudo dnf install -y java-17  
       # Trick to find the path
       # cd -P "/usr/java/latest"
@@ -54,34 +54,39 @@ if [ "$TF_VAR_language" == "java" ]; then
     chmod +x jms_agent_deploy.sh
     sudo ./jms_agent_deploy.sh
   fi
-fi
+}
+export -f install_java
 
 # -- App --------------------------------------------------------------------
 # Application Specific installation
-if [ -f app/install.sh ]; then
-  chmod +x app/install.sh
-  app/install.sh
-fi  
+# Build all app* directories
+for APP_DIR in `ls -d app* | sort -g`; do
+  if [ -f $APP_DIR/install.sh ]; then
+    chmod +x ${APP_DIR}/install.sh
+    ${APP_DIR}/install.sh
+  fi  
+done
 
 # -- app/start.sh -----------------------------------------------------------
-if [ -f app/start.sh ]; then
-  # Hardcode the connection to the DB in the start.sh
-  if [ "$DB_URL" != "" ]; then
-    sed -i "s!##JDBC_URL##!$JDBC_URL!" app/start.sh 
-    sed -i "s!##DB_URL##!$DB_URL!" app/start.sh 
-  fi  
-  sed -i "s!##TF_VAR_java_vm##!$TF_VAR_java_vm!" app/start.sh   
-  chmod +x app/start.sh
+for APP_DIR in `ls -d app* | sort -g`; do
+  if [ -f $APP_DIR/start.sh ]; then
+    # Hardcode the connection to the DB in the start.sh
+    if [ "$DB_URL" != "" ]; then
+      sed -i "s!##JDBC_URL##!$JDBC_URL!" $APP_DIR/start.sh 
+      sed -i "s!##DB_URL##!$DB_URL!" $APP_DIR/start.sh 
+    fi  
+    sed -i "s!##TF_VAR_java_vm##!$TF_VAR_java_vm!" $APP_DIR/start.sh   
+    chmod +x $APP_DIR/start.sh
 
-  # Create an "app.service" that starts when the machine starts.
-  cat > /tmp/app.service << EOT
+    # Create an "app.service" that starts when the machine starts.
+    cat > /tmp/$APP_DIR.service << EOT
 [Unit]
 Description=App
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=/home/opc/app/start.sh
+ExecStart=/home/opc/$APP_DIR/start.sh
 TimeoutStartSec=0
 User=opc
 
@@ -89,12 +94,13 @@ User=opc
 WantedBy=default.target
 EOT
 
-  sudo cp /tmp/app.service /etc/systemd/system
-  sudo chmod 664 /etc/systemd/system/app.service
-  sudo systemctl daemon-reload
-  sudo systemctl enable app.service
-  sudo systemctl restart app.service
-fi
+    sudo cp /tmp/$APP_DIR.service /etc/systemd/system
+    sudo chmod 664 /etc/systemd/system/$APP_DIR.service
+    sudo systemctl daemon-reload
+    sudo systemctl enable $APP_DIR.service
+    sudo systemctl restart $APP_DIR.service
+  fi
+done  
 
 # -- UI --------------------------------------------------------------------
 # Install NGINX

@@ -22,7 +22,7 @@ data "oci_core_images" "node_pool_images" {
   compartment_id           = var.tenancy_ocid
   operating_system         = "Oracle Linux"
   operating_system_version = "7.9"
-  shape                    = "VM.Standard.E3.Flex"
+  shape                    = "VM.Standard.E4.Flex"
   sort_by                  = "TIMECREATED"
   sort_order               = "DESC"
 }

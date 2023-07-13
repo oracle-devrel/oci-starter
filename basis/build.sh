@@ -1,8 +1,8 @@
 #!/bin/bash
-export ROOT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-export TARGET_DIR=$ROOT_DIR/target
+export PROJECT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+export TARGET_DIR=$PROJECT_DIR/target
 
-cd $ROOT_DIR
+cd $PROJECT_DIR
 mkdir -p $TARGET_DIR
 
 # Show the log and save it in target/build.log

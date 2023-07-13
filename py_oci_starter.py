@@ -91,13 +91,13 @@ def allowed_options():
 
 
 allowed_values = {
-    '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'none'},
+    '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
     '-deploy': {'compute', 'kubernetes', 'function', 'container_instance', 'ci', 'hpc', 'datascience'},
     '-java_framework': {'springboot', 'helidon', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     '-java_version': {'8', '11', '17'},
     '-kubernetes': {'oke', 'docker'},
-    '-ui': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'none'},
+    '-ui': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
     '-database': {'atp', 'database', 'dbsystem', 'rac', 'pluggable', 'mysql', 'none'},
     '-license': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
@@ -144,8 +144,11 @@ def db_rules():
     params['database'] = longhand(
         'database', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database'})
 
-    if params.get('database') != 'autonomous' and params.get('language') == 'ords':
-        error(f'OCI starter only supports ORDS on ATP (Autonomous)')
+    if params.get('database') != 'autonomous':
+        if params.get('language') == 'ords':
+            error(f'OCI starter supports ORDS only on ATP (Autonomous)')
+        if params.get('language') == 'apex':
+            error(f'OCI starter supports APEX only on ATP (Autonomous)')
     if params.get('database') == 'pluggable':
         if (params.get('db_ocid') is None and params.get('pdb_ocid') is None):
             error(f'Pluggable Database needs an existing DB_OCID or PDB_OCID')
@@ -454,7 +457,8 @@ def env_sh_contents():
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
     contents = ['#!/bin/bash']
     contents.append(
-        'SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )')
+        'PROJECT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )')
+    contents.append(f'export BIN_DIR=$PROJECT_DIR/bin')
     contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
     contents.append(f'export OCI_STARTER_VERSION=1.5')
     contents.append('')
@@ -475,12 +479,10 @@ def env_sh_contents():
             tf_var_comment(contents, param)
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
     contents.append('')
-    if 'group_name' in params:
-        contents.append("if [ -f $SCRIPT_DIR/../../group_common_env.sh ]; then")      
-        contents.append("  . $SCRIPT_DIR/../../group_common_env.sh")      
-    else:
-        contents.append("if [ -f $SCRIPT_DIR/../group_common_env.sh ]; then")      
-        contents.append("  . $SCRIPT_DIR/../group_common_env.sh")      
+    contents.append("if [ -f $PROJECT_DIR/../group_common_env.sh ]; then")      
+    contents.append("  . $PROJECT_DIR/../group_common_env.sh")      
+    contents.append("elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then")      
+    contents.append("  . $PROJECT_DIR/../../group_common_env.sh")      
     contents.append("elif [ -f $HOME/.oci_starter_profile ]; then")      
     contents.append("  . $HOME/.oci_starter_profile")   
     contents.append("else")      
@@ -505,7 +507,7 @@ def env_sh_contents():
     contents.append('')
     contents.append(
         '# Get other env variables automatically (-silent flag can be passed)')
-    contents.append('. $SCRIPT_DIR/bin/auto_env.sh $1')
+    contents.append('. $BIN_DIR/auto_env.sh $1')
     return contents
 
 
@@ -557,33 +559,28 @@ def output_replace(old_string, new_string, filename):
             s = s.replace(old_string, new_string)
             f.write(s)
 
+def append_file(file1, file2):
+    print("append " + file2)
+    # opening first file in append mode and second file in read mode
+    f1 = open(file1, 'a+')
+    f2 = open(file2, 'r')
+    # appending the contents of the second file to the first file
+    f1.write('\n\n')
+    f1.write(f2.read())
+    f1.close()
+    f2.close()                
+
 def cp_terraform(file1, file2=None, file3=None):
     print("cp_terraform " + file1)
     shutil.copy2("option/terraform/"+file1, output_dir + "/src/terraform")
 
     # Append a second file
     if file2 is not None:
-        print("append " + file2)
-        # opening first file in append mode and second file in read mode
-        f1 = open(output_dir + "/src/terraform/"+file1, 'a+')
-        f2 = open("option/terraform/"+file2, 'r')
-        # appending the contents of the second file to the first file
-        f1.write('\n\n')
-        f1.write(f2.read())
-        f1.close()
-        f2.close()
+        append_file( output_dir + "/src/terraform/"+file1, "option/terraform/"+file2 )
 
     # Append a third file
     if file3 is not None:
-        print("append " + file3)
-        # opening first file in append mode and second file in read mode
-        f1 = open(output_dir + "/src/terraform/"+file1, 'a+')
-        f2 = open("option/terraform/"+file3, 'r')
-        # appending the contents of the second file to the first file
-        f1.write('\n\n')
-        f1.write(f2.read())
-        f1.close()
-        f2.close()
+        append_file( output_dir + "/src/terraform/"+file1, "option/terraform/"+file3 )
 
 
 def output_copy_tree(src, target):
@@ -627,6 +624,8 @@ def output_replace_db_node_count():
 def cp_terraform_apigw(append_tf):
     if params['language'] == "ords":
         app_url = "${local.ords_url}/starter/module/$${request.path[pathname]}"
+    elif params['language'] == "apex":
+        app_url = "${local.ords_url}/r/app_dept/dept/$${request.path[pathname]}"
     elif params['language'] == "java" and params['java_framework'] == "tomcat":
         app_url = "http://${local.apigw_dest_private_ip}:8080/starter-1.0/$${request.path[pathname]}"
     else:
@@ -685,8 +684,6 @@ def create_output_dir():
             app = "fn/fn_"+params['language']
         else:
             app = params['language']
-            if params['language'] == "java":
-                app = "java_" + params['java_framework']
 
         if params['database'] == "autonomous" or params['database'] == "database" or params['database'] == "pluggable":
             app_db = "oracle"
@@ -695,18 +692,22 @@ def create_output_dir():
         elif params['database'] == "none":
             app_db = "none"
 
-        app_dir = app+"_"+app_db
-        print("app_dir="+app_dir)
-
         # Function Common
         if params.get('deploy') == "function":
             output_copy_tree("option/src/app/fn/fn_common", "src/app")
-
+         
         # Generic version for Oracle DB
         if os.path.exists("option/src/app/"+app):
             output_copy_tree("option/src/app/"+app, "src/app")
 
+        if params.get('deploy') != "function" and params['language'] == "java":
+            # Java Framework
+            app = "java_" + params['java_framework']
+            output_copy_tree("option/src/app/"+app, "src/app")
+
         # Overwrite the generic version (ex for mysql)
+        app_dir = app+"_"+app_db
+        print("app_dir="+app_dir)
         if os.path.exists("option/src/app/"+app_dir):
             output_copy_tree("option/src/app/"+app_dir, "src/app")
 
@@ -798,6 +799,10 @@ def create_output_dir():
             output_copy_tree("option/container_instance", "bin")
             cp_terraform_apigw("apigw_ci_append.tf")          
 
+    if os.path.exists(output_dir + "/src/app/openapi_spec_append.yaml"):
+        append_file( output_dir + "/src/app/openapi_spec.yaml", output_dir + "/src/app/openapi_spec_append.yaml")
+        os.remove( output_dir + "/src/app/openapi_spec_append.yaml" )
+
     # -- Database ----------------------------------------------------------------
     if params.get('database') != "none":
         cp_terraform("output.tf")
@@ -832,8 +837,14 @@ def create_output_dir():
             else:
                 cp_terraform("mysql.tf", "mysql_append.tf")
 
-    if os.path.exists(output_dir + "/src/app/oracle.sql"):
-        output_move("src/app/oracle.sql", "src/db/oracle.sql")
+    if os.path.exists(output_dir + "/src/app/db"):
+        allfiles = os.listdir(output_dir + "/src/app/db")
+        # iterate on all files to move them to destination folder
+        for f in allfiles:
+            src_path = os.path.join("src/app/db", f)
+            dst_path = os.path.join("src/db", f)
+            output_move(src_path, dst_path) 
+        os.rmdir(output_dir + "/src/app/db")                   
 
 #----------------------------------------------------------------------------
 # Create group_common Directory

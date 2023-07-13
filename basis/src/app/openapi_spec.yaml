@@ -5,7 +5,7 @@ info:
 paths:
   /app/dept:
     get:
-      summary: Retrieve a list of departments
+      summary: Rest DB API
       operationId: dept
       responses:
         '200':
@@ -29,7 +29,7 @@ paths:
                       description: Location 
   /app/info:
     get:
-      summary: Returns information about the API
+      summary: Rest Info API
       responses:
         200:
           description: Information about the API

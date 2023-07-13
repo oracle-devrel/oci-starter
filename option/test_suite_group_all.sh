@@ -9,6 +9,9 @@ loop_ui() {
   if [ "$OPTION_LANG" == "php" ]; then
     OPTION_UI=php 
     build_option
+  elif [ "$OPTION_LANG" == "apex" ]; then
+    OPTION_UI=apex 
+    build_option    
   else
     OPTION_UI=html 
     build_option
@@ -89,7 +92,10 @@ loop_lang () {
   if [ "$OPTION_DEPLOY" != "function" ]; then
     OPTION_LANG=php
     loop_db
-  fi  
+    OPTION_LANG=apex
+    OPTION_DB=atp 
+    loop_shape
+  fi    
   OPTION_LANG=go
   loop_db  
   OPTION_LANG=node 

@@ -152,6 +152,7 @@ build_option() {
   if [ -d output ]; then 
     mkdir output/target
     cp $TEST_HOME/group_common/target/ssh* output/target/.
+    rm -Rf $TEST_DIR
     mv output $TEST_DIR               
     build_test_destroy
   else

@@ -3,12 +3,13 @@
 #
 # Compute:
 # - build the code 
-# - create a $ROOT/compute/app directory with the compiled files
+# - create a $ROOT/target/compute/$APP_DIR directory with the compiled files
 # - and a start.sh to start the program
 # Docker:
 # - build the image
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-. $SCRIPT_DIR/../../bin/build_common.sh
+. $SCRIPT_DIR/../../env.sh -no-auto
+. $BIN_DIR/build_common.sh
 java_build_common
 
 if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
@@ -22,11 +23,11 @@ if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
   exit_on_error
 
   # Replace the user and password
-  cp start.sh target/.
+  cp start.sh install.sh target/.
 
-  mkdir -p ../../target/compute/app
-  cp -r target/* ../../target/compute/app/.
-  replace_db_user_password_in_file ../../target/compute/app/start.sh  
+  mkdir -p ../../target/compute/$APP_DIR
+  cp -r target/* ../../target/compute/$APP_DIR/.
+  replace_db_user_password_in_file ../../target/compute/$APP_DIR/start.sh  
 else
   docker image rm ${TF_VAR_prefix}-app:latest
  

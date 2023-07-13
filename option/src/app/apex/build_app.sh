@@ -11,15 +11,13 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $SCRIPT_DIR/../../env.sh -no-auto
 . $BIN_DIR/build_common.sh
 
-## XXXXX Check Language version
-
 if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
+  sed "s&##ORDS_URL##&$ORDS_URL&" nginx_app.locations > ../../target/compute/nginx_app.locations
+  ORDS_HOST=`basename $(dirname $ORDS_URL)`
+  sed -i "s&##ORDS_HOST##&$ORDS_HOST&" ../../target/compute/nginx_app.locations
   mkdir -p ../../target/compute/$APP_DIR
   cp -r src/* ../../target/compute/$APP_DIR/.
-  # Replace the user and password in the start file
-  replace_db_user_password_in_file ../../target/compute/$APP_DIR/start.sh
 else
-  docker image rm ${TF_VAR_prefix}-app:latest
-  docker build -t ${TF_VAR_prefix}-app:latest .
-  exit_on_error
+  echo "No docker image needed"
 fi  
+
