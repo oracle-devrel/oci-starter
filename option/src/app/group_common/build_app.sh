@@ -125,9 +125,11 @@ EOT
 cat >> ../../../group_common_env.sh <<'EOT' 
 
 # SSH Keys
-export TF_VAR_ssh_public_key=$(cat $COMMON_DIR/group_common/target/ssh_key_starter.pub)
-export TF_VAR_ssh_private_key=$(cat $COMMON_DIR/group_common/target/ssh_key_starter)
-export TF_VAR_ssh_private_path=$COMMON_DIR/group_common/target/ssh_key_starter
+if [ -f $COMMON_DIR/group_common/target/ssh_key_starter ]; then
+  export TF_VAR_ssh_public_key=$(cat $COMMON_DIR/group_common/target/ssh_key_starter.pub)
+  export TF_VAR_ssh_private_key=$(cat $COMMON_DIR/group_common/target/ssh_key_starter)
+  export TF_VAR_ssh_private_path=$COMMON_DIR/group_common/target/ssh_key_starter
+fi  
 EOT
 
 echo
