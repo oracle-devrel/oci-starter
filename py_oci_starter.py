@@ -723,13 +723,13 @@ def create_output_dir():
 
     # -- User Interface -----------------------------------------------------
     if params.get('ui') == "none":
-        print("No UI")
-        output_rm_tree("src/ui")
-    elif params.get('ui') == "api": 
         print("API Only")
         output_rm_tree("src/ui")   
         if params.get('deploy') == "compute":
-            cp_terraform_apigw("apigw_compute_append.tf")          
+            print("API Only")
+            cp_terraform_apigw("apigw_compute_append.tf")
+        else:          
+            print("No UI")
     else:
         ui_lower = params.get('ui').lower()
         output_copy_tree("option/src/ui/"+ui_lower, "src/ui")
