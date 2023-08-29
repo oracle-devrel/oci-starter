@@ -83,9 +83,6 @@ if [ -z "$APIM_HOST" ]; then
 else
   append "export APIM_HOST=$APIM_HOST"
 fi
-if [ -n "$TF_VAR_compute_ocid" ]; then
-  append "export TF_VAR_compute_ocid=$TF_VAR_compute_ocid"
-fi  
 if [ -z "$TF_VAR_instance_shape" ]; then
   append "# export TF_VAR_instance_shape=VM.Standard.E3.Flex"
 else
@@ -119,6 +116,7 @@ conditional_append mysql TF_VAR_mysql_ocid
 conditional_append oke TF_VAR_oke_ocid
 conditional_append apigw TF_VAR_apigw_ocid
 conditional_append fnapp TF_VAR_fnapp_ocid
+conditional_append compute TF_VAR_compute_ocid
 
 cat >> ../../../group_common_env.sh <<EOT 
 

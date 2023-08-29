@@ -1,4 +1,6 @@
-# Defines the number of instances to deploy
+# Existing Compute
+variable "compute_ocid" {}
+
 data "oci_core_instance" "starter_instance" {
     #Required
     instance_id = var.compute_ocid
