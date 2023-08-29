@@ -72,7 +72,7 @@ else
   fi
 
   # SSH keys
-  if [ -f $TARGET_DIR/ssh_key_starter ]; then 
+  if [ "$TF_VAR_ssh_private_path" == "" ] && [ -f $TARGET_DIR/ssh_key_starter ]; then 
     export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
     export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)
     export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
