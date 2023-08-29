@@ -84,7 +84,7 @@ else
   append "export APIM_HOST=$APIM_HOST"
 fi
 if [ -n "$TF_VAR_compute_ocid" ]; then
-  append "export TF_VAR_instance_shape=$TF_VAR_compute_ocid"
+  append "export TF_VAR_compute_ocid=$TF_VAR_compute_ocid"
 fi  
 if [ -z "$TF_VAR_instance_shape" ]; then
   append "# export TF_VAR_instance_shape=VM.Standard.E3.Flex"

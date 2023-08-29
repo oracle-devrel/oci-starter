@@ -783,7 +783,10 @@ def create_output_dir():
                 cp_terraform("apigw.tf", "apigw_tags.tf", apigw_append)
 
         elif params.get('deploy') == "compute":
-            cp_terraform("compute.tf")
+            if 'compute_ocid' in params:
+                cp_terraform("compute_existing.tf")
+            else:
+                cp_terraform("compute.tf")            
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
 

@@ -6,18 +6,6 @@ data "oci_core_instance" "starter_instance" {
 
 locals {
   compute_ocid = var.compute_ocid
-}
-
-# Output the private and public IPs of the instance
-output "instance_private_ips" {
-  value = [oci_core_instance.starter_instance.private_ip]
-}
-
-output "instance_public_ips" {
-  value = [oci_core_instance.starter_instance.public_ip]
-}
-
-output "ui_url" {
-  value = format("http://%s", oci_core_instance.starter_instance.public_ip)
+  compute_private_ip = data.oci_core_instance.starter_instance.private_ip
 }
 
