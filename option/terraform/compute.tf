@@ -60,15 +60,7 @@ resource "oci_core_instance" "starter_instance" {
 
 locals {
   compute_ocid = oci_core_instance.starter_instance.id
+  compute_public_ip = oci_core_instance.starter_instance.public_ip
   compute_private_ip = oci_core_instance.starter_instance.private_ip
-}
-
-# Output the public IP of the instance
-output "compute_ip" {
-  value = oci_core_instance.starter_instance.public_ip
-}
-
-output "ui_url" {
-  value = format("http://%s", oci_core_instance.starter_instance.public_ip)
 }
 
