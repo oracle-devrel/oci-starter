@@ -74,6 +74,7 @@ default_options = {
     '-license': 'included',
     '-mode': CLI,
     '-infra_as_code': 'terraform_local',
+    '-output_dir' : 'output'
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
@@ -186,7 +187,6 @@ def vcn_rules():
         error('-vcn_ocid required for -subnet_ocid')
     
  
-
 def ui_rules():
     params['ui'] = longhand('ui', {'reactjs': 'ReactJS'})
     if params.get('ui') == 'jsp':
@@ -219,8 +219,9 @@ def license_rules():
 
 
 def zip_rules():
+    global output_dir, zip_dir
+    output_dir = params['output_dir']
     if 'zip' in params:
-        global output_dir, zip_dir
         if 'group_name' in params:
              zip_dir = params['group_name']
         else:
@@ -310,6 +311,7 @@ oci-starter.sh
    -shape (optional freetier)
    -ui (default html | reactjs | jet | angular | none) 
    -vcn_ocid (optional)
+   -output_dir (optional)
 
 '''
     if len(unknown_params) > 0:
