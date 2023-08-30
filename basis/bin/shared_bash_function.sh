@@ -228,6 +228,37 @@ get_ui_url() {
   fi
 }
 
+create_deployment_in_apigw() {
+# Publish the API with an API Deployment to API Gateway
+  if [ "$APIGW_DEPLOYMENT_OCID" != "" ]; then
+   cat > $TARGET_DIR/api_deployment.json << EOF
+{
+  "loggingPolicies": {
+    "accessLog": {
+      "isEnabled": true
+    },
+    "executionLog": {
+      "isEnabled": true,
+      "logLevel": "string"
+    }
+  },  
+  "routes": [
+    {
+      "path": "/app/{pathname*}",
+      "methods": [ "ANY" ],
+      "backend": {
+        "type": "HTTP_BACKEND",
+        "url": "$UI_URL/app/dept"
+      }
+    }
+  ]
+}
+EOF
+   oci api-gateway deployment create --compartment-id $TF_VAR_compartment_ocid --display-name "${TF_VAR_prefix}-apigw-deployment" --gateway-id $APIGW_DEPLOYMENT_OCID \
+      --path-prefix "/${TF_VAR_prefix}" --specification file://$TARGET_DIR/api_deployment.json
+  fi
+}
+
 configure() {
   if cat env.sh | grep -q "__TO_FILL__"; then
     echo Found these variables:

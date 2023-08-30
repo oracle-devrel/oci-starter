@@ -4,7 +4,7 @@ metadata:
   name: ##PREFIX##-app-ingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/rewrite-target: /ords/starter/module/$2
+    nginx.ingress.kubernetes.io/rewrite-target: /ords/r/apex_app/apex_app/$2
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     nginx.ingress.kubernetes.io/upstream-vhost: "##ORDS_HOST##"
 spec:
@@ -18,5 +18,3 @@ spec:
                 name: ##PREFIX##-app-service
                 port:
                   number: 443
-
-

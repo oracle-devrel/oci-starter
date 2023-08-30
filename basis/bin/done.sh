@@ -28,6 +28,7 @@ if [ ! -z "$UI_URL" ]; then
     x=1
     while [ $x -le 5 ]
     do
+      rm /tmp/cookie.txt
       curl $UI_URL/app/dept -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_json.log > /tmp/result.json
       if grep -q -i "deptno" /tmp/result.json; then
         echo "OK"

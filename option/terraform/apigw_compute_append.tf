@@ -1,5 +1,5 @@
 locals {
-  apigw_dest_private_ip = oci_core_instance.starter_instance.private_ip
+  apigw_dest_private_ip = local.compute_private_ip
 }
 
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {

@@ -322,6 +322,7 @@ resource "oci_containerengine_cluster" "starter_oke" {
   kubernetes_version = data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions[length(data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions)-1]
   name               = "${var.prefix}-oke"
   vcn_id             = oci_core_vcn.starter_vcn.id
+  type               = "ENHANCED_CLUSTER"
 
   #Optional
   endpoint_config {

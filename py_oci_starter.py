@@ -74,6 +74,7 @@ default_options = {
     '-license': 'included',
     '-mode': CLI,
     '-infra_as_code': 'terraform_local',
+    '-output_dir' : 'output'
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
@@ -186,7 +187,6 @@ def vcn_rules():
         error('-vcn_ocid required for -subnet_ocid')
     
  
-
 def ui_rules():
     params['ui'] = longhand('ui', {'reactjs': 'ReactJS'})
     if params.get('ui') == 'jsp':
@@ -219,8 +219,9 @@ def license_rules():
 
 
 def zip_rules():
+    global output_dir, zip_dir
+    output_dir = params['output_dir']
     if 'zip' in params:
-        global output_dir, zip_dir
         if 'group_name' in params:
              zip_dir = params['group_name']
         else:
@@ -310,6 +311,7 @@ oci-starter.sh
    -shape (optional freetier)
    -ui (default html | reactjs | jet | angular | none) 
    -vcn_ocid (optional)
+   -output_dir (optional)
 
 '''
     if len(unknown_params) > 0:
@@ -783,7 +785,10 @@ def create_output_dir():
                 cp_terraform("apigw.tf", "apigw_tags.tf", apigw_append)
 
         elif params.get('deploy') == "compute":
-            cp_terraform("compute.tf")
+            if 'compute_ocid' in params:
+                cp_terraform("compute_existing.tf", "compute_append.tf")
+            else:
+                cp_terraform("compute.tf", "compute_append.tf")            
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
 
@@ -905,9 +910,14 @@ def create_group_common_dir():
             cp_terraform("jms.tf")            
             cp_terraform("log_group.tf")
 
+    if 'compute' in a_group_common:
+        if 'compute_ocid' in params:
+            cp_terraform("compute_existing.tf", "compute_append.tf")
+        else:
+            cp_terraform("compute.tf", "compute_append.tf")            
+
     # Container Instance Common
     cp_terraform("container_instance_policy.tf")
-
 
     allfiles = os.listdir(output_dir)
     allfiles.remove('README.md')
@@ -985,7 +995,7 @@ if 'group_common' in params:
     # Use a bastion only for the database
     if params.get('database')!='none':
         params['bastion_ocid'] = TO_FILL
-    to_ocid = { "atp": "atp_ocid", "database": "db_ocid", "mysql": "mysql_ocid", "oke": "oke_ocid", "fnapp": "fnapp_ocid", "apigw": "apigw_ocid", "jms": "jms_ocid"}
+    to_ocid = { "atp": "atp_ocid", "database": "db_ocid", "mysql": "mysql_ocid", "oke": "oke_ocid", "fnapp": "fnapp_ocid", "apigw": "apigw_ocid", "jms": "jms_ocid", "compute": "compute_ocid"}
     for x in a_group_common:
         if x in to_ocid:
             ocid = to_ocid[x]

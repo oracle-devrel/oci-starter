@@ -72,7 +72,7 @@ else
   fi
 
   # SSH keys
-  if [ -f $TARGET_DIR/ssh_key_starter ]; then 
+  if [ "$TF_VAR_ssh_private_path" == "" ] && [ -f $TARGET_DIR/ssh_key_starter ]; then 
     export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
     export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)
     export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
@@ -208,8 +208,8 @@ if [ -f $STATE_FILE ]; then
   fi
 
   # Compute
-  get_attribute_from_tfstate "COMPUTE_IP" "starter_instance" "public_ip"
-
+  get_output_from_tfstate "COMPUTE_IP" "compute_ip"
+  
   # Bastion 
   get_attribute_from_tfstate "BASTION_IP" "starter_bastion" "public_ip"
 

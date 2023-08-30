@@ -55,6 +55,10 @@ if [ -z "$TF_VAR_bastion_ocid" ]; then
   get_id_from_tfstate "TF_VAR_bastion_ocid" "starter_bastion"
 fi
 
+if [ -z "$TF_VAR_compute_ocid" ]; then
+   get_id_from_tfstate "TF_VAR_compute_ocid" "starter_instance"
+fi   
+
 COMMON=,${TF_VAR_group_common},
 
 cat > ../../../group_common_env.sh <<'EOT' 
@@ -112,6 +116,7 @@ conditional_append mysql TF_VAR_mysql_ocid
 conditional_append oke TF_VAR_oke_ocid
 conditional_append apigw TF_VAR_apigw_ocid
 conditional_append fnapp TF_VAR_fnapp_ocid
+conditional_append compute TF_VAR_compute_ocid
 
 cat >> ../../../group_common_env.sh <<EOT 
 
@@ -125,9 +130,11 @@ EOT
 cat >> ../../../group_common_env.sh <<'EOT' 
 
 # SSH Keys
-export TF_VAR_ssh_public_key=$(cat $COMMON_DIR/group_common/target/ssh_key_starter.pub)
-export TF_VAR_ssh_private_key=$(cat $COMMON_DIR/group_common/target/ssh_key_starter)
-export TF_VAR_ssh_private_path=$COMMON_DIR/group_common/target/ssh_key_starter
+if [ -f $COMMON_DIR/group_common/target/ssh_key_starter ]; then
+  export TF_VAR_ssh_public_key=$(cat $COMMON_DIR/group_common/target/ssh_key_starter.pub)
+  export TF_VAR_ssh_private_key=$(cat $COMMON_DIR/group_common/target/ssh_key_starter)
+  export TF_VAR_ssh_private_path=$COMMON_DIR/group_common/target/ssh_key_starter
+fi  
 EOT
 
 echo

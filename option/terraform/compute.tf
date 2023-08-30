@@ -58,16 +58,9 @@ resource "oci_core_instance" "starter_instance" {
   freeform_tags = local.freeform_tags
 }
 
-# Output the private and public IPs of the instance
-output "instance_private_ips" {
-  value = [oci_core_instance.starter_instance.private_ip]
-}
-
-output "instance_public_ips" {
-  value = [oci_core_instance.starter_instance.public_ip]
-}
-
-output "ui_url" {
-  value = format("http://%s", oci_core_instance.starter_instance.public_ip)
+locals {
+  compute_ocid = oci_core_instance.starter_instance.id
+  compute_public_ip = oci_core_instance.starter_instance.public_ip
+  compute_private_ip = oci_core_instance.starter_instance.private_ip
 }
 
