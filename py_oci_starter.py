@@ -784,9 +784,9 @@ def create_output_dir():
 
         elif params.get('deploy') == "compute":
             if 'compute_ocid' in params:
-                cp_terraform("compute_existing.tf")
+                cp_terraform("compute_existing.tf", "compute_append.tf")
             else:
-                cp_terraform("compute.tf")            
+                cp_terraform("compute.tf", "compute_append.tf")            
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
 
@@ -910,13 +910,12 @@ def create_group_common_dir():
 
     if 'compute' in a_group_common:
         if 'compute_ocid' in params:
-            cp_terraform("compute_existing.tf")
+            cp_terraform("compute_existing.tf", "compute_append.tf")
         else:
-            cp_terraform("compute.tf")            
+            cp_terraform("compute.tf", "compute_append.tf")            
 
     # Container Instance Common
     cp_terraform("container_instance_policy.tf")
-
 
     allfiles = os.listdir(output_dir)
     allfiles.remove('README.md')
