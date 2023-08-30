@@ -11,3 +11,6 @@ locals {
   compute_private_ip = data.oci_core_instance.starter_instance.private_ip
 }
 
+output "compute_ip" {
+  value = data.oci_core_instance.starter_instance.public_ip
+}

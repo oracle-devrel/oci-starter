@@ -208,8 +208,8 @@ if [ -f $STATE_FILE ]; then
   fi
 
   # Compute
-  get_attribute_from_tfstate "COMPUTE_IP" "starter_instance" "public_ip"
-
+  get_output_from_tfstate "COMPUTE_IP" "compute_ip"
+  
   # Bastion 
   get_attribute_from_tfstate "BASTION_IP" "starter_bastion" "public_ip"
 

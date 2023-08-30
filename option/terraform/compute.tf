@@ -63,13 +63,9 @@ locals {
   compute_private_ip = oci_core_instance.starter_instance.private_ip
 }
 
-# Output the private and public IPs of the instance
-output "instance_private_ips" {
-  value = [oci_core_instance.starter_instance.private_ip]
-}
-
-output "instance_public_ips" {
-  value = [oci_core_instance.starter_instance.public_ip]
+# Output the public IP of the instance
+output "compute_ip" {
+  value = oci_core_instance.starter_instance.public_ip
 }
 
 output "ui_url" {
