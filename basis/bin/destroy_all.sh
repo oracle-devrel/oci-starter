@@ -37,5 +37,5 @@ fi
 if [ -f $TARGET_DIR/terraform.tfstate ]; then
   title "Terraform Destroy"
   src/terraform/destroy.sh --auto-approve -no-color
-fi  
+fi
 echo "Destroy time: ${SECONDS} secs"
