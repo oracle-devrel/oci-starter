@@ -903,6 +903,7 @@ def create_group_common_dir():
             cp_terraform("apigw_existing.tf", "apigw_tags.tf")
         else:
             cp_terraform("apigw.tf", "apigw_tags.tf")
+            cp_terraform("log_group.tf")
 
     if 'jms' in a_group_common:
         if 'jms_ocid' in params:
