@@ -61,7 +61,7 @@ elif [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then
     $BIN_DIR/ci_deploy.sh
 fi
 
-$BIN_DIR/add_api.sh
+$BIN_DIR/add_api_portal.sh
 
 title "Done"
 $BIN_DIR/done.sh
