@@ -688,7 +688,7 @@ def create_output_dir():
         else:
             app = params['language']
 
-        if params['database'] == "autonomous" or params['database'] == "database" or params['database'] == "pluggable":
+        if params['database'] == "autonomous" or params['database'] == "database" or params['database'] == "pluggable" or params['database'] == "db_free":
             app_db = "oracle"
         elif params['database'] == "mysql":
             app_db = "mysql"
