@@ -142,7 +142,7 @@ def db_rules():
     if params.get('database') == 'rac':
         params['db_node_count'] = "2" 
 
-    params['database_type'] = longhand(
+    params['database'] = longhand(
         'database', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database'})
 
     if params.get('database') != 'autonomous':
@@ -154,9 +154,9 @@ def db_rules():
         if (params.get('db_ocid') is None and params.get('pdb_ocid') is None):
             error(f'Pluggable Database needs an existing DB_OCID or PDB_OCID')
     if params.get('db_user') == None:
-        default_users = {'autonomous': 'admin', 'database': 'system',
+        default_users = {'autonomous': 'admin', 'database': 'system', 'db_free': 'system'
                          'pluggable': 'system',  'mysql': 'root', 'none': ''}
-        params['db_user'] = default_users[params['database']]
+        params['db_user'] = default_users[params['database_type']]
     if params.get('database')=='none':
         params.pop('db_password')   
 
@@ -839,6 +839,8 @@ def create_output_dir():
         if params.get('database') == "db_free":
             cp_dir_src_db("oracle")
             cp_terraform("db_free_compute.tf")
+            output_copy_tree("option/src/db/db_free", "src/db")
+            output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
 
         if params.get('database') == "mysql":
             cp_dir_src_db("mysql")
