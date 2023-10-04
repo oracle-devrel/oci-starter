@@ -1,11 +1,12 @@
 # Doc: https://docs.oracle.com/en/database/oracle/oracle-database/23/xeinl/installing-oracle-database-free.html
+# Run as root
 dnf install -y oraclelinux-developer-release-el8
 dnf config-manager --set-enabled ol8_developer 
-dnf install -y oracle-database-preinstall-23c
+sudo dnf install -y oracle-database-preinstall-23c
 wget https://download.oracle.com/otn-pub/otn_software/db-free/oracle-database-free-23c-1.0-1.el8.x86_64.rpm
 dnf -y localinstall oracle-database-free-23c-1.0-1.el8.x86_64.rpm
 
-export DB_PASSWORD=SysPassword1
+echo DB_PASSWORD=$DB_PASSWORD
 (echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-23c configure
 
 cat >> $HOME/.bash_profile << EOF

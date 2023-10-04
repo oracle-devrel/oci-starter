@@ -48,14 +48,14 @@ resource "oci_core_instance" "starter_db_free" {
   freeform_tags = local.freeform_tags
 }
 
-output {
-  db_free_ip = oci_core_instance.starter_db_free.public_ip
-  # db_ip = oci_core_instance.starter_db.private_ip
-}
-
 locals {
+  db_free_ip = oci_core_instance.starter_db_free.public_ip
   # TNS Connect String (Description....)
-  db_url = format("%s:1521/freepdb1", locals.db_ip)
+  db_url = format("%s:1521/freepdb1", local.db_free_ip)
   db_host = "todo"
   jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
+}
+
+output "db_free_ip" {
+   value = local.db_free_ip
 }
