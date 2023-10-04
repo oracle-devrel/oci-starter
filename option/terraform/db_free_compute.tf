@@ -15,7 +15,7 @@ resource "oci_core_instance" "starter_db_free" {
   create_vnic_details {
     subnet_id                 = data.oci_core_subnet.starter_private_subnet.id
     display_name              = "Primaryvnic"
-    assign_public_ip          = true
+    # assign_public_ip          = true
     assign_private_dns_record = true
     hostname_label            = "${var.prefix}-db"
   }
