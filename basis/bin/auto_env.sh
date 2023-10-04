@@ -223,6 +223,8 @@ if [ -f $STATE_FILE ]; then
 
   if [ "$TF_VAR_db_strategy" == "database" ]; then
     get_attribute_from_tfstate "DB_NODE_IP" "starter_node_vnic" "private_ip_address"
+  elif [ "$TF_VAR_db_strategy" == "db_free" ]; then
+    get_output_from_tfstate "DB_NODE_IP" "db_free_ip"
   fi
 
   if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then

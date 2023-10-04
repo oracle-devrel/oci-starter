@@ -99,7 +99,7 @@ allowed_values = {
     '-java_version': {'8', '11', '17'},
     '-kubernetes': {'oke', 'docker'},
     '-ui': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
-    '-database': {'atp', 'database', 'dbsystem', 'rac', 'pluggable', 'mysql', 'none'},
+    '-database': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'mysql', 'none'},
     '-license': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
@@ -142,7 +142,7 @@ def db_rules():
     if params.get('database') == 'rac':
         params['db_node_count'] = "2" 
 
-    params['database'] = longhand(
+    params['database_type'] = longhand(
         'database', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database'})
 
     if params.get('database') != 'autonomous':
@@ -835,6 +835,10 @@ def create_output_dir():
                 cp_terraform("dbsystem_pluggable_existing.tf")
             else:
                 cp_terraform("dbsystem_existing.tf", "dbsystem_pluggable.tf")
+
+        if params.get('database') == "db_free":
+            cp_dir_src_db("oracle")
+            cp_terraform("db_free_compute.tf")
 
         if params.get('database') == "mysql":
             cp_dir_src_db("mysql")

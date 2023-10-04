@@ -59,6 +59,10 @@ if [ -z "$TF_VAR_compute_ocid" ]; then
    get_id_from_tfstate "TF_VAR_compute_ocid" "starter_instance"
 fi   
 
+if [ -z "$TF_VAR_log_group_ocid" ]; then
+   get_id_from_tfstate "TF_VAR_log_group_ocid" "starter_log_group"
+fi   
+
 COMMON=,${TF_VAR_group_common},
 
 cat > ../../../group_common_env.sh <<'EOT' 
@@ -117,6 +121,10 @@ conditional_append oke TF_VAR_oke_ocid
 conditional_append apigw TF_VAR_apigw_ocid
 conditional_append fnapp TF_VAR_fnapp_ocid
 conditional_append compute TF_VAR_compute_ocid
+
+if [ -n "$TF_VAR_log_group_ocid" ]; then
+  append "export TF_VAR_log_group_ocid=$TF_VAR_log_group_ocid"
+fi   
 
 cat >> ../../../group_common_env.sh <<EOT 
 
