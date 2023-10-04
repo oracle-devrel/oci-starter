@@ -52,7 +52,7 @@ locals {
 
 # Get latest Oracle Linux image 
 data "oci_core_images" "oraclelinux" {
-  compartment_id = var.tenancy_ocid
+  compartment_id = var.compartment_ocid
   operating_system = "Oracle Linux"
   operating_system_version = "8"
   filter {
