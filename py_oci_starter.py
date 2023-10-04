@@ -156,7 +156,7 @@ def db_rules():
     if params.get('db_user') == None:
         default_users = {'autonomous': 'admin', 'database': 'system', 'db_free': 'system',
                          'pluggable': 'system',  'mysql': 'root', 'none': ''}
-        params['db_user'] = default_users[params['database_type']]
+        params['db_user'] = default_users[params['database']]
     if params.get('database')=='none':
         params.pop('db_password')   
 
