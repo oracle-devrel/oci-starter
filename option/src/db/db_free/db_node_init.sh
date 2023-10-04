@@ -9,6 +9,8 @@ dnf -y localinstall oracle-database-free-23c-1.0-1.el8.x86_64.rpm
 echo DB_PASSWORD=$DB_PASSWORD
 (echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-23c configure
 
+firewall-cmd --zone=public --add-port=1521/tcp --permanent
+
 cat >> $HOME/.bash_profile << EOF
 
 # Setup Oracle Free environment

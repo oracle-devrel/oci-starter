@@ -2,8 +2,8 @@
 resource "oci_core_instance" "starter_db_free" {
 
   availability_domain = data.oci_identity_availability_domain.ad.name
-  compartment_id      = local.lz_appdev_cmp_ocid
-  display_name        = "${var.prefix}-instance"
+  compartment_id      = local.lz_database_cmp_ocid
+  display_name        = "${var.prefix}-db-free"
   shape               = var.instance_shape
 
   shape_config {
@@ -13,8 +13,7 @@ resource "oci_core_instance" "starter_db_free" {
   }
 
   create_vnic_details {
-    subnet_id                 = data.oci_core_subnet.starter_public_subnet.id 
-    # =XXXXX data.oci_core_subnet.starter_private_subnet.id
+    subnet_id                 = data.oci_core_subnet.starter_private_subnet.id
     display_name              = "Primaryvnic"
     assign_public_ip          = true
     assign_private_dns_record = true
@@ -30,6 +29,8 @@ resource "oci_core_instance" "starter_db_free" {
     source_id   = data.oci_core_images.oraclelinux.images.0.id
   }
 
+/*
+  // XXXX Potential connection issue
   // If changed to private network - not possible for private IP.
   connection {
     agent       = false
@@ -44,14 +45,15 @@ resource "oci_core_instance" "starter_db_free" {
       "date"
     ]
   }
+*/
 
   freeform_tags = local.freeform_tags
 }
 
 locals {
-  db_free_ip = oci_core_instance.starter_db_free.public_ip
+  db_free_ip = oci_core_instance.starter_db_free.private_ip
   # TNS Connect String (Description....)
-  db_url = format("%s:1521/freepdb1", local.db_free_ip)
+  db_url = format("%s:1521/FREEPDB1", local.db_free_ip)
   db_host = "todo"
   jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
 }
