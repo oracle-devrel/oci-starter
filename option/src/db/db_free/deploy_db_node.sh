@@ -13,9 +13,9 @@ eval "$(ssh-agent -s)"
 ssh-add $TF_VAR_ssh_private_path
 
 # Wait that the host is up
-until ssh -o StrictHostKeyChecking=no -J opc@$BASTION_IP opc@$DB_NODE_IP do
-    sleep 5
-    echo "Waiting for $DB_NODE_IP"
+until ssh -o StrictHostKeyChecking=no -J opc@$BASTION_IP opc@$DB_NODE_IP echo test; do
+  sleep 5
+  echo "SSH - Waiting for $DB_NODE_IP"
 done
 
 scp -o StrictHostKeyChecking=no -oProxyCommand="ssh -o StrictHostKeyChecking=no -W %h:%p opc@$BASTION_IP" src/db/db_node_init.sh opc@$DB_NODE_IP:/tmp/.
