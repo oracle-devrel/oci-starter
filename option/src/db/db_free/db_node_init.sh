@@ -18,7 +18,7 @@ ${DB_PASSWORD}
 EOF
 
 ls -al /usr/local/bin
-ords --config /etc/ords/config install --admin-user SYS --proxy-user --db-hostname localhost --db-port 1521 --db-servicename FREE --log-folder /etc/ords/logs --feature-sdw true --feature-db-api true --feature-rest-enabled-sql true --password-stdin < password.txt
+/usr/local/bin/ords --config /etc/ords/config install --admin-user SYS --proxy-user --db-hostname localhost --db-port 1521 --db-servicename FREE --log-folder /etc/ords/logs --feature-sdw true --feature-db-api true --feature-rest-enabled-sql true --password-stdin < password.txt
 /etc/init.d/ords start
 
 # Open the Firewall
