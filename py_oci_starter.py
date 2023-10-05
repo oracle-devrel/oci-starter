@@ -99,7 +99,7 @@ allowed_values = {
     '-java_version': {'8', '11', '17'},
     '-kubernetes': {'oke', 'docker'},
     '-ui': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
-    '-database': {'atp', 'database', 'dbsystem', 'rac', 'pluggable', 'mysql', 'none'},
+    '-database': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'mysql', 'none'},
     '-license': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
@@ -154,7 +154,7 @@ def db_rules():
         if (params.get('db_ocid') is None and params.get('pdb_ocid') is None):
             error(f'Pluggable Database needs an existing DB_OCID or PDB_OCID')
     if params.get('db_user') == None:
-        default_users = {'autonomous': 'admin', 'database': 'system',
+        default_users = {'autonomous': 'admin', 'database': 'system', 'db_free': 'system',
                          'pluggable': 'system',  'mysql': 'root', 'none': ''}
         params['db_user'] = default_users[params['database']]
     if params.get('database')=='none':
@@ -688,7 +688,7 @@ def create_output_dir():
         else:
             app = params['language']
 
-        if params['database'] == "autonomous" or params['database'] == "database" or params['database'] == "pluggable":
+        if params['database'] == "autonomous" or params['database'] == "database" or params['database'] == "pluggable" or params['database'] == "db_free":
             app_db = "oracle"
         elif params['database'] == "mysql":
             app_db = "mysql"
@@ -835,6 +835,12 @@ def create_output_dir():
                 cp_terraform("dbsystem_pluggable_existing.tf")
             else:
                 cp_terraform("dbsystem_existing.tf", "dbsystem_pluggable.tf")
+
+        if params.get('database') == "db_free":
+            cp_dir_src_db("oracle")
+            cp_terraform("db_free_compute.tf")
+            output_copy_tree("option/src/db/db_free", "src/db")
+            output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
 
         if params.get('database') == "mysql":
             cp_dir_src_db("mysql")
