@@ -68,7 +68,7 @@ default_options = {
     '-prefix': 'starter',
     '-java_framework': 'springboot',
     '-java_vm': 'jdk',
-    '-java_version': '17',
+    '-java_version': '21',
     '-ui': 'html',
     '-database': 'atp',
     '-license': 'included',
@@ -166,9 +166,9 @@ def language_rules():
         params.pop('java_framework')
         params.pop('java_vm')
         params.pop('java_version')
-    elif params.get('java_framework') == 'helidon' and params.get('java_version') != '17':
-        warning('Helidon only supports Java 17. Forcing Java version to 17')
-        params['java_version'] = 17
+    elif params.get('java_framework') == 'helidon' and params.get('java_version') != '21':
+        warning('Helidon only supports Java 17. Forcing Java version to 21')
+        params['java_version'] = 21
 
 
 def kubernetes_rules():
@@ -298,7 +298,7 @@ oci-starter.sh
    -group_common (optional) atp | database | mysql | fnapp | apigw | oke | jms 
    -group_name (optional)
    -java_framework (default helidon | springboot | tomcat)
-   -java_version (default 17 | 11 | 8)
+   -java_version (default 21 | 17 | 11 | 8)
    -java_vm (default jdk | graalvm)  
    -kubernetes (default oke | docker) 
    -language (mandatory) java | node | python | dotnet | ords 
@@ -715,14 +715,14 @@ def create_output_dir():
             output_copy_tree("option/src/app/"+app_dir, "src/app")
 
         if params['language'] == "java":
-            # FROM ghcr.io/graalvm/jdk:java17
+            # FROM container-registry.oracle.com/graalvm/jdk:17
             # FROM openjdk:17
             # FROM openjdk:17-jdk-slim
             if os.path.exists(output_dir + "/src/app/Dockerfile"):
                 if params['java_vm'] == "graalvm":
-                    output_replace('##DOCKER_IMAGE##', 'ghcr.io/graalvm/jdk:java17', "src/app/Dockerfile")
+                    output_replace('##DOCKER_IMAGE##', 'container-registry.oracle.com/graalvm/jdk:21', "src/app/Dockerfile")
                 else:
-                    output_replace('##DOCKER_IMAGE##', 'openjdk:17-jdk-slim', "src/app/Dockerfile")
+                    output_replace('##DOCKER_IMAGE##', 'openjdk:21-jdk-slim', "src/app/Dockerfile")
 
     # -- User Interface -----------------------------------------------------
     if params.get('ui') == "none":

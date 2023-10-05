@@ -10,7 +10,7 @@ variable prefix { default = "starter" }
 
 # Java
 variable language { default = "java" }
-variable java_version { default = "17" }
+variable java_version { default = "21" }
 
 variable db_user { default="" }
 variable db_password{ default="" }
