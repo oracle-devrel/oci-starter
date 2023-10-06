@@ -5,6 +5,42 @@ cd $SCRIPT_DIR
 
 set -e
 
+infra_as_code_plan() {
+  if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
+     resource_manager_plan
+  else
+    if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ];
+      sed "s/XX_TERRAFORM_STATE_URL_XX/$TF_VAR_terraform_state_url/g" terraform.template.tf > terraform/terraform.tf
+    fi  
+    terraform init -no-color
+    terraform plan
+  fi
+}
+
+infra_as_code_apply() {
+  if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
+    resource_manager_create_or_update
+    resource_manager_apply
+    exit_on_error
+  else
+    if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ];
+      sed "s/XX_TERRAFORM_STATE_URL_XX/$TF_VAR_terraform_state_url/g" terraform.template.tf > terraform/terraform.tf
+    fi  
+    terraform init -no-color -upgrade
+    terraform apply $@
+    exit_on_error
+  fi
+}
+
+infra_as_code_destroy() {
+  if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
+    resource_manager_destroy
+  else
+    terraform init -upgrade
+    terraform destroy $@
+  fi
+}
+
 resource_manager_get_stack() {
   if [ ! -f $TARGET_DIR/resource_manager_stackid ]; then
     rs_echo "Stack does not exists ( file target/resource_manager_stackid not found )"

@@ -440,7 +440,7 @@ def readme_contents():
 
 def env_param_list():
     env_params = list(params.keys())
-    exclude = ['mode', 'infra_as_code', 'zip', 'prefix', 'shape']
+    exclude = ['mode', 'zip', 'prefix', 'shape']
     if params.get('language') != 'java' or 'group_name' in params:
         exclude.extend(['java_vm', 'java_framework', 'java_version'])
     if 'group_name' in params:
@@ -885,9 +885,9 @@ def create_group_common_dir():
             output_replace_db_node_count()
 
     if "db_free" in a_group_common:
-        # XXXX -> 
+        # XXXX It will not work for the test suite XXXXXX
         cp_terraform("db_free_compute.tf")
-        output_copy_tree("option/src/db/db_free", "src/db")
+        # output_copy_tree("option/src/db/db_free", "src/db")
         # output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")            
 
     if "mysql" in a_group_common:
