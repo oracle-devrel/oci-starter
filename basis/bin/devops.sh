@@ -9,7 +9,7 @@ fi
 
 if test "$#" -ne 1; then
     echo
-    echo "Syntax: ./devops.sh install or ./devops.sh remove"
+    echo "Syntax: ./devops.sh build or ./devops.sh destroy"
     exit
 fi
 
@@ -23,7 +23,7 @@ case $yn in
 		exit 1;;
 esac
 
-if [ "$1"=="install" ]; then
+if [ "$1"=="build" ]; then
   export STATE_FILE=$TARGET_DIR/devops.tfstate
   cd $BIN_DIR/devops
 
@@ -39,7 +39,7 @@ if [ "$1"=="install" ]; then
   mkdir $GIT_TMP_DIR
   cd $GIT_TMP_DIR
   git clone $DEVOPS_GIT_URL
-  cd ${PREFIX}
+  cd ${TF_VAR_prefix}
   cp -r $PROJECT_DIR/* .
   rm -Rf target
   cp bin/devops/build_devops.yaml .
@@ -49,7 +49,7 @@ if [ "$1"=="install" ]; then
   git commit -m "OCI Starter"
   git push origin main
 
-elif [ "$1"=="remove" ]; then
+elif [ "$1"=="destroy" ]; then
   terraform init -no-color -upgrade
   terraform destroy --auto-approve
   exit_on_error
