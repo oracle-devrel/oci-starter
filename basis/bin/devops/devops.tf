@@ -38,12 +38,17 @@ locals {
   ocir_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace")
 }
 
+resource "random_string" "id" {
+  length  = 4
+  special = false
+}
+
 #############################################################################
 
 # Create OCI Notification
 resource "oci_ons_notification_topic" "starter_devops_notification_topic" {
   compartment_id = var.compartment_ocid
-  name           = "${var.prefix}-devops-topic"
+  name           = "${var.prefix}-topic-${random_string.id}"
 }
 
 # Create devops project
@@ -124,12 +129,12 @@ locals {
 
 resource "oci_devops_repository" "starter_devops_repository" {
   #Required
-  name       = "${var.prefix}-git"
+  name       = "${var.prefix}"
   project_id = oci_devops_project.starter_devops_project.id
 
   #Optional
   default_branch = "main"
-  description    = "${var.prefix}-git"
+  description    = "${var.prefix} GIT Repository"
   repository_type = "HOSTED"
 }
 

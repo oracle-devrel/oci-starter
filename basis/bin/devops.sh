@@ -11,6 +11,16 @@ if test "$#" -ne 1; then
     echo "Syntax: ./devops.sh install or ./devops.sh remove"
 fi
 
+echo "Action: $1"
+read -p "Do you want to proceed? (yes/no) " yn
+case $yn in 
+	yes ) echo 
+	no ) echo Exiting...;
+		exit;;
+	* ) echo Invalid response;
+		exit 1;;
+esac
+
 if [ "$1"=="install" ]; then
   export STATE_FILE=$TARGET_DIR/devops.tfstate
   cd $BIN_DIR/devops
@@ -27,7 +37,7 @@ if [ "$1"=="install" ]; then
   mkdir $GIT_TMP_DIR
   cd $GIT_TMP_DIR
   git clone $DEVOPS_GIT_URL
-  cd ${PREFIX}-git
+  cd ${PREFIX}
   cp -r $PROJECT_DIR/* .
   rm -Rf target
   cp bin/devops/build_devops.yaml .
@@ -41,5 +51,5 @@ elif [ "$1"=="remove" ]; then
   terraform init -no-color -upgrade
   terraform destroy --auto-approve
   exit_on_error
-  
+
 fi
