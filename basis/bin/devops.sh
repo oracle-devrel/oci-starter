@@ -8,13 +8,15 @@ if [ "$TF_VAR_auth_token" == "" ]; then
 fi
 
 if test "$#" -ne 1; then
+    echo
     echo "Syntax: ./devops.sh install or ./devops.sh remove"
+    exit
 fi
 
 echo "Action: $1"
 read -p "Do you want to proceed? (yes/no) " yn
 case $yn in 
-	yes ) echo 
+	yes ) echo;; 
 	no ) echo Exiting...;
 		exit;;
 	* ) echo Invalid response;
