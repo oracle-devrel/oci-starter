@@ -2,13 +2,25 @@ variable tenancy_ocid {}
 variable region {}
 variable compartment_ocid {}
 variable prefix { default = "starter" }
+variable username {}
+variable auth_token {}
 
 #############################################################################
-
 terraform {
   backend "local" { 
     path = "../../target/devops.tfstate" 
   }
+}
+
+#############################################################################
+provider "oci" {
+  alias        = "current_region"
+  tenancy_ocid = var.tenancy_ocid
+  region       = var.region
+
+  #user_ocid        = var.user_ocid
+  #fingerprint      = var.fingerprint
+  #private_key_path = var.private_key_path
 }
 
 #############################################################################
@@ -18,12 +30,20 @@ data "oci_identity_tenancy" "tenant_details" {
   provider   = oci.current_region
 }
 
+data "oci_objectstorage_namespace" "ns" {
+  compartment_id = var.compartment_ocid
+}
+
+locals {
+  ocir_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace")
+}
+
 #############################################################################
 
 # Create OCI Notification
 resource "oci_ons_notification_topic" "starter_devops_notification_topic" {
   compartment_id = var.compartment_ocid
-  name           = "${var.prefix}-devops-topic-${random_string.id.result}"
+  name           = "${var.prefix}-devops-topic"
 }
 
 # Create devops project
@@ -78,9 +98,9 @@ resource "oci_objectstorage_bucket" "starter_devops_bucket" {
 }
 
 resource "oci_objectstorage_object" "starter_devops_object" {
-  namespace      = local.ocir_namespace
-  bucket              = oci_objectstorage_bucket.tf_bucket.starter_devops_bucket
-  object              = "tfstate.tf"
+  namespace           = local.ocir_namespace
+  bucket              = oci_objectstorage_bucket.starter_devops_bucket.name
+  object              = "terraform.tfstate"
   content_language    = "en-US"
   content_type        = "text/plain"
   content             = ""
@@ -104,12 +124,12 @@ locals {
 
 resource "oci_devops_repository" "starter_devops_repository" {
   #Required
-  name       = "repository"
+  name       = "${var.prefix}-git"
   project_id = oci_devops_project.starter_devops_project.id
 
   #Optional
   default_branch = "main"
-  description    = "repository"
+  description    = "${var.prefix}-git"
   repository_type = "HOSTED"
 }
 
@@ -162,13 +182,13 @@ resource "oci_devops_build_pipeline_stage" "starter_devops_build_function" {
       # connection_id  = oci_devops_connection.test_connection.id
       name           = "build"
       repository_id  = oci_devops_repository.starter_devops_repository.id
-      repository_url = "https://devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.ocir_namespace}/projects/${oci_devops_project.test_project.name}/repositories/${oci_devops_repository.starter_devops_repository.name}"
+      repository_url = "https://devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.ocir_namespace}/projects/${oci_devops_project.starter_devops_project.name}/repositories/${oci_devops_repository.starter_devops_repository.name}"
     }
   }
-  build_spec_file                    = "build_spec_app.yaml"
-  description                        = "Build function"
-  display_name                       = "build-function"
-  image                              = "OL8_X86_64_STANDARD_10"
+  build_spec_file                    = "build_devops.yaml"
+  description                        = "Build using build.sh"
+  display_name                       = "Build using build.sh"
+  image                              = "OL7_X86_64_STANDARD_10"
   stage_execution_timeout_in_seconds = "36000"
   wait_criteria {
     #Required
@@ -200,7 +220,7 @@ locals {
   # OCI DevOps GIT login is tenancy/username
   encoded_oci_username = urlencode("${data.oci_identity_tenancy.tenant_details.name}/${var.username}")
   encoded_auth_token  = urlencode(var.auth_token)
-  devops_git_url = "https://${local.encoded_oci_username}:${local.encoded_auth_token}@devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.ocir_namespace}/projects/${oci_devops_project.test_project.name}/repositories/${oci_devops_repository.starter_devops_repository.name}"
+  devops_git_url = "https://${local.encoded_oci_username}:${local.encoded_auth_token}@devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.ocir_namespace}/projects/${oci_devops_project.starter_devops_project.name}/repositories/${oci_devops_repository.starter_devops_repository.name}"
 }
 
 output devops_git_url {

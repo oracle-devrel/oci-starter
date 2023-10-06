@@ -884,6 +884,12 @@ def create_group_common_dir():
             cp_terraform("dbsystem.tf")
             output_replace_db_node_count()
 
+    if "db_free" in a_group_common:
+        # XXXX -> 
+        cp_terraform("db_free_compute.tf")
+        output_copy_tree("option/src/db/db_free", "src/db")
+        # output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")            
+
     if "mysql" in a_group_common:
         if 'mysql_ocid' in params:
             cp_terraform("mysql_existing.tf")
