@@ -7,27 +7,39 @@ if [ "$TF_VAR_auth_token" == "" ]; then
   exit
 fi
 
-export STATE_FILE=$TARGET_DIR/devops.tfstate
-cd $BIN_DIR/devops
+if test "$#" -ne 1; then
+    echo "Syntax: ./devops.sh install or ./devops.sh remove"
+fi
 
-terraform init -no-color -upgrade
-terraform apply 
-exit_on_error
+if [ "$1"=="install" ]; then
+  export STATE_FILE=$TARGET_DIR/devops.tfstate
+  cd $BIN_DIR/devops
 
-get_output_from_tfstate "DEVOPS_GIT_URL" "devops_git_url"
+  terraform init -no-color -upgrade
+  terraform apply --auto-approve
+  exit_on_error
 
-# Clone the directory in the devops git repository
-GIT_TMP_DIR=/tmp/ocistarter_git
-rm -Rf $GIT_TMP_DIR
-mkdir $GIT_TMP_DIR
-cd $GIT_TMP_DIR
-git clone $DEVOPS_GIT_URL
-cd ${PREFIX}-git
-cp -r $PROJECT_DIR/* .
-rm -Rf target
-cp bin/devops/build_devops.yaml .
-git config --local user.email "dummy@ocistarter.com"
-git config --local user.name "${TF_VAR_username}"
-git add .
-git commit -m "OCI Starter"
-git push origin main
+  get_output_from_tfstate "DEVOPS_GIT_URL" "devops_git_url"
+
+  # Clone the directory in the devops git repository
+  GIT_TMP_DIR=/tmp/ocistarter_git
+  rm -Rf $GIT_TMP_DIR
+  mkdir $GIT_TMP_DIR
+  cd $GIT_TMP_DIR
+  git clone $DEVOPS_GIT_URL
+  cd ${PREFIX}-git
+  cp -r $PROJECT_DIR/* .
+  rm -Rf target
+  cp bin/devops/build_devops.yaml .
+  git config --local user.email "dummy@ocistarter.com"
+  git config --local user.name "${TF_VAR_username}"
+  git add .
+  git commit -m "OCI Starter"
+  git push origin main
+
+elif [ "$1"=="remove" ]; then
+  terraform init -no-color -upgrade
+  terraform destroy --auto-approve
+  exit_on_error
+  
+fi
