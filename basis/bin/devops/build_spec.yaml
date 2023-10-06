@@ -1,0 +1,16 @@
+version: 1.0
+component: build
+timeoutInSeconds: 60000
+runAs: root
+shell: bash
+env:
+  exportedVariables:
+    - BUILDRUN_HASH
+
+steps:
+  - type: Command
+    name: "Build and Deploy using the build.sh script"
+    timeoutInSeconds: 60000
+    command: |
+      ./build.sh
+      

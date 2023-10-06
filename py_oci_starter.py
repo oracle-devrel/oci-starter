@@ -715,9 +715,9 @@ def create_output_dir():
             output_copy_tree("option/src/app/"+app_dir, "src/app")
 
         if params['language'] == "java":
-            # FROM container-registry.oracle.com/graalvm/jdk:17
-            # FROM openjdk:17
-            # FROM openjdk:17-jdk-slim
+            # FROM container-registry.oracle.com/graalvm/jdk:21
+            # FROM openjdk:21
+            # FROM openjdk:21-jdk-slim
             if os.path.exists(output_dir + "/src/app/Dockerfile"):
                 if params['java_vm'] == "graalvm":
                     output_replace('##DOCKER_IMAGE##', 'container-registry.oracle.com/graalvm/jdk:21', "src/app/Dockerfile")
