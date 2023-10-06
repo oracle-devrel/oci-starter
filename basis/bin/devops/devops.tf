@@ -48,7 +48,7 @@ resource "random_string" "id" {
 # Create OCI Notification
 resource "oci_ons_notification_topic" "starter_devops_notification_topic" {
   compartment_id = var.compartment_ocid
-  name           = "${var.prefix}-topic-${random_string.id}"
+  name           = "${var.prefix}-devops-topic-${random_string.id}"
 }
 
 # Create devops project
