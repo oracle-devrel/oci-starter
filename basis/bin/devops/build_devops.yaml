@@ -1,6 +1,6 @@
-version: 1.0
+version: 0.1
 component: build
-timeoutInSeconds: 60000
+timeoutInSeconds: 28000
 runAs: root
 shell: bash
 env:
@@ -8,9 +8,9 @@ env:
     - BUILDRUN_HASH
 
 steps:
+
   - type: Command
     name: "Build and Deploy using the build.sh script"
-    timeoutInSeconds: 60000
+    timeoutInSeconds: 28000
     command: |
-      ./build.sh
-      
+      yum install -y jq; oci iam compartment list; env; ls -al; ./build.sh
