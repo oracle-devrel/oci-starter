@@ -5,7 +5,7 @@ infra_as_code_plan() {
   if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
      resource_manager_plan
   else
-    if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ];
+    if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ]; then
       sed "s/XX_TERRAFORM_STATE_URL_XX/$TF_VAR_terraform_state_url/g" terraform.template.tf > terraform/terraform.tf
     fi  
     terraform init -no-color
@@ -19,7 +19,7 @@ infra_as_code_apply() {
     resource_manager_apply
     exit_on_error
   else
-    if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ];
+    if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ]; then
       sed "s/XX_TERRAFORM_STATE_URL_XX/$TF_VAR_terraform_state_url/g" terraform.template.tf > terraform/terraform.tf
     fi  
     terraform init -no-color -upgrade
