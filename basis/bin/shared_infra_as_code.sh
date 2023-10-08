@@ -126,7 +126,7 @@ resource_manager_apply() {
   # Check the result of the destroy JOB and stop deletion if required
   if [ "$STATUS" != "SUCCEEDED" ]; then
     rs_echo "ERROR: Status ($STATUS) is not SUCCEEDED"
-    exit_on_error
+    exit 1 # Exit with error
   fi  
 }
 
@@ -145,7 +145,7 @@ resource_manager_destroy() {
   # Check the result of the destroy JOB and stop deletion if required
   if [ "$STATUS" != "SUCCEEDED" ]; then
     rs_echo "ERROR: Status ($STATUS) is not SUCCEEDED"
-    exit_on_error
+    exit 1 # Exit with error
   fi  
 
   rs_echo "Delete Stack"
