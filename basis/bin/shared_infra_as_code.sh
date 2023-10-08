@@ -117,11 +117,17 @@ resource_manager_apply() {
 
   rs_echo "Get job"
   STATUS=$(oci resource-manager job get --job-id $CREATED_APPLY_JOB_ID  --query 'data."lifecycle-state"' --raw-output)
-
+  
   oci resource-manager job get-job-logs-content --job-id $CREATED_APPLY_JOB_ID | tee > $TARGET_DIR/tf_apply.log
 
   rs_echo "Get stack state"
   oci resource-manager stack get-stack-tf-state --stack-id $STACK_ID --file $TARGET_DIR/terraform.tfstate
+
+  # Check the result of the destroy JOB and stop deletion if required
+  if [ "$STATUS" != "SUCCEEDED" ]; then
+    rs_echo "ERROR: Status ($STATUS) is not SUCCEEDED"
+    exit_on_error
+  fi  
 }
 
 resource_manager_destroy() {
@@ -139,7 +145,7 @@ resource_manager_destroy() {
   # Check the result of the destroy JOB and stop deletion if required
   if [ "$STATUS" != "SUCCEEDED" ]; then
     rs_echo "ERROR: Status ($STATUS) is not SUCCEEDED"
-    return
+    exit_on_error
   fi  
 
   rs_echo "Delete Stack"
