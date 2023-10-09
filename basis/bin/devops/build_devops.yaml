@@ -13,4 +13,4 @@ steps:
     name: "Build and Deploy using the build.sh script"
     timeoutInSeconds: 28000
     command: |
-      yum install -y jq; oci iam compartment list; env; ls -al; ./build.sh
+      yum install -y jq jdk-17; export JAVA_HOME=/usr/java/latest; env; ls -al; ./build.sh
