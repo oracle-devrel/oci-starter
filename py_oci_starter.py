@@ -67,7 +67,7 @@ def mandatory_options(mode):
 default_options = {
     '-prefix': 'starter',
     '-java_framework': 'springboot',
-    '-java_vm': 'jdk',
+    '-java_vm': 'graalvm',
     '-java_version': '21',
     '-ui': 'html',
     '-database': 'atp',
@@ -96,7 +96,7 @@ allowed_values = {
     '-deploy': {'compute', 'kubernetes', 'function', 'container_instance', 'ci', 'hpc', 'datascience'},
     '-java_framework': {'springboot', 'helidon', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
-    '-java_version': {'8', '11', '17'},
+    '-java_version': {'8', '11', '17', '21'},
     '-kubernetes': {'oke', 'docker'},
     '-ui': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
     '-database': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'mysql', 'none'},
@@ -105,7 +105,6 @@ allowed_values = {
     '-mode': {CLI, GIT, ZIP},
     '-shape': {'amd','freetier_amd','ampere'}
 }
-
 
 def check_values():
     illegals = {}
