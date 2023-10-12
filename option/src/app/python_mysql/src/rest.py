@@ -10,7 +10,11 @@ def dept():
         cursor = conn.cursor()
         cursor.execute("SELECT deptno, dname, loc FROM dept")
         deptRows = cursor.fetchall()
-        response = jsonify(deptRows)
+        a = []
+        for row in deptRows:
+            a.append( {"deptno": row[0], "dname": row[1], "loc": row[2]} )
+        print(a)
+        response = jsonify(a)
         response.status_code = 200
         return response
     except Exception as e:
