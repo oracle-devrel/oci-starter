@@ -1,9 +1,41 @@
 #!/bin/bash
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR
-. ../../env.sh -silent
-
 set -e
+
+infra_as_code_plan() {
+  if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
+     resource_manager_plan
+  else
+    if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ]; then
+      sed "s/XX_TERRAFORM_STATE_URL_XX/$TF_VAR_terraform_state_url/g" terraform.template.tf > terraform/terraform.tf
+    fi  
+    terraform init -no-color
+    terraform plan
+  fi
+}
+
+infra_as_code_apply() {
+  if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
+    resource_manager_create_or_update
+    resource_manager_apply
+    exit_on_error
+  else
+    if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ]; then
+      sed "s/XX_TERRAFORM_STATE_URL_XX/$TF_VAR_terraform_state_url/g" terraform.template.tf > terraform/terraform.tf
+    fi  
+    terraform init -no-color -upgrade
+    terraform apply $@
+    exit_on_error
+  fi
+}
+
+infra_as_code_destroy() {
+  if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
+    resource_manager_destroy
+  else
+    terraform init -upgrade
+    terraform destroy $@
+  fi
+}
 
 resource_manager_get_stack() {
   if [ ! -f $TARGET_DIR/resource_manager_stackid ]; then
@@ -38,6 +70,9 @@ resource_manager_create_or_update() {
   # This is a complex way to get them. But it works for multi line variables like TF_VAR_private_key
   excluded=$(env | sed -n 's/^\([A-Z_a-z][0-9A-Z_a-z]*\)=.*/\1/p' | grep -v 'TF_VAR_')
   sh -c 'unset $1; export -p' sh "$excluded" > $TARGET_DIR/tf_var.sh
+  # Nasty WA trick for OCI Devops (not a proper fix)
+  sed -i "s/export maven.home//" $TARGET_DIR/tf_var.sh
+
   echo -n "{" > $VAR_FILE_PATH
   cat $TARGET_DIR/tf_var.sh | sed "s/export TF_VAR_/\"/g" | sed "s/=\"/\": \"/g" | sed ':a;N;$!ba;s/\"\n/\", /g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/$/}/'>> $VAR_FILE_PATH
 
@@ -85,11 +120,17 @@ resource_manager_apply() {
 
   rs_echo "Get job"
   STATUS=$(oci resource-manager job get --job-id $CREATED_APPLY_JOB_ID  --query 'data."lifecycle-state"' --raw-output)
-
+  
   oci resource-manager job get-job-logs-content --job-id $CREATED_APPLY_JOB_ID | tee > $TARGET_DIR/tf_apply.log
 
   rs_echo "Get stack state"
   oci resource-manager stack get-stack-tf-state --stack-id $STACK_ID --file $TARGET_DIR/terraform.tfstate
+
+  # Check the result of the destroy JOB and stop deletion if required
+  if [ "$STATUS" != "SUCCEEDED" ]; then
+    rs_echo "ERROR: Status ($STATUS) is not SUCCEEDED"
+    exit 1 # Exit with error
+  fi  
 }
 
 resource_manager_destroy() {
@@ -107,7 +148,7 @@ resource_manager_destroy() {
   # Check the result of the destroy JOB and stop deletion if required
   if [ "$STATUS" != "SUCCEEDED" ]; then
     rs_echo "ERROR: Status ($STATUS) is not SUCCEEDED"
-    return
+    exit 1 # Exit with error
   fi  
 
   rs_echo "Delete Stack"

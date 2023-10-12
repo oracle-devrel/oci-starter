@@ -2,6 +2,6 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 . ../../env.sh -silent
-
-terraform init -upgrade
-terraform destroy $@
+. $BIN_DIR/shared_infra_as_code.sh
+infra_as_code_destroy $@
+exit_on_error

@@ -2,7 +2,6 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 . ../../env.sh -silent
-
-terraform init -no-color -upgrade
-terraform apply $@
+. $BIN_DIR/shared_infra_as_code.sh
+infra_as_code_apply $@
 exit_on_error

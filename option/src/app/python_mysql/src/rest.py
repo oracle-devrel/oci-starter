@@ -1,18 +1,20 @@
-import pymysql
 import os 
 from app import app
 from flask import jsonify
-from flask import flash, request
-from flaskext.mysql import MySQL
+import mysql.connector
 
 @app.route('/dept')
 def dept():
     try:
-        conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        conn = mysql.connector.connect(**config)
+        cursor = conn.cursor()
         cursor.execute("SELECT deptno, dname, loc FROM dept")
         deptRows = cursor.fetchall()
-        response = jsonify(deptRows)
+        a = []
+        for row in deptRows:
+            a.append( {"deptno": row[0], "dname": row[1], "loc": row[2]} )
+        print(a)
+        response = jsonify(a)
         response.status_code = 200
         return response
     except Exception as e:
@@ -25,14 +27,18 @@ def dept():
 def info():
         return "Python - Flask / MySQL"          
 
-mysql = MySQL()
 db_url = os.getenv('DB_URL')
 mysql_host = db_url.split(':')[0]
-app.config['MYSQL_DATABASE_USER'] = os.getenv('DB_USER')
-app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('DB_PASSWORD')
-app.config['MYSQL_DATABASE_DB'] = 'db1'
-app.config['MYSQL_DATABASE_HOST'] = mysql_host
-mysql.init_app(app)
+config = {
+    "host": mysql_host,
+    "port": 3306,
+    "database": "db1",
+    "user": os.getenv('DB_USER'),
+    "password": os.getenv('DB_PASSWORD'),
+    "charset": "utf8",
+    "use_unicode": True,
+    "get_warnings": True
+}
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)

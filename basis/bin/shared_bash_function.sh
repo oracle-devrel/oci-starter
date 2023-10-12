@@ -206,7 +206,14 @@ get_user_details() {
     # echo TF_VAR_user_ocid=$TF_VAR_user_ocid
     # echo TF_VAR_fingerprint=$TF_VAR_fingerprint
     # echo TF_VAR_private_key_path=$TF_VAR_private_key_path
+  elif [ "$OCI_AUTH" == "ResourcePrincipal" ]; then
+    # OCI DevOps use resource principal
+    # XXX Missing a lot of other variable... 
+    # OCI_RESOURCE_PRINCIPAL_RPST=xxx.xxxbase64xxx.xxxx
+    export TF_VAR_tenancy_ocid=`echo "${OCI_RESOURCE_PRINCIPAL_RPST#*\.}" | sed "s/\..*//" | base64 -d | jq -r .tenant`
+    export TF_VAR_region=$OCI_RESOURCE_PRINCIPAL_REGION
   fi
+
   # Find TF_VAR_username based on TF_VAR_user_ocid or the opposite
   if [ "$TF_VAR_username" != "" ]; then
     export TF_VAR_user_ocid=`oci iam user list --name $TF_VAR_username | jq -r .data[0].id`
