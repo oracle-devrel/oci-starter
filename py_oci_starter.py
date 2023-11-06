@@ -368,6 +368,11 @@ def git_params():
 def readme_contents():
     if 'group_name' in params:
         contents = ['''## OCI-Starter - Common Resources
+                    
+### License
+                    
+Check LICENSE file (Apache 2.0)                    
+
 ### Usage 
 
 ### Commands
