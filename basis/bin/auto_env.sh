@@ -40,6 +40,9 @@ if [ "$TF_VAR_db_password" == "__TO_FILL__" ]; then
   echo "> TF_VAR_db_password=$TF_VAR_db_password"
 fi
 
+# Livelabs Green Button (Autodetect compartment/vcn/subnet)
+livelabs_green_button
+
 # -- env.sh
 # Do not stop if __TO_FILL__ are not replaced if TF_VAR_group_name exist in env variable
 # XXX -> It would be safer to check also for TF_VAR_xxx containing __TO_FILL__ too

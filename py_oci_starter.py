@@ -503,6 +503,12 @@ def env_sh_contents():
     contents.append('  # API Management')
     contents.append('  # export APIM_HOST=xxxx-xxx.adb.region.oraclecloudapps.com')
     contents.append('')
+
+    if params.get('instance_shape') == None:   
+        contents.append('  # Compute Shape')
+        contents.append('  # export TF_VAR_instance_shape=VM.Standard.E4.Flex')
+        contents.append('')
+
     contents.append('  # Landing Zone')
     contents.append('  # export TF_VAR_lz_appdev_cmp_ocid=$TF_VAR_compartment_ocid')
     contents.append('  # export TF_VAR_lz_database_cmp_ocid=$TF_VAR_compartment_ocid')
