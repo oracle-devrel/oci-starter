@@ -290,6 +290,12 @@ livelabs_green_button() {
       export TF_VAR_public_subnet_ocid=$TF_VAR_subnet_ocid
       export TF_VAR_private_subnet_ocid=$TF_VAR_subnet_ocid
     fi  
+    
+    # LiveLabs support only E4 Shapes
+    if grep -q '# export TF_VAR_instance_shape=VM.Standard.E4.Flex' $PROJECT_DIR/env.sh; then
+      sed -i "s&# export TF_VAR_instance_shape=&export TF_VAR_instance_shape=&" $PROJECT_DIR/env.sh
+    fi
+
   fi
 }
 
