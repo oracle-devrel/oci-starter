@@ -286,11 +286,10 @@ livelabs_green_button() {
       sed -i "s&TF_VAR_public_subnet_ocid=\"__TO_FILL__\"&TF_VAR_public_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
       sed -i "s&TF_VAR_private_subnet_ocid=\"__TO_FILL__\"&TF_VAR_private_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
       echo "TF_VAR_subnet_ocid stored in env.sh"
+      # Set the real variables such that the first ./build.sh works too.
       export TF_VAR_public_subnet_ocid=$TF_VAR_subnet_ocid
       export TF_VAR_private_subnet_ocid=$TF_VAR_subnet_ocid
     fi  
-  else
-    echo 'File env.sh does not contain: # export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx'  
   fi
 }
 
