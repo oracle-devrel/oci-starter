@@ -26,7 +26,7 @@ resource "oci_core_instance" "starter_db_free" {
 
   source_details {
     source_type = "image"
-    source_id   = data.oci_core_images.oraclelinux.images.0.id
+    source_id   = local.oracle-linux-latest-name
   }
 
 /*
