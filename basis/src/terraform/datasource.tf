@@ -111,6 +111,7 @@ locals {
   ocir_username = join( "/", [ coalesce(local.ocir_namespace, "missing_privilege"), var.username ])
 }
 
-resource "random_id" "tag" {
-  byte_length = 2
+resource "random_string" "id" {
+  length  = 4
+  special = false
 }
