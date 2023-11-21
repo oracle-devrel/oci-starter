@@ -250,14 +250,14 @@ livelabs_green_button() {
     fi
     # Whoami user format ? 
     if [[ `whoami` =~ ^ll.*_u.* ]]; then
-      echo "LiveLabs - Green Button - User name in llxxx_uxx format"
+      echo "LiveLabs - Green Button - whoami format detected"
     else
       return
     fi
     get_user_details
     # OCI User name format ? 
     if [[ $TF_VAR_username =~ ^LL.*-USER$ ]]; then
-      echo "LiveLabs - Green Button"
+      echo "LiveLabs - Green Button - OCI User detected"
     else
       return
     fi
