@@ -1,4 +1,4 @@
-## Copyright (c) 2022, Oracle and/or its affiliates. 
+## Copyright (c) 2023, Oracle and/or its affiliates. 
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 data "oci_identity_availability_domains" "ADs" {
@@ -81,12 +81,12 @@ output "oracle-dev-linux-latest-name" {
 }
 */
 
-output "oracle-linux-latest-name" {
-  value = data.oci_core_images.oraclelinux.images.0.display_name
+locals {
+  oracle-linux-latest-name = coalesce( data.oci_core_images.oraclelinux.images.0.display_name, "Oracle-Linux-8.8-2023.10.24-0")
 }
 
-output "oracle-linux-latest-id" {
-  value = data.oci_core_images.oraclelinux.images.0.id
+output "oracle-linux-latest-name" {
+  value = local.oracle-linux-latest-name
 }
 
 ## Object Storage
@@ -108,6 +108,9 @@ data "oci_identity_compartment" "compartment" {
 locals {
   ocir_docker_repository = join("", [lower(lookup(data.oci_identity_regions.current_region.regions[0], "key")), ".ocir.io"])
   ocir_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace")
-  ocir_username = "${local.ocir_namespace}/${var.username}"
+  ocir_username = join( "/", [ coalesce(local.ocir_namespace, "missing_privilege"), var.username ])
 }
 
+resource "random_id" "tag" {
+  byte_length = 2
+}
