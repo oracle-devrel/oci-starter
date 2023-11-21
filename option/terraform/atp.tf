@@ -4,8 +4,8 @@ resource "oci_database_autonomous_database" "starter_atp" {
   compartment_id           = local.lz_database_cmp_ocid
   cpu_core_count           = "1"
   data_storage_size_in_tbs = "1"
-  # Random name to have several OCI Starter ATP named (starteratp-xx) on the same Tenancy (Ex: livelabs)
-  db_name                  = "${var.prefix}atp-${random_string.id.result}"
+  # Random name to have several OCI Starter ATP named (starteratpxxxx) on the same Tenancy (Ex: livelabs)
+  db_name                  = "${var.prefix}atp${random_string.id.result}"
 
   #Optional
   db_workload                                    = "OLTP"
