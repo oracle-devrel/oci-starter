@@ -10,8 +10,8 @@ dnf -y localinstall oracle-database-free-23c-1.0-1.el8.x86_64.rpm
 (echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-23c configure
 
 ls -al /usr/local/bin
-if [ -d $HOME/app ]; then
-  echo "$HOME/app exists. APEX not installed."
+if [ -d /home/opc/app ]; then
+  echo "/home/opc/app exists. APEX not installed."
 else   
   # Install ORDS in silent mode
   dnf install -y graalvm22-ee-17-jdk
