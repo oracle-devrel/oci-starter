@@ -86,7 +86,7 @@ locals {
 }
 
 output "oracle-linux-latest-name" {
-  value = data.oci_core_images.oraclelinux.images.0.display_name
+  value = local.oracle-linux-latest-name
 }
 
 ## Object Storage
