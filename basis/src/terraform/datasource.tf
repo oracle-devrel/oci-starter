@@ -81,6 +81,10 @@ output "oracle-dev-linux-latest-name" {
 }
 */
 
+locals {
+  oracle-linux-latest-name = coalesce( data.oci_core_images.oraclelinux.images.0.display_name, "Oracle-Linux-8.8-2023.10.24-0")
+}
+
 output "oracle-linux-latest-name" {
   value = data.oci_core_images.oraclelinux.images.0.display_name
 }
