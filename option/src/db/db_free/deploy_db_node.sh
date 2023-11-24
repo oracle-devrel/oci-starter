@@ -19,5 +19,5 @@ get_output_from_tfstate "DB_FREE_IP" "db_free_ip"
 # done
 
 scp -o StrictHostKeyChecking=no -oProxyCommand="ssh -o StrictHostKeyChecking=no -W %h:%p opc@$BASTION_IP" src/db/db_node_init.sh opc@$DB_FREE_IP:/tmp/.
-ssh -o StrictHostKeyChecking=no -J opc@$BASTION_IP opc@$DB_FREE_IP "chmod +x /tmp/db_node_init.sh; sudo -i -u root DB_PASSWORD=$TF_VAR_db_password /tmp/db_node_init.sh 2>&1 | tee -a /tmp/db_node_init.log"
+ssh -o StrictHostKeyChecking=no -J opc@$BASTION_IP opc@$DB_FREE_IP "chmod +x /tmp/db_node_init.sh; sudo -i -u root DB_PASSWORD=$TF_VAR_db_password TF_VAR_language=$TF_VAR_language /tmp/db_node_init.sh 2>&1 | tee -a /tmp/db_node_init.log"
 

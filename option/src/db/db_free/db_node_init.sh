@@ -10,9 +10,7 @@ dnf -y localinstall oracle-database-free-23c-1.0-1.el8.x86_64.rpm
 (echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-23c configure
 
 ls -al /usr/local/bin
-if [ -d /home/opc/app ]; then
-  echo "/home/opc/app exists. APEX not installed."
-else   
+if [ "$TF_VAR_language" = "apex" ]; then
   # Install ORDS in silent mode
   dnf install -y graalvm22-ee-17-jdk
   dnf install -y ords
@@ -23,6 +21,8 @@ EOF
   /usr/local/bin/ords --config /etc/ords/config install --admin-user SYS --proxy-user --db-hostname localhost --db-port 1521 --db-servicename FREE --log-folder /etc/ords/logs --feature-sdw true --feature-db-api true --feature-rest-enabled-sql true --password-stdin < password.txt
   /etc/init.d/ords start
   firewall-cmd --zone=public --add-port=8080/tcp --permanent
+else
+  echo "TF_VAR_language=$TF_VAR_language. APEX not installed."
 fi
 
 # Open the Firewall
