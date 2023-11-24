@@ -103,7 +103,8 @@ allowed_values = {
     '-license': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
-    '-shape': {'amd','freetier_amd','ampere'}
+    '-shape': {'amd','freetier_amd','ampere'},
+    '-db_install': {'default', 'shared_compute', 'kubernetes'}
 }
 
 def check_values():
@@ -849,7 +850,10 @@ def create_output_dir():
 
         if params.get('database') == "db_free":
             cp_dir_src_db("oracle")
-            cp_terraform("db_free_compute.tf")
+            if params.get('db_install') == "shared_compute":
+               cp_terraform("db_free_shared_compute.tf")
+            else:     
+               cp_terraform("db_free.tf")
             output_copy_tree("option/src/db/db_free", "src/db")
             output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
 
