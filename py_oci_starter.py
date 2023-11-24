@@ -681,7 +681,9 @@ def create_dir_shared():
     # -- Bastion ------------------------------------------------------------
     # Currently limited to provision the database ? 
     # XXXX In the future maybe as build machine ?
-    if 'bastion_ocid' in params:
+    if params.get('db_install') == "shared_compute":
+        cp_terraform("bastion_shared_compute.tf")   
+    elif 'bastion_ocid' in params:
         cp_terraform("bastion_existing.tf")
     elif params.get('database')!='none':
         cp_terraform("bastion.tf")
