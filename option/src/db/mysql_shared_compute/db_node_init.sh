@@ -3,9 +3,9 @@ wget https://repo.mysql.com//mysql80-community-release-el8-5.noarch.rpm
 yum -y install mysql80-community-release-el8-5.noarch.rpm
 yum repolist enabled | grep "mysql.*-community.*"
 yum module disable mysql
-dnf install mysql-community-server -y
-groupadd -g 27 -o -r mysql
-useradd -r -g mysql -s /bin/false mysql
+dnf -y install mysql-community-server
+# groupadd -g 27 -o -r mysql
+# useradd -r -g mysql -s /bin/false mysql
 id mysql
 systemctl start mysqld 
 
