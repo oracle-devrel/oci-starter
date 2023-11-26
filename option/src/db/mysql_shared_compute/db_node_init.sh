@@ -7,7 +7,6 @@ yum -y install mysql80-community-release-el8-5.noarch.rpm
 yum repolist enabled | grep "mysql.*-community.*"
 yum -y module disable mysql
 dnf -y install mysql-community-server
-id mysql
 systemctl start mysqld 
 
 dnf -y install mysql-shell
