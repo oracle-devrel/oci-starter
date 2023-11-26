@@ -7,7 +7,7 @@ dnf install mysql-community-server -y
 groupadd -g 27 -o -r mysql
 useradd -r -g mysql -s /bin/false mysql
 id mysql
-systemctl start mysqld -y
+systemctl start mysqld 
 
 # Open the Firewall
 firewall-cmd --zone=public --add-port=3306/tcp --permanent
