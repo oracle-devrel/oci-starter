@@ -861,7 +861,11 @@ def create_output_dir():
 
         if params.get('database') == "mysql":
             cp_dir_src_db("mysql")
-            if 'mysql_ocid' in params:
+            if params.get('db_install') == "shared_compute":
+               cp_terraform("mysql_shared_compute.tf")   
+               output_copy_tree("option/src/db/mysql_shared_compute", "src/db")  
+               output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")       
+            elif 'mysql_ocid' in params:
                 cp_terraform("mysql_existing.tf", "mysql_append.tf")
             else:
                 cp_terraform("mysql.tf", "mysql_append.tf")
