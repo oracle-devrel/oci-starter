@@ -120,6 +120,7 @@ loop_shared_compute() {
   OPTION_DB_INSTALL=shared_compute
   OPTION_UI=html
   OPTION_DB=db_free
+  mkdir_deploy
   build_option   
   OPTION_DB=mysql
   build_option   
