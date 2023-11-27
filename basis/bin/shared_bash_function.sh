@@ -215,10 +215,11 @@ get_user_details() {
   fi
 
   # Find TF_VAR_username based on TF_VAR_user_ocid or the opposite
-  if [ "$TF_VAR_username" != "" ]; then
-    export TF_VAR_user_ocid=`oci iam user list --name $TF_VAR_username | jq -r .data[0].id`
-  elif [ "$TF_VAR_user_ocid" != "" ]; then
+  # In this order, else this is not reentrant. "oci iam user list" require more privileges.  
+  if [ "$TF_VAR_user_ocid" != "" ]; then
     export TF_VAR_username=`oci iam user get --user-id $TF_VAR_user_ocid | jq -r '.data.name'`
+  elif [ "$TF_VAR_username" != "" ]; then
+    export TF_VAR_user_ocid=`oci iam user list --name $TF_VAR_username | jq -r .data[0].id`
   fi  
   auto_echo TF_VAR_username=$TF_VAR_username
   auto_echo TF_VAR_user_ocid=$TF_VAR_user_ocid

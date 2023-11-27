@@ -123,6 +123,7 @@ build_option() {
   if [ "$OPTION_SHAPE" != "amd" ]; then
     NAME=${NAME}-$OPTION_SHAPE
   fi  
+  NAME=${NAME/_/-}
   start_test $NAME
   cd $TEST_HOME/oci-starter
   ./oci_starter.sh \
