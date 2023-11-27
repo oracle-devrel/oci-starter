@@ -113,6 +113,7 @@ loop_lang () {
 
 loop_shared_compute() {
   # Shared compute / LiveLabs Green Button
+  OPTION_SHAPE=amd
   OPTION_LANG=java
   OPTION_JAVA_VM=jdk
   OPTION_JAVA_FRAMEWORK=springboot

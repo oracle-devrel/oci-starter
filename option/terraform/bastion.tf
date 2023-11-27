@@ -46,5 +46,5 @@ resource "oci_core_instance" "starter_bastion" {
 
 # Output the public IPs 
 output "bastion_public_ip" {
-  value = oci_core_instance.starter_bastion.*.public_ip
+  value = oci_core_instance.starter_bastion.public_ip
 }
