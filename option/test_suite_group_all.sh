@@ -45,6 +45,7 @@ loop_shape() {
 }
 
 loop_db() {
+  OPTION_DB_INSTALL=default
   # OPTION_DB=database 
   # loop_ui  
   OPTION_DB=atp 
@@ -110,8 +111,24 @@ loop_lang () {
   loop_ui
 }
 
+loop_shared_compute() {
+  # Shared compute / LiveLabs Green Button
+  OPTION_SHAPE=amd
+  OPTION_LANG=java
+  OPTION_JAVA_VM=jdk
+  OPTION_JAVA_FRAMEWORK=springboot
+  OPTION_DB_INSTALL=shared_compute
+  OPTION_UI=html
+  OPTION_DB=db_free
+  mkdir_deploy
+  build_option   
+  OPTION_DB=mysql
+  build_option   
+}
+
 loop_deploy() {
   OPTION_DEPLOY=compute
+  loop_shared_compute
   loop_lang  
   OPTION_DEPLOY=container_instance 
   loop_lang

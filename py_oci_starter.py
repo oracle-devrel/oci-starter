@@ -80,7 +80,7 @@ default_options = {
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
                       '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid',
                       '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token',
-                      '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape']
+                      '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape','-db_install']
 
 # hidden_options - allowed but not advertised
 hidden_options = ['-zip', '-group_common','-group_name']
@@ -103,7 +103,8 @@ allowed_values = {
     '-license': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
-    '-shape': {'amd','freetier_amd','ampere'}
+    '-shape': {'amd','freetier_amd','ampere'},
+    '-db_install': {'default', 'shared_compute', 'kubernetes'}
 }
 
 def check_values():
@@ -157,7 +158,11 @@ def db_rules():
                          'pluggable': 'system',  'mysql': 'root', 'none': ''}
         params['db_user'] = default_users[params['database']]
     if params.get('database')=='none':
-        params.pop('db_password')   
+        params.pop('db_password')          
+    # shared_compute is valid only in compute deployment
+    if params.get('db_install') == "shared_compute":
+        if params.get('deploy')!='compute':
+            params.pop('db_install')            
 
 
 def language_rules():
@@ -680,7 +685,9 @@ def create_dir_shared():
     # -- Bastion ------------------------------------------------------------
     # Currently limited to provision the database ? 
     # XXXX In the future maybe as build machine ?
-    if 'bastion_ocid' in params:
+    if params.get('db_install') == "shared_compute":
+        cp_terraform("bastion_shared_compute.tf")   
+    elif 'bastion_ocid' in params:
         cp_terraform("bastion_existing.tf")
     elif params.get('database')!='none':
         cp_terraform("bastion.tf")
@@ -849,13 +856,20 @@ def create_output_dir():
 
         if params.get('database') == "db_free":
             cp_dir_src_db("oracle")
-            cp_terraform("db_free_compute.tf")
+            if params.get('db_install') == "shared_compute":
+               cp_terraform("db_free_shared_compute.tf")
+            else:     
+               cp_terraform("db_free.tf")
             output_copy_tree("option/src/db/db_free", "src/db")
             output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
 
         if params.get('database') == "mysql":
             cp_dir_src_db("mysql")
-            if 'mysql_ocid' in params:
+            if params.get('db_install') == "shared_compute":
+               cp_terraform("mysql_shared_compute.tf")   
+               output_copy_tree("option/src/db/mysql_shared_compute", "src/db")  
+               output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")       
+            elif 'mysql_ocid' in params:
                 cp_terraform("mysql_existing.tf", "mysql_append.tf")
             else:
                 cp_terraform("mysql.tf", "mysql_append.tf")
@@ -896,7 +910,7 @@ def create_group_common_dir():
             output_replace_db_node_count()
 
     if "db_free" in a_group_common:
-        cp_terraform("db_free_compute.tf")
+        cp_terraform("db_free.tf")
         output_copy_tree("option/src/db/db_free", "src/db")
         output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")            
 

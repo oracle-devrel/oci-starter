@@ -44,11 +44,7 @@ resource "oci_core_instance" "starter_bastion" {
   freeform_tags = local.freeform_tags   
 }
 
-# Output the private and public IPs of the instance
-output "bastion_private_ips" {
-  value = [oci_core_instance.starter_bastion.*.private_ip]
-}
-
-output "bastion_public_ips" {
-  value = [oci_core_instance.starter_bastion.*.public_ip]
+# Output the public IPs 
+output "bastion_public_ip" {
+  value = oci_core_instance.starter_bastion.public_ip
 }
