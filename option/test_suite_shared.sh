@@ -115,7 +115,7 @@ build_test_destroy () {
 build_option() {
   if [ "$OPTION_DB_INSTALL" == "shared_compute" ]; then
     NAME=shared-compute-${OPTION_DB}
-  if [ "$OPTION_LANG" == "java" ] && [ "$OPTION_DEPLOY" != "function" ]; then
+  elif [ "$OPTION_LANG" == "java" ] && [ "$OPTION_DEPLOY" != "function" ]; then
     NAME=${OPTION_LANG}-${OPTION_JAVA_FRAMEWORK}-${OPTION_JAVA_VM}-${OPTION_DB}-${OPTION_UI}
   else
     NAME=${OPTION_LANG}-${OPTION_DB}-${OPTION_UI}
