@@ -45,7 +45,7 @@ loop_shape() {
 }
 
 loop_db() {
-  OPTION_DB_INSTALL=none
+  OPTION_DB_INSTALL=default
   # OPTION_DB=database 
   # loop_ui  
   OPTION_DB=atp 
@@ -116,7 +116,7 @@ loop_shared_compute() {
   OPTION_LANG=java
   OPTION_JAVA_VM=jdk
   OPTION_JAVA_FRAMEWORK=springboot
-  OPTION_DB_install=shared_compute
+  OPTION_DB_INSTALL=shared_compute
   OPTION_UI=html
   OPTION_DB=db_free
   build_option   
