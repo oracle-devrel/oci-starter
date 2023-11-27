@@ -910,7 +910,7 @@ def create_group_common_dir():
             output_replace_db_node_count()
 
     if "db_free" in a_group_common:
-        cp_terraform("db_free_compute.tf")
+        cp_terraform("db_free.tf")
         output_copy_tree("option/src/db/db_free", "src/db")
         output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")            
 
