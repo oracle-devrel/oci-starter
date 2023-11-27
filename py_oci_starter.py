@@ -158,7 +158,11 @@ def db_rules():
                          'pluggable': 'system',  'mysql': 'root', 'none': ''}
         params['db_user'] = default_users[params['database']]
     if params.get('database')=='none':
-        params.pop('db_password')   
+        params.pop('db_password')          
+    # shared_compute is valid only in compute deployment
+    if params.get('db_install') == "shared_compute":
+        if params.get('deploy')!='compute':
+            params.pop('db_install')            
 
 
 def language_rules():
