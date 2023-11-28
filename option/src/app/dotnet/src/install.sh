@@ -5,5 +5,5 @@ cd $SCRIPT_DIR
 # Install Dotnet
 wget https://dot.net/v1/dotnet-install.sh
 sudo chmod +x ./dotnet-install.sh
-./dotnet-install.sh --version latest
+./dotnet-install.sh --channel 6.0 --version latest
 ls $HOME/.dotnet

@@ -94,7 +94,7 @@ def allowed_options():
 allowed_values = {
     '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
     '-deploy': {'compute', 'kubernetes', 'function', 'container_instance', 'ci', 'hpc', 'datascience'},
-    '-java_framework': {'springboot', 'helidon', 'tomcat', 'micronaut'},
+    '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     '-java_version': {'8', '11', '17', '21'},
     '-kubernetes': {'oke', 'docker'},

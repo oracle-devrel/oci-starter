@@ -34,7 +34,7 @@ install_java() {
       sudo update-alternatives --set java /usr/lib64/graalvm/graalvm22-ee-java17/bin/java
     elif [ "$TF_VAR_java_version" == 21 ]; then
       sudo dnf install -y graalvm-21-jdk
-      sudo update-alternatives --set java /usr/lib64/graalvm/graalvm22-ee-java21/bin/java
+      sudo update-alternatives --set java /usr/lib64/graalvm/graalvm-java21/bin/java
     fi   
   else
     # jdk 
