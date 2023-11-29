@@ -25,10 +25,11 @@ if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
 fi
 
 if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
+  # -Dnet.bytebuddy.experimental=true is needed in helidon 3 for Java 21
   if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
-    mvn package -Pnative-image -Dnative.image.buildStatic -DskipTests
+    mvn package -Pnative-image -Dnative.image.buildStatic -DskipTests -Dnet.bytebuddy.experimental=true
   else 
-    mvn package -DskipTests
+    mvn package -DskipTests -Dnet.bytebuddy.experimental=true
   fi
   exit_on_error  
   cp start.sh install.sh target/.
