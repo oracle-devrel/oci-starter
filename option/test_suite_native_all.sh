@@ -19,6 +19,7 @@ loop_shape() {
 }
 
 loop_db() {
+  OPTION_DB_INSTALL=default
   # OPTION_DB=database 
   # loop_ui  
   OPTION_DB=atp 

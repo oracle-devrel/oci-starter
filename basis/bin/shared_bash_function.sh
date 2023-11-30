@@ -352,3 +352,49 @@ configure() {
     fi
   fi
 } 
+
+java_get_version() {
+  JAVA_VERSION=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
+  JAVA_VERSION_NUMBER=$(echo $JAVA_VERSION | awk -F '.' '{print $1}')
+}
+
+java_home_exists() {
+  if [ -d /$1 ]; then
+    export JAVA_HOME=$1
+    export PATH=$JAVA_HOME/bin:$PATH
+    java -version
+    return 0 
+  fi
+  echo "Not Found $1"
+  return 1
+}
+
+java_check_exact_version() {
+  java_get_version
+  if [[ "$1" = "$JAVA_VERSION_NUMBER" ]]; then
+    echo "Check Java Version OK: Request: $1 = Found: $JAVA_VERSION_NUMBER"
+  else 
+    echo "Check Java Version FAILED: Request: $1 != Found $JAVA_VERSION_NUMBER"
+    exit 1
+  fi
+}
+
+java_find_version() {
+  JAVA_REQUEST=$1
+  java_get_version
+  if [[ "$JAVA_VERSION_NUMBER" < "$JAVA_REQUEST" ]]; then
+    echo "Java Version too small: Found $JAVA_VERSION_NUMBER < Request: $JAVA_REQUEST"
+    echo "Trying to find version $1 in standard Java directory"
+    if java_home_exists /usr/lib64/graalvm/graalvm-java$JAVA_REQUEST; then
+       return;
+    fi; 
+    if java_home_exists /usr/java/jdk-$JAVA_REQUEST; then
+       return;
+    fi; 
+    echo "Not found"
+    exit 1
+  else 
+    echo "Check Java Version OK: Request: $JAVA_REQUEST <= Found: $JAVA_VERSION_NUMBER"
+  fi
+}
+

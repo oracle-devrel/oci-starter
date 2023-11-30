@@ -5,7 +5,7 @@ mv * orig
 curl "https://helidon.io/api/starter/4.0.0/generate?flavor=mp&app-type=database&db.server=oracledb&groupId=helidon&artifactId=helidon&package=helidon" --output helidon.zip
 unzip helidon.zip
 mv helidon/* .
-mv helidon/.*
+mv helidon/.* .
 rmdir helidon
 rm src/main/java/helidon/Pokemon*
 cp orig/*.sh .
