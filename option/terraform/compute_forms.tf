@@ -88,7 +88,7 @@ resource oci_core_instance starter_instance {
       timeout     = "5m"
       user        = "opc"
       private_key = var.ssh_private_key
-      host        = oci_core_instance.forms1.*.public_ip[0]
+      host        = oci_core_instance.starter_instance.public_ip
     }
     source      = "../app/.success"
     destination = "/u01/oracle/.frm_config/msg/.success"  
