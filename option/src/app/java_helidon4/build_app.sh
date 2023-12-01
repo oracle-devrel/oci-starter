@@ -12,6 +12,8 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $BIN_DIR/build_common.sh
 
 java_find_version 21
+exit_on_error
+
 java_build_common
 
 # XXXX microprofile-config.properties values should all go in start.sh like JDBC_USER
