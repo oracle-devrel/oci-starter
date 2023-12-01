@@ -7,7 +7,6 @@ export COLOR_RED='\033[0;31m'
 export COLOR_GREEN='\033[0;32m'
 export COLOR_NONE='\033[0m' 
 
-
 # No color for terraforms logs
 export nocolorarg=1
 

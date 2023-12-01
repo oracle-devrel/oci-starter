@@ -121,8 +121,14 @@ loop_shared_compute() {
   OPTION_UI=html
   OPTION_DB=db_free
   mkdir_deploy
-  build_option   
+  build_option  
   OPTION_DB=mysql
+  build_option   
+
+  # Helidon 4
+  OPTION_DB_INSTALL=default
+  OPTION_DB=ATP
+  OPTION_JAVA_FRAMEWORK=helidon4 
   build_option   
 }
 

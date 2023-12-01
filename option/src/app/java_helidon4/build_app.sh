@@ -11,6 +11,9 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $SCRIPT_DIR/../../env.sh -no-auto
 . $BIN_DIR/build_common.sh
 
+java_find_version 21
+exit_on_error
+
 java_build_common
 
 # XXXX microprofile-config.properties values should all go in start.sh like JDBC_USER
@@ -25,11 +28,10 @@ if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
 fi
 
 if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
-  # -Dnet.bytebuddy.experimental=true is needed in helidon 3 for Java 21
   if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
-    mvn package -Pnative-image -Dnative.image.buildStatic -DskipTests -Dnet.bytebuddy.experimental=true
+    mvn package -Pnative-image -Dnative.image.buildStatic -DskipTests
   else 
-    mvn package -DskipTests -Dnet.bytebuddy.experimental=true
+    mvn package -DskipTests
   fi
   exit_on_error  
   cp start.sh install.sh target/.

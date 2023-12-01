@@ -92,9 +92,9 @@ def allowed_options():
 
 
 allowed_values = {
-    '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
+    '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'forms', 'none'},
     '-deploy': {'compute', 'kubernetes', 'function', 'container_instance', 'ci', 'hpc', 'datascience'},
-    '-java_framework': {'springboot', 'helidon', 'tomcat', 'micronaut'},
+    '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     '-java_version': {'8', '11', '17', '21'},
     '-kubernetes': {'oke', 'docker'},
@@ -806,6 +806,8 @@ def create_output_dir():
         elif params.get('deploy') == "compute":
             if 'compute_ocid' in params:
                 cp_terraform("compute_existing.tf", "compute_append.tf")
+            elif params.get("language") == 'forms':
+                cp_terraform("compute_forms.tf", "compute_append.tf")
             else:
                 cp_terraform("compute.tf", "compute_append.tf")            
             output_mkdir("src/compute")
@@ -951,6 +953,8 @@ def create_group_common_dir():
     if 'compute' in a_group_common:
         if 'compute_ocid' in params:
             cp_terraform("compute_existing.tf", "compute_append.tf")
+        elif params.get("language") == 'forms':
+            cp_terraform("compute_forms.tf", "compute_append.tf")            
         else:
             cp_terraform("compute.tf", "compute_append.tf")            
 
