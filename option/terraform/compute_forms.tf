@@ -53,11 +53,6 @@ output "image_id" {
   value = [data.oci_marketplace_listing_package.forms_listing_package.image_id]
 }
 
-data "oci_identity_availability_domain" "ad" {
-  compartment_id = var.tenancy_ocid
-  ad_number      = "1"
-}
-
 resource oci_core_instance starter_instance {
 
   availability_domain = data.oci_identity_availability_domain.ad.name
