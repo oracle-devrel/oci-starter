@@ -1005,12 +1005,16 @@ jinja2_db_params = {
         "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
     },
     "psql": { 
-        "pomGroupId": "mysql",
-        "pomArtifactId": "mysql-connector-java",
-        "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
+        "pomGroupId": "org.postgresql",
+        "pomArtifactId": "postgresql",
+        "pomVersion": "42.6",
+        "jdbcDriverClassName": "org.postgresql.Driver"
     },
     "none": {}
 }
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+org.postgresql
 
 def jinja2_replace_template():
     db_param = jinja2_db_params.get( params.get('db_family') )
