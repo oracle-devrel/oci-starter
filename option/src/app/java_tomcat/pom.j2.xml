@@ -6,12 +6,14 @@
   <version>1.0</version>
   <packaging>war</packaging>
   <dependencies>
+{%- if db_family !="none" %}  
 		<dependency>
-			<groupId>com.oracle.database.jdbc</groupId>
-			<artifactId>ojdbc8</artifactId>
+			<groupId>{{ pomGroupId }}</groupId>
+			<artifactId>{{ pomArtifactId }}</artifactId>
 			<scope>runtime</scope>
-      <version>19.3.0.0</version>
+      <version>{{ pomVersion }}</version>
 		</dependency>  
+{%- endif %}    
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>

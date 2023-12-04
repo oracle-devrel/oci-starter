@@ -995,11 +995,13 @@ jinja2_db_params = {
     "oracle": { 
         "pomGroupId": "com.oracle.database.jdbc",
         "pomArtifactId": "ojdbc8",
+        "pomVersion": "19.3.0.0",
         "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
     },
     "mysql": { 
         "pomGroupId": "mysql",
         "pomArtifactId": "mysql-connector-java",
+        "pomVersion": "19.3.0.0",
         "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
     },
     "psql": { 

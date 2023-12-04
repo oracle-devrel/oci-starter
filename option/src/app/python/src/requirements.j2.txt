@@ -1,0 +1,7 @@
+Flask
+flask-cors
+{%- if db_family == "oracle" %}
+oracledb
+{%- elif db_family == "mysql" %}
+mysql-connector-python
+{%- endif %}
