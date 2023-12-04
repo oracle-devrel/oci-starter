@@ -128,6 +128,18 @@ resource "oci_core_security_list" "starter_security_list" {
     }
   }  
 
+  // PostgreSQL
+  ingress_security_rules {
+    protocol  = "6" // tcp
+    source    = "10.0.0.0/8"
+    stateless = false
+
+    tcp_options {
+      min = 5432
+      max = 5433
+    }
+  }  
+
   // External access to Kubernetes API endpoint
   ingress_security_rules {
     protocol  = "6" // tcp
