@@ -1103,8 +1103,7 @@ if 'group_common' in params:
 
 if 'deploy' in params:
     create_output_dir()
-
-jinja2_replace_template();  
+    jinja2_replace_template()
 
 # -- Done --------------------------------------------------------------------
 title("Done")
