@@ -50,6 +50,8 @@ loop_db() {
   # loop_ui  
   OPTION_DB=atp 
   loop_shape
+  OPTION_DB=psql 
+  loop_shape  
   OPTION_DB=mysql
   loop_shape
   OPTION_DB=none

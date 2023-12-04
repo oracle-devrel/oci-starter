@@ -145,6 +145,7 @@ build_option() {
        -atp_ocid $TF_VAR_atp_ocid \
        -db_ocid $TF_VAR_db_ocid \
        -mysql_ocid $TF_VAR_mysql_ocid \
+       -psql_ocid $TF_VAR_psql_ocid \
        -auth_token $OCI_TOKEN \
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
@@ -185,7 +186,7 @@ pre_test_suite() {
   git clone https://github.com/mgueury/oci-starter
 
   cd $TEST_HOME/oci-starter
-  ./oci_starter.sh -group_name tsall -group_common atp,mysql,database,fnapp,apigw,oke,db_free -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
+  ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,database,fnapp,apigw,oke,db_free -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
   ./build.sh
