@@ -1,17 +1,18 @@
 micronaut:
   application:
     name: demo
-{% if database !="none" -%}
+{% if db_family !="none" -%}
 datasources:
   default:
     url: ${JDBC_URL}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
-    {% if database == "oracle" -%}
+    db_family: {{ db_family }}
+    {% if db_family == "oracle" -%}
     driverClassName: oracle.jdbc.OracleDriver
     db-type: oracle
     dialect: oracle
-    {% elif database == "mysql" -%}
+    {% elif db_family == "mysql" -%}
     driverClassName: com.mysql.cj.jdbc.Driver
     dialect: mysql
     {% endif %}
