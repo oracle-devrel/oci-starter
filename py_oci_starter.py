@@ -1012,18 +1012,17 @@ jinja2_db_params = {
 
 def jinja2_replace_template():
     for subdir, dirs, files in os.walk(output_dir):
-        for file in files:    
-            file_path = os.path.join(subdir, file)
-            if file.endswith('.j2'):
+        for filename in files:    
+            if filename.endswith('.j2'):
                 environment = Environment(loader=FileSystemLoader(subdir))
-                template = environment.get_template(file)
+                template = environment.get_template(filename)
                 db_param = jinja2_db_params.get( params.get('db_family') )
                 content = template.render( params )
                 output_filename = filename.replace(".j2", "")
                 with open(output_filename, mode="w", encoding="utf-8") as output_file:
                     output_file.write(content)
                     print(f"Wrote {output_file}")
-                os.remove(file_path)     
+                os.remove(os.path.join(subdir, filename))     
 
 #----------------------------------------------------------------------------
 
