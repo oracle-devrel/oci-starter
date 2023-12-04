@@ -1016,7 +1016,7 @@ def jinja2_replace_template():
 
     for subdir, dirs, files in os.walk(output_dir):
         for filename in files:    
-            if filename.index('.j2.')>0:
+            if filename.find('.j2.')>0:
                 environment = Environment(loader=FileSystemLoader(subdir))
                 template = environment.get_template(filename)
                 db_param = jinja2_db_params.get( params.get('db_family') )
