@@ -32,8 +32,8 @@
 
   <dependencies>
 		<dependency>
-			<groupId>com.oracle.database.jdbc</groupId>
-			<artifactId>ojdbc8</artifactId>
+			<groupId>{{ pomGroupId }}</groupId>
+			<artifactId>{{ pomArtifactId }}</artifactId>
 			<scope>runtime</scope>
 		</dependency>  
     <dependency>

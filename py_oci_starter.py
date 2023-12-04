@@ -993,31 +993,34 @@ def create_group_common_dir():
 
 jinja2_db_params = {
     "oracle": { 
-        "pom-groupId": "com.oracle.database.jdbc",
-        "pom-artifactId": "ojdbc8",
+        "pomGroupId": "com.oracle.database.jdbc",
+        "pomArtifactId": "ojdbc8",
         "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
     },
     "mysql": { 
-        "pom-groupId": "mysql",
-        "pom-artifactId": "mysql-connector-java",
+        "pomGroupId": "mysql",
+        "pomArtifactId": "mysql-connector-java",
         "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
     },
-    "plsql": { 
-        "pom-groupId": "mysql",
-        "pom-artifactId": "mysql-connector-java",
+    "psql": { 
+        "pomGroupId": "mysql",
+        "pomArtifactId": "mysql-connector-java",
         "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
     },
     "none": {}
 }
 
 def jinja2_replace_template():
+    db_param = jinja2_db_params.get( params.get('db_family') )
+    template_param = {**params, **db_param}
+
     for subdir, dirs, files in os.walk(output_dir):
         for filename in files:    
-            if filename.endswith('.j2'):
+            if filename.index('.j2.')>0:
                 environment = Environment(loader=FileSystemLoader(subdir))
                 template = environment.get_template(filename)
                 db_param = jinja2_db_params.get( params.get('db_family') )
-                content = template.render( params )
+                content = template.render( template_param )
                 output_file_path = os.path.join(subdir, filename.replace(".j2", ""))
                 with open(output_file_path, mode="w", encoding="utf-8") as output_file:
                     output_file.write(content)
