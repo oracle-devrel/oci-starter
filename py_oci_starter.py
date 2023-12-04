@@ -11,6 +11,7 @@ import shutil
 import json
 from datetime import datetime
 from distutils.dir_util import copy_tree
+from jinja2 import Environment, FileSystemLoader
 
 ## constants ################################################################
 
@@ -715,6 +716,7 @@ def create_output_dir():
             app_db = "psql"
         elif params['database'] == "none":
             app_db = "none"
+        params['db_family'] = app_db    
 
         # Function Common
         if params.get('deploy') == "function":
@@ -893,7 +895,9 @@ def create_output_dir():
             src_path = os.path.join("src/app/db", f)
             dst_path = os.path.join("src/db", f)
             output_move(src_path, dst_path) 
-        os.rmdir(output_dir + "/src/app/db")                   
+        os.rmdir(output_dir + "/src/app/db")    
+
+    jinja2_replace_template( output_dir );                   
 
 #----------------------------------------------------------------------------
 # Create group_common Directory
@@ -987,6 +991,42 @@ def create_group_common_dir():
 
     output_copy_tree("option/group", ".")
     
+#----------------------------------------------------------------------------
+
+db_params = {
+    "oracle": { 
+        "pom-groupId": "com.oracle.database.jdbc",
+        "pom-artifactId": "ojdbc8",
+        "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
+    },
+    "mysql": { 
+        "pom-groupId": "mysql",
+        "pom-artifactId": "mysql-connector-java",
+        "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
+    },
+    "plsql": { 
+        "pom-groupId": "mysql",
+        "pom-artifactId": "mysql-connector-java",
+        "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
+    },
+    "none": {}
+}
+
+def jinja2_replace_template():
+    for subdir, dirs, files in os.walk(output_dir):
+        for file in files:    
+            file_path = os.path.join(subdir, file)
+            if file.endswith('.j2'):
+                environment = Environment(loader=FileSystemLoader(subdir))
+                template = environment.get_template(file)
+                db_param = db_params( params.get('db_family') )
+                content = template.render( params, db_param )
+                output_filename = filename.replace(".j2", "")
+                with open(output_filename, mode="w", encoding="utf-8") as output_file:
+                    output_file.write(content)
+                    print(f"Wrote {output_file}")
+                os.remove(file_path)     
+
 #----------------------------------------------------------------------------
 
 # the script
