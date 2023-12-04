@@ -1012,9 +1012,6 @@ jinja2_db_params = {
     },
     "none": {}
 }
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-org.postgresql
 
 def jinja2_replace_template():
     db_param = jinja2_db_params.get( params.get('db_family') )
