@@ -17,6 +17,18 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
+{%- if db_family != "none" %}  
+		<dependency>
+			<groupId>{{ pomGroupId }}</groupId>
+			<artifactId>{{ pomArtifactId }}</artifactId>
+		</dependency>  
+{%- endif %}    	
+{%- if db_family == "oracle" %}  
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ucp</artifactId>
+		</dependency>		
+{%- endif %}    	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
