@@ -16,7 +16,7 @@ resource "oci_psql_db_system" "starter_psql" {
     system_type = "OCI_OPTIMIZED_STORAGE"
   }
   credentials {
-    username = "adminUser"
+    username = "postgres"
     password_details {
       password_type = "PLAIN_TEXT"
       password = var.db_password
