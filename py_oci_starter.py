@@ -1022,7 +1022,7 @@ def jinja2_replace_template():
                 with open(output_filename, mode="w", encoding="utf-8") as output_file:
                     output_file.write(content)
                     print(f"Wrote {output_file}")
-                os.remove(os.path.join(subdir, filename))     
+                # os.remove(os.path.join(subdir, filename))     
 
 #----------------------------------------------------------------------------
 
