@@ -895,9 +895,7 @@ def create_output_dir():
             src_path = os.path.join("src/app/db", f)
             dst_path = os.path.join("src/db", f)
             output_move(src_path, dst_path) 
-        os.rmdir(output_dir + "/src/app/db")    
-
-    jinja2_replace_template( output_dir );                   
+        os.rmdir(output_dir + "/src/app/db")                     
 
 #----------------------------------------------------------------------------
 # Create group_common Directory
@@ -993,7 +991,7 @@ def create_group_common_dir():
     
 #----------------------------------------------------------------------------
 
-db_params = {
+jinja2_db_params = {
     "oracle": { 
         "pom-groupId": "com.oracle.database.jdbc",
         "pom-artifactId": "ojdbc8",
@@ -1019,7 +1017,7 @@ def jinja2_replace_template():
             if file.endswith('.j2'):
                 environment = Environment(loader=FileSystemLoader(subdir))
                 template = environment.get_template(file)
-                db_param = db_params( params.get('db_family') )
+                db_param = jinja2_db_params( params.get('db_family') )
                 content = template.render( params, db_param )
                 output_filename = filename.replace(".j2", "")
                 with open(output_filename, mode="w", encoding="utf-8") as output_file:
@@ -1101,6 +1099,8 @@ if 'group_common' in params:
 
 if 'deploy' in params:
     create_output_dir()
+
+jinja2_replace_template();  
 
 # -- Done --------------------------------------------------------------------
 title("Done")
