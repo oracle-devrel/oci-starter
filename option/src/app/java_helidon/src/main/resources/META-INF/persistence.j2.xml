@@ -25,7 +25,11 @@
         <jta-data-source>ds1</jta-data-source>
         <class>me.opc.mp.database.Dept</class>       
         <properties>
+   	        {%- if db_family == "oracle" %}
             <property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect"/>
+	        {%- elif db_family == "mysql" %}
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>            
+	        {%- endif %}        
         </properties>
     </persistence-unit>
 </persistence>

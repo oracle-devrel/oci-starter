@@ -17,6 +17,13 @@
     </properties>
 
     <dependencies>
+{%- if db_family != "none" %}  
+		<dependency>
+			<groupId>{{ pomGroupId }}</groupId>
+			<artifactId>{{ pomArtifactId }}</artifactId>
+            <scope>runtime</scope>
+		</dependency>  
+{%- endif %}    	
         <dependency>
             <groupId>io.helidon.microprofile.bundles</groupId>
             <artifactId>helidon-microprofile-core</artifactId>
@@ -51,12 +58,6 @@
             <groupId>io.helidon.integrations.cdi</groupId>
             <artifactId>helidon-integrations-cdi-datasource-hikaricp</artifactId>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc8-production</artifactId>
-            <scope>runtime</scope>
-            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>jakarta.annotation</groupId>
