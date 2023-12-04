@@ -1017,7 +1017,7 @@ def jinja2_replace_template():
             if file.endswith('.j2'):
                 environment = Environment(loader=FileSystemLoader(subdir))
                 template = environment.get_template(file)
-                db_param = jinja2_db_params( params.get('db_family') )
+                db_param = jinja2_db_param.get( params.get('db_family') )
                 content = template.render( params, db_param )
                 output_filename = filename.replace(".j2", "")
                 with open(output_filename, mode="w", encoding="utf-8") as output_file:
