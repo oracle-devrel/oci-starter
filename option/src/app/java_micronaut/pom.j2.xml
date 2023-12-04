@@ -31,11 +31,13 @@
   </repositories>
 
   <dependencies>
+{%- if db_family !="none" %}  
 		<dependency>
 			<groupId>{{ pomGroupId }}</groupId>
 			<artifactId>{{ pomArtifactId }}</artifactId>
 			<scope>runtime</scope>
 		</dependency>  
+{%- endif %}    
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-inject</artifactId>
