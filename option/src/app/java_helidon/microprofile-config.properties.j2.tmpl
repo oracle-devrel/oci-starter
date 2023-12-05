@@ -14,8 +14,11 @@ app.greeting=Hello
 javax.sql.DataSource.ds1.dataSourceClassName=oracle.jdbc.pool.OracleDataSource
 {%- elif db_family == "mysql" %}
 javax.sql.DataSource.ds1.dataSourceClassName=com.mysql.cj.jdbc.MysqlDataSource
-{%- endif %}    
+{%- elif db_family == "psql" %}
+javax.sql.DataSource.ds1.dataSourceClassName=org.postgresql.jdbc3.Jdbc3PoolingDataSource
+{%- endif %}
 javax.sql.DataSource.ds1.dataSource.url=##JDBC_URL##
 javax.sql.DataSource.ds1.dataSource.user=##DB_USER##
 javax.sql.DataSource.ds1.dataSource.password=##DB_PASSWORD##
-{%- endif %}    
+{%- endif %}
+

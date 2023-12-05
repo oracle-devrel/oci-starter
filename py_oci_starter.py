@@ -1001,13 +1001,13 @@ jinja2_db_params = {
     "mysql": { 
         "pomGroupId": "mysql",
         "pomArtifactId": "mysql-connector-java",
-        "pomVersion": "19.3.0.0",
+        "pomVersion": "8.0.31",
         "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
     },
     "psql": { 
         "pomGroupId": "org.postgresql",
         "pomArtifactId": "postgresql",
-        "pomVersion": "42.6",
+        "pomVersion": "42.7.0",
         "jdbcDriverClassName": "org.postgresql.Driver"
     },
     "none": {}

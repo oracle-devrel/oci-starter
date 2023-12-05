@@ -4,4 +4,6 @@ flask-cors
 oracledb
 {%- elif db_family == "mysql" %}
 mysql-connector-python
+{%- elif db_family == "psql" %}
+psycopg2
 {%- endif %}

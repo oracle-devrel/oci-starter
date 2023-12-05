@@ -29,7 +29,11 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect"/>
 	        {%- elif db_family == "mysql" %}
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>            
+	        {%- elif db_family == "psql" %}
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>            
 	        {%- endif %}        
         </properties>
     </persistence-unit>
 </persistence>
+
+

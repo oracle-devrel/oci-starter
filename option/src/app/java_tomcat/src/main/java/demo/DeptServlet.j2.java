@@ -37,11 +37,7 @@ public class DeptServlet extends HttpServlet {
 		StringBuffer sb = new StringBuffer();
 		sb.append("[");
 		try {
-			if (dbUrl.indexOf("oracle") > 0) {
-				Class.forName("oracle.jdbc.driver.OracleDriver");
-			} else {
-				Class.forName("com.mysql.cj.jdbc.Driver");
-			}
+  		    Class.forName("{{ jdbcDriverClassName }}");
 			Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM dept");

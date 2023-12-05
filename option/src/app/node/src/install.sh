@@ -7,11 +7,5 @@ cd $SCRIPT_DIR
 sudo dnf module enable -y nodejs:18
 sudo dnf module install -y nodejs
 
-# ORACLE Instant Client (Not needed since Thin driver in oracledb-6.0.0)
-# https://docs.oracle.com/en/database/oracle/oracle-database/21/lacli/install-instant-client-using-rpm.html
-# sudo dnf install -y oracle-instantclient-release-el8
-# sudo dnf install -y oracle-instantclient-basic
-# sudo dnf install -y oracle-instantclient-sqlplus
-
 npm install
 

@@ -7,11 +7,13 @@
       "starter"
     ],
     "dependencies": {
-        "express": "^4.18.2",
+        "express": "^4.18.2"
         {%- if db_family == "oracle" %}
-        "oracledb": "^6.0.0"
+        ,"oracledb": "^6.0.0"
         {%- elif db_family == "mysql" %}
-        "mysql2": "^2.3.3"
+        ,"mysql2": "^2.3.3"
+        {%- elif db_family == "psql" %}
+        ,"pg": "^8.11.3"
         {%- endif %}        
     },
     "author": "You",

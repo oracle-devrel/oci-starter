@@ -7,5 +7,7 @@ require (
 	github.com/godror/godror v0.35.1
 	{%- elif db_family == "mysql" %}
 	github.com/go-sql-driver/mysql v1.7.0
+	{%- elif db_family == "psql" %}
+	github.com/lib/pq v1.10.9
 	{%- endif %}
 )
