@@ -13,19 +13,10 @@ import java.io.IOException;
  * Servlet implementation class DeptServlet
  */
 public class DeptServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private String dbUrl;
-	private String dbUser;
-	private String dbPassword;
-
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public DeptServlet() {
-		dbUrl = System.getenv("JDBC_URL");
-		dbUser = System.getenv("DB_USER");
-		dbPassword = System.getenv("DB_PASSWORD");
-	}
+	public DeptServlet() {}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -38,7 +29,7 @@ public class DeptServlet extends HttpServlet {
 		sb.append("[");
 		try {
   		    Class.forName("{{ jdbcDriverClassName }}");
-			Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+			Connection conn = DriverManager.getConnection(System.getenv("JDBC_URL"), System.getenv("DB_USER"), System.getenv("DB_PASSWORD"));
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM dept");
 			while (rs.next()) {
