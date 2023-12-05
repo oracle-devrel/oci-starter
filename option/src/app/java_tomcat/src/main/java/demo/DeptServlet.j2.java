@@ -28,7 +28,7 @@ public class DeptServlet extends HttpServlet {
 		StringBuffer sb = new StringBuffer();
 		sb.append("[");
 		try {
-  		    Class.forName("{{ jdbcDriverClassName }}");
+  	        Class.forName("{{ jdbcDriverClassName }}");
 			Connection conn = DriverManager.getConnection(System.getenv("JDBC_URL"), System.getenv("DB_USER"), System.getenv("DB_PASSWORD"));
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM dept");
