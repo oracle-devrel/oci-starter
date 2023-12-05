@@ -6,13 +6,14 @@ import oracle.ucp.jdbc.PoolDataSourceFactory;
 import com.fnproject.fn.api.RuntimeContext;
 
 public class HelloFunction {
-  private PoolDataSource poolDataSource;
 
   private final String dbUser = System.getenv().get("DB_USER");
   private final String dbPassword = System.getenv().get("DB_PASSWORD");
   private final String dbUrl = System.getenv().get("DB_URL");
 
+	{%- if db_family == "oracle" %}
   final static String CONN_FACTORY_CLASS_NAME = "oracle.jdbc.pool.OracleDataSource";
+  private PoolDataSource poolDataSource;
 
   public HelloFunction() {
     System.out.println("Setting up pool data source");
@@ -30,6 +31,9 @@ public class HelloFunction {
     System.out.println("Pool data source setup...");
     System.setProperty("oracle.jdbc.fanEnabled", "false");
   }
+  {%- else %}
+  public HelloFunction() {}
+  {%- endif %}	
 
   public String handleRequest(String input) {
     // System.out.println("dbUser=" + dbUser + " / dbPassword=" + dbPassword + " / dbUurl=" + dbUrl);
@@ -38,8 +42,12 @@ public class HelloFunction {
     sb.append("[");
     try {
       System.out.println("Before classForName");
-      Class.forName("oracle.jdbc.driver.OracleDriver");
+      Class.forName("{{ jdbcDriverClassName  }}r");
+      {%- if db_family == "oracle" %}
       Connection conn = poolDataSource.getConnection();
+      {%- else %}
+      Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+      {%- endif %}	
       System.out.println("After connection");
       Statement stmt = conn.createStatement();
       ResultSet rs = stmt.executeQuery("SELECT * FROM dept");
@@ -59,5 +67,4 @@ public class HelloFunction {
     sb.append("]");
     return sb.toString();
   }
-
 }

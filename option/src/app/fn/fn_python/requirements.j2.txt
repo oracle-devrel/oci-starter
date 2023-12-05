@@ -1,0 +1,9 @@
+fdk
+{%- if db_family == "oracle" %}
+oracledb
+{%- elif db_family == "mysql" %}
+# 8.0.29 removed the support for Python 3.6 used
+mysql-connector-python==8.0.28
+{%- elif db_family == "psql" %}
+psycopg2
+{%- endif %}

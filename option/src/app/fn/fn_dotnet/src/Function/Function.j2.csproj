@@ -7,6 +7,12 @@
 
   <ItemGroup>
     <PackageReference Include="Fnproject.Fn.Fdk" Version="1.0.7" />
+    {%- if db_family == "oracle" %}
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.90" />
+	  {%- elif db_family == "mysql" %}
+	  <PackageReference Include="MySql.Data" Version="8.0.31" />
+	  {%- elif db_family == "psql" %}
+	  <PackageReference Include="Npgsql" Version="8.0.1" />
+	  {%- endif %}
   </ItemGroup>
 </Project>
