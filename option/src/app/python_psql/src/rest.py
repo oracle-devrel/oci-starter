@@ -9,8 +9,9 @@ def dept():
         conn = conn = psycopg2.connect(
             host=os.getenv('DB_URL'),
             database="postgres",
-            user=os.getenv('DB_PASSWORD'),
-            password=os.getenv('DB_PASSWORD'))
+            user=os.getenv('DB_USER'),
+            password=os.getenv('DB_PASSWORD'),
+            sslmode='require' )
         cursor = conn.cursor()
         cursor.execute("SELECT deptno, dname, loc FROM dept")
         deptRows = cursor.fetchall()
