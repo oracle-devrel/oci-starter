@@ -37,7 +37,7 @@ namespace Function
                     {
                         bFirst = false;
                     }
-                    result += "{ \"deptno\": \"" + reader.GetString(0) + "\", \"dname\": \"" + reader.GetString(1) + "\", \"loc\": \"" + reader.GetString(2) + "\"}";
+                    result += "{ \"deptno\": \"" + reader.GetInt64(0).ToString() + "\", \"dname\": \"" + reader.GetString(1) + "\", \"loc\": \"" + reader.GetString(2) + "\"}";
                 }
                 reader.Dispose();
             }

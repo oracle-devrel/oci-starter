@@ -12,6 +12,7 @@ get_ui_url
 
 echo 
 echo "Build done"
+
 if [ ! -z "$UI_URL" ]; then
   # Check the URL if running in the test_suite
   if [ ! -z "$TEST_NAME" ]; then
@@ -26,25 +27,30 @@ if [ ! -z "$UI_URL" ]; then
 
     # Retry several time. Needed for ORDS or Go or Tomcat that takes more time to start
     x=1
-    while [ $x -le 5 ]
+    while [ $x -le 20 ]
     do
-      rm /tmp/cookie.txt
-      curl $UI_URL/app/dept -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_json.log > /tmp/result.json
+      if [ -f "/tmp/cookie.txt" ]; then
+        rm /tmp/cookie.txt
+      fi  
+      curl $UI_URL/app/dept -b /tmp/cookie.txt -c /tmp/cookie.txt -L -D /tmp/result_json.log > /tmp/result.json
       if grep -q -i "deptno" /tmp/result.json; then
-        echo "OK"
+        echo "----- OK ----- deptno detected in $UI_URL/app/dept"
        	break
       fi
-      echo "WARNING: /app/dept does not contain 'deptno'. Retrying in 10 secs"
-      sleep 10  
+      sleep 5  
       x=$(( $x + 1 ))
     done
     if [ "$TF_VAR_ui_strategy" != "api" ]; then
-      rm /tmp/cookie.txt
+      if [ -f "/tmp/cookie.txt" ]; then
+        rm /tmp/cookie.txt
+      fi  
       curl $UI_URL/ -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_html.log > /tmp/result.html
     else 
       echo "OCI Starter" > /tmp/result.html
     fi  
-    rm /tmp/cookie.txt
+    if [ -f "/tmp/cookie.txt" ]; then
+      rm /tmp/cookie.txt
+    fi  
     curl $UI_URL/app/info -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_info.log > /tmp/result.info
   fi
   if [ "$TF_VAR_ui_strategy" != "api" ]; then
