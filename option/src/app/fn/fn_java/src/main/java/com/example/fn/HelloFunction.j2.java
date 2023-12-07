@@ -1,9 +1,11 @@
 package com.example.fn;
 
+import com.fnproject.fn.api.RuntimeContext;
 import java.sql.*;
+{%- if db_family == "oracle" %}
 import oracle.ucp.jdbc.PoolDataSource;
 import oracle.ucp.jdbc.PoolDataSourceFactory;
-import com.fnproject.fn.api.RuntimeContext;
+{%- endif %}	
 
 public class HelloFunction {
 
