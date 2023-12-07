@@ -41,6 +41,9 @@ build_test () {
   cd $TEST_HOME
   cd $TEST_DIR
   pwd
+  if [ -z $GENERATE_ONLY ]; then
+    return
+  fi
   ./build.sh > build_$BUILD_ID.log 2>&1
 
   CSV_NAME=$NAME
@@ -167,7 +170,7 @@ build_option() {
 # Create the $OPTION_DEPLOY directory
 mkdir_deploy() {
   mkdir $TEST_HOME/$OPTION_DEPLOY
-  echo ". $PROJECT_DIR/../../group_common_env.sh" > $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
+  echo '. $PROJECT_DIR/../../group_common_env.sh' > $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
   chmod +x $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
 }
 
