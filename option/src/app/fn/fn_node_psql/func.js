@@ -14,7 +14,6 @@ fdk.handle(async function() {
             rejectUnauthorized: false
         }
       })
-    const [rows, fields] = await pool.query("SELECT deptno, dname, loc FROM dept");
-    connection.end();   
-    return rows.rows;
+    response = await pool.query("SELECT deptno, dname, loc FROM dept");
+    return response.rows;
 })

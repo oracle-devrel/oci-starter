@@ -9,11 +9,13 @@ import oracle.ucp.jdbc.PoolDataSourceFactory;
 
 public class HelloFunction {
 
+	{%- if db_family != "none" %}
   private final String dbUser = System.getenv().get("DB_USER");
   private final String dbPassword = System.getenv().get("DB_PASSWORD");
   private final String dbUrl = System.getenv().get("DB_URL");
+  {%- endif %}	
 
-	{%- if db_family == "oracle" %}
+  {%- if db_family == "oracle" %}
   final static String CONN_FACTORY_CLASS_NAME = "oracle.jdbc.pool.OracleDataSource";
   private PoolDataSource poolDataSource;
 
@@ -38,6 +40,16 @@ public class HelloFunction {
   {%- endif %}	
 
   public String handleRequest(String input) {
+    {%- if db_family == "none" %}
+		return """
+ 		[ 
+			{ "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"},
+			{ "deptno": "20", "dname": "RESEARCH", "loc": "Cape Town"},
+			{ "deptno": "30", "dname": "SALES", "loc": "Brussels"},
+			{ "deptno": "40", "dname": "OPERATIONS", "loc": "San Francisco"}
+		] 
+		""";
+    {%- else %}
     // System.out.println("dbUser=" + dbUser + " / dbPassword=" + dbPassword + " / dbUurl=" + dbUrl);
     int counter = 0;
     StringBuffer sb = new StringBuffer();
@@ -68,5 +80,6 @@ public class HelloFunction {
     }
     sb.append("]");
     return sb.toString();
+    {%- endif %}	
   }
 }
