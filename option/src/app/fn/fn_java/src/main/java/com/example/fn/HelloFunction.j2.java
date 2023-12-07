@@ -44,7 +44,7 @@ public class HelloFunction {
     sb.append("[");
     try {
       System.out.println("Before classForName");
-      Class.forName("{{ jdbcDriverClassName  }}r");
+      Class.forName("{{ jdbcDriverClassName  }}");
       {%- if db_family == "oracle" %}
       Connection conn = poolDataSource.getConnection();
       {%- else %}
