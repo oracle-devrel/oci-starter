@@ -1,5 +1,5 @@
 schema_version: 20180708
-name: fn-node-mysql
+name: fn-node-none
 version: 0.0.1
 runtime: node
 build_image: fnproject/node:14-dev

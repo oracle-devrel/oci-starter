@@ -1,3 +1,9 @@
+resource "random_string" "id" {
+  length  = 4
+  special = false
+  upper = false
+}
+
 resource "oci_database_autonomous_database" "starter_atp" {
   #Required
   admin_password           = var.db_password

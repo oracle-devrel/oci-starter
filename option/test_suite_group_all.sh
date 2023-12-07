@@ -50,6 +50,8 @@ loop_db() {
   # loop_ui  
   OPTION_DB=atp 
   loop_shape
+  OPTION_DB=psql 
+  loop_shape  
   OPTION_DB=mysql
   loop_shape
   OPTION_DB=none
@@ -144,8 +146,20 @@ loop_deploy() {
   loop_lang
 }
 
+generate_only() {
+  if [ -d $TEST_HOME ]; then    
+    echo "$TEST_HOME directory detected"
+  else
+    echo "$TEST_HOME does not exist"
+    exit
+  fi
+  rm -rf $TEST_HOME/compute $TEST_HOME/kubernetes $TEST_HOME/container_instance $TEST_HOME/function
+  export GENERATE_ONLY=true
+}
+
 pre_test_suite
 # pre_git_refresh
+# generate_only
 cd $TEST_HOME
 . ./group_common_env.sh
 loop_deploy

@@ -1,0 +1,21 @@
+{
+    "name": "Starter",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Starter app",
+    "keywords": [
+      "starter"
+    ],
+    "dependencies": {
+        "express": "^4.18.2"
+        {%- if db_family == "oracle" %}
+        ,"oracledb": "^6.0.0"
+        {%- elif db_family == "mysql" %}
+        ,"mysql2": "^2.3.3"
+        {%- elif db_family == "psql" %}
+        ,"pg": "^8.11.3"
+        {%- endif %}        
+    },
+    "author": "You",
+    "license": "MIT"
+  }

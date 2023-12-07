@@ -108,6 +108,7 @@ build_test_destroy () {
   fi
   if [ "$CSV_JSON_OK" != "1" ] || [ "$CSV_HTML_OK" != "1" ]; then
     echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,$OPTION_JAVA_FRAMEWORK,$OPTION_JAVA_VM,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/errors.csv 
+    echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/error_rerun.sh
   fi
 }
 
@@ -145,6 +146,7 @@ build_option() {
        -atp_ocid $TF_VAR_atp_ocid \
        -db_ocid $TF_VAR_db_ocid \
        -mysql_ocid $TF_VAR_mysql_ocid \
+       -psql_ocid $TF_VAR_psql_ocid \
        -auth_token $OCI_TOKEN \
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
@@ -156,8 +158,10 @@ build_option() {
     mkdir output/target
     cp $TEST_HOME/group_common/target/ssh* output/target/.
     rm -Rf $TEST_DIR
-    mv output $TEST_DIR               
-    build_test_destroy
+    mv output $TEST_DIR    
+    if [ -z $GENERATE_ONLY ]; then
+      build_test_destroy
+    fi           
   else
     echo "Error: no output directory"  
   fi  
@@ -166,7 +170,7 @@ build_option() {
 # Create the $OPTION_DEPLOY directory
 mkdir_deploy() {
   mkdir $TEST_HOME/$OPTION_DEPLOY
-  echo ". ../../group_common_env.sh" > $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
+  echo '. $PROJECT_DIR/../../group_common_env.sh' > $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
   chmod +x $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
 }
 
@@ -185,7 +189,7 @@ pre_test_suite() {
   git clone https://github.com/mgueury/oci-starter
 
   cd $TEST_HOME/oci-starter
-  ./oci_starter.sh -group_name tsall -group_common atp,mysql,database,fnapp,apigw,oke,db_free -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
+  ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,database,fnapp,apigw,oke,db_free -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
   ./build.sh

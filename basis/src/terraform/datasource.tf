@@ -110,9 +110,3 @@ locals {
   ocir_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace")
   ocir_username = join( "/", [ coalesce(local.ocir_namespace, "missing_privilege"), var.username ])
 }
-
-resource "random_string" "id" {
-  length  = 4
-  special = false
-  upper = false
-}
