@@ -51,7 +51,11 @@ build_function() {
   fn update context oracle.compartment-id ${TF_VAR_compartment_ocid}
   fn update context api-url https://functions.${TF_VAR_region}.oraclecloud.com
   fn update context registry ${TF_VAR_ocir}/${TF_VAR_namespace}
+  # Set pipefail to get the error despite pip to tee
+  set -o pipefail
   fn build -v | tee $TARGET_DIR/fn_build.log
+  exit_on_error
+
   if grep --quiet "built successfully" $TARGET_DIR/fn_build.log; then
      fn bump
      # Store the image name and DB_URL in files
@@ -61,6 +65,9 @@ build_function() {
      # Push the image to docker
      docker login ${TF_VAR_ocir} -u ${TF_VAR_namespace}/${TF_VAR_username} -p "${TF_VAR_auth_token}"
      docker push $TF_VAR_fn_image
+  else 
+     echo "build_function - built successfully not found"
+     exit 1
   fi 
 
   # First create the Function using terraform
