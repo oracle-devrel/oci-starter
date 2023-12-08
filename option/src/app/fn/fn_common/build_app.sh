@@ -14,4 +14,4 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # Deploy with terraform
 # Then Work-around: terraforms is not able to create a APIGW with dynamic multiple backends
 build_function $DB_URL
-
+exit_on_error

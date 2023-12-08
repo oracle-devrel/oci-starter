@@ -7,7 +7,7 @@ import (
 	"io"
 	fdk "github.com/fnproject/fdk-go"
 	"database/sql"
-    _ "github.com/go-sql-driver/mysql"
+    _ "github.com/lib/pq"
 	"os"
 )
 
@@ -25,8 +25,6 @@ func myHandler(ctx context.Context, in io.Reader, out io.Writer) {
     psqlInfo := fmt.Sprintf("host=%s port=5432 user=%s password=%s dbname=postgres sslmode=require",
                  os.Getenv("DB_URL"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"))
     db, err := sql.Open("postgres", psqlInfo)    
-
-    db, err := sql.Open("mysql", os.Getenv("DB_USER")+":"+os.Getenv("DB_PASSWORD")+"@tcp("+os.Getenv("DB_URL")+")/db1")
     if err != nil {
         fmt.Println(err)
         return
@@ -51,4 +49,3 @@ func myHandler(ctx context.Context, in io.Reader, out io.Writer) {
 	}
     json.NewEncoder(out).Encode(&d)
 }
-

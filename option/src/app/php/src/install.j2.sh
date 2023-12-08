@@ -19,7 +19,6 @@ sudo ./wa_php_oci.sh
 sudo yum install -y php-pgsql
 {%- endif %}
 
-
 if grep -q '##DB_URL##' php.ini.append; then
   sed -i "s!##DB_URL##!$DB_URL!" php.ini.append 
   sudo sh -c "cat php.ini.append >> /etc/php.ini"
