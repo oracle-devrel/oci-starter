@@ -95,6 +95,8 @@ loop_lang () {
   if [ "$OPTION_DEPLOY" != "function" ]; then
     OPTION_LANG=php
     loop_db
+  fi
+  if [ "$OPTION_DEPLOY" == "compute" ]; then
     OPTION_LANG=apex
     OPTION_DB=atp 
     loop_shape
