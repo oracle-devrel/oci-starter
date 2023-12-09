@@ -27,7 +27,7 @@ if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
   sed -i "s&##JDBC_URL##&$JDBC_URL&" src/main/resources/META-INF/microprofile-config.properties
 fi
 
-if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
+if [ is_deploy_compute ]; then
   if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
     mvn package -Pnative-image -Dnative.image.buildStatic -DskipTests
   else 

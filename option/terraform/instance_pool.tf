@@ -109,8 +109,8 @@ resource "oci_core_instance_pool" "starter_instance_pool" {
   size = 2
   state = "RUNNING"
   display_name = "${var.prefix}-pool"
-  instance_display_name_formatter = "${var.prefix}-host$${launchCount}"
-  instance_hostname_formatter = "${var.prefix}-host$${launchCount}"
+  instance_display_name_formatter = "${var.prefix}-pool$${launchCount}"
+  instance_hostname_formatter = "${var.prefix}-pool$${launchCount}"
 
   placement_configurations {
     availability_domain = data.oci_identity_availability_domain.ad.name
@@ -159,4 +159,8 @@ output "pooled_instances_hostname_labels" {
 
 output "load_balancer_backend_set_name" {
   value = [data.oci_core_instance_pool_load_balancer_attachment.starter_instance_pool_load_balancer_attachment.backend_set_name]
+}
+
+output "pool_lb_url" {
+  value = format("http://%s", oci_load_balancer.starter_pool_lb.ip_address_details[0].ip_address) 
 }
