@@ -24,7 +24,7 @@ if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
   sed -i "s&##JDBC_URL##&$JDBC_URL&" src/main/resources/META-INF/microprofile-config.properties
 fi
 
-if [ is_deploy_compute ]; then
+if is_deploy_compute; then
   # -Dnet.bytebuddy.experimental=true is needed in helidon 3 for Java 21
   if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
     mvn package -Pnative-image -Dnative.image.buildStatic -DskipTests -Dnet.bytebuddy.experimental=true

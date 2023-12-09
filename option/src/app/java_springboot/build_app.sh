@@ -12,7 +12,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $BIN_DIR/build_common.sh
 java_build_common
 
-if [ is_deploy_compute ]; then
+if is_deploy_compute; then
 
   if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
     # Native Build about 14 mins. Output is ./demo

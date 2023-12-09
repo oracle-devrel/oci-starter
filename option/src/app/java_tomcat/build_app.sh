@@ -15,7 +15,7 @@ java_build_common
 mvn package
 exit_on_error
 
-if [ is_deploy_compute ]; then
+if is_deploy_compute; then
   cp src/start.sh target/.
   cp src/install.sh target/.
 

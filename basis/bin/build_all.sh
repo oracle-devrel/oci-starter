@@ -33,7 +33,7 @@ if [ -d src/db ]; then
 fi  
 
 # Init target/compute
-if [ is_deploy_compute ]; then
+if is_deploy_compute; then
     mkdir -p target/compute
     cp src/compute/* target/compute/.
 fi

@@ -32,7 +32,7 @@ java_build_common() {
 
 build_ui() {
   cd $SCRIPT_DIR
-  if [ is_deploy_compute ]; then
+  if is_deploy_compute; then
     mkdir -p ../../target/compute/ui
     cp -r ui/* ../../target/compute/ui/.
   elif [ "$TF_VAR_deploy_strategy" == "function" ]; then 
