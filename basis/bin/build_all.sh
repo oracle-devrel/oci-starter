@@ -55,10 +55,19 @@ fi
 title "Deploy $TF_VAR_deploy_strategy"
 if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
     $BIN_DIR/deploy_compute.sh
+    exit_on_error
+elif [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
+    $BIN_DIR/deploy_compute.sh
+    exit_on_error
+    export TF_VAR_compute_ready="true"
+    src/terraform/apply.sh --auto-approve -no-color
+    exit_on_error
 elif [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
     $BIN_DIR/oke_deploy.sh
+    exit_on_error
 elif [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then
     $BIN_DIR/ci_deploy.sh
+    exit_on_error
 fi
 
 $BIN_DIR/add_api_portal.sh
