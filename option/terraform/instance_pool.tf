@@ -1,4 +1,4 @@
-variable compute_ready { default = "ready" }
+variable compute_ready { default = "" }
 
 resource "oci_core_image" "custom_image" {
   count          = var.compute_ready == "" ? 0 : 1
@@ -130,19 +130,15 @@ resource "oci_core_instance_pool" "starter_instance_pool" {
 }
 
 data "oci_core_instance_pool_instances" "starter_instance_pool_instances_datasource" {
+  count            = var.compute_ready == "" ? 0 : 1  
   compartment_id   = local.lz_appdev_cmp_ocid
   instance_pool_id = oci_core_instance_pool.starter_instance_pool[0].id
 }
 
 # Usage of singular instance datasources to show the public_ips, private_ips, and hostname_labels for the instances in the pool
 data "oci_core_instance" "starter_instance_pool_instance_singular_datasource" {
-  count       = 2
-  instance_id = data.oci_core_instance_pool_instances.starter_instance_pool_instances_datasource.instances[count.index]["id"]
-}
-
-data "oci_core_instance_pool_load_balancer_attachment" "starter_instance_pool_load_balancer_attachment" {
-  instance_pool_id                          = oci_core_instance_pool.starter_instance_pool[0].id
-  instance_pool_load_balancer_attachment_id = oci_core_instance_pool.starter_instance_pool[0].load_balancers[0].id
+  count       = var.compute_ready == "" ? 0 : 2
+  instance_id = data.oci_core_instance_pool_instances.starter_instance_pool_instances_datasource[0].instances[count.index]["id"]
 }
 
 output "pooled_instances_private_ips" {
@@ -155,10 +151,6 @@ output "pooled_instances_public_ips" {
 
 output "pooled_instances_hostname_labels" {
   value = [data.oci_core_instance.starter_instance_pool_instance_singular_datasource.*.hostname_label]
-}
-
-output "load_balancer_backend_set_name" {
-  value = [data.oci_core_instance_pool_load_balancer_attachment.starter_instance_pool_load_balancer_attachment.backend_set_name]
 }
 
 output "pool_lb_url" {
