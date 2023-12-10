@@ -46,14 +46,16 @@ loop_shape() {
 
 loop_db() {
   OPTION_DB_INSTALL=default
-  # OPTION_DB=database 
-  # loop_ui  
-  OPTION_DB=atp 
-  loop_shape
-  OPTION_DB=psql 
-  loop_shape  
-  OPTION_DB=mysql
-  loop_shape
+  if [ "$OPTION_DEPLOY" != "instance_pool" ] ; then
+    # OPTION_DB=database 
+    # loop_ui  
+    OPTION_DB=atp 
+    loop_shape
+    OPTION_DB=psql 
+    loop_shape  
+    OPTION_DB=mysql
+    loop_shape
+  fi  
   OPTION_DB=none
   loop_shape
 }
@@ -140,11 +142,13 @@ loop_deploy() {
   OPTION_DEPLOY=compute
   loop_shared_compute
   loop_lang  
+  OPTION_DEPLOY=kubernetes
+  loop_lang
+  OPTION_DEPLOY=instance_pool 
+  loop_lang
   OPTION_DEPLOY=container_instance 
   loop_lang
   OPTION_DEPLOY=function 
-  loop_lang
-  OPTION_DEPLOY=kubernetes
   loop_lang
 }
 
