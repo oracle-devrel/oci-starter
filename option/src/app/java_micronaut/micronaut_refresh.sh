@@ -15,12 +15,8 @@ cp orig/*.sh .
 cp orig/openapi_spec.yaml .
 cp orig/app.yaml .
 cp orig/src/main/java/com/example/Dept* src/main/java/com/example/.
-vi src/main/resources/application.properties
-
 cp orig/microprofile-config.properties.tmpl .
-cp orig/src/main/resources/META-INF/persistence.xml src/main/resources/META-INF/.
-cp orig/src/main/java/me/opc/mp/database/Dept* src/main/java/helidon/.
-rm src/main/resources/META-INF/init_script.sql
-rm src/main/resources/META-INF/microprofile-config.properties
-sed -i "s/me.opc.mp.database.Dept/helidon.Dept/" src/main/resources/META-INF/persistence.xml 
-sed -i "s/package me.opc.mp.database/package helidon/" src/main/java/helidon/Dept*
+cp orig/Docker* .
+cp orig/src/main/resources/application.j2.yml src/main/resources/.
+rm src/main/resources/application.properties
+
