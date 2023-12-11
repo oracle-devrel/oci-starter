@@ -3,7 +3,7 @@ package com.example;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.CrudRepository;
 
-import jakarta.persistence.EntityManager;
+import javax.persistence.EntityManager;
 import java.util.List;
 
 @Repository
