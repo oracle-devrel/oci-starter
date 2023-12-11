@@ -32,7 +32,9 @@ sudo cp app.conf /etc/httpd/conf.d/.
 
 # Configure the Apache Listener on 8080
 sudo sed -i "s/Listen 80$/Listen 8080/" /etc/httpd/conf/httpd.conf
+sudo systemctl enable httpd
 sudo systemctl restart httpd
+sudo systemctl enable php-fpm
 sudo systemctl restart php-fpm
 
 # XXXX

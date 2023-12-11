@@ -94,7 +94,7 @@ def allowed_options():
 
 allowed_values = {
     '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'forms', 'none'},
-    '-deploy': {'compute', 'kubernetes', 'function', 'container_instance', 'ci', 'hpc', 'datascience'},
+    '-deploy': {'compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience'},
     '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     '-java_version': {'8', '11', '17', '21'},
@@ -202,9 +202,8 @@ def ui_rules():
     elif params.get('ui') == 'ruby':
         params['language'] = 'ruby'
 
-
 def auth_token_rules():
-    if params.get('deploy') not in [ 'compute', 'hpc', 'datascience' ] and params.get('auth_token') is None:
+    if params.get('deploy') in [ 'kubernetes', 'container_instance', 'function' ] and params.get('auth_token') is None:
         warning('-auth_token is not set. Will need to be set in env.sh')
         params['auth_token'] = TO_FILL
 
@@ -418,7 +417,7 @@ Check LICENSE file (Apache 2.0)
     - db        : SQL files of the database
     - terraform : Terraform scripts (Command: plan.sh / apply.sh)'''
                 ]
-        if params['deploy'] == 'compute':
+        if params['deploy'] in [ 'compute', 'instance_pool' ]:
             contents.append(
                 "    - compute   : Contains the deployment files to Compute")
         elif params['deploy'] == 'kubernetes':
@@ -754,7 +753,7 @@ def create_output_dir():
     elif params.get('ui') == "api": 
         print("API Only")
         output_rm_tree("src/ui")   
-        if params.get('deploy') == "compute":
+        if params.get('deploy') in [ 'compute', 'instance_pool' ]:
             cp_terraform_apigw("apigw_compute_append.tf")          
     else:
         ui_lower = params.get('ui').lower()
@@ -808,7 +807,7 @@ def create_output_dir():
             else:
                 cp_terraform("apigw.tf", "apigw_tags.tf", apigw_append)
 
-        elif params.get('deploy') == "compute":
+        elif params.get('deploy') in [ 'compute', 'instance_pool' ]:
             if 'compute_ocid' in params:
                 cp_terraform("compute_existing.tf", "compute_append.tf")
             elif params.get("language") == 'forms':
@@ -817,6 +816,8 @@ def create_output_dir():
                 cp_terraform("compute.tf", "compute_append.tf")            
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
+            if params.get('deploy') == 'instance_pool':
+                cp_terraform("instance_pool.tf")            
 
         elif params.get('deploy') == "container_instance":
             if 'group_common' not in params:
@@ -1028,7 +1029,9 @@ def jinja2_replace_template():
                 with open(output_file_path, mode="w", encoding="utf-8") as output_file:
                     output_file.write(content)
                     print(f"Wrote {output_file}")
-                os.remove(os.path.join(subdir, filename))     
+                os.remove(os.path.join(subdir, filename))   
+            if filename.endswith('_refresh.sh'):      
+                os.remove(os.path.join(subdir, filename))   
 
 #----------------------------------------------------------------------------
 

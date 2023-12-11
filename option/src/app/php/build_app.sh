@@ -13,7 +13,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 ## XXXXX Check Language version
 
-if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
+if is_deploy_compute; then
   mkdir -p ../../target/compute/$APP_DIR
   cp -r src/* ../../target/compute/$APP_DIR/.
   # Replace the user and password in the start file

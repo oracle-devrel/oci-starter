@@ -32,7 +32,7 @@ java_build_common() {
 
 build_ui() {
   cd $SCRIPT_DIR
-  if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
+  if is_deploy_compute; then
     mkdir -p ../../target/compute/ui
     cp -r ui/* ../../target/compute/ui/.
   elif [ "$TF_VAR_deploy_strategy" == "function" ]; then 
@@ -236,10 +236,20 @@ get_user_details() {
 get_ui_url() {
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
     get_output_from_tfstate UI_URL ui_url  
+  elif [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
+    get_output_from_tfstate UI_URL pool_lb_url 
   elif [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
     export UI_URL=http://`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`/${TF_VAR_prefix}
   elif [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then  
     export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
+  fi
+}
+
+is_deploy_compute() {
+  if [ "$TF_VAR_deploy_strategy" == "compute" ] || [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
+    return 0
+  else
+    return 1
   fi
 }
 

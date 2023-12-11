@@ -19,7 +19,7 @@ else
 fi
 exit_on_error  
 
-if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
+if is_deploy_compute; then
   cp start.sh install.sh target/.
 
   mkdir -p ../../target/compute/$APP_DIR
