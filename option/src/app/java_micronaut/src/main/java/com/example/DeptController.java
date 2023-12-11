@@ -23,6 +23,7 @@ class DeptController {
 
     @Get(uri = "dept") 
     @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
     List<Dept> dept() {
         return deptRepository.find();
     }
