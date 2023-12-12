@@ -1,21 +1,17 @@
 package com.example;
 
-import jakarta.persistence.*;
+import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.serde.annotation.Serdeable;
 
-@Entity
-@Table(name = "dept")
+@Serdeable
+@MappedEntity
 public class Dept {
 
     @Id
-    @Column(name = "deptno", nullable = false, updatable = false)
     private int deptno;
-
-    @Basic(optional = false)
-    @Column(name = "dname")
     private String dname;
-
-    @Basic(optional = false)
-    @Column(name = "loc")
     private String loc;
 
     public Dept() {
@@ -51,5 +47,7 @@ public class Dept {
         this.loc = loc;
     }
 }
+
+
 
 
