@@ -5,7 +5,6 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.transaction.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
-import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -25,7 +24,7 @@ class DeptController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     List<Dept> dept() {
-        return deptRepository.find();
+        return deptRepository.findAll();
     }
 
     @Get(uri = "info") 

@@ -1,6 +1,0 @@
-#Mon Dec 11 08:44:45 UTC 2023
-datasources.default.db-type=oracle
-datasources.default.dialect=ORACLE
-micronaut.application.name=demo
-jpa.default.properties.hibernate.hbm2ddl.auto=update
-datasources.default.driver-class-name=oracle.jdbc.OracleDriver

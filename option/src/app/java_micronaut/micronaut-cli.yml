@@ -3,4 +3,4 @@ defaultPackage: com.example
 testFramework: junit
 sourceLanguage: java
 buildTool: maven
-features: [annotation-api, app-name, data, data-jpa, hibernate-jpa, http-client-test, jackson-databind, java, java-application, jdbc-hikari, junit, logback, maven, maven-enforcer-plugin, micronaut-aot, micronaut-http-validation, netty-server, oracle, properties, readme, shade, test-resources, validation]
+features: [app-name, data, data-jpa, http-client-test, java, java-application, jdbc-hikari, junit, logback, maven, maven-enforcer-plugin, micronaut-aot, micronaut-http-validation, netty-server, oracle, properties, readme, serialization-jackson, shade, test-resources]
