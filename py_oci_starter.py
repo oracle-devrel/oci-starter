@@ -1031,7 +1031,7 @@ def jinja2_replace_template():
                     content = template.render( template_param )
                     with open(output_file_path, mode="w", encoding="utf-8") as output_file:
                         output_file.write(content)
-                        print(f"J2 - Wrote {output_file}")
+                        print(f"J2 - Wrote {output_file_path}")
                 os.remove(os.path.join(subdir, filename))   
             if filename.endswith('_refresh.sh'):      
                 os.remove(os.path.join(subdir, filename))   
