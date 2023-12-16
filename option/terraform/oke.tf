@@ -314,6 +314,21 @@ resource "oci_core_subnet" "starter_api_subnet" {
   freeform_tags     = local.freeform_tags
 }
 
+resource "oci_core_subnet" "starter_pod_subnet" {
+  #Required
+  cidr_block          = "10.0.40.0/24"
+  compartment_id      = local.lz_network_cmp_ocid
+  vcn_id              = oci_core_vcn.starter_vcn.id
+
+  # Provider code tries to maintain compatibility with old versions.
+  security_list_ids = [oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
+  display_name      = "${var.prefix}-oke-pod-subnet"
+  route_table_id    = oci_core_vcn.starter_vcn.default_route_table_id
+  freeform_tags     = local.freeform_tags
+}
+
+
+
 #----------------------------------------------------------------------------
 
 resource "oci_containerengine_cluster" "starter_oke" {
@@ -332,7 +347,6 @@ resource "oci_containerengine_cluster" "starter_oke" {
 
   options {
     service_lb_subnet_ids = [oci_core_subnet.starter_lb_subnet.id]
-
     #Optional
     add_ons {
       #Optional
@@ -350,6 +364,10 @@ resource "oci_containerengine_cluster" "starter_oke" {
       pods_cidr     = "10.1.0.0/16"
       services_cidr = "10.2.0.0/16"
     }
+
+    # cluster_pod_network_options {
+    #     cni_type = "OCI_VCN_IP_NATIVE"
+    # }
   }
 
   freeform_tags = local.freeform_tags
@@ -379,6 +397,11 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
       fault_domains = ["FAULT-DOMAIN-1", "FAULT-DOMAIN-3"]
     }
     size = var.node_pool_node_config_details_size
+
+    # node_pool_pod_network_option_details {
+    #   cni_type = "OCI_VCN_IP_NATIVE"
+    #   pod_subnet_ids = [ oci_core_subnet.starter_nodepool_subnet.id ]
+    # }
   }
   ssh_public_key      = var.ssh_public_key
 

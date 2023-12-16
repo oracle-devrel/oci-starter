@@ -48,9 +48,10 @@ sed -i "s&##ORDS_HOST##&$ORDS_HOST&" $TARGET_DIR/app.yaml
 sed "s&##ORDS_HOST##&$ORDS_HOST&" src/oke/ingress-app.yaml > $TARGET_DIR/ingress-app.yaml
 
 # delete the old pod, just to be sure a new image is pulled
-kubectl delete pod ${TF_VAR_prefix}-app ${TF_VAR_prefix}-ui
-# Wait to be sure that the pod is deleted before to recreate
-kubectl wait --for=delete pod/${TF_VAR_prefix}-app --timeout=30s
+kubectl delete pod ${TF_VAR_prefix}-ui
+kubectl delete deployment ${TF_VAR_prefix}-dep
+# Wait to be sure that the deployment is deleted before to recreate
+kubectl wait --for=delete deployment/${TF_VAR_prefix}-dep --timeout=30s
 
 # Create objects in Kubernetes
 kubectl apply -f $TARGET_DIR/app.yaml

@@ -1021,14 +1021,17 @@ def jinja2_replace_template():
     for subdir, dirs, files in os.walk(output_dir):
         for filename in files:    
             if filename.find('.j2.')>0 or filename.endswith('.j2'):
-                environment = Environment(loader=FileSystemLoader(subdir))
-                template = environment.get_template(filename)
-                db_param = jinja2_db_params.get( params.get('db_family') )
-                content = template.render( template_param )
                 output_file_path = os.path.join(subdir, filename.replace(".j2", ""))
-                with open(output_file_path, mode="w", encoding="utf-8") as output_file:
-                    output_file.write(content)
-                    print(f"Wrote {output_file}")
+                if os.path.isfile(output_file_path): 
+                    print(f"J2 - Skipping - destination file already exists: {output_file_path}") 
+                else:
+                    environment = Environment(loader=FileSystemLoader(subdir))
+                    template = environment.get_template(filename)
+                    db_param = jinja2_db_params.get( params.get('db_family') )
+                    content = template.render( template_param )
+                    with open(output_file_path, mode="w", encoding="utf-8") as output_file:
+                        output_file.write(content)
+                        print(f"J2 - Wrote {output_file}")
                 os.remove(os.path.join(subdir, filename))   
             if filename.endswith('_refresh.sh'):      
                 os.remove(os.path.join(subdir, filename))   
