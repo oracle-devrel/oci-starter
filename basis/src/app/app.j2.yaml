@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ##PREFIX##-dep
+  name: {{ prefix }}-dep
   labels:
-      app: ##PREFIX##-app
+      app: {{ prefix }}-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ##PREFIX##-app
+      app: {{ prefix }}-app
   template:
     metadata:
       labels:
-        app: ##PREFIX##-app
+        app: {{ prefix }}-app
     spec:
       containers:
       - name: app
-        image: ##DOCKER_PREFIX##/##PREFIX##-app
+        image: ##DOCKER_PREFIX##/{{ prefix }}-app
         ports:
         - containerPort: 8080
           name: app-port
@@ -26,38 +26,38 @@ spec:
         - name: JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL
           valueFrom:
             secretKeyRef:
-              name: ##PREFIX##-db-secret
+              name: {{ prefix }}-db-secret
               key: jdbc_url
 {%- else %}        
 {%- if java_framework == "springboot" %}
         - name: SPRING_APPLICATION_JSON
           valueFrom:
             secretKeyRef:
-              name: ##PREFIX##-db-secret
+              name: {{ prefix }}-db-secret
               key: spring_application_json
 {%- endif %}        
         - name: JDBC_URL
           valueFrom:
             secretKeyRef:
-              name: ##PREFIX##-db-secret
+              name: {{ prefix }}-db-secret
               key: jdbc_url
 {%- endif %}        
 {%- else %}        
         - name: DB_URL
           valueFrom:
             secretKeyRef:
-              name: ##PREFIX##-db-secret
+              name: {{ prefix }}-db-secret
               key: db_url
 {%- endif %}        
         - name: DB_USER
           valueFrom:
             secretKeyRef:
-              name: ##PREFIX##-db-secret
+              name: {{ prefix }}-db-secret
               key: db_user
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: ##PREFIX##-db-secret
+              name: {{ prefix }}-db-secret
               key: db_password
       imagePullSecrets:
       - name: ocirsecret        
@@ -65,10 +65,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ##PREFIX##-app-service
+  name: {{ prefix }}-app-service
 spec:
   selector:
-    app: ##PREFIX##-app
+    app: {{ prefix }}-app
   ports:
   - name: http-service-port
     protocol: TCP
