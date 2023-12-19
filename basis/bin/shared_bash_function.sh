@@ -417,6 +417,13 @@ java_find_version() {
   fi
 }
 
+certificate_validity() {
+  CERT_DATE_VALIDITY=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r '.data.items[0]["current-version-summary"].validity["time-of-validity-not-after"]'`
+  CERT_VALIDITY_DAY=`echo $((($(date -d $CERT_VALIDITY +%s) - $(date +%s))/86400))`
+  echo "Certificate valid until: $CERT_DATE_VALIDITY"
+  echo "Days left: $CERT_VALIDITY_DAY"
+}
+
 certificate_create() {
   echo "Creating certificate $TF_VAR_dns_name"
   CERT_CERT=$(cat $CERTIFICATE_PATH/cert.pem)
@@ -441,7 +448,9 @@ certificate_path_before_terraform() {
       cp src/tls/nginx_tls.conf target/compute/.
       sed -i "s/##DNS_NAME##/$TF_VAR_dns_name/" target/compute/nginx_tls.conf
     fi
-  else
+  elif [ "$TF_VAR_certificate_ocid" == "" ]; then
     certificate_create
+  else 
+    certificate_validity
   fi  
 }

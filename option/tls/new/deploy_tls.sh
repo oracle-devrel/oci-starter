@@ -44,11 +44,8 @@ fi
 # XXXXX
 
 if [ "$TF_VAR_certificate_ocid" != "" ]; then
-  CERT_DATE_VALIDITY=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r '.data.items[0]["current-version-summary"].validity["time-of-validity-not-after"]'`
-  CERT_VALIDITY_DAY=`echo $((($(date -d $CERT_VALIDITY +%s) - $(date +%s))/86400))`
   echo "OCI Certificate for $TF_VAR_dns_name exists already. OCID: $TF_VAR_certificate_ocid"
-  echo "Certificate valid until: $CERT_DATE_VALIDITY"
-  echo "Days left: $CERT_VALIDITY_DAY"
+  certificate_validity
   echo "Done"
   exit
 else 
