@@ -2,7 +2,7 @@ variable "dns_zone_name" { default="" }
 variable "dns_name" { default="" }
 variable "dns_ip" { default="" }
 
-variable {
+locals {
 {%- if deploy == "compute" %}  
   dns_ip = local.compute_ip
 {%- elif deploy == "instance_pool" %}  
