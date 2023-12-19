@@ -15,10 +15,11 @@ sudo ln -s /snap/bin/certbot /usr/bin/certbot
 sudo systemctl enable nginx
 sudo systemctl restart nginx
 sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
 sudo firewall-cmd --reload
 sudo certbot --agree-tos --nginx --email $CERTIFICATE_GENERATE_EMAIL -d $TF_VAR_dns_name
 
 # Place the certificate in an OPC directory so that it can be copied via SSH.
 mkdir certificate
-sudo cp -r /etc/letsencrypt/archive/$TF_VAR_dns_name /home/opc/ssl/certificate
+sudo cp -r /etc/letsencrypt/live/$TF_VAR_dns_name /home/opc/tls/certificate
 sudo chown -R opc certificate

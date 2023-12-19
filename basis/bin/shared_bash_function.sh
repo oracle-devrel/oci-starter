@@ -419,3 +419,27 @@ java_find_version() {
   fi
 }
 
+certificate_create() {
+  echo "Creating certificate $TF_VAR_dns_name"
+  CERT_CERT=$(cat $CERTIFICATE_PATH/cert.pem)
+  CERT_CHAIN=$(cat $CERTIFICATE_PATH/chain.pem)
+  CERT_PRIVKEY=$(cat $CERTIFICATE_PATH/privkey.pem)
+  oci certs-mgmt certificate create-by-importing-config --compartment-id=$TF_VAR_compartment_ocid  --name=$TF_VAR_dns_name --cert-chain-pem="$CERT_CHAIN" --certificate-pem="$CERT_CERT"  --private-key-pem="$CERT_PRIVKEY" --wait-for-state ACTIVE --wait-for-state FAILED
+  exit_on_error
+  TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[0].id`
+}
+
+certificate_path_before_terraform() {
+  if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
+    if [ -d target/compute/certificate ]; then
+      echo "Certificate Directory exists already" 
+    else
+      mkdir -p target/compute/certificate
+      cp $CERTIFICATE_PATH/* target/compute/certificate/.
+      cp src/tls/nginx_tls.conf target/compute/.
+      sed -i "s/##DNS_NAME##/$TF_VAR_dns_name/" target/compute/nginx_tls.conf
+    fi
+  else
+    certificate_create
+  fi  
+}

@@ -43,6 +43,9 @@ variable group_name { default="" }
 # Log Group
 variable log_group_ocid  { default="" }
 
+# Certificate
+variable "certificate_ocid" { default = "" }
+
 locals {
   group_name = var.group_name == "" ? "none" : var.group_name
 

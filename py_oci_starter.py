@@ -75,12 +75,13 @@ default_options = {
     '-license': 'included',
     '-mode': CLI,
     '-infra_as_code': 'terraform_local',
-    '-output_dir' : 'output'
+    '-output_dir' : 'output',
+    '-tls': 'none'
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
                       '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid', '-psql_ocid',
-                      '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token',
+                      '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token', '-tls',
                       '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape','-db_install']
 
 # hidden_options - allowed but not advertised
@@ -105,7 +106,8 @@ allowed_values = {
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
     '-shape': {'amd','freetier_amd','ampere'},
-    '-db_install': {'default', 'shared_compute', 'kubernetes'}
+    '-db_install': {'default', 'shared_compute', 'kubernetes'},
+    '-tls': {'none', 'new', 'existing'}
 }
 
 def check_values():
@@ -250,6 +252,14 @@ def shape_rules():
             params['instance_shape_config_memory_in_gbs'] = 8
 
 
+def tls_rules():
+    if params.get('tls')!='none':
+        params['dns_zone_name'] = TO_FILL
+        params['dns_name'] = TO_FILL
+        if params.get('tls')=='existing':
+            params['certificate_path'] = TO_FILL
+
+
 def apply_rules():
     zip_rules()
     group_common_rules()
@@ -262,6 +272,7 @@ def apply_rules():
     compartment_rules()
     license_rules()
     shape_rules()
+    tls_rules()
 
 
 def error(msg):
@@ -654,8 +665,8 @@ def cp_terraform_apigw(append_tf):
         cp_terraform("apigw_existing.tf", "apigw_tags.tf", append_tf)
         output_replace('##APP_URL##', app_url,"src/terraform/apigw_existing.tf")
     else:
-        cp_terraform("apigw.tf", "apigw_tags.tf", append_tf)
-        output_replace('##APP_URL##', app_url, "src/terraform/apigw.tf")    
+        cp_terraform("apigw.j2.tf", "apigw_tags.tf", append_tf)
+        output_replace('##APP_URL##', app_url, "src/terraform/apigw.j2.tf")    
 
 #----------------------------------------------------------------------------
 # Create Directory (shared for group_common and output)
@@ -805,7 +816,7 @@ def create_output_dir():
             if 'apigw_ocid' in params:
                 cp_terraform("apigw_existing.tf", "apigw_tags.tf", apigw_append)
             else:
-                cp_terraform("apigw.tf", "apigw_tags.tf", apigw_append)
+                cp_terraform("apigw.j2.tf", "apigw_tags.tf", apigw_append)
 
         elif params.get('deploy') in [ 'compute', 'instance_pool' ]:
             if 'compute_ocid' in params:
@@ -818,6 +829,8 @@ def create_output_dir():
             output_copy_tree("option/compute", "src/compute")
             if params.get('deploy') == 'instance_pool':
                 cp_terraform("instance_pool.tf")            
+            elif params.get('tls') == 'existing':
+                output_copy_tree("option/tls/compute_existing", "src/tls")
 
         elif params.get('deploy') == "container_instance":
             if 'group_common' not in params:
@@ -830,6 +843,9 @@ def create_output_dir():
             # output_mkdir src/container_instance
             output_copy_tree("option/container_instance", "bin")
             cp_terraform_apigw("apigw_ci_append.tf")          
+
+    if params.get('tls') == 'new':
+        output_copy_tree("option/tls/new", "src/tls")
 
     if os.path.exists(output_dir + "/src/app/openapi_spec_append.yaml"):
         append_file( output_dir + "/src/app/openapi_spec.yaml", output_dir + "/src/app/openapi_spec_append.yaml")
@@ -896,7 +912,8 @@ def create_output_dir():
             src_path = os.path.join("src/app/db", f)
             dst_path = os.path.join("src/db", f)
             output_move(src_path, dst_path) 
-        os.rmdir(output_dir + "/src/app/db")                     
+        os.rmdir(output_dir + "/src/app/db")         
+
 
 #----------------------------------------------------------------------------
 # Create group_common Directory
@@ -959,7 +976,7 @@ def create_group_common_dir():
         if 'apigw_ocid' in params:
             cp_terraform("apigw_existing.tf", "apigw_tags.tf")
         else:
-            cp_terraform("apigw.tf", "apigw_tags.tf")
+            cp_terraform("apigw.j2.tf", "apigw_tags.tf")
             cp_terraform("log_group.tf")
 
     if 'jms' in a_group_common:

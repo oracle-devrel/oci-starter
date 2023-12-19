@@ -142,6 +142,11 @@ else
     export TF_VAR_bastion_ad=$TF_VAR_ad
   fi 
 
+  # TLS
+  if [ -n $TF_VAR_dns_name ]; then
+    TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[0].id`
+  fi
+
   # GIT
   if [ `git rev-parse --is-inside-work-tree 2>/dev/null` ]; then   
     export GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
@@ -219,6 +224,7 @@ if [ -f $STATE_FILE ]; then
   # JDBC_URL
   get_output_from_tfstate "JDBC_URL" "jdbc_url"
   get_output_from_tfstate "DB_URL" "db_url"
+
 
   if [ "$TF_VAR_db_strategy" == "autonomous" ]; then
     get_output_from_tfstate "ORDS_URL" "ords_url"

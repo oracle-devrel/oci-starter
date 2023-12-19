@@ -14,6 +14,11 @@ title "OCI Starter - Build"
 if [ "$TF_VAR_ssh_private_path" == "" ]; then
   . $BIN_DIR/sshkey_generate.sh
 fi
+
+if [ -n "$CERTIFICATE_PATH" ]; then
+  certificate_path_before_terraform
+fi  
+
 . env.sh
 title "Terraform Apply"
 src/terraform/apply.sh --auto-approve -no-color
