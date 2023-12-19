@@ -154,9 +154,9 @@ output "pooled_instances_hostname_labels" {
 }
 
 locals {
-  dns_ip = local.compute_public_ip
+  instance_pool_ip = oci_load_balancer.starter_pool_lb.ip_address_details[0].ip_address
 }
 
-output "ui_url" {
-  value = format("http://%s", local.dns_ip) 
+output "pool_lb_url" {
+  value = format("http://%s", instance_pool_ip) 
 }

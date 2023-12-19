@@ -845,7 +845,7 @@ def create_output_dir():
             cp_terraform_apigw("apigw_ci_append.tf")          
 
     if params.get('tls'):
-        cp_terraform("tls.tf")
+        cp_terraform("tls.j2.tf")
         if params.get('tls') == 'new':
             output_copy_tree("option/tls/new", "src/tls")
 
