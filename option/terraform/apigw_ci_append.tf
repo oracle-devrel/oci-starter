@@ -3,7 +3,7 @@ locals {
 }
 
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
-{%- if tls != "none" %}
+{%- if tls is defined %}
   count = (var.docker_image_ui == "" || var.certificate_ocid == "") &&  ? 0 : 1
 {%- else %}   
   count = var.docker_image_ui == "" ? 0 : 1

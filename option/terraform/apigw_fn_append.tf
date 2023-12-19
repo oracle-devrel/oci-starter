@@ -1,5 +1,5 @@
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
-{%- if tls != "none" %}
+{%- if tls is defined %}
   count = (var.fn_image == "" || var.certificate_ocid == "") &&  ? 0 : 1
 {%- else %}   
   count          = var.fn_image == "" ? 0 : 1

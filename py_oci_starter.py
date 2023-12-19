@@ -75,13 +75,12 @@ default_options = {
     '-license': 'included',
     '-mode': CLI,
     '-infra_as_code': 'terraform_local',
-    '-output_dir' : 'output',
-    '-tls': 'none'
+    '-output_dir' : 'output'
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
                       '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid', '-psql_ocid',
-                      '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token', '-tls',
+                      '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token', 'tls',
                       '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape','-db_install']
 
 # hidden_options - allowed but not advertised
@@ -125,7 +124,8 @@ def get_tf_var(param):
         'database': 'TF_VAR_db_strategy',
         'deploy': 'TF_VAR_deploy_strategy',
         'license': 'TF_VAR_license_model',
-        'ui': 'TF_VAR_ui_strategy'
+        'ui': 'TF_VAR_ui_strategy',
+        'certificate_path': 'CERTIFICATE_PATH'
     }.get(param)
     if special_case is not None:
         return special_case

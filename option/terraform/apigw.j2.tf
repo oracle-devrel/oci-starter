@@ -9,7 +9,7 @@ resource oci_apigateway_gateway starter_apigw {
   subnet_id = data.oci_core_subnet.starter_public_subnet.id
   freeform_tags = local.freeform_tags
 
-{%- if tls != "none" %}
+{%- if tls is defined %}
   count = var.certificate_ocid == "" ? 0 : 1
   certificate_id = certificate_ocid
 {%- endif %}       
@@ -21,7 +21,7 @@ resource "oci_apigateway_api" "starter_api" {
   display_name  = "${var.prefix}-api"
   freeform_tags = local.freeform_tags   
 
-{%- if tls != "none" %}
+{%- if tls is defined %}
   count = var.certificate_ocid == "" ? 0 : 1
 {%- endif %}       
 }
