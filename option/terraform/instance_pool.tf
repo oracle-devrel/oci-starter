@@ -158,5 +158,5 @@ locals {
 }
 
 output "pool_lb_url" {
-  value = format("http://%s", instance_pool_ip) 
+  value = format("http://%s", local.instance_pool_ip) 
 }
