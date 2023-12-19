@@ -430,6 +430,10 @@ certificate_create() {
 }
 
 certificate_path_before_terraform() {
+  if [ -z $TF_VAR_dns_name ]; then
+    echo "ERROR: certificate_path_before_terraform: TF_VAR_dns_name not defined"
+    exit 1
+  fi 
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
     if [ -d target/compute/certificate ]; then
       echo "Certificate Directory exists already" 

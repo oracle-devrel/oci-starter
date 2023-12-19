@@ -844,8 +844,10 @@ def create_output_dir():
             output_copy_tree("option/container_instance", "bin")
             cp_terraform_apigw("apigw_ci_append.tf")          
 
-    if params.get('tls') == 'new':
-        output_copy_tree("option/tls/new", "src/tls")
+    if params.get('tls'):
+        cp_terraform("tls.tf")
+        if params.get('tls') == 'new':
+            output_copy_tree("option/tls/new", "src/tls")
 
     if os.path.exists(output_dir + "/src/app/openapi_spec_append.yaml"):
         append_file( output_dir + "/src/app/openapi_spec.yaml", output_dir + "/src/app/openapi_spec_append.yaml")
