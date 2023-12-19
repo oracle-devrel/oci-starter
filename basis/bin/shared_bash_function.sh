@@ -439,6 +439,9 @@ certificate_path_before_terraform() {
     echo "ERROR: certificate_path_before_terraform: TF_VAR_dns_name not defined"
     exit 1
   fi 
+  if [ -z $TF_VAR_certificate_ocid ]; then
+    export TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[0].id`
+  fi
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
     if [ -d target/compute/certificate ]; then
       echo "Certificate Directory exists already" 
