@@ -59,6 +59,10 @@ spec:
             secretKeyRef:
               name: {{ prefix }}-db-secret
               key: db_password
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP              
       imagePullSecrets:
       - name: ocirsecret        
 ---

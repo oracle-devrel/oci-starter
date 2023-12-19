@@ -2,10 +2,10 @@ package com.example.demo;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.sql.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.Inet4Address;
+import java.sql.*;
+import java.util.*;
 import oracle.ucp.jdbc.PoolDataSourceFactory;
 import oracle.ucp.jdbc.PoolDataSource;
 
@@ -13,7 +13,6 @@ import oracle.ucp.jdbc.PoolDataSource;
 
 public class DemoController {
   static PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
-
   public record Dept( int deptno, String dname, String loc ) {}; 
 
   @Autowired
@@ -58,7 +57,8 @@ public class DemoController {
   }
 
   @RequestMapping(value = "/info", method = RequestMethod.GET, produces = { "text/plain" })
-  public String info() {
-    return "Java - SpringBoot";
+  public String info() throws Exception {
+    String IP = (System.getenv("POD_IP")==null)?Inet4Address.getLocalHost().getHostAddress():" - "+ System.getenv("POD_IP");
+    return "Java - SpringBoot - " + IP;
   }
 }

@@ -153,6 +153,10 @@ output "pooled_instances_hostname_labels" {
   value = [data.oci_core_instance.starter_instance_pool_instance_singular_datasource.*.hostname_label]
 }
 
-output "pool_lb_url" {
-  value = format("http://%s", oci_load_balancer.starter_pool_lb.ip_address_details[0].ip_address) 
+locals {
+  dns_ip = local.compute_public_ip
+}
+
+output "ui_url" {
+  value = format("http://%s", local.dns_ip) 
 }

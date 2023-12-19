@@ -314,6 +314,7 @@ resource "oci_core_subnet" "starter_api_subnet" {
   freeform_tags     = local.freeform_tags
 }
 
+/*
 resource "oci_core_subnet" "starter_pod_subnet" {
   #Required
   cidr_block          = "10.0.40.0/24"
@@ -326,8 +327,7 @@ resource "oci_core_subnet" "starter_pod_subnet" {
   route_table_id    = oci_core_vcn.starter_vcn.default_route_table_id
   freeform_tags     = local.freeform_tags
 }
-
-
+*/
 
 #----------------------------------------------------------------------------
 
@@ -400,7 +400,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
 
     # node_pool_pod_network_option_details {
     #   cni_type = "OCI_VCN_IP_NATIVE"
-    #   pod_subnet_ids = [ oci_core_subnet.starter_nodepool_subnet.id ]
+    #   pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
     # }
   }
   ssh_public_key      = var.ssh_public_key

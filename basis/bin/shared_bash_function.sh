@@ -235,11 +235,15 @@ get_user_details() {
 # Get the user interface URL
 get_ui_url() {
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
-    get_output_from_tfstate UI_URL ui_url  
+    get_output_from_tfstate DNS_IP dns_ip 
+    get_output_from_tfstate UI_URL ui_url 
   elif [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
-    get_output_from_tfstate UI_URL pool_lb_url 
+    get_output_from_tfstate DNS_IP dns_ip 
+    get_output_from_tfstate UI_URL ui_url 
   elif [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
-    export UI_URL=http://`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`/${TF_VAR_prefix}
+    export DNS_IP=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
+    export LB_OCID=`oci lb load-balancer list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[] | select(.["ip-addresses"][0]["ip-address"]=="'$DNS_IP'") | .id'`  
+    export UI_URL=http://${LB_IP}/${TF_VAR_prefix}
   elif [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then  
     export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
   fi
