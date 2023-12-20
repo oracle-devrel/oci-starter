@@ -461,3 +461,11 @@ certificate_path_before_terraform() {
     certificate_validity
   fi  
 }
+
+certificate_post_ingress() {
+  if [ -z $TF_VAR_certificate_ocid ]; then
+    if [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
+      infra_as_code_apply
+    fi
+  fi  
+}

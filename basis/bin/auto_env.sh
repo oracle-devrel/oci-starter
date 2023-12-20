@@ -143,7 +143,7 @@ else
   fi 
 
   # TLS
-  if [ -n $TF_VAR_dns_name ] && [ -z TF_VAR_certificate_ocid ]; then
+  if [ -n $TF_VAR_dns_name ] && [ -z $TF_VAR_certificate_ocid ]; then
     export TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[0].id`
   fi
 
@@ -239,6 +239,8 @@ if [ -f $STATE_FILE ]; then
   if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     # OKE
     get_output_from_tfstate "OKE_OCID" "oke_ocid"
+    export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
+    export INGRESS_LB_OCID=`oci lb load-balancer list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[] | select(.["ip-addresses"][0]["ip-address"]=="'$TF_VAR_ingress_ip'") | .id'`  
   fi
 
   # JMS

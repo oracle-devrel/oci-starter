@@ -75,6 +75,8 @@ elif [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then
     exit_on_error
 fi
 
+certificate_post_ingress
+
 $BIN_DIR/add_api_portal.sh
 
 title "Done"

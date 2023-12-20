@@ -17,11 +17,11 @@ if [ ! -f $KUBECONFIG ]; then
   kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=240s
   kubectl wait --namespace ingress-nginx --for=condition=Complete job/ingress-nginx-admission-patch  
   # Wait for the ingress external IP
-  external_ip=""
-  while [ -z $external_ip ]; do
+  INGRESS_LB_IP=""
+  while [ -z $INGRESS_LB_IP ]; do
     echo "Waiting for external IP..."
-    external_ip=$(kubectl get svc -n ingress-nginx ingress-nginx-controller --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}")
-    if [ -z "$external_ip" ]; then
+    INGRESS_LB_IP=$(kubectl get svc -n ingress-nginx ingress-nginx-controller --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}")
+    if [ -z "$INGRESS_LB_IP" ]; then
       sleep 10
     fi
   done
@@ -29,12 +29,12 @@ if [ ! -f $KUBECONFIG ]; then
   date
   kubectl get all -n ingress-nginx
   sleep 5
-  echo "Ingress ready: $external_ip"
+  echo "Ingress ready: $INGRESS_LB_IP"
 
   # Create secrets
   kubectl create secret docker-registry ocirsecret --docker-server=$TF_VAR_ocir --docker-username="$TF_VAR_namespace/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
   # XXXX - This should be by date 
-  kubectl delete secret ${TF_VAR_prefix}-db-secret
+  kubectl delete secret ${TF_VAR_prefix}-db-secret  --ignore-not-found=true
   kubectl create secret generic ${TF_VAR_prefix}-db-secret --from-literal=db_user=$TF_VAR_db_user --from-literal=db_password=$TF_VAR_db_password --from-literal=db_url=$DB_URL --from-literal=jdbc_url=$JDBC_URL --from-literal=spring_application_json='{ "db.info": "Java - SpringBoot" }'
 fi
 
@@ -48,8 +48,8 @@ sed -i "s&##ORDS_HOST##&$ORDS_HOST&" $TARGET_DIR/app.yaml
 sed "s&##ORDS_HOST##&$ORDS_HOST&" src/oke/ingress-app.yaml > $TARGET_DIR/ingress-app.yaml
 
 # delete the old pod, just to be sure a new image is pulled
-kubectl delete pod ${TF_VAR_prefix}-ui
-kubectl delete deployment ${TF_VAR_prefix}-dep
+kubectl delete pod ${TF_VAR_prefix}-ui --ignore-not-found=true
+kubectl delete deployment ${TF_VAR_prefix}-dep --ignore-not-found=true
 # Wait to be sure that the deployment is deleted before to recreate
 kubectl wait --for=delete deployment/${TF_VAR_prefix}-dep --timeout=30s
 
