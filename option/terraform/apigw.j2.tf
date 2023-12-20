@@ -27,6 +27,6 @@ resource "oci_apigateway_api" "starter_api" {
 }
 
 locals {
-  apigw_ocid = oci_apigateway_gateway.starter_apigw[0].id
-  apigw_ip   = oci_apigateway_gateway.starter_apigw[0].ip_addresses[0].ip_address
+  apigw_ocid = try(oci_apigateway_gateway.starter_apigw[0].id, "")
+  apigw_ip   = try(oci_apigateway_gateway.starter_apigw[0].ip_addresses[0].ip_address,"")
 }
