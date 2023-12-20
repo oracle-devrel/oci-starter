@@ -423,7 +423,7 @@ java_find_version() {
 
 certificate_validity() {
   CERT_DATE_VALIDITY=`oci certs-mgmt certificate get --certificate-id $TF_VAR_certificate_ocid | jq -r '.data["current-version"].validity["time-of-validity-not-after"]'`
-  CERT_VALIDITY_DAY=`echo $((($(date -d $CERT_VALIDITY +%s) - $(date +%s))/86400))`
+  CERT_VALIDITY_DAY=`echo $((($(date -d $CERT_DATE_VALIDITY +%s) - $(date +%s))/86400))`
   echo "Certificate valid until: $CERT_DATE_VALIDITY"
   echo "Days left: $CERT_VALIDITY_DAY"
 }
