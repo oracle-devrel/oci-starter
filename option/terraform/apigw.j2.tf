@@ -11,7 +11,7 @@ resource oci_apigateway_gateway starter_apigw {
 
 {%- if tls is defined %}
   count = var.certificate_ocid == "" ? 0 : 1
-  certificate_id = certificate_ocid
+  certificate_id = var.certificate_ocid
 {%- endif %}       
 }
 
@@ -27,7 +27,6 @@ resource "oci_apigateway_api" "starter_api" {
 }
 
 locals {
-  apigw_ocid = oci_apigateway_gateway.starter_apigw.id
+  apigw_ocid = oci_apigateway_gateway.starter_apigw[0].id
+  apigw_ip   = oci_apigateway_gateway.starter_apigw[0].ip_addresses[0].ip_address
 }
-
-certificate_id = 
