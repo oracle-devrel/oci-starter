@@ -1,7 +1,6 @@
 variable "dns_zone_name" { default="" }
 variable "dns_name" { default="" }
 variable "dns_ip" { default="" }
-variable "certificate_ocid" { default="" }
 
 locals {
 {%- if deploy == "compute" %}  
