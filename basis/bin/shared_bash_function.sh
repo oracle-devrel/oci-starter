@@ -239,9 +239,10 @@ get_ui_url() {
   elif [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
     get_output_from_tfstate UI_URL pool_lb_url 
   elif [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
-    # export INGRESS_LB_IP=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
-    # export INGRESS_LB_OCID=`oci lb load-balancer list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[] | select(.["ip-addresses"][0]["ip-address"]=="'$INGRESS_LB_IP'") | .id'`  
-    export UI_URL=http://${INGRESS_LB_OCID}/${TF_VAR_prefix}
+    export UI_URL=http://${TF_VAR_ingress_ip}/${TF_VAR_prefix}
+    if [ "$TF_VAR_certificate_ocid" != "" ]; then
+      export UI_HTTPS=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
+    fi
   elif [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then  
     if [ "$TF_VAR_certificate_ocid" == "" ]; then
        export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
@@ -465,7 +466,8 @@ certificate_path_before_terraform() {
 certificate_post_ingress() {
   if [ -n $TF_VAR_certificate_ocid ]; then
     if [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
-      infra_as_code_apply
+      src/terraform/apply.sh --auto-approve -no-color
+      exit_on_error
     fi
   fi  
 }

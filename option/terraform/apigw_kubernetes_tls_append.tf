@@ -12,7 +12,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
       methods = [ "ANY" ]
       backend {
         type = "HTTP_BACKEND"
-        url    = "http://${var.ingress_ip}/${var.prefix}/${request.path[pathname]}"
+        url    = "http://${var.ingress_ip}/${var.prefix}/$${request.path[pathname]}"
       }
     }     
   }
