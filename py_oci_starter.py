@@ -846,6 +846,8 @@ def create_output_dir():
 
     if params.get('tls'):
         cp_terraform("tls.j2.tf")
+        if params.get('deploy') == 'kubernetes':
+            cp_terraform_apigw("apigw_kubernetes_tls_append.tf")   
         if params.get('tls') == 'new':
             output_copy_tree("option/tls/new", "src/tls")
 

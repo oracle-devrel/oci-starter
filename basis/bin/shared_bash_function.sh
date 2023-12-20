@@ -243,7 +243,7 @@ get_ui_url() {
     export LB_OCID=`oci lb load-balancer list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[] | select(.["ip-addresses"][0]["ip-address"]=="'$DNS_IP'") | .id'`  
     export UI_URL=http://${LB_IP}/${TF_VAR_prefix}
   elif [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then  
-    if [ "$TF_VAR_dns_name" == "" ]; then
+    if [ "$TF_VAR_certificate_ocid" == "" ]; then
        export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
     else
        export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
