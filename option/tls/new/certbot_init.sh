@@ -17,7 +17,7 @@ sudo systemctl restart nginx
 sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
 sudo firewall-cmd --reload
-sudo certbot --agree-tos --nginx --email $CERTIFICATE_GENERATE_EMAIL -d $TF_VAR_dns_name
+sudo certbot --agree-tos --nginx --email $CERTIFICATE_EMAIL -d $TF_VAR_dns_name
 
 # Place the certificate in an OPC directory so that it can be copied via SSH.
 mkdir certificate

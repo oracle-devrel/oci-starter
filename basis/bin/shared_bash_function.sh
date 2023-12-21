@@ -509,8 +509,8 @@ certificate_post_deploy() {
 # Generate a certificate on compute or bastion
 certificate_run_certbot()
 {
-  if [ -z "$CERTIFICATE_GENERATE_EMAIL" ]; then
-    echo "Error: CERTIFICATE_GENERATE_EMAIL is not defined."
+  if [ -z "$CERTIFICATE_EMAIL" ]; then
+    echo "Error: CERTIFICATE_EMAIL is not defined."
     exit 1
   fi   
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
@@ -521,7 +521,7 @@ certificate_run_certbot()
       TLS_IP=$BASTION_IP
   fi
   scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path bin/tls opc@$TLS_IP:/home/opc/.
-  ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export CERTIFICATE_GENERATE_DNS=\"$CERTIFICATE_GENERATE_EMAIL\"; bash tls/certbot_init.sh 2>&1 | tee -a tls/certbot_init.log"
+  ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export CERTIFICATE_EMAIL=\"$CERTIFICATE_EMAIL\"; bash tls/certbot_init.sh 2>&1 | tee -a tls/certbot_init.log"
   scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP:tls/certificate target/.
   export CERTIFICATE_PATH=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
 }

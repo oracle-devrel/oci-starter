@@ -125,7 +125,8 @@ def get_tf_var(param):
         'deploy': 'TF_VAR_deploy_strategy',
         'license': 'TF_VAR_license_model',
         'ui': 'TF_VAR_ui_strategy',
-        'certificate_path': 'CERTIFICATE_PATH'
+        'certificate_path': 'CERTIFICATE_PATH',
+        'certificate_email': 'CERTIFICATE_EMAIL'
     }.get(param)
     if special_case is not None:
         return special_case
@@ -260,7 +261,10 @@ def tls_rules():
         params['dns_zone_name'] = TO_FILL
         params['dns_name'] = TO_FILL
         if params.get('tls')=='existing':
+            params['certificate_ocid'] = TO_FILL
             params['certificate_path'] = TO_FILL
+        elif params.get('tls')=='new':
+            params['certificate_email'] = TO_FILL
 
 
 def apply_rules():
