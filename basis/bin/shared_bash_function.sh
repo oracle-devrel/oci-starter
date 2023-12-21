@@ -468,7 +468,7 @@ certificate_path_before_terraform() {
     fi
   elif [ "$TF_VAR_certificate_ocid" == "" ] && [ "$CERTIFICATE_PATH" != "" ] ;  then
     certificate_create
-  elif [ "$TF_VAR_certificate_ocid" != "" ]
+  elif [ "$TF_VAR_certificate_ocid" != "" ]; then
     certificate_validity
   else
     echo "Certificate will be created after the deployment."
