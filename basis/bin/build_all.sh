@@ -16,6 +16,7 @@ if [ "$TF_VAR_ssh_private_path" == "" ]; then
 fi
 
 if [ -n "$CERTIFICATE_PATH" ]; then
+  title "Certificate"
   certificate_path_before_terraform
 fi  
 
@@ -75,7 +76,10 @@ elif [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then
     exit_on_error
 fi
 
-certificate_post_deploy
+if [ -n "$TF_VAR_dns_name" ]; then
+  title "Certificate - Post Deploy"
+  certificate_post_deploy
+fi
 
 $BIN_DIR/add_api_portal.sh
 
