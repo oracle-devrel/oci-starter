@@ -118,8 +118,8 @@ build_option() {
   mkdir_deploy
   if [ "$OPTION_DB_INSTALL" == "shared_compute" ]; then
     NAME=shared-compute-${OPTION_DB}
-  elif [ "$OPTION_TLS" == "existing" ]; then
-    NAME=tls-existing-${OPTION_DEPLOY}    
+  elif [ "$OPTION_TLS" != "none" ]; then
+    NAME=tls-${OPTION_TLS}-${OPTION_DEPLOY}
   elif [ "$OPTION_LANG" == "java" ] && [ "$OPTION_DEPLOY" != "function" ]; then
     NAME=${OPTION_LANG}-${OPTION_JAVA_FRAMEWORK}-${OPTION_JAVA_VM}-${OPTION_DB}-${OPTION_UI}
   else
@@ -143,6 +143,7 @@ build_option() {
        -db_install $OPTION_DB_INSTALL \
        -group_common $OPTION_GROUP_NAME \
        -shape $OPTION_SHAPE \
+       -tls $OPTION_TLS \
        -compartment_ocid $EX_COMPARTMENT_OCID \
        -vcn_ocid $TF_VAR_vcn_ocid \
        -public_subnet_ocid $TF_VAR_public_subnet_ocid \
