@@ -4,7 +4,7 @@ variable "dns_ip" { default="" }
 
 locals {
 {%- if deploy == "compute" %}  
-  dns_ip = local.compute_ip
+  dns_ip = local.compute_public_ip
 {%- elif deploy == "instance_pool" %}  
   dns_ip = local.instance_pool_lb_ip
 {%- else %}  

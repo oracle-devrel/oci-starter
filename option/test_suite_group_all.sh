@@ -45,7 +45,6 @@ loop_shape() {
 }
 
 loop_db() {
-  OPTION_DB_INSTALL=default
   if [ "$OPTION_DEPLOY" != "instance_pool" ] ; then
     # OPTION_DB=database 
     # loop_ui  

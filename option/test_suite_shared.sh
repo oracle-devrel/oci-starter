@@ -6,8 +6,12 @@ export BUILD_COUNT=1
 export COLOR_RED='\033[0;31m'
 export COLOR_GREEN='\033[0;32m'
 export COLOR_NONE='\033[0m' 
-export OPTION_TLS='none'
-export OPTION_GROUP_NAME='dummy'
+
+# Default
+OPTION_TLS=none
+OPTION_GROUP_NAME=dummy
+OPTION_DB_INSTALL=default
+OPTION_SHAPE=amd
 
 # No color for terraforms logs
 export nocolorarg=1
