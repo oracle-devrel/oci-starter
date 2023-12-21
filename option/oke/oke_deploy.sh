@@ -41,12 +41,13 @@ fi
 # Using & as separator
 sed "s&##DOCKER_PREFIX##&${DOCKER_PREFIX}&" src/app/app.yaml > $TARGET_DIR/app.yaml
 sed "s&##DOCKER_PREFIX##&${DOCKER_PREFIX}&" src/ui/ui.yaml > $TARGET_DIR/ui.yaml
+cp src/oke/ingress-app.yaml $TARGET_DIR/ingress-app.yaml
 
 # If present, replace the ORDS URL
 if [ "$ORDS_URL" != "" ]; then
   ORDS_HOST=`basename $(dirname $ORDS_URL)`
   sed -i "s&##ORDS_HOST##&$ORDS_HOST&" $TARGET_DIR/app.yaml
-  sed "s&##ORDS_HOST##&$ORDS_HOST&" src/oke/ingress-app.yaml > $TARGET_DIR/ingress-app.yaml
+  sed -i "s&##ORDS_HOST##&$ORDS_HOST&" $TARGET_DIR/ingress-app.yaml
 fi 
 
 # delete the old pod, just to be sure a new image is pulled
