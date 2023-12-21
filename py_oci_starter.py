@@ -612,7 +612,6 @@ def cp_terraform(file1, file2=None, file3=None):
     if file3 is not None:
         append_file( output_dir + "/src/terraform/"+file1, "option/terraform/"+file3 )
 
-
 def output_copy_tree(src, target):
     copy_tree(src, output_dir + os.sep + target)
 

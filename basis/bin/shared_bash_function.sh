@@ -450,7 +450,7 @@ certificate_create() {
 }
 
 certificate_path_before_terraform() {
-  if [ -z $TF_VAR_dns_name ]; then
+  if [ $"TF_VAR_dns_name" == "" ]; then
     echo "ERROR: certificate_path_before_terraform: TF_VAR_dns_name not defined"
     exit 1
   fi 
@@ -466,18 +466,53 @@ certificate_path_before_terraform() {
       cp src/tls/nginx_tls.conf target/compute/.
       sed -i "s/##DNS_NAME##/$TF_VAR_dns_name/" target/compute/nginx_tls.conf
     fi
-  elif [ "$TF_VAR_certificate_ocid" == "" ]; then
+  elif [ "$TF_VAR_certificate_ocid" == "" ] && [ "$CERTIFICATE_PATH" != "" ] ;  then
     certificate_create
-  else 
+  elif [ "$TF_VAR_certificate_ocid" != "" ]
     certificate_validity
+  else
+    echo "Certificate will be created after the deployment."
   fi  
 }
 
-certificate_post_ingress() {
+# Certificate - Post Deploy
+certificate_post_deploy() {
   if [ -n $TF_VAR_certificate_ocid ]; then
     if [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
       src/terraform/apply.sh --auto-approve -no-color
       exit_on_error
     fi
+  else 
+    if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
+      certificate_run_certbot
+    else
+      ### XXXX ### Everything except compute ### 
+      if [ "$CERTIFICATE_PATH" == "" ]; then
+        certificate_run_certbot
+      fi  
+      certificate_create
+      src/terraform/apply.sh --auto-approve -no-color
+      exit_on_error      
+    fi
   fi  
+}
+
+# Generate a certificate on compute or bastion
+certificate_run_certbot()
+{
+  if [ -z "$CERTIFICATE_GENERATE_EMAIL" ]; then
+    echo "Error: CERTIFICATE_GENERATE_EMAIL is not defined."
+    exit 1
+  fi   
+  if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
+      # Generate the certificate with Let'Encrypt on the COMPUTE
+      TLS_IP=$COMPUTE_IP
+  else
+      # Generate the certificate with Let'Encrypt on the BASTION
+      TLS_IP=$BASTION_IP
+  fi
+  scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path bin/tls opc@$TLS_IP:/home/opc/.
+  ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export CERTIFICATE_GENERATE_DNS=\"$CERTIFICATE_GENERATE_EMAIL\"; bash tls/certbot_init.sh 2>&1 | tee -a tls/certbot_init.log"
+  scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP:tls/certificate target/.
+  export CERTIFICATE_PATH=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
 }
