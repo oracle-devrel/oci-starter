@@ -16,7 +16,7 @@ if [ "$TF_VAR_ssh_private_path" == "" ]; then
 fi
 
 . env.sh
-if [ -n "$CERTIFICATE_PATH" ]; then
+if [ -n "$TF_VAR_tls" ]; then
   title "Certificate"
   certificate_path_before_terraform
 fi  
@@ -76,7 +76,7 @@ elif [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then
     exit_on_error
 fi
 
-if [ -n "$TF_VAR_dns_name" ]; then
+if [ -n "$TF_VAR_tls" ]; then
   title "Certificate - Post Deploy"
   certificate_post_deploy
 fi
