@@ -707,7 +707,7 @@ def create_dir_shared():
         cp_terraform("bastion_shared_compute.tf")   
     elif 'bastion_ocid' in params:
         cp_terraform("bastion_existing.tf")
-    elif params.get('database')!='none':
+    elif params.get('database')!='none' or 'tls' in params:
         cp_terraform("bastion.tf")
 
 #----------------------------------------------------------------------------
