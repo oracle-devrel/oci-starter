@@ -134,16 +134,8 @@ loop_shared_compute() {
   build_option   
 }
 
-loop_tls() {
-  # TLS
-  OPTION_GROUP_NAME=none
-  OPTION_LANG=java
-  OPTION_JAVA_VM=jdk
-  OPTION_JAVA_FRAMEWORK=springboot
-  OPTION_UI=html
-  OPTION_DB=none
+loop_tls_deploy() {
   OPTION_DEPLOY=compute
-  OPTION_TLS=existing
   build_option  
   OPTION_DEPLOY=kubernetes
   build_option  
@@ -153,6 +145,20 @@ loop_tls() {
   build_option  
   OPTION_DEPLOY=function
   build_option  
+}
+
+loop_tls() {
+  # TLS
+  OPTION_GROUP_NAME=none
+  OPTION_LANG=java
+  OPTION_JAVA_VM=jdk
+  OPTION_JAVA_FRAMEWORK=springboot
+  OPTION_UI=html
+  OPTION_DB=none
+  OPTION_TLS=existing
+  loop_tls_deploy
+  OPTION_TLS=new
+  loop_tls_deploy  
   OPTION_GROUP_NAME=dummy
 }
 

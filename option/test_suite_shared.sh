@@ -18,7 +18,7 @@ export nocolorarg=1
 
 start_test() {
   export TEST_NAME=$1
-  if[ "$OPTION_GROUP_NAME" != "none" ]
+  if [ "$OPTION_GROUP_NAME" != "none" ]; then
     export TEST_DIR=$TEST_HOME/$OPTION_DEPLOY/$TEST_NAME
   else
     export TEST_DIR=$TEST_HOME/no_group/$OPTION_DEPLOY/$TEST_NAME
@@ -105,6 +105,7 @@ build_test_destroy () {
     echo "stop_token file dectected"
     echo "Exiting before destroy.sh"
     echo "Last directory: $TEST_DIR"
+    rm $TEST_HOME/stop_token
     exit
   fi  
   ./destroy.sh --auto-approve > destroy.log 2>&1  
