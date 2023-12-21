@@ -6,6 +6,8 @@ export BUILD_COUNT=1
 export COLOR_RED='\033[0;31m'
 export COLOR_GREEN='\033[0;32m'
 export COLOR_NONE='\033[0m' 
+export OPTION_TLS='none'
+export OPTION_GROUP_NAME='dummy'
 
 # No color for terraforms logs
 export nocolorarg=1
@@ -113,6 +115,7 @@ build_test_destroy () {
 }
 
 build_option() {
+  mkdir_deploy
   if [ "$OPTION_DB_INSTALL" == "shared_compute" ]; then
     NAME=shared-compute-${OPTION_DB}
   elif [ "$OPTION_LANG" == "java" ] && [ "$OPTION_DEPLOY" != "function" ]; then
@@ -136,7 +139,7 @@ build_option() {
        -database $OPTION_DB \
        -db_password $TEST_DB_PASSWORD \
        -db_install $OPTION_DB_INSTALL \
-       -group_common dummy \
+       -group_common $OPTION_GROUP_NAME \
        -shape $OPTION_SHAPE \
        -compartment_ocid $EX_COMPARTMENT_OCID \
        -vcn_ocid $TF_VAR_vcn_ocid \
@@ -169,9 +172,11 @@ build_option() {
 
 # Create the $OPTION_DEPLOY directory
 mkdir_deploy() {
-  mkdir $TEST_HOME/$OPTION_DEPLOY
-  echo '. $PROJECT_DIR/../../group_common_env.sh' > $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
-  chmod +x $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
+  if [ ! -d $TEST_HOME/$OPTION_DEPLOY ]; then
+    mkdir $TEST_HOME/$OPTION_DEPLOY
+    echo '. $PROJECT_DIR/../../group_common_env.sh' > $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
+    chmod +x $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
+  fi
 }
 
 

@@ -238,8 +238,11 @@ def zip_rules():
 
 def group_common_rules():
     if  params.get('group_common'):
-       global a_group_common 
-       a_group_common=params.get('group_common').split(',')
+        if params.get('group_common')=='none':
+            params.pop('group_common')
+        else:
+            global a_group_common 
+            a_group_common=params.get('group_common').split(',')
 
 
 def shape_rules():

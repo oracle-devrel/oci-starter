@@ -83,8 +83,6 @@ loop_java_framework () {
 }
 
 loop_lang () {
-  mkdir_deploy
-
   OPTION_LANG=java 
   OPTION_JAVA_VM=jdk 
   if [ "$OPTION_DEPLOY" == "function" ]; then
@@ -126,7 +124,6 @@ loop_shared_compute() {
   OPTION_DB_INSTALL=shared_compute
   OPTION_UI=html
   OPTION_DB=db_free
-  mkdir_deploy
   build_option  
   OPTION_DB=mysql
   build_option   
@@ -136,6 +133,28 @@ loop_shared_compute() {
   OPTION_DB=ATP
   OPTION_JAVA_FRAMEWORK=helidon4 
   build_option   
+}
+
+loop_tls() {
+  # TLS
+  OPTION_GROUP_NAME=none
+  OPTION_LANG=java
+  OPTION_JAVA_VM=jdk
+  OPTION_JAVA_FRAMEWORK=springboot
+  OPTION_UI=html
+  OPTION_DB=none
+  OPTION_DEPLOY=compute
+  OPTION_TLS=existing
+  build_option  
+  OPTION_DEPLOY=kubernetes
+  build_option  
+  OPTION_DEPLOY=instance_pool
+  build_option  
+  OPTION_DEPLOY=container_instance
+  build_option  
+  OPTION_DEPLOY=function
+  build_option  
+  OPTION_GROUP_NAME=dummy
 }
 
 loop_deploy() {
@@ -150,6 +169,8 @@ loop_deploy() {
   loop_lang
   OPTION_DEPLOY=function 
   loop_lang
+
+  loop_tls
 }
 
 generate_only() {
