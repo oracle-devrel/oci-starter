@@ -18,7 +18,12 @@ export nocolorarg=1
 
 start_test() {
   export TEST_NAME=$1
-  export TEST_DIR=$TEST_HOME/$OPTION_DEPLOY/$TEST_NAME
+  if[ "$OPTION_GROUP_NAME" != "none" ]
+    export TEST_DIR=$TEST_HOME/$OPTION_DEPLOY/$TEST_NAME
+  else
+    export TEST_DIR=$TEST_HOME/no_group/$OPTION_DEPLOY/$TEST_NAME
+    mkdir -p $TEST_DIR
+  fi
   echo "-- TEST: $OPTION_DEPLOY - $TEST_NAME ---------------------------------------"   
 }
 
@@ -135,7 +140,8 @@ build_option() {
   NAME=${NAME/_/-}
   start_test $NAME
   cd $TEST_HOME/oci-starter
-  ./oci_starter.sh \
+  if [ "$OPTION_GROUP_NAME" == "dummy" ]; then
+    ./oci_starter.sh \
        -prefix $NAME \
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
@@ -161,7 +167,22 @@ build_option() {
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
        -fnapp_ocid $TF_VAR_fnapp_ocid > ${TEST_DIR}.log 2>&1 
-
+  else
+    ./oci_starter.sh \
+       -prefix tsone \
+       -deploy $OPTION_DEPLOY \
+       -ui $OPTION_UI \
+       -language $OPTION_LANG \
+       -java_framework $OPTION_JAVA_FRAMEWORK \
+       -java_vm $OPTION_JAVA_VM \
+       -database $OPTION_DB \
+       -db_password $TEST_DB_PASSWORD \
+       -db_install $OPTION_DB_INSTALL \
+       -group_common $OPTION_GROUP_NAME \
+       -shape $OPTION_SHAPE \
+       -tls $OPTION_TLS \
+       -compartment_ocid $EX_COMPARTMENT_OCID > ${TEST_DIR}.log 2>&1 
+  fi
 #      -db_compartment_ocid $EX_COMPARTMENT_OCID \
 
   if [ -d output ]; then 
