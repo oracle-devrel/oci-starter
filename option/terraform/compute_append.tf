@@ -2,7 +2,3 @@
 output "compute_ip" {
   value = local.compute_public_ip
 }
-
-output "ui_url" {
-  value = format("http://%s", local.compute_public_ip) 
-}

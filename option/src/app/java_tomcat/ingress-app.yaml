@@ -4,7 +4,7 @@ kind: Ingress
 metadata:
   name: ##PREFIX##-app-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
+    spec.ingressClassName: "nginx"
     nginx.ingress.kubernetes.io/rewrite-target: /starter-1.0/$2    
 spec:
   rules:

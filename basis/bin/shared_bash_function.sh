@@ -235,19 +235,29 @@ get_user_details() {
 # Get the user interface URL
 get_ui_url() {
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
-    get_output_from_tfstate UI_URL ui_url 
+    export UI_URL=http://${COMPUTE_IP}
+    if [ "$TF_VAR_certificate_ocid" != "" ]; then
+      export UI_HTTP=$UI_URL
+      export UI_URL=https://${TF_VAR_dns_name}
+    fi
   elif [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
-    get_output_from_tfstate UI_URL pool_lb_url 
+    get_output_from_tfstate INSTANCE_POOL_LB_IP instance_pool_lb_ip 
+    export UI_URL=http://${INSTANCE_POOL_LB_IP}
+    if [ "$TF_VAR_certificate_ocid" != "" ]; then
+      export UI_HTTP=$UI_URL
+      export UI_URL=https://${TF_VAR_dns_name}
+    fi
   elif [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
     export UI_URL=http://${TF_VAR_ingress_ip}/${TF_VAR_prefix}
     if [ "$TF_VAR_certificate_ocid" != "" ]; then
-      export UI_HTTPS=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
+      export UI_HTTP=$UI_URL
+      export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     fi
   elif [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then  
-    if [ "$TF_VAR_certificate_ocid" == "" ]; then
-       export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
-    else
-       export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
+    export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
+    if [ "$TF_VAR_certificate_ocid" != "" ]; then
+      export UI_HTTP=$UI_URL
+      export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     fi   
   fi
 }

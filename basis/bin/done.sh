@@ -56,8 +56,8 @@ if [ ! -z "$UI_URL" ]; then
   if [ "$TF_VAR_ui_strategy" != "api" ]; then
     echo - User Interface: $UI_URL/
   fi  
-  if [ "$UI_HTTPS" != "" ]; then
-    echo - HTTPS : $UI_HTTPS/
+  if [ "$UI_HTTP" != "" ]; then
+    echo - HTTP : $UI_HTTP/
   fi
   for APP_DIR in `app_dir_list`; do
     if [ -f  $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml ]; then

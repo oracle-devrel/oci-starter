@@ -6,7 +6,7 @@ locals {
 {%- if deploy == "compute" %}  
   dns_ip = local.compute_ip
 {%- elif deploy == "instance_pool" %}  
-  dns_ip = local.instance_pool_ip
+  dns_ip = local.instance_pool_lb_ip
 {%- else %}  
   dns_ip = local.apigw_ip
 {%- endif %}       
