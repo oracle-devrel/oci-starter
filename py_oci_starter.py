@@ -834,7 +834,7 @@ def create_output_dir():
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
             if params.get('deploy') == 'instance_pool':
-                cp_terraform("instance_pool.tf")            
+                cp_terraform("instance_pool.j2.tf")            
             elif params.get('tls') == 'existing':
                 output_copy_tree("option/tls/compute_existing", "src/tls")
 
