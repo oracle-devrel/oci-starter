@@ -60,15 +60,23 @@ resource oci_load_balancer_backend_set starter-bastion-bes {
     url_path       = "/"
   }
   load_balancer_id = oci_load_balancer.starter_pool_lb.id
-  name             = "${prefix}-bastion-bes"
+  name             = "${var.prefix}-bastion-bes"
   policy           = "ROUND_ROBIN"
 }
 
+resource oci_load_balancer_backend starter-bastion-be {
+  load_balancer_id = oci_load_balancer.starter_pool_lb.id
+  backendset_name  = oci_load_balancer_backend_set.starter-bastion-bes.name
+  ip_address       = oci_core_instance.starter_bastion.private_ip 
+  port             = "80"
+  weight           = "1"
+}
+
 resource oci_load_balancer_path_route_set starter-bastion-routeset {
-  load_balancer_id = oci_load_balancer_load_balancer.export_tsone-pool-lb.id
-  name             = "${prefix}-bastion-routeset"
+  load_balancer_id = oci_load_balancer.starter_pool_lb.id
+  name             = "${var.prefix}-bastion-routeset"
   path_routes {
-    backend_set_name = oci_load_balancer_backend_set starter-bastion-bes"tsone-bastion-bes"
+    backend_set_name = oci_load_balancer_backend_set.starter-bastion-bes.name
     path             = "/.well-known/acme-challenge"
     path_match_type {
       match_type = "PREFIX_MATCH"
@@ -77,10 +85,10 @@ resource oci_load_balancer_path_route_set starter-bastion-routeset {
 }
 
 resource oci_load_balancer_listener starter-lb-http-listener {
-  load_balancer_id    = oci_load_balancer_load_balancer.export_tsone-pool-lb.id
+  load_balancer_id    = oci_load_balancer.starter_pool_lb.id
   default_backend_set_name = oci_load_balancer_backend_set.starter_pool_backend_set.name
   name                = "HTTP-80"
-  path_route_set_name = "${prefix}-bastion-routeset"
+  path_route_set_name = oci_load_balancer_path_route_set.starter-bastion-routeset.name
   port                = "80"
   protocol            = "HTTP"
 }

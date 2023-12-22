@@ -182,6 +182,15 @@ if [ -f $STATE_FILE ]; then
     get_attribute_from_tfstate "APIGW_DEPLOYMENT_OCID" "starter_apigw_deployment" "id"
   fi
 
+  if [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
+    # XXX Does not work with Resource Manager XXX
+    # Check in the terraform state is the compute is already created.
+    COMPUTE_TYPE=`cat $STATE_FILE | jq -r '.resources[] | select(.name=="starter_instance") | .type'`
+    if [ "$COMPUTE_TYPE" != "" ]; then
+      export TF_VAR_compute_ready="true"
+    fi
+  fi
+
   # Functions
   if [ "$TF_VAR_deploy_strategy" == "function" ]; then
     # OBJECT Storage URL
