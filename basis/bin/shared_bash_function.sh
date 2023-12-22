@@ -441,11 +441,15 @@ certificate_validity() {
 }
 
 certificate_create() {
-  echo "Creating certificate $TF_VAR_dns_name"
+  echo "Creating or Updating certificate $TF_VAR_dns_name"
   CERT_CERT=$(cat $CERTIFICATE_PATH/cert.pem)
   CERT_CHAIN=$(cat $CERTIFICATE_PATH/chain.pem)
   CERT_PRIVKEY=$(cat $CERTIFICATE_PATH/privkey.pem)
-  oci certs-mgmt certificate create-by-importing-config --compartment-id=$TF_VAR_compartment_ocid  --name=$TF_VAR_dns_name --cert-chain-pem="$CERT_CHAIN" --certificate-pem="$CERT_CERT"  --private-key-pem="$CERT_PRIVKEY" --wait-for-state ACTIVE --wait-for-state FAILED
+  if [ -z $TF_VAR_certificate_ocid ]; then
+    oci certs-mgmt certificate create-by-importing-config --compartment-id=$TF_VAR_compartment_ocid  --name=$TF_VAR_dns_name --cert-chain-pem="$CERT_CHAIN" --certificate-pem="$CERT_CERT"  --private-key-pem="$CERT_PRIVKEY" --wait-for-state ACTIVE --wait-for-state FAILED
+  else
+    oci certs-mgmt certificate update-certificate-by-importing-config-details --certificate-id=$TF_VAR_certificate_ocid --cert-chain-pem="$CERT_CHAIN" --certificate-pem="$CERT_CERT"  --private-key-pem="$CERT_PRIVKEY" --wait-for-state ACTIVE --wait-for-state FAILED
+  fi
   exit_on_error
   TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[0].id`
 }
