@@ -27,8 +27,25 @@ sudo systemctl restart nginx
 sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
 sudo firewall-cmd --reload
-sudo certbot --agree-tos --nginx --email $CERTIFICATE_EMAIL -d $TF_VAR_dns_name
-exit_on_error
+
+x=10
+while [ $x -gt 0 ]
+do
+  sudo certbot --agree-tos --nginx --email $CERTIFICATE_EMAIL -d $TF_VAR_dns_name
+  RESULT=$?
+  if [ $RESULT -eq 0 ]; then
+    echo "Success - certbot"
+    x=0
+  else 
+    echo "Cerbot failed - Retrying $x - Waiting 60 secs for the DNS"
+    sleep 60  
+    x=$(( $x - 1 ))
+    if [ x -eq 0 ]; then
+      echo "ERROR"
+      exit 1
+    fi
+  fi
+done
 
 # Place the certificate in an OPC directory so that it can be copied via SSH.
 mkdir certificate

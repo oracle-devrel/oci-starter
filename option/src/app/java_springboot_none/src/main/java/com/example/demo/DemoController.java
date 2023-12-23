@@ -3,6 +3,7 @@ package com.example.demo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.*;
+import java.net.Inet4Address;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class DemoController {
 
   @RequestMapping(value = "/info", method = RequestMethod.GET, produces ={ "text/plain" })  
   public String info() {
-    return "Java - SpringBoot / No Database"; 
+    String IP = (System.getenv("POD_IP")==null)?Inet4Address.getLocalHost().getHostAddress():" - "+ System.getenv("POD_IP");
+    return "Java - SpringBoot / No Database - " + IP; 
   }  
 }
