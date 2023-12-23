@@ -445,7 +445,7 @@ certificate_create() {
   CERT_CERT=$(cat $CERTIFICATE_PATH/cert.pem)
   CERT_CHAIN=$(cat $CERTIFICATE_PATH/chain.pem)
   CERT_PRIVKEY=$(cat $CERTIFICATE_PATH/privkey.pem)
-  if [ -z $TF_VAR_certificate_ocid ]; then
+  if [ "$TF_VAR_certificate_ocid" == "" ]; then
     oci certs-mgmt certificate create-by-importing-config --compartment-id=$TF_VAR_compartment_ocid  --name=$TF_VAR_dns_name --cert-chain-pem="$CERT_CHAIN" --certificate-pem="$CERT_CERT"  --private-key-pem="$CERT_PRIVKEY" --wait-for-state ACTIVE --wait-for-state FAILED
   else
     oci certs-mgmt certificate update-certificate-by-importing-config-details --certificate-id=$TF_VAR_certificate_ocid --cert-chain-pem="$CERT_CHAIN" --certificate-pem="$CERT_CERT"  --private-key-pem="$CERT_PRIVKEY" --wait-for-state ACTIVE --wait-for-state FAILED
@@ -459,9 +459,6 @@ certificate_path_before_terraform() {
     echo "ERROR: certificate_path_before_terraform: TF_VAR_dns_name not defined"
     exit 1
   fi 
-  if [ -z $TF_VAR_certificate_ocid ]; then
-    export TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[0].id`
-  fi
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
     if [ "$TF_VAR_tls" == "existing" ]; then
       if [ -d target/compute/certificate ]; then
