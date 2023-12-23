@@ -39,7 +39,7 @@ resource "oci_load_balancer_backend_set" "starter_pool_backend_set" {
   }
 }
 
-{%- if tls == "new" %} 
+{%- if tls != "new" %} 
 resource "oci_load_balancer_listener" "starter_pool_lb_listener" {
   load_balancer_id         = oci_load_balancer.starter_pool_lb.id
   name                     = "HTTP-80"
