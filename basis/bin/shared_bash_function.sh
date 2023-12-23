@@ -522,7 +522,9 @@ certificate_run_certbot()
       TLS_IP=$BASTION_IP
   fi
   scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path src/tls opc@$TLS_IP:/home/opc/.
+  exit_on_error
   ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export CERTIFICATE_EMAIL=\"$CERTIFICATE_EMAIL\"; bash tls/certbot_init.sh 2>&1 | tee -a tls/certbot_init.log"
   scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP:tls/certificate target/.
+  exit_on_error
   export CERTIFICATE_PATH=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
 }
