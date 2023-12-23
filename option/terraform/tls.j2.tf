@@ -50,7 +50,7 @@ resource "oci_load_balancer_listener" "starter-lb-https-listener" {
     server_order_preference = "ENABLED"
     verify_depth = 1
     verify_peer_certificate = false
-    }
+  }
 }
 
 {%- if tls == "new" %}  

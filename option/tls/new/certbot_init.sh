@@ -38,6 +38,7 @@ do
     x=0
   else 
     echo "Cerbot failed - Retrying $x - Waiting 60 secs for the DNS"
+    nslookup $TF_VAR_dns_name
     sleep 60  
     x=$(( $x - 1 ))
     if [ x -eq 0 ]; then
