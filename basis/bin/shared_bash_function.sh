@@ -463,7 +463,7 @@ certificate_path_before_terraform() {
     if [ "$TF_VAR_tls" == "existing" ]; then
       if [ -d target/compute/certificate ]; then
         echo "Certificate Directory exists already" 
-      elif [ -n $TF_VAR_CERTIFICATE_PATH ]; then
+      elif [ "$TF_VAR_CERTIFICATE_PATH" != "" ]; then
         mkdir -p target/compute/certificate
         cp $CERTIFICATE_PATH/* target/compute/certificate/.
         cp src/tls/nginx_tls.conf target/compute/.
