@@ -39,15 +39,16 @@ resource "oci_load_balancer_backend_set" "starter_pool_backend_set" {
   }
 }
 
-{%- if tls != "new" %} 
 resource "oci_load_balancer_listener" "starter_pool_lb_listener" {
   load_balancer_id         = oci_load_balancer.starter_pool_lb.id
   name                     = "HTTP-80"
   default_backend_set_name = oci_load_balancer_backend_set.starter_pool_backend_set.name
   port                     = 80
   protocol                 = "HTTP"
-}
+{%- if tls == "new" %} 
+  path_route_set_name = oci_load_balancer_path_route_set.starter-bastion-routeset.name
 {%- endif %} 
+}
 
 
 resource "oci_core_instance_configuration" "starter_instance_configuration" {

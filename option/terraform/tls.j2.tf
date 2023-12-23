@@ -83,16 +83,6 @@ resource oci_load_balancer_path_route_set starter-bastion-routeset {
     }
   }
 }
-
-resource oci_load_balancer_listener starter-lb-http-listener {
-  load_balancer_id    = oci_load_balancer.starter_pool_lb.id
-  default_backend_set_name = oci_load_balancer_backend_set.starter_pool_backend_set.name
-  name                = "HTTP-80"
-  path_route_set_name = oci_load_balancer_path_route_set.starter-bastion-routeset.name
-  port                = "80"
-  protocol            = "HTTP"
-}
-
 {%- endif %}
 
 {%- endif %}
