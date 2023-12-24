@@ -28,7 +28,8 @@ sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
 sudo firewall-cmd --reload
 
-x=10
+x_max=10
+x=$x_max
 while [ $x -gt 0 ]
 do
   nslookup $TF_VAR_dns_name
@@ -38,7 +39,9 @@ do
     echo "Success - certbot"
     x=0
   else 
-    echo "Cerbot failed - Retrying $x - Waiting 60 secs for the DNS"
+    echo
+    echo "WARNING"
+    echo "Cerbot failed - Retrying $x/${x_max} - Waiting 60 secs for the DNS entry to propagate to the verification servers"
     sleep 60  
     x=$(( $x - 1 ))
     if [ $x -eq 0 ]; then
