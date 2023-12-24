@@ -35,7 +35,7 @@ public class DemoController {
 
   @RequestMapping(value = "/info", method = RequestMethod.GET, produces ={ "text/plain" })  
   public String info() throws Exception {
-    String IP = (System.getenv("POD_IP")==null)?Inet4Address.getLocalHost().getHostAddress():" - "+ System.getenv("POD_IP");
+    String IP = (System.getenv("POD_IP")==null)?Inet4Address.getLocalHost().getHostAddress()+ System.getenv("POD_IP");
     return "Java - SpringBoot / No Database - " + IP; 
   }  
 }

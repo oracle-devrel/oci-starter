@@ -28,7 +28,7 @@ sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
 sudo firewall-cmd --reload
 
-x_max=10
+x_max=5
 x=$x_max
 while [ $x -gt 0 ]
 do
@@ -41,8 +41,8 @@ do
   else 
     echo
     echo "WARNING"
-    echo "Cerbot failed - Retrying $x/${x_max} - Waiting 60 secs for the DNS entry to propagate to the verification servers"
-    sleep 60  
+    echo "Cerbot failed - Retrying $x/${x_max} - Waiting 120 secs for the DNS entry to propagate to the verification servers"
+    sleep 120  
     x=$(( $x - 1 ))
     if [ $x -eq 0 ]; then
       echo "ERROR"
