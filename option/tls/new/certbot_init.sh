@@ -31,6 +31,7 @@ sudo firewall-cmd --reload
 x=10
 while [ $x -gt 0 ]
 do
+  nslookup $TF_VAR_dns_name
   sudo certbot --agree-tos --nginx --email $CERTIFICATE_EMAIL -d $TF_VAR_dns_name
   RESULT=$?
   if [ $RESULT -eq 0 ]; then
@@ -38,10 +39,9 @@ do
     x=0
   else 
     echo "Cerbot failed - Retrying $x - Waiting 60 secs for the DNS"
-    nslookup $TF_VAR_dns_name
     sleep 60  
     x=$(( $x - 1 ))
-    if [ x -eq 0 ]; then
+    if [ $x -eq 0 ]; then
       echo "ERROR"
       exit 1
     fi
