@@ -3,8 +3,9 @@ cd $SCRIPT_DIR/..
 . env.sh -silent
 . $BIN_DIR/tls/dns_shared_function.sh
 
-# Start Certbot in Backgroud (since it has not OCI CLI access)
-$BIN_DIR/tls/dns_oci_background.sh & 
+# Start OCI Commands in Backgroud waiting from files coming from certbot 
+# (Since Certbot Docker has not OCI CLI access)
+$BIN_DIR/tls/dns_oci_background.sh > $TARGET_DIR/dns_oci_background.log 2>&1 &
 
 if [ "$TF_VAR_dns_name" == "" ]; then
   echo "ERROR: TF_VAR_dns_name not defined"
