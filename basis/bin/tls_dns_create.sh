@@ -18,7 +18,7 @@ cp $BIN_DIR/tls/dns* $TARGET_DIR/certbot_shared/.
 # docker run -it --rm --name certbot --entrypoint /bin/sh certbot/certbot
 docker run -it --rm --name certbot -v "$TARGET_DIR/certbot_shared:/certbot_shared" --entrypoint /bin/sh certbot/certbot /certbot_shared/dns_certbot_entrypoint.sh $TF_VAR_dns_name
 
-if [ -f $TARGET_DIR/certbot_shared/$TF_VAR_dns_name ];
+if [ -f $TARGET_DIR/certbot_shared/$TF_VAR_dns_name ]; then
   mkdir -p $PROJECT_DIR/src/tls
   cp -R $TARGET_DIR/certbot_shared/$TF_VAR_dns_name $PROJECT_DIR/src/tls/.
   rm -R $TARGET_DIR/certbot_shared/$TF_VAR_dns_name
