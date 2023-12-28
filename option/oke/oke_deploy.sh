@@ -17,11 +17,11 @@ if [ ! -f $KUBECONFIG ]; then
   kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=240s
   kubectl wait --namespace ingress-nginx --for=condition=Complete job/ingress-nginx-admission-patch  
   # Wait for the ingress external IP
-  TF_VAR_dns_ip=""
-  while [ -z $TF_VAR_dns_ip ]; do
+  TF_VAR_ingress_ip=""
+  while [ -z $TF_VAR_ingress_ip ]; do
     echo "Waiting for external IP..."
-    export TF_VAR_dns_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
-    if [ -z "$TF_VAR_dns_ip" ]; then
+    TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
+    if [ -z "$TF_VAR_ingress_ip" ]; then
       sleep 10
     fi
   done
@@ -29,7 +29,7 @@ if [ ! -f $KUBECONFIG ]; then
   date
   kubectl get all -n ingress-nginx
   sleep 5
-  echo "Ingress ready: $TF_VAR_dns_ip"
+  echo "Ingress ready: $TF_VAR_ingress_ip"
 
   # Create secrets
   kubectl create secret docker-registry ocirsecret --docker-server=$TF_VAR_ocir --docker-username="$TF_VAR_namespace/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
