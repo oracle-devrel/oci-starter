@@ -459,10 +459,16 @@ certificate_path_before_terraform() {
     echo "ERROR: certificate_path_before_terraform: TF_VAR_dns_name not defined"
     exit 1
   fi
-  if [ -f $PROJECT_DIR/src/tls/$TF_VAR_dns_name ] && [ "$CERTIFICATE_PATH" == "" ]; then
-    # TLS new: the certificate is in $PROJECT_DIR/src/tls/$TF_VAR_dns_name
+  if [ -f $PROJECT_DIR/src/tls/$TF_VAR_dns_name ]; then
+    export CERTIFICATE_PATH=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
+    echo Using existing CERTIFICATE_PATH=$CERTIFICATE_PATH
+  elif [ "$TF_VAR_tls" == "new" ]; then
+    # Create a new certificate via DNS-01
+    $BIN_DIR/tls_dns_create.sh 
+    exit_on_error
     export CERTIFICATE_PATH=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
   fi
+
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
     if [ "$TF_VAR_tls" == "existing" ]; then
       if [ -d target/compute/certificate ]; then
