@@ -21,6 +21,13 @@ if [ ! -f $KUBECONFIG ]; then
   create_kubeconfig
 fi
 
+# Check if OKE is still in the terraform state file
+get_id_from_tfstate "OKE_OCID" "starter_oke"
+if [ "$OKE_OCID" == "" ]; then
+  echo "OKE_DESTROY skipped. OKE not detected in $STATE_FILE"
+  exit
+fi 
+
 # The goal is to destroy all LoadBalancers created by OKE in OCI before to delete OKE.
 #
 # Delete all ingress, services

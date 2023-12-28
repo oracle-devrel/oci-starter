@@ -186,8 +186,8 @@ if [ -f $STATE_FILE ]; then
   if [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
     # XXX Does not work with Resource Manager XXX
     # Check in the terraform state is the compute is already created.
-    COMPUTE_TYPE=`cat $STATE_FILE | jq -r '.resources[] | select(.name=="starter_instance") | .type'`
-    if [ "$COMPUTE_TYPE" != "" ]; then
+    get_id_from_tfstate "COMPUTE_OCID" "starter_instance"
+    if [ "$COMPUTE_OCID" != "" ]; then
       export TF_VAR_compute_ready="true"
     fi
   fi
