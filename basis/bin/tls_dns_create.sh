@@ -4,7 +4,7 @@ cd $SCRIPT_DIR/..
 . $BIN_DIR/tls/dns_shared_function.sh
 
 # Start Certbot in Backgroud (since it has not OCI CLI access)
-$BIN_DIR/tls/docker_certbot.sh > $TARGET_DIR/docker_certbot.log 2>&1 & 
+$BIN_DIR/tls/dns_certbot_docker.sh > $TARGET_DIR/dns_certbot_docker.log 2>&1 & 
 
 # Wait that Certbot create the validation token
 wait_file $TARGET_DIR/certbot_shared/CERBOT_DOMAIN ]
