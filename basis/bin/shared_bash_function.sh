@@ -459,7 +459,7 @@ certificate_path_before_terraform() {
     echo "ERROR: certificate_path_before_terraform: TF_VAR_dns_name not defined"
     exit 1
   fi
-  if [ -f $PROJECT_DIR/src/tls/$TF_VAR_dns_name ]; then
+  if [ -d $PROJECT_DIR/src/tls/$TF_VAR_dns_name ]; then
     export CERTIFICATE_PATH=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
     echo Using existing CERTIFICATE_PATH=$CERTIFICATE_PATH
   elif [ "$TF_VAR_tls" == "new" ]; then
@@ -470,49 +470,39 @@ certificate_path_before_terraform() {
   fi
 
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
-    if [ "$TF_VAR_tls" == "existing" ]; then
-      if [ -d target/compute/certificate ]; then
-        echo "Certificate Directory exists already" 
-      elif [ "$CERTIFICATE_PATH" != "" ]; then
-        mkdir -p target/compute/certificate
-        cp $CERTIFICATE_PATH/* target/compute/certificate/.
-        cp src/tls/nginx_tls.conf target/compute/.
-        sed -i "s/##DNS_NAME##/$TF_VAR_dns_name/" target/compute/nginx_tls.conf
-      else
-       echo "ERROR: certificate_path_before_terraform: CERTIFICATE_PATH not defined"
-       exit 1      
-      fi
-    fi
-  elif [ "$TF_VAR_tls" == "existing" ]; then
-    if [ "$TF_VAR_certificate_ocid" == "" ] && [ "$CERTIFICATE_PATH" != "" ] ;  then
-      certificate_create
-    elif [ "$TF_VAR_certificate_ocid" != "" ]; then
-      certificate_validity
+    if [ -d target/compute/certificate ]; then
+      echo "Certificate Directory exists already" 
+    elif [ "$CERTIFICATE_PATH" != "" ]; then
+      mkdir -p target/compute/certificate
+      cp $CERTIFICATE_PATH/* target/compute/certificate/.
+      cp src/tls/nginx_tls.conf target/compute/.
+      sed -i "s/##DNS_NAME##/$TF_VAR_dns_name/" target/compute/nginx_tls.conf
+    elif [ "$TF_VAR_tls" == "new" ]; then
+      echo "New Certificate will be created after the deployment."      
     else 
-      echo "ERROR: certificate_path_before_terraform: missing variables TF_VAR_certificate_ocid or CERTIFICATE_PATH"
+      echo "ERROR: compute: certificate_path_before_terraform: missing variables CERTIFICATE_PATH"
       exit 1
-    fi  
+    fi
+  elif [ "$TF_VAR_certificate_ocid" == "" ] && [ "$CERTIFICATE_PATH" != "" ] ;  then
+    certificate_create
+  elif [ "$TF_VAR_certificate_ocid" != "" ]; then
+    certificate_validity
   elif [ "$TF_VAR_tls" == "new" ]; then
     echo "New Certificate will be created after the deployment."
+  else 
+    echo "ERROR: certificate_path_before_terraform: missing variables TF_VAR_certificate_ocid or CERTIFICATE_PATH"
+    exit 1
   fi  
 }
 
 # Certificate - Post Deploy
 certificate_post_deploy() {
-  if [ "$TF_VAR_tls" == "existing" ]; then
-    if [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
-      src/terraform/apply.sh --auto-approve -no-color
-      exit_on_error
-    fi
+  if [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
+    src/terraform/apply.sh --auto-approve -no-color
+    exit_on_error
   elif [ "$TF_VAR_tls" == "new" ]; then
     if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
       certificate_run_certbot
-    else
-      ### XXXX ### Everything except compute ### 
-      certificate_run_certbot
-      certificate_create
-      src/terraform/apply.sh --auto-approve -no-color
-      exit_on_error      
     fi
   fi  
 }

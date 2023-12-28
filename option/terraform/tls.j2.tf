@@ -13,7 +13,11 @@ locals {
 }
 
 resource "oci_dns_rrset" "starter_rrset" {
+{%- if deploy == "kubernetes" %}
+    count = var.dns_ip=="" ? 0 : 1
+{%- else %}  
     count = var.dns_zone_name=="" ? 0 : 1
+{%- endif %}       
 
     #Required
     zone_name_or_id = var.dns_zone_name
