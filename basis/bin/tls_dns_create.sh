@@ -1,10 +1,10 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR/..
 . env.sh -silent
-. $BIN_DIR/tls_dns/dns_shared_function.sh
+. $BIN_DIR/tls/dns_shared_function.sh
 
 # Start Certbot in Backgroud (since it has not OCI CLI access)
-$BIN_DIR/tls_dns/docker_certbot.sh > $TARGET_DIR/docker_certbot.log 2>&1 & 
+$BIN_DIR/tls/docker_certbot.sh > $TARGET_DIR/docker_certbot.log 2>&1 & 
 
 # Wait that Certbot create the validation token
 wait_file $TARGET_DIR/certbot_shared/CERBOT_DOMAIN ]
