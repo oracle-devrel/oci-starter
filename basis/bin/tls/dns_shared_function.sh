@@ -1,6 +1,6 @@
 wait_file() {
     echo "Waiting File $1"
-    x=12
+    x=60
     until [ -f $1 ]
     do
         x=$(( $x - 1 ))

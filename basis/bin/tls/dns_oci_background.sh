@@ -1,9 +1,9 @@
 # Wait that Certbot create the validation token
 . $BIN_DIR/tls/dns_shared_function.sh
 
-wait_file $TARGET_DIR/certbot_shared/CERBOT_DOMAIN ]
+wait_file $TARGET_DIR/certbot_shared/CERTBOT_DOMAIN ]
 
-export CERBOT_DOMAIN=`cat $TARGET_DIR/certbot_shared/CERBOT_DOMAIN`
+export CERBOT_DOMAIN=`cat $TARGET_DIR/certbot_shared/CERTBOT_DOMAIN`
 export CERTBOT_VALIDATION=`cat $TARGET_DIR/certbot_shared/CERTBOT_VALIDATION`
 export TF_VAR_dns_acme_challenge=_acme-challenge.${CERBOT_DOMAIN}
 export TF_VAR_dns_data=$CERTBOT_VALIDATION
