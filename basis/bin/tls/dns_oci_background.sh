@@ -9,6 +9,7 @@ export TF_VAR_dns_acme_challenge=_acme-challenge.${CERBOT_DOMAIN}
 export TF_VAR_dns_data=$CERTBOT_VALIDATION
 oci dns record rrset update --force --zone-name-or-id $TF_VAR_dns_zone_name --domain $TF_VAR_dns_acme_challenge --rtype 'TXT' --items '[{"domain":"'$TF_VAR_dns_acme_challenge'", "rdata":"'$TF_VAR_dns_data'", "rtype":"TXT","ttl":300}]' 
 # XXX Check that DNS is really propagated ? 
+sleep 10
 echo "done" > $TARGET_DIR/certbot_shared/DNS_CREATED
 
 # Wait that Certbot create the validation token
