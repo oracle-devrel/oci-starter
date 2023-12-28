@@ -8,7 +8,7 @@ wait_file() {
           echo "ERROR: $1 not found"
           exit 1
         fi
-        echo "Waiting 5 secs"
+        echo "- waiting 5 secs"
         sleep 5
     done
     echo "File found"
