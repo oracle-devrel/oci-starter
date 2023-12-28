@@ -8,7 +8,7 @@ ls -lR /etc/letsencrypt > /certbot_shared/etc_letsencrypt.log
 
 # Copy the certificate to the shared directory 
 cp -Lr /etc/letsencrypt/live/$TF_VAR_dns_name /certbot_shared/.
-chmod 777 /certbot_shared/$TF_VAR_dns_name
+chmod -R 777 /certbot_shared/$TF_VAR_dns_name
 
 # Request OCI to clean the OCI DNS entry
 echo clean > /certbot_shared/CERTBOT_DOMAIN_CLEAN
