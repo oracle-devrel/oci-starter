@@ -455,21 +455,25 @@ certificate_create() {
 }
 
 certificate_path_before_terraform() {
-  if [ $"TF_VAR_dns_name" == "" ]; then
+  if [ "$TF_VAR_dns_name" == "" ]; then
     echo "ERROR: certificate_path_before_terraform: TF_VAR_dns_name not defined"
     exit 1
-  fi 
+  fi
+  if [ -f $PROJECT_DIR/src/tls/$TF_VAR_dns_name ] && [ "$CERTIFICATE_PATH" == "" ]; then
+    # TLS new: the certificate is in $PROJECT_DIR/src/tls/$TF_VAR_dns_name
+    export CERTIFICATE_PATH=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
+  fi
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
     if [ "$TF_VAR_tls" == "existing" ]; then
       if [ -d target/compute/certificate ]; then
         echo "Certificate Directory exists already" 
-      elif [ "$TF_VAR_CERTIFICATE_PATH" != "" ]; then
+      elif [ "$CERTIFICATE_PATH" != "" ]; then
         mkdir -p target/compute/certificate
         cp $CERTIFICATE_PATH/* target/compute/certificate/.
         cp src/tls/nginx_tls.conf target/compute/.
         sed -i "s/##DNS_NAME##/$TF_VAR_dns_name/" target/compute/nginx_tls.conf
       else
-       echo "ERROR: certificate_path_before_terraform: TF_VAR_CERTIFICATE_PATH not defined"
+       echo "ERROR: certificate_path_before_terraform: CERTIFICATE_PATH not defined"
        exit 1      
       fi
     fi
@@ -523,7 +527,7 @@ certificate_run_certbot()
   fi
   scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path src/tls opc@$TLS_IP:/home/opc/.
   exit_on_error
-  ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export CERTIFICATE_EMAIL=\"$CERTIFICATE_EMAIL\"; bash tls/certbot_init.sh 2>&1 | tee -a tls/certbot_init.log"
+  ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export CERTIFICATE_EMAIL=\"$CERTIFICATE_EMAIL\"; bash tls/certbot_http.sh 2>&1 | tee -a tls/certbot_http.log"
   scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP:tls/certificate target/.
   exit_on_error
   export CERTIFICATE_PATH=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
