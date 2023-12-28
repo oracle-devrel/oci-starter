@@ -498,6 +498,8 @@ certificate_path_before_terraform() {
 # Certificate - Post Deploy
 certificate_post_deploy() {
   if [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
+    # Set the TF_VAR_dns_ip
+    get_ui_url 
     src/terraform/apply.sh --auto-approve -no-color
     exit_on_error
   elif [ "$TF_VAR_tls" == "new" ]; then

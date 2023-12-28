@@ -145,7 +145,6 @@ else
   # TLS
   if [ "$TF_VAR_dns_name" != "" ] && [ "$TF_VAR_certificate_ocid" == "" ]; then
     export TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[].id`
-    TF_VAR_dns_ip
   fi
 
   # GIT
