@@ -670,8 +670,8 @@ def cp_terraform_apigw(append_tf):
         app_url = "http://${local.apigw_dest_private_ip}:8080/$${request.path[pathname]}" 
 
     if 'apigw_ocid' in params:
-        cp_terraform("apigw_existing.tf", "apigw_tags.tf", append_tf)
-        output_replace('##APP_URL##', app_url,"src/terraform/apigw_existing.tf")
+        cp_terraform("apigw_existing.j2.tf", "apigw_tags.tf", append_tf)
+        output_replace('##APP_URL##', app_url,"src/terraform/apigw_existing.j2.tf")
     else:
         cp_terraform("apigw.j2.tf", "apigw_tags.tf", append_tf)
         output_replace('##APP_URL##', app_url, "src/terraform/apigw.j2.tf")    
@@ -822,7 +822,7 @@ def create_output_dir():
             else:
                 apigw_append = "apigw_fn_append.tf"
             if 'apigw_ocid' in params:
-                cp_terraform("apigw_existing.tf", "apigw_tags.tf", apigw_append)
+                cp_terraform("apigw_existing.j2.tf", "apigw_tags.tf", apigw_append)
             else:
                 cp_terraform("apigw.j2.tf", "apigw_tags.tf", apigw_append)
 
@@ -986,7 +986,7 @@ def create_group_common_dir():
 
     if 'apigw' in a_group_common:
         if 'apigw_ocid' in params:
-            cp_terraform("apigw_existing.tf", "apigw_tags.tf")
+            cp_terraform("apigw_existing.j2.tf", "apigw_tags.tf")
         else:
             cp_terraform("apigw.j2.tf", "apigw_tags.tf")
             cp_terraform("log_group.tf")

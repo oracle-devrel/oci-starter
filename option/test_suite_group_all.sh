@@ -169,7 +169,10 @@ loop_deploy() {
   OPTION_DEPLOY=kubernetes
   loop_lang
   OPTION_DEPLOY=instance_pool 
-  loop_lang
+  OPTION_LANG=java
+  OPTION_JAVA_FRAMEWORK=springboot
+  OPTION_DB=atp 
+  loop_shape  
   OPTION_DEPLOY=container_instance 
   loop_lang
   OPTION_DEPLOY=function 

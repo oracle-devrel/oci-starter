@@ -20,7 +20,7 @@ if [ "$APIM_HOST" != "" ]; then
     APIGW_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}  
     for APP_DIR in `app_dir_list`; do
       if [ -f src/${APP_DIR}/openapi_spec.yaml ]; then
-         add_api_portal "endpoint_url=${APIGW_URL}/${APP_DIR}/dept&endpoint_git_path=src/terraform/apigw_existing.tf&spec_git_path=src/${APP_DIR}/openapi_spec.yaml"
+         add_api_portal "endpoint_url=${APIGW_URL}/${APP_DIR}/dept&endpoint_git_path=src/terraform/apigw_existing.j2.tf&spec_git_path=src/${APP_DIR}/openapi_spec.yaml"
       fi  
     done
   else
