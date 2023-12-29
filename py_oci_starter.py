@@ -257,7 +257,9 @@ def shape_rules():
 
 
 def tls_rules():
-    if params.get('tls')!='none':
+    if params.get('tls')=='none':
+        params.pop('tls')
+    else:
         params['dns_zone_name'] = TO_FILL
         params['dns_name'] = TO_FILL
         if params.get('tls')=='existing':
@@ -265,8 +267,6 @@ def tls_rules():
             params['certificate_path'] = TO_FILL
         elif params.get('tls')=='new':
             params['certificate_email'] = TO_FILL
-    else:
-        params.pop('tls')
 
 
 def apply_rules():
