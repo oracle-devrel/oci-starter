@@ -1043,7 +1043,10 @@ jinja2_db_params = {
 
 def jinja2_replace_template():
     db_param = jinja2_db_params.get( params.get('db_family') )
-    template_param = {**params, **db_param}
+    if db_param is None:  
+        template_param = params
+    else:   
+        template_param = {**params, **db_param}
 
     for subdir, dirs, files in os.walk(output_dir):
         for filename in files:    
