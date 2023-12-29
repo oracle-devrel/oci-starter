@@ -462,6 +462,8 @@ certificate_path_before_terraform() {
   if [ -d $PROJECT_DIR/src/tls/$TF_VAR_dns_name ]; then
     export CERTIFICATE_PATH=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
     echo Using existing CERTIFICATE_PATH=$CERTIFICATE_PATH
+  elif [ -d $CERTIFICATE_PATH ]; then
+    echo Using existing CERTIFICATE_PATH=$CERTIFICATE_PATH
   elif [ "$TF_VAR_tls" == "new" ]; then
     # Create a new certificate via DNS-01
     $BIN_DIR/tls_dns_create.sh 
