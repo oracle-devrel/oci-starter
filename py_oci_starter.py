@@ -265,6 +265,8 @@ def tls_rules():
             params['certificate_path'] = TO_FILL
         elif params.get('tls')=='new':
             params['certificate_email'] = TO_FILL
+    else:
+        params.pop('tls')
 
 
 def apply_rules():
