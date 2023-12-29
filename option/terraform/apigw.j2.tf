@@ -12,6 +12,8 @@ resource oci_apigateway_gateway starter_apigw {
 {%- if tls is defined %}
   count = var.certificate_ocid == "" ? 0 : 1
   certificate_id = var.certificate_ocid
+{%- else %}
+  count = 1
 {%- endif %}       
 }
 
