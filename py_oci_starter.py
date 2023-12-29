@@ -1114,6 +1114,7 @@ output_dir_orig = output_dir
 # Create a group
 if 'group_name' in params:
     create_group_common_dir()
+    jinja2_replace_template()
 
 # Add parameters to the creation if the project is to be used with a group
 if 'group_common' in params:
