@@ -157,8 +157,8 @@ loop_tls() {
   OPTION_DB=none
   OPTION_TLS=existing
   loop_tls_deploy
-  OPTION_TLS=new
-  loop_tls_deploy  
+  # OPTION_TLS=new
+  # loop_tls_deploy  
   OPTION_GROUP_NAME=dummy
 }
 
