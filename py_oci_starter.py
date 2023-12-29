@@ -932,7 +932,7 @@ def create_group_common_dir():
 
     # -- APP ----------------------------------------------------------------
     output_copy_tree("option/src/app/group_common", "src/app")
-    os.remove(output_dir + "/src/app/app.yaml")
+    os.remove(output_dir + "/src/app/app.j2.yaml")
 
     # -- User Interface -----------------------------------------------------
     output_rm_tree("src/ui")
