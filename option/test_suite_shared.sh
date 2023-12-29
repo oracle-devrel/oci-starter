@@ -16,6 +16,16 @@ OPTION_SHAPE=amd
 # No color for terraforms logs
 export nocolorarg=1
 
+exit_on_error() {
+  RESULT=$?
+  if [ $RESULT -eq 0 ]; then
+    echo "Success"
+  else
+    echo "Failed (RESULT=$RESULT)"
+    exit $RESULT
+  fi  
+}
+
 start_test() {
   export TEST_NAME=$1
   if [ "$OPTION_GROUP_NAME" != "none" ]; then
@@ -224,6 +234,7 @@ pre_test_suite() {
 
   cd $TEST_HOME/oci-starter
   ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,database,fnapp,apigw,oke,db_free -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
+  exit_on_error
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
   ./build.sh

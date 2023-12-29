@@ -10,3 +10,4 @@ cd $SCRIPT_DIR
 
 rm -rf ./output 
 python3 py_oci_starter.py "$@"
+exit $RESULT
