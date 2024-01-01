@@ -154,19 +154,24 @@ else
       export TF_VAR_git_url=`git config --get remote.origin.url`
       if [[ "$TF_VAR_git_url" == *"github.com"* ]]; then
         S1=${TF_VAR_git_url/git@github.com:/https:\/\/github.com\/}        
-        export TF_VAR_git_url=${S1/.git/\/blob\/}${GIT_BRANCH}
+        if [[ "$TF_VAR_git_url" == *".git"* ]]; then
+          export TF_VAR_git_url=${S1/.git/\/blob\/}${GIT_BRANCH}
+        else
+          export TF_VAR_git_url=${S1}/blob/${GIT_BRANCH}
+        fi
       elif [[ "$TF_VAR_git_url" == *"gitlab.com"* ]]; then
         S1=${TF_VAR_git_url/git@gitlab.com:/https:\/\/gitlab.com\/}        
         export TF_VAR_git_url=${S1/.git/\/-\/blob\/}${GIT_BRANCH}
       fi
       cd $PROJECT_DIR
       export GIT_RELATIVE_PATH=`git rev-parse --show-prefix`
-      cd -
+      cd - > /dev/null
       export TF_VAR_git_url=${TF_VAR_git_url}/${GIT_RELATIVE_PATH}
-      echo $TF_VAR_git_url
+      auto_echo TF_VAR_git_url=$TF_VAR_git_url
     fi  
   fi
 fi
+
 
 #-- POST terraform ----------------------------------------------------------
 export STATE_FILE=$TARGET_DIR/terraform.tfstate
