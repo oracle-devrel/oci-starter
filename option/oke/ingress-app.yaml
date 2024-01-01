@@ -13,7 +13,7 @@ spec:
     - http:
         paths:
           - path: /##PREFIX##/app(/|$)(.*)
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: ##PREFIX##-app-service

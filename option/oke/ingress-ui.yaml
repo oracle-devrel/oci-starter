@@ -10,7 +10,7 @@ spec:
     - http:
         paths:
           - path: /##PREFIX##(/|$)(.*)
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: ##PREFIX##-ui-service
