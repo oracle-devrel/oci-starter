@@ -18,14 +18,14 @@ if [ ! -f $KUBECONFIG ]; then
   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$LATEST_INGRESS_CONTROLLER/deploy/static/provider/cloud/deploy.yaml
   
   # Wait for the deployment
-  echo "Waiting for Ingress Controller..."
+  echo "Waiting for Ingress Controller Pods..."
   kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=600s
   kubectl wait --namespace ingress-nginx --for=condition=Complete job/ingress-nginx-admission-patch  
   
   # Wait for the ingress external IP
   TF_VAR_ingress_ip=""
   while [ -z $TF_VAR_ingress_ip ]; do
-    echo "Waiting for external IP..."
+    echo "Waiting for Ingress IP..."
     TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
     if [ -z "$TF_VAR_ingress_ip" ]; then
       sleep 10
