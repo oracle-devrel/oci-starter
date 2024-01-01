@@ -1,3 +1,6 @@
+#----------------------------------------------------------------------------
+# VARIABLES
+
 variable "oke_shape" {
   default = "VM.Standard2.1"
 }
@@ -11,6 +14,7 @@ variable "cluster_options_persistent_volume_config_defined_tags_value" {
 }
 
 #----------------------------------------------------------------------------
+# DATA
 
 data "oci_containerengine_cluster_option" "starter_cluster_option" {
   cluster_option_id = "all"
@@ -45,6 +49,7 @@ locals {
 }
 
 #----------------------------------------------------------------------------
+# SECURITY LISTS
 
 resource "oci_core_security_list" "starter_seclist_lb" {
   compartment_id = local.lz_network_cmp_ocid
@@ -268,6 +273,7 @@ resource oci_core_security_list starter_seclist_api {
 }
 
 #----------------------------------------------------------------------------
+# SUBNETS
 
 resource "oci_core_subnet" "starter_nodepool_subnet" {
   #Required
@@ -330,6 +336,7 @@ resource "oci_core_subnet" "starter_pod_subnet" {
 */
 
 #----------------------------------------------------------------------------
+# CLUSTER
 
 resource "oci_containerengine_cluster" "starter_oke" {
   #Required
@@ -373,6 +380,9 @@ resource "oci_containerengine_cluster" "starter_oke" {
   freeform_tags = local.freeform_tags
 }
 
+#----------------------------------------------------------------------------
+# NODE POOL
+
 resource "oci_containerengine_node_pool" "starter_node_pool" {
   #Required
   cluster_id         = oci_containerengine_cluster.starter_oke.id
@@ -409,6 +419,31 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
 }
 
 #----------------------------------------------------------------------------
+# ADDONS 
+
+# Database Operator
+resource oci_containerengine_addon starter_oke_addon_dboperator {
+  addon_name                       = "OracleDatabaseOperator"
+  cluster_id                       = oci_containerengine_cluster.starter_oke.id
+  remove_addon_resources_on_delete = "true"
+}
+
+# WebLogic Operator
+resource oci_containerengine_addon starter_oke_addon_wlsoperator {
+  addon_name                       = "WeblogicKubernetesOperator"
+  cluster_id                       = oci_containerengine_cluster.starter_oke.id
+  remove_addon_resources_on_delete = "true"
+}
+
+# CertManager
+resource oci_containerengine_addon starter_oke_addon_certmanager {
+  addon_name                       = "CertManager"
+  cluster_id                       = oci_containerengine_cluster.starter_oke.id
+  remove_addon_resources_on_delete = "true"
+}
+
+#----------------------------------------------------------------------------
+# OUTPUTS
 
 output "node_pool" {
   value = {
@@ -420,6 +455,7 @@ output "node_pool" {
 }
 
 #----------------------------------------------------------------------------
+# LOCALS
 
 locals {
   oke_ocid = oci_containerengine_cluster.starter_oke.id
