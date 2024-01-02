@@ -13,6 +13,9 @@ locals {
 }
 
 resource "oci_dns_rrset" "starter_rrset" {
+    # XXXX Advanced case with DNS not in OCI XXXX ?
+    count = var.dns_zone_name=="" ? 0 : 1
+
     #Required
     zone_name_or_id = var.dns_zone_name
     domain = var.dns_name

@@ -442,9 +442,9 @@ certificate_validity() {
 
 certificate_create() {
   echo "Creating or Updating certificate $TF_VAR_dns_name"
-  CERT_CERT=$(cat $CERTIFICATE_PATH/cert.pem)
-  CERT_CHAIN=$(cat $CERTIFICATE_PATH/chain.pem)
-  CERT_PRIVKEY=$(cat $CERTIFICATE_PATH/privkey.pem)
+  CERT_CERT=$(cat $CERTIFICATE_DIR/cert.pem)
+  CERT_CHAIN=$(cat $CERTIFICATE_DIR/chain.pem)
+  CERT_PRIVKEY=$(cat $CERTIFICATE_DIR/privkey.pem)
   if [ "$TF_VAR_certificate_ocid" == "" ]; then
     oci certs-mgmt certificate create-by-importing-config --compartment-id=$TF_VAR_compartment_ocid  --name=$TF_VAR_dns_name --cert-chain-pem="$CERT_CHAIN" --certificate-pem="$CERT_CERT"  --private-key-pem="$CERT_PRIVKEY" --wait-for-state ACTIVE --wait-for-state FAILED
   else
@@ -454,45 +454,45 @@ certificate_create() {
   TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[0].id`
 }
 
-certificate_path_before_terraform() {
+certificate_dir_before_terraform() {
   if [ "$TF_VAR_dns_name" == "" ]; then
-    echo "ERROR: certificate_path_before_terraform: TF_VAR_dns_name not defined"
+    echo "ERROR: certificate_dir_before_terraform: TF_VAR_dns_name not defined"
     exit 1
   fi
   if [ -d $PROJECT_DIR/src/tls/$TF_VAR_dns_name ]; then
-    export CERTIFICATE_PATH=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
-    echo Using existing CERTIFICATE_PATH=$CERTIFICATE_PATH
-  elif [ -d $CERTIFICATE_PATH ]; then
-    echo Using existing CERTIFICATE_PATH=$CERTIFICATE_PATH
+    export CERTIFICATE_DIR=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
+    echo Using existing CERTIFICATE_DIR=$CERTIFICATE_DIR
+  elif [ -d $CERTIFICATE_DIR ]; then
+    echo Using existing CERTIFICATE_DIR=$CERTIFICATE_DIR
   elif [ "$TF_VAR_tls" == "new" ]; then
     # Create a new certificate via DNS-01
     $BIN_DIR/tls_dns_create.sh 
     exit_on_error
-    export CERTIFICATE_PATH=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
+    export CERTIFICATE_DIR=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
   fi
 
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
     if [ -d target/compute/certificate ]; then
       echo "Certificate Directory exists already" 
-    elif [ "$CERTIFICATE_PATH" != "" ]; then
+    elif [ "$CERTIFICATE_DIR" != "" ]; then
       mkdir -p target/compute/certificate
-      cp $CERTIFICATE_PATH/* target/compute/certificate/.
+      cp $CERTIFICATE_DIR/* target/compute/certificate/.
       cp src/tls/nginx_tls.conf target/compute/.
       sed -i "s/##DNS_NAME##/$TF_VAR_dns_name/" target/compute/nginx_tls.conf
     elif [ "$TF_VAR_tls" == "new" ]; then
       echo "New Certificate will be created after the deployment."      
     else 
-      echo "ERROR: compute: certificate_path_before_terraform: missing variables CERTIFICATE_PATH"
+      echo "ERROR: compute: certificate_dir_before_terraform: missing variables CERTIFICATE_DIR"
       exit 1
     fi
-  elif [ "$TF_VAR_certificate_ocid" == "" ] && [ "$CERTIFICATE_PATH" != "" ] ;  then
+  elif [ "$TF_VAR_certificate_ocid" == "" ] && [ "$CERTIFICATE_DIR" != "" ] ;  then
     certificate_create
   elif [ "$TF_VAR_certificate_ocid" != "" ]; then
     certificate_validity
   elif [ "$TF_VAR_tls" == "new" ]; then
     echo "New Certificate will be created after the deployment."
   else 
-    echo "ERROR: certificate_path_before_terraform: missing variables TF_VAR_certificate_ocid or CERTIFICATE_PATH"
+    echo "ERROR: certificate_dir_before_terraform: missing variables TF_VAR_certificate_ocid or CERTIFICATE_DIR"
     exit 1
   fi  
 }
@@ -530,5 +530,5 @@ certificate_run_certbot()
   ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export CERTIFICATE_EMAIL=\"$CERTIFICATE_EMAIL\"; bash tls/certbot_http.sh 2>&1 | tee -a tls/certbot_http.log"
   scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP:tls/certificate target/.
   exit_on_error
-  export CERTIFICATE_PATH=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
+  export CERTIFICATE_DIR=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
 }

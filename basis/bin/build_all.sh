@@ -18,7 +18,7 @@ fi
 . env.sh
 if [ -n "$TF_VAR_tls" ]; then
   title "Certificate"
-  certificate_path_before_terraform
+  certificate_dir_before_terraform
 fi  
 
 title "Terraform Apply"
