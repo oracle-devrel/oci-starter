@@ -103,29 +103,29 @@ replace_db_user_password_in_file() {
   sed -i "s/##DB_PASSWORD##/$TF_VAR_db_password/" $CONFIG_FILE
 }  
 
+error_exit() {
+  echo
+  LEN=${#BASH_LINENO[@]}
+  printf "%-30s %-10s %-20s\n" "STACK TRACE"  "LINE" "FUNCTION"
+  for (( INDEX=0; INDEX<$LEN; INDEX++ ))
+  do
+     printf "  %-28s %-10s %-20s\n" $(basename ${BASH_SOURCE[${INDEX}]})  ${BASH_LINENO[${INDEX}]} ${FUNCNAME[${INDEX}]}
+  done
+
+  if [ "$1" != "" ]; then
+    echo
+    echo "ERROR: $1"
+  fi
+  exit 1
+}
+
 exit_on_error() {
   RESULT=$?
   if [ $RESULT -eq 0 ]; then
     echo "Success"
   else
-    echo "Failed (RESULT=$RESULT)"
-    exit $RESULT
+    error_exit "Failed (RESULT=$RESULT)"
   fi  
-}
-
-error_exit() {
-  echo "Stack"
-  echo "-----"
-  for (( INDEX=0; INDEX<$LEN; INDEX++ ))
-  do
-     echo "$(basename ${BASH_SOURCE[${INDEX}]}) line ${BASH_LINENO[${INDEX}]}: function ${FUNCNAME[${INDEX}]}"
-  done
-
-  if [ "$1" != "" ]; then
-    echo "ERROR: $1"
-    echo $1
-  fi
-  exit 1
 }
 
 auto_echo () {

@@ -2,11 +2,11 @@
 #!/bin/bash
 if [[ -z "${BIN_DIR}" ]]; then
   echo "Error: BIN_DIR not set"
-  exit
+  exit 1
 fi
 if [[ -z "${PROJECT_DIR}" ]]; then
   echo "Error: PROJECT_DIR not set"
-  exit
+  exit 1
 fi
 
 APP_DIR=`echo ${SCRIPT_DIR} |sed -E "s#(.*)/(.*)#\2#"`

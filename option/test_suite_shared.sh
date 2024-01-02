@@ -205,7 +205,7 @@ build_option() {
       build_test_destroy
     fi           
   else
-    echo "Error: no output directory"  
+    echo "ERROR: no output directory"  
   fi  
 }
 

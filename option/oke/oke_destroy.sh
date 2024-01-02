@@ -13,8 +13,7 @@ fi
 echo "OKE DESTROY"
 
 if [ "$1" != "--auto-approve" ]; then
-  echo "Error: Please call this script via destroy.sh"
-  exit
+  error_exit "Please call this script via destroy.sh"
 fi
 
 if [ ! -f $KUBECONFIG ]; then
@@ -25,7 +24,7 @@ fi
 get_id_from_tfstate "OKE_OCID" "starter_oke"
 if [ "$OKE_OCID" == "" ]; then
   echo "OKE_DESTROY skipped. OKE not detected in $STATE_FILE"
-  exit
+  exit 0
 fi 
 
 # The goal is to destroy all LoadBalancers created by OKE in OCI before to delete OKE.

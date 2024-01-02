@@ -62,7 +62,7 @@ build_test_destroy () {
     echo "destroy_secs=$SECONDS" >> ${TEST_DIR}_time.txt
     cat ${TEST_DIR}_time.txt
   else
-    echo "Error: no output directory"  
+    echo "ERROR: no output directory"  
   fi  
 }
 
