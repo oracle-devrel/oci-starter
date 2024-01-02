@@ -47,6 +47,7 @@ livelabs_green_button
 # XXX -> It would be safer to check also for TF_VAR_xxx containing __TO_FILL__ too
 
 if declare -p | grep -q "__TO_FILL__"; then
+  echo
   echo "ERROR: missing environment variables"
   echo
   declare -p | grep __TO_FILL__
