@@ -113,6 +113,21 @@ exit_on_error() {
   fi  
 }
 
+error_exit() {
+  echo "Stack"
+  echo "-----"
+  for (( INDEX=0; INDEX<$LEN; INDEX++ ))
+  do
+     echo "$(basename ${BASH_SOURCE[${INDEX}]}) line ${BASH_LINENO[${INDEX}]}: function ${FUNCNAME[${INDEX}]}"
+  done
+
+  if [ "$1" != "" ]; then
+    echo "ERROR: $1"
+    echo $1
+  fi
+  exit 1
+}
+
 auto_echo () {
   if [ -z "$SILENT_MODE" ]; then
     echo "$1"

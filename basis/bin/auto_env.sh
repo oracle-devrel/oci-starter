@@ -53,13 +53,11 @@ if declare -p | grep -q "__TO_FILL__"; then
   echo
   echo "Edit the file env.sh. Some variables needs to be filled:" 
   cat env.sh | grep __TO_FILL__
-  exit 1
+  error_exit "Missing environment variables."
 fi  
 
 if ! command -v jq &> /dev/null; then
-  echo "Command jq could not be found. Please install it"
-  echo "Ex on linux: sudo yum install jq -y"
-  exit 1
+  error_exit "Unix command jq not found. Please install it."
 fi
 
 #-- PRE terraform ----------------------------------------------------------
