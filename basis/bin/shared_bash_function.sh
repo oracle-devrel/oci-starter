@@ -250,11 +250,15 @@ get_user_details() {
 # Get the user interface URL
 get_ui_url() {
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
-    export UI_URL=http://${COMPUTE_IP}
-    if [ "$TF_VAR_certificate_ocid" != "" ]; then
-      export UI_HTTP=$UI_URL
-      export UI_URL=https://${TF_VAR_dns_name}
-    fi
+    if [ "$TF_VAR_tls" == "existing_ocid" ]; then
+      export UI_HTTP=http://${COMPUTE_IP}/${TF_VAR_prefix}
+      export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
+    else 
+      export UI_URL=http://${COMPUTE_IP}
+      if [ "$TF_VAR_certificate_ocid" != "" ]; then
+        export UI_HTTP=$UI_URL
+        export UI_URL=https://${TF_VAR_dns_name}
+      fi
   elif [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
     get_output_from_tfstate INSTANCE_POOL_LB_IP instance_pool_lb_ip 
     export UI_URL=http://${INSTANCE_POOL_LB_IP}
