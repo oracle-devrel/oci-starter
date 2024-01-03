@@ -10,10 +10,7 @@ resource oci_apigateway_gateway starter_apigw {
   freeform_tags = local.freeform_tags
 
 {%- if tls is defined %}
-  count = var.certificate_ocid == "" ? 0 : 1
   certificate_id = var.certificate_ocid
-{%- else %}
-  count = 1
 {%- endif %}       
 }
 
@@ -22,13 +19,9 @@ resource "oci_apigateway_api" "starter_api" {
   content       = var.openapi_spec
   display_name  = "${var.prefix}-api"
   freeform_tags = local.freeform_tags   
-
-{%- if tls is defined %}
-  count = var.certificate_ocid == "" ? 0 : 1
-{%- endif %}       
 }
 
 locals {
-  apigw_ocid = try(oci_apigateway_gateway.starter_apigw[0].id, "")
-  apigw_ip   = try(oci_apigateway_gateway.starter_apigw[0].ip_addresses[0].ip_address,"")
+  apigw_ocid = try(oci_apigateway_gateway.starter_apigw.id, "")
+  apigw_ip   = try(oci_apigateway_gateway.starter_apigw.ip_addresses[0].ip_address,"")
 }
