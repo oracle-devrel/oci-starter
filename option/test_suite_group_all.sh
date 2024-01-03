@@ -155,10 +155,18 @@ loop_tls() {
   OPTION_JAVA_FRAMEWORK=springboot
   OPTION_UI=html
   OPTION_DB=none
-  OPTION_TLS=existing
+  OPTION_TLS=existing_dir
   loop_tls_deploy
-  # OPTION_TLS=new
-  # loop_tls_deploy  
+  # existing_ocid is part of existing_dir
+
+  OPTION_TLS=new_http_01
+  OPTION_DEPLOY=compute
+  build_option  
+
+  OPTION_TLS=new_dns_01
+  OPTION_DEPLOY=container_instance
+  build_option  
+
   OPTION_GROUP_NAME=dummy
 }
 

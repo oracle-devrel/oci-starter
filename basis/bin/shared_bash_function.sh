@@ -251,7 +251,6 @@ get_user_details() {
 get_ui_url() {
   if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
     if [ "$TF_VAR_tls" == "existing_ocid" ]; then
-      export UI_HTTP=http://${COMPUTE_IP}/${TF_VAR_prefix}
       export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     else 
       export UI_URL=http://${COMPUTE_IP}
