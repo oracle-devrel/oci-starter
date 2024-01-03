@@ -259,6 +259,7 @@ get_ui_url() {
         export UI_HTTP=$UI_URL
         export UI_URL=https://${TF_VAR_dns_name}
       fi
+    fi  
   elif [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
     get_output_from_tfstate INSTANCE_POOL_LB_IP instance_pool_lb_ip 
     export UI_URL=http://${INSTANCE_POOL_LB_IP}
