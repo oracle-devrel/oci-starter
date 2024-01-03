@@ -479,7 +479,7 @@ certificate_dir_before_terraform() {
     echo Using existing CERTIFICATE_DIR=$CERTIFICATE_DIR
   elif [ -d $CERTIFICATE_DIR ]; then
     echo Using existing CERTIFICATE_DIR=$CERTIFICATE_DIR
-  elif [ "$TF_VAR_tls" == "new" ]; then
+  elif [ "$TF_VAR_tls" == "new_dns_01" ]; then
     # Create a new certificate via DNS-01
     $BIN_DIR/tls_dns_create.sh 
     exit_on_error
@@ -494,7 +494,7 @@ certificate_dir_before_terraform() {
       cp $CERTIFICATE_DIR/* target/compute/certificate/.
       cp src/tls/nginx_tls.conf target/compute/.
       sed -i "s/##DNS_NAME##/$TF_VAR_dns_name/" target/compute/nginx_tls.conf
-    elif [ "$TF_VAR_tls" == "new" ]; then
+    elif [ "$TF_VAR_tls" == "new_http_01" ]; then
       echo "New Certificate will be created after the deployment."      
     else 
       echo "ERROR: compute: certificate_dir_before_terraform: missing variables CERTIFICATE_DIR"
@@ -504,11 +504,8 @@ certificate_dir_before_terraform() {
     certificate_create
   elif [ "$TF_VAR_certificate_ocid" != "" ]; then
     certificate_validity
-  elif [ "$TF_VAR_tls" == "new" ]; then
-    echo "New Certificate will be created after the deployment."
   else 
-    echo "ERROR: certificate_dir_before_terraform: missing variables TF_VAR_certificate_ocid or CERTIFICATE_DIR"
-    exit 1
+    exit_error "certificate_dir_before_terraform: missing variables TF_VAR_certificate_ocid or CERTIFICATE_DIR"
   fi  
 }
 
@@ -519,31 +516,26 @@ certificate_post_deploy() {
     get_ui_url 
     src/terraform/apply.sh --auto-approve -no-color
     exit_on_error
-  elif [ "$TF_VAR_tls" == "new" ]; then
+  elif [ "$TF_VAR_tls" == "new_http_01" ]; then
     if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
-      certificate_run_certbot
+      certificate_run_certbot_http_01
     fi
   fi  
 }
 
-# Generate a certificate on compute or bastion
-certificate_run_certbot()
+# Generate a certificate on compute
+certificate_run_certbot_http_01()
 {
   if [ -z "$CERTIFICATE_EMAIL" ]; then
-    echo "Error: CERTIFICATE_EMAIL is not defined."
-    exit 1
+    exit_error "CERTIFICATE_EMAIL is not defined."
   fi   
-  if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
-      # Generate the certificate with Let'Encrypt on the COMPUTE
-      TLS_IP=$COMPUTE_IP
-  else
-      # Generate the certificate with Let'Encrypt on the BASTION
-      TLS_IP=$BASTION_IP
-  fi
-  scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path src/tls opc@$TLS_IP:/home/opc/.
+
+  # Generate the certificate with Let'Encrypt on the COMPUTE
+  TLS_IP=$COMPUTE_IP
+  scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path src/tls opc@$COMPUTE_IP:/home/opc/.
   exit_on_error
-  ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export CERTIFICATE_EMAIL=\"$CERTIFICATE_EMAIL\"; bash tls/certbot_http.sh 2>&1 | tee -a tls/certbot_http.log"
-  scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$TLS_IP:tls/certificate target/.
+  ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export CERTIFICATE_EMAIL=\"$CERTIFICATE_EMAIL\"; bash tls/certbot_http.sh 2>&1 | tee -a tls/certbot_http.log"
+  scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:tls/certificate target/.
   exit_on_error
   export CERTIFICATE_DIR=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
 }

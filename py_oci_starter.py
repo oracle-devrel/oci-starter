@@ -106,7 +106,7 @@ allowed_values = {
     '-mode': {CLI, GIT, ZIP},
     '-shape': {'amd','freetier_amd','ampere'},
     '-db_install': {'default', 'shared_compute', 'kubernetes'},
-    '-tls': {'none', 'new', 'existing'}
+    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_path'}
 }
 
 def check_values():
@@ -260,13 +260,18 @@ def tls_rules():
     if params.get('tls')=='none':
         params.pop('tls')
     else:
-        params['dns_zone_name'] = TO_FILL
         params['dns_name'] = TO_FILL
-        if params.get('tls')=='existing':
-            params['certificate_ocid'] = TO_FILL
-            params['certificate_dir'] = TO_FILL
-        elif params.get('tls')=='new':
+        if params.get('tls')=='new_http_01':
             params['certificate_email'] = TO_FILL
+        elif params.get('tls')=='new_dns_01':
+            params['certificate_email'] = TO_FILL
+            params['dns_zone_name'] = TO_FILL
+        elif params.get('tls')=='existing_ocid':
+            params['dns_zone_name'] = TO_FILL
+            params['certificate_ocid'] = TO_FILL
+        elif params.get('tls')=='existing_ocid':
+            params['dns_zone_name'] = TO_FILL
+            params['certificate_dir'] = TO_FILL
 
 
 def apply_rules():
@@ -856,6 +861,9 @@ def create_output_dir():
         cp_terraform("tls.j2.tf")
         if params.get('deploy') == 'kubernetes':
             cp_terraform_apigw("apigw_kubernetes_tls_append.tf")   
+        elif params.get('deploy') == 'compute':
+            if params.get('tls') == 'existing_ocid':
+                cp_terraform_apigw("apigw_compute_append.tf")   
         if params.get('tls') == 'new':
             output_copy_tree("option/tls/new", "src/tls")
 
