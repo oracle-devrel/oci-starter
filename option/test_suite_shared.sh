@@ -103,6 +103,11 @@ build_test () {
   fi   
 }
 
+echo_errors_csv() {
+  echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,$OPTION_JAVA_FRAMEWORK,$OPTION_JAVA_VM,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/errors.csv 
+  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/error_rerun.sh
+}
+
 build_test_destroy () {
   BUILD_ID=1
   build_test
@@ -129,8 +134,7 @@ build_test_destroy () {
     echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,-,-,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/result.csv 
   fi
   if [ "$CSV_JSON_OK" != "1" ] || [ "$CSV_HTML_OK" != "1" ]; then
-    echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,$OPTION_JAVA_FRAMEWORK,$OPTION_JAVA_VM,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/errors.csv 
-    echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/error_rerun.sh
+    echo_errors_csv
   fi
 }
 
@@ -206,6 +210,7 @@ build_option() {
     fi           
   else
     echo "ERROR: no output directory"  
+    echo_errors_csv
   fi  
 }
 
