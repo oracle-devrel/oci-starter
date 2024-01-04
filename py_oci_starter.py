@@ -844,6 +844,8 @@ def create_output_dir():
                 cp_terraform("instance_pool.j2.tf")            
             elif params.get('tls') == 'existing_dir':
                 output_copy_tree("option/tls/compute_existing", "src/tls")
+            elif params.get('tls') == 'new_http_01':
+                output_copy_tree("option/tls/new", "src/tls")
             elif params.get('tls') == 'existing_ocid':
                 cp_terraform_apigw("apigw_compute_append.tf")   
 
@@ -863,8 +865,6 @@ def create_output_dir():
         cp_terraform("tls.j2.tf")
         if params.get('deploy') == 'kubernetes':
             cp_terraform_apigw("apigw_kubernetes_tls_append.tf")   
-        if params.get('tls') == 'new':
-            output_copy_tree("option/tls/new", "src/tls")
 
     if os.path.exists(output_dir + "/src/app/openapi_spec_append.yaml"):
         append_file( output_dir + "/src/app/openapi_spec.yaml", output_dir + "/src/app/openapi_spec_append.yaml")
