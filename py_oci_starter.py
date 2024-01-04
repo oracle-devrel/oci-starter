@@ -106,7 +106,7 @@ allowed_values = {
     '-mode': {CLI, GIT, ZIP},
     '-shape': {'amd','freetier_amd','ampere'},
     '-db_install': {'default', 'shared_compute', 'kubernetes'},
-    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_path'}
+    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'}
 }
 
 def check_values():
@@ -842,8 +842,10 @@ def create_output_dir():
             output_copy_tree("option/compute", "src/compute")
             if params.get('deploy') == 'instance_pool':
                 cp_terraform("instance_pool.j2.tf")            
-            elif params.get('tls') == 'existing':
+            elif params.get('tls')=='existing_dir':
                 output_copy_tree("option/tls/compute_existing", "src/tls")
+            elif params.get('tls') == 'existing_ocid':
+                cp_terraform_apigw("apigw_compute_append.tf")   
 
         elif params.get('deploy') == "container_instance":
             if 'group_common' not in params:
@@ -861,9 +863,6 @@ def create_output_dir():
         cp_terraform("tls.j2.tf")
         if params.get('deploy') == 'kubernetes':
             cp_terraform_apigw("apigw_kubernetes_tls_append.tf")   
-        elif params.get('deploy') == 'compute':
-            if params.get('tls') == 'existing_ocid':
-                cp_terraform_apigw("apigw_compute_append.tf")   
         if params.get('tls') == 'new':
             output_copy_tree("option/tls/new", "src/tls")
 
