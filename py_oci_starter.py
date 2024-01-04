@@ -843,7 +843,7 @@ def create_output_dir():
             if params.get('deploy') == 'instance_pool':
                 cp_terraform("instance_pool.j2.tf")            
             elif params.get('tls') == 'existing_dir':
-                output_copy_tree("option/tls/compute_existing", "src/tls")
+                output_copy_tree("option/tls/compute_existing_dir", "src/tls")
             elif params.get('tls') == 'new_http_01':
                 output_copy_tree("option/tls/new_http_01", "src/tls")
             elif params.get('tls') == 'existing_ocid':
