@@ -842,7 +842,7 @@ def create_output_dir():
             output_copy_tree("option/compute", "src/compute")
             if params.get('deploy') == 'instance_pool':
                 cp_terraform("instance_pool.j2.tf")            
-            elif params.get('tls')=='existing_dir':
+            elif params.get('tls') == 'existing_dir':
                 output_copy_tree("option/tls/compute_existing", "src/tls")
             elif params.get('tls') == 'existing_ocid':
                 cp_terraform_apigw("apigw_compute_append.tf")   
