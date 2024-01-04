@@ -845,7 +845,7 @@ def create_output_dir():
             elif params.get('tls') == 'existing_dir':
                 output_copy_tree("option/tls/compute_existing", "src/tls")
             elif params.get('tls') == 'new_http_01':
-                output_copy_tree("option/tls/new", "src/tls")
+                output_copy_tree("option/tls/new_http_01", "src/tls")
             elif params.get('tls') == 'existing_ocid':
                 cp_terraform_apigw("apigw_compute_append.tf")   
 
