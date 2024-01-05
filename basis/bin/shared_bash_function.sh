@@ -106,10 +106,10 @@ replace_db_user_password_in_file() {
 error_exit() {
   echo
   LEN=${#BASH_LINENO[@]}
-  printf "%-30s %-10s %-20s\n" "STACK TRACE"  "LINE" "FUNCTION"
+  printf "%-40s %-10s %-20s\n" "STACK TRACE"  "LINE" "FUNCTION"
   for (( INDEX=0; INDEX<$LEN; INDEX++ ))
   do
-     printf "  %-28s %-10s %-20s\n" $(basename ${BASH_SOURCE[${INDEX}]})  ${BASH_LINENO[${INDEX}]} ${FUNCNAME[${INDEX}]}
+     printf "   %-37s %-10s %-20s\n" ${BASH_SOURCE[${INDEX}]#$PROJECT_DIR/}  ${BASH_LINENO[$(($INDEX-1))]} ${FUNCNAME[${INDEX}]}
   done
 
   if [ "$1" != "" ]; then
@@ -124,7 +124,10 @@ exit_on_error() {
   if [ $RESULT -eq 0 ]; then
     echo "Success"
   else
-    error_exit "Failed (RESULT=$RESULT)"
+    echo
+    echo "EXIT ON ERROR - HISTORY"
+    history 2
+    error_exit "Command Failed (RESULT=$RESULT)"
   fi  
 }
 
