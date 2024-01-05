@@ -205,7 +205,7 @@ build_option() {
     cp $TEST_HOME/group_common/target/ssh* output/target/.
     rm -Rf $TEST_DIR
     if [ -f ${TEST_DIR}_time.txt ]; then
-      rm ${TEST_DIR}_time.txt
+      rm ${TEST_DIR}_*
     fi
     mv output $TEST_DIR    
     if [ -z $GENERATE_ONLY ]; then
