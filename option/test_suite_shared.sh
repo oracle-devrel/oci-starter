@@ -204,6 +204,9 @@ build_option() {
     mkdir output/target
     cp $TEST_HOME/group_common/target/ssh* output/target/.
     rm -Rf $TEST_DIR
+    if [ -f ${TEST_DIR}_time.txt ]; then
+      rm ${TEST_DIR}_time.txt
+    fi
     mv output $TEST_DIR    
     if [ -z $GENERATE_ONLY ]; then
       build_test_destroy
