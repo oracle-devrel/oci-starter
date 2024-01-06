@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Enable BASH history for Stack Trace
+set -o history -o histexpand
+
 if [[ -z "${BIN_DIR}" ]]; then
   export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 fi

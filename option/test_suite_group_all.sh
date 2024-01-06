@@ -129,7 +129,7 @@ loop_shared_compute() {
 
   # Helidon 4
   OPTION_DB_INSTALL=default
-  OPTION_DB=ATP
+  OPTION_DB=atp
   OPTION_JAVA_FRAMEWORK=helidon4 
   build_option   
 }
