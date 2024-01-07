@@ -239,6 +239,7 @@ def zip_rules():
         output_dir = "zip" + os.sep + params['zip'] + os.sep + zip_dir
         file_output('zip' + os.sep + params['zip'] + '.param', [json.dumps(file_params)])
     # Store the params in a file to be able to regenerate the sample with newer versions
+    os.mkdir(output_dir)    
     os.mkdir(output_dir+os.sep+"src")    
     file_output(output_dir + os.sep + "src" + os.sep + 'params.json', [json.dumps(file_params)])
 
