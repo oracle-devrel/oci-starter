@@ -1103,20 +1103,15 @@ warnings = []
 errors = []
 
 if mode == CLI:
-    apply_rules()
-    if len(errors) > 0:
-        mode = ABORT
-    elif os.path.isdir(output_dir):
+    if os.path.isdir(output_dir):
         print("Output dir exists already.")
         mode = ABORT
     else:
-        print_warnings()
-
-if mode == GIT:
-    print("GIT mode currently not implemented.")
-    # git clone $GIT_URL
-    # cp ../mode/git/* $REPOSITORY_NAME/.
-    exit()
+        apply_rules()
+        if len(errors) > 0:
+            mode = ABORT
+        else:
+            print_warnings()
 
 if mode == ABORT:
     print(help())
