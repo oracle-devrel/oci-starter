@@ -229,9 +229,9 @@ def zip_rules():
     global output_dir, zip_dir
     output_dir = params['output_dir']
     file_params = params.copy()
-    file_params.pop("zip")
     file_params.pop("output_dir")
     if 'zip' in params:
+        file_params.pop("zip")
         if 'group_name' in params:
              zip_dir = params['group_name']
         else:
