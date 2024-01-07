@@ -234,8 +234,11 @@ def zip_rules():
         else:
              zip_dir = params['prefix']
         output_dir = "zip" + os.sep + params['zip'] + os.sep + zip_dir
-        file_output('zip' + os.sep + params['zip'] + '.param', [json.dumps(params)])
-
+        file_params = params.copy()
+        file_params.pop("zip")
+        file_params.pop("output_dir")
+        file_output('zip' + os.sep + params['zip'] + '.param', [json.dumps(file_params)])
+        file_output(output_dir + os.sep + 'params.json', [json.dumps(file_params)])
 
 def group_common_rules():
     if  params.get('group_common'):
