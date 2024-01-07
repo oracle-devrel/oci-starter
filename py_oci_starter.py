@@ -228,17 +228,17 @@ def license_rules():
 def zip_rules():
     global output_dir, zip_dir
     output_dir = params['output_dir']
+    file_params = params.copy()
+    file_params.pop("zip")
+    file_params.pop("output_dir")
     if 'zip' in params:
         if 'group_name' in params:
              zip_dir = params['group_name']
         else:
              zip_dir = params['prefix']
         output_dir = "zip" + os.sep + params['zip'] + os.sep + zip_dir
-        file_params = params.copy()
-        file_params.pop("zip")
-        file_params.pop("output_dir")
         file_output('zip' + os.sep + params['zip'] + '.param', [json.dumps(file_params)])
-        file_output(output_dir + os.sep + 'params.json', [json.dumps(file_params)])
+    file_output(output_dir + os.sep + '.oci_starter_params.json', [json.dumps(file_params)])
 
 def group_common_rules():
     if  params.get('group_common'):
