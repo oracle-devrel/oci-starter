@@ -55,3 +55,6 @@ done
 mkdir certificate
 sudo cp -Lr /etc/letsencrypt/live/$TF_VAR_dns_name /home/opc/tls/certificate
 sudo chown -R opc certificate
+
+# Cron job for Let's Encrypt (Certbot) renewal (each day at 1AM)
+sudo echo '0 1 * * * certbot renew --post-hook "systemctl reload nginx"' >> /etc/crontab
