@@ -238,6 +238,8 @@ def zip_rules():
              zip_dir = params['prefix']
         output_dir = "zip" + os.sep + params['zip'] + os.sep + zip_dir
         file_output('zip' + os.sep + params['zip'] + '.param', [json.dumps(file_params)])
+    # Store the params in a file to be able to regenerate the sample with newer versions
+    os.mkdir(output_dir)    
     file_output(output_dir + os.sep + '.oci_starter_params.json', [json.dumps(file_params)])
 
 def group_common_rules():
