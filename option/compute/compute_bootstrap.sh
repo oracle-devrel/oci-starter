@@ -123,7 +123,7 @@ else
 fi
 
 # TLS
-if [ -d certificate ]; then
+if [ -f nginx_tls.conf ]; then
     echo "Adding nginx_tls.conf"
     sudo cp nginx_tls.conf /etc/nginx/conf.d/.
     sudo awk -i inplace '/# HTTPS server/ && !x {print "        include conf.d/nginx_tls.conf;"; x=1} 1' /etc/nginx/nginx.conf
