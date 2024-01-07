@@ -540,7 +540,7 @@ certificate_run_certbot_http_01()
   # Generate the certificate with Let'Encrypt on the COMPUTE
   scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path src/tls opc@$COMPUTE_IP:/home/opc/.
   exit_on_error
-  ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export CERTIFICATE_EMAIL=\"$CERTIFICATE_EMAIL\"; bash tls/certbot_http.sh 2>&1 | tee -a tls/certbot_http.log"
+  ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export CERTIFICATE_EMAIL=\"$CERTIFICATE_EMAIL\"; bash tls/certbot_http_01.sh 2>&1 | tee -a tls/certbot_http_01.log"
   scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:tls/certificate target/.
   exit_on_error
   export CERTIFICATE_DIR=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
