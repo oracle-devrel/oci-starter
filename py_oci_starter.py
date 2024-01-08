@@ -224,12 +224,18 @@ def license_rules():
     params['license'] = longhand(
         'license', {'included': 'LICENSE_INCLUDED', 'byol': 'BRING_YOUR_OWN_LICENSE'})
 
+
+def pop_param(dict,param):
+    if param in dict:
+        dict.pop(param)
+
+
 def save_params():
     file_params = params.copy()
-    file_params.pop("output_dir")
-    file_params.pop("db_password")
-    file_params.pop("auth_token")
-    file_params.pop("zip")
+    pop_param(file_param,"output_dir")
+    pop_param(file_param,"db_password")
+    pop_param(file_param,"auth_token")
+    pop_param(file_param,"zip")
     # Store the params in a file to be able to regenerate the sample with newer versions  
     os.makedirs(output_dir + os.sep + "src")
     file_output(output_dir + os.sep + "src" + os.sep + '_params.json', [json.dumps(file_params)])
