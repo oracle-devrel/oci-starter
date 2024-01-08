@@ -231,7 +231,6 @@ def pop_param(dict,param):
 
 
 def save_params():
-    params['params'] = list(mydict.keys())
     file_params = params.copy()
     pop_param(file_params,"output_dir")
     pop_param(file_params,"db_password")
