@@ -232,10 +232,10 @@ def pop_param(dict,param):
 
 def save_params():
     file_params = params.copy()
-    pop_param(file_param,"output_dir")
-    pop_param(file_param,"db_password")
-    pop_param(file_param,"auth_token")
-    pop_param(file_param,"zip")
+    pop_param(file_params,"output_dir")
+    pop_param(file_params,"db_password")
+    pop_param(file_params,"auth_token")
+    pop_param(file_params,"zip")
     # Store the params in a file to be able to regenerate the sample with newer versions  
     os.makedirs(output_dir + os.sep + "src")
     file_output(output_dir + os.sep + "src" + os.sep + '_params.json', [json.dumps(file_params)])
