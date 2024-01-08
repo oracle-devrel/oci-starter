@@ -57,8 +57,8 @@ def prog_arg_dict():
 
 
 MANDATORY_OPTIONS = {
-    CLI: ['-language', '-deploy', '-db_password'],
-    GROUP: ['-group_name','-group_common','-db_password']
+    CLI: ['-language', '-deploy'],
+    GROUP: ['-group_name','-group_common']
 }
 
 def mandatory_options(mode):
@@ -75,7 +75,8 @@ default_options = {
     '-license': 'included',
     '-mode': CLI,
     '-infra_as_code': 'terraform_local',
-    '-output_dir' : 'output'
+    '-output_dir' : 'output',
+    '-db_password' : TO_FILL
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
@@ -484,15 +485,21 @@ Check LICENSE file (Apache 2.0)
         contents.append("  ./build.sh")
     return contents
 
+def is_param_default_value(name):
+    return params.get(name) == default_options.get('-'+name)
+
 def env_param_list():
     env_params = list(params.keys())
-    exclude = ['mode', 'zip', 'prefix', 'shape', 'params']
+    exclude = ['mode', 'zip', 'prefix', 'shape', 'params', 'output_dir']
     if params.get('language') != 'java' or 'group_name' in params:
         exclude.extend(['java_vm', 'java_framework', 'java_version'])
     if 'group_name' in params:
         exclude.extend(['ui', 'database', 'language', 'deploy', 'db_user', 'group_name'])
     else:
         exclude.append('group_common')
+    if is_param_default_value('infra_as_code'):
+        exclude.append('infra_as_code')        
+        
     print(exclude)
     for x in exclude:
         if x in env_params:
@@ -1098,6 +1105,8 @@ params = get_params()
 mode = get_mode()
 unknown_params = missing_parameters(allowed_options(), prog_arg_dict().keys())
 illegal_params = check_values()
+print( params )
+print( params )
 if 'group_name' in params:
   missing_params = missing_parameters(prog_arg_dict().keys(), mandatory_options(GROUP))
 else:  
@@ -1105,6 +1114,7 @@ else:
 
 if len(unknown_params) > 0 or len(illegal_params) > 0 or len(missing_params) > 0:
     mode = ABORT
+print( params )
 
 warnings = []
 errors = []
