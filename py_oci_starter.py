@@ -143,6 +143,23 @@ def longhand(key, abbreviations):
         return current
 
 
+def pop_param(dict,param):
+    if param in dict:
+        dict.pop(param)
+
+
+def save_params():
+    p = params.copy()
+    pop_param(p,"output_dir")
+    pop_param(p,"zip")
+    # Print in Bash Array format
+    s = "( "
+    for key, value in p.items():
+        s += '"' + str(key) + '" '
+    s += ")"
+    params['params'] = s
+
+
 def db_rules():
     if params.get('database') == 'rac':
         params['db_node_count'] = "2" 
@@ -224,18 +241,6 @@ def license_rules():
         params['license'] = license_model
     params['license'] = longhand(
         'license', {'included': 'LICENSE_INCLUDED', 'byol': 'BRING_YOUR_OWN_LICENSE'})
-
-
-def pop_param(dict,param):
-    if param in dict:
-        dict.pop(param)
-
-
-def save_params():
-    file_params = params.copy()
-    pop_param(file_params,"output_dir")
-    pop_param(file_params,"zip")
-    params['params'] = list(file_params.keys())
 
 
 def zip_rules():
