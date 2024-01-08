@@ -233,8 +233,6 @@ def pop_param(dict,param):
 def save_params():
     file_params = params.copy()
     pop_param(file_params,"output_dir")
-    pop_param(file_params,"db_password")
-    pop_param(file_params,"auth_token")
     pop_param(file_params,"zip")
     params['params'] = list(file_params.keys())
 
@@ -289,7 +287,6 @@ def tls_rules():
 
 def apply_rules():
     zip_rules()
-    save_params()
     group_common_rules()
     language_rules()
     kubernetes_rules()
@@ -489,7 +486,7 @@ Check LICENSE file (Apache 2.0)
 
 def env_param_list():
     env_params = list(params.keys())
-    exclude = ['mode', 'zip', 'prefix', 'shape']
+    exclude = ['mode', 'zip', 'prefix', 'shape', 'params']
     if params.get('language') != 'java' or 'group_name' in params:
         exclude.extend(['java_vm', 'java_framework', 'java_version'])
     if 'group_name' in params:
@@ -512,6 +509,7 @@ def env_sh_contents():
     contents.append(f'export BIN_DIR=$PROJECT_DIR/bin')
     contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
     contents.append(f'export OCI_STARTER_VERSION=1.5')
+    contents.append(f'export PARAMS="{params["params"]}"')
     contents.append('')
     contents.append('# Env Variables')
     if 'group_name' in params:
@@ -1116,6 +1114,7 @@ if mode == CLI:
         print("Output dir exists already.")
         mode = ABORT
     else:
+        save_params()
         apply_rules()
         if len(errors) > 0:
             mode = ABORT
