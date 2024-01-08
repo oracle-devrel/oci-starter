@@ -499,7 +499,7 @@ def env_param_list():
         exclude.append('group_common')
     if is_param_default_value('infra_as_code'):
         exclude.append('infra_as_code')        
-        
+
     print(exclude)
     for x in exclude:
         if x in env_params:
@@ -1105,8 +1105,6 @@ params = get_params()
 mode = get_mode()
 unknown_params = missing_parameters(allowed_options(), prog_arg_dict().keys())
 illegal_params = check_values()
-print( params )
-print( params )
 if 'group_name' in params:
   missing_params = missing_parameters(prog_arg_dict().keys(), mandatory_options(GROUP))
 else:  
@@ -1114,7 +1112,6 @@ else:
 
 if len(unknown_params) > 0 or len(illegal_params) > 0 or len(missing_params) > 0:
     mode = ABORT
-print( params )
 
 warnings = []
 errors = []
