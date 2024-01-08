@@ -224,24 +224,27 @@ def license_rules():
     params['license'] = longhand(
         'license', {'included': 'LICENSE_INCLUDED', 'byol': 'BRING_YOUR_OWN_LICENSE'})
 
+def save_params():
+    file_params = params.copy()
+    file_params.pop("output_dir")
+    file_params.pop("db_password")
+    file_params.pop("auth_token")
+    file_params.pop("zip")
+    # Store the params in a file to be able to regenerate the sample with newer versions  
+    os.makedirs(output_dir + os.sep + "src")
+    file_output(output_dir + os.sep + "src" + os.sep + '_params.json', [json.dumps(file_params)])
+
 
 def zip_rules():
     global output_dir, zip_dir
     output_dir = params['output_dir']
-    file_params = params.copy()
-    file_params.pop("output_dir")
     if 'zip' in params:
-        file_params.pop("zip")
         if 'group_name' in params:
              zip_dir = params['group_name']
         else:
              zip_dir = params['prefix']
         output_dir = "zip" + os.sep + params['zip'] + os.sep + zip_dir
-        file_output('zip' + os.sep + params['zip'] + '.param', [json.dumps(file_params)])
-    # Store the params in a file to be able to regenerate the sample with newer versions
-    os.mkdir(output_dir)    
-    os.mkdir(output_dir+os.sep+"src")    
-    file_output(output_dir + os.sep + "src" + os.sep + 'params.json', [json.dumps(file_params)])
+        file_output('zip' + os.sep + params['zip'] + '.param', [json.dumps(params)])
 
 def group_common_rules():
     if  params.get('group_common'):
@@ -282,6 +285,7 @@ def tls_rules():
 
 def apply_rules():
     zip_rules()
+    save_params()
     group_common_rules()
     language_rules()
     kubernetes_rules()
