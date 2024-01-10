@@ -532,6 +532,10 @@ def env_sh_contents():
         else:
             tf_var_comment(contents, param)
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
+
+    for s in group_common_contents:
+        contents.append(s)
+
     contents.append('')
     contents.append("if [ -f $PROJECT_DIR/../group_common_env.sh ]; then")      
     contents.append("  . $PROJECT_DIR/../group_common_env.sh")      
@@ -543,13 +547,13 @@ def env_sh_contents():
     if params.get('compartment_ocid') == None:
         contents.append('  # export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx')       
 
-    for x in group_common_contents:
-        contents.append("  " + x)
+    # for x in group_common_contents:
+    #     contents.append("  " + x)
 
-    contents.append('')
-    contents.append('  # API Management')
-    contents.append('  # export APIM_HOST=xxxx-xxx.adb.region.oraclecloudapps.com')
-    contents.append('')
+    # contents.append('')
+    # contents.append('  # API Management')
+    # contents.append('  # export APIM_HOST=xxxx-xxx.adb.region.oraclecloudapps.com')
+    # contents.append('')
 
     if params.get('instance_shape') == None:   
         contents.append('  # Compute Shape')
@@ -567,7 +571,7 @@ def env_sh_contents():
     contents.append('# Creation Details')
     contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
     contents.append(f'export OCI_STARTER_VERSION=2.0')
-    contents.append(f'export PARAMS="{params["params"]}"')
+    contents.append(f'export OCI_STARTER_PARAMS="{params["params"]}"')
     contents.append('')
     contents.append(
         '# Get other env variables automatically (-silent flag can be passed)')
@@ -578,7 +582,7 @@ def env_sh_contents():
 def tf_var_comment(contents, param):
     comments = {
         'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
-        'db_password': ['Requires at least 12 characters, 2 letters in lowercase, 2 in uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345', 'If not filled, it will be generated randomly during the first build.'],
+        'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345', 'If not filled, it will be generated randomly during the first build.'],
         'license': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED']
     }.get(param)
     if comments is not None:
