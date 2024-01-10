@@ -514,9 +514,6 @@ def env_sh_contents():
     contents.append(
         'PROJECT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )')
     contents.append(f'export BIN_DIR=$PROJECT_DIR/bin')
-    contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
-    contents.append(f'export OCI_STARTER_VERSION=1.5')
-    contents.append(f'export PARAMS="{params["params"]}"')
     contents.append('')
     contents.append('# Env Variables')
     if 'group_name' in params:
@@ -566,7 +563,11 @@ def env_sh_contents():
     contents.append('  # export TF_VAR_lz_security_cmp_ocid=$TF_VAR_compartment_ocid')
 
     contents.append("fi")      
-
+    contents.append('')
+    contents.append('# Creation Details')
+    contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
+    contents.append(f'export OCI_STARTER_VERSION=2.0')
+    contents.append(f'export PARAMS="{params["params"]}"')
     contents.append('')
     contents.append(
         '# Get other env variables automatically (-silent flag can be passed)')
