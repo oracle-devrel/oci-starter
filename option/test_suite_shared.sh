@@ -241,7 +241,7 @@ pre_test_suite() {
   git clone https://github.com/mgueury/oci-starter
 
   cd $TEST_HOME/oci-starter
-  ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,database,fnapp,apigw,oke,db_free -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
+  ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
   exit_on_error
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
