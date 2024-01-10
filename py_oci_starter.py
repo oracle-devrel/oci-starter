@@ -586,10 +586,10 @@ def tf_var_comment(contents, param):
         'license': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED']
     }.get(param)
     if comments is not None:
-        b = true
+        b=True
         for comment in comments:
             if b:
-                b = false
+                b=False
                 contents.append(f'# {get_tf_var(param)} : {comment}')
             else:
                 contents.append(f'# {comment}')
