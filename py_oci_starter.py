@@ -499,7 +499,7 @@ def env_param_list():
     if params.get('language') != 'java' or 'group_name' in params:
         exclude.extend(['java_vm', 'java_framework', 'java_version'])
     if 'group_name' in params:
-        exclude.extend(['ui', 'database', 'language', 'deploy', 'db_user', 'group_name'])
+        exclude.extend(['ui_type', 'db_type', 'language', 'deploy_type', 'db_user', 'group_name'])
     else:
         exclude.append('group_common')
     if is_param_default_value('infra_as_code'):
@@ -1163,7 +1163,7 @@ if 'group_common' in params:
             ocid = to_ocid[x]
             params[ocid] = TO_FILL
 
-if 'deploy' in params:
+if 'deploy_type' in params:
     create_output_dir()
     jinja2_replace_template()
 
