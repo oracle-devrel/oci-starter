@@ -147,12 +147,7 @@ def save_params():
     p = params.copy()
     pop_param(p,"output_dir")
     pop_param(p,"zip")
-    # Print in Bash Array format
-    s = "( "
-    for key, value in p.items():
-        s += '"' + str(key) + '" '
-    s += ")"
-    params['params'] = s
+    params['params'] = ",".join(p.keys())
 
 
 def db_rules():
