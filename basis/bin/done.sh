@@ -2,7 +2,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR/..
 
-if [ -z "$TF_VAR_deploy_strategy" ]; then
+if [ -z "$TF_VAR_deploy_type" ]; then
   . ./env.sh -silent
 else
   . bin/shared_bash_function.sh
@@ -18,7 +18,7 @@ if [ ! -z "$UI_URL" ]; then
   if [ ! -z "$TEST_NAME" ]; then
     echo $UI_URL > /tmp/ui_url.txt
     
-    if [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
+    if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
       kubectl wait --for=condition=ready pod ${TF_VAR_prefix}-app
       kubectl wait --for=condition=ready pod ${TF_VAR_prefix}-ui
       kubectl get all
@@ -40,7 +40,7 @@ if [ ! -z "$UI_URL" ]; then
       sleep 5  
       x=$(( $x + 1 ))
     done
-    if [ "$TF_VAR_ui_strategy" != "api" ]; then
+    if [ "$TF_VAR_ui_type" != "api" ]; then
       if [ -f "/tmp/cookie.txt" ]; then
         rm /tmp/cookie.txt
       fi  
@@ -53,7 +53,7 @@ if [ ! -z "$UI_URL" ]; then
     fi  
     curl $UI_URL/app/info -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_info.log > /tmp/result.info
   fi
-  if [ "$TF_VAR_ui_strategy" != "api" ]; then
+  if [ "$TF_VAR_ui_type" != "api" ]; then
     echo - User Interface: $UI_URL/
   fi  
   if [ "$UI_HTTP" != "" ]; then
@@ -66,11 +66,11 @@ if [ ! -z "$UI_URL" ]; then
     # echo - Rest DB API     : $UI_URL/$APP_DIR/dept
     # echo - Rest Info API   : $UI_URL/$APP_DIR/info
   done
-  if [ "$TF_VAR_deploy_strategy" == "compute" ] && [ "$TF_VAR_ui_strategy" == "api" ]; then   
+  if [ "$TF_VAR_deploy_type" == "compute" ] && [ "$TF_VAR_ui_type" == "api" ]; then   
     export APIGW_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}  
     echo - API Gateway URL : $APIGW_URL/app/dept 
   fi
-  if [ "$TF_VAR_language" == "java" ] && [ "$TF_VAR_java_framework" == "springboot" ] && [ "$TF_VAR_ui_strategy" == "html" ] && [ "$TF_VAR_db_node_count" == "2" ]; then
+  if [ "$TF_VAR_language" == "java" ] && [ "$TF_VAR_java_framework" == "springboot" ] && [ "$TF_VAR_ui_type" == "html" ] && [ "$TF_VAR_db_node_count" == "2" ]; then
     echo - RAC Page        : $UI_URL/rac.html
   fi
 fi

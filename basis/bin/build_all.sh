@@ -58,20 +58,20 @@ if [ -f src/ui/build_ui.sh ]; then
 fi
 
 # Deploy
-title "Deploy $TF_VAR_deploy_strategy"
-if [ "$TF_VAR_deploy_strategy" == "compute" ]; then
+title "Deploy $TF_VAR_deploy_type"
+if [ "$TF_VAR_deploy_type" == "compute" ]; then
     $BIN_DIR/deploy_compute.sh
     exit_on_error
-elif [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
+elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
     $BIN_DIR/deploy_compute.sh
     exit_on_error
     export TF_VAR_compute_ready="true"
     src/terraform/apply.sh --auto-approve -no-color
     exit_on_error
-elif [ "$TF_VAR_deploy_strategy" == "kubernetes" ]; then
+elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
     $BIN_DIR/oke_deploy.sh
     exit_on_error
-elif [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then
+elif [ "$TF_VAR_deploy_type" == "container_instance" ]; then
     $BIN_DIR/ci_deploy.sh
     exit_on_error
 fi

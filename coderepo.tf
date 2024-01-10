@@ -32,12 +32,12 @@ resource "null_resource" "clonerepo" {
       export TF_VAR_vcn_strategy="${local.vcn_strategy}"
       export TF_VAR_vcn_ocid="${var.vcn_ocid}"
       export TF_VAR_subnet_ocid="${var.subnet_ocid}"
-      export TF_VAR_ui_strategy="${var.ui_strategy}"
-      export TF_VAR_deploy_strategy="${local.deploy_strategy}"
+      export TF_VAR_ui_type="${var.ui_type}"
+      export TF_VAR_deploy_type="${local.deploy_type}"
       export TF_VAR_kubernetes_strategy="${var.kubernetes_strategy}"
       export TF_VAR_oke_strategy="${local.oke_strategy}"
       export TF_VAR_oke_ocid="${var.oke_ocid}"
-      export TF_VAR_db_strategy="${local.db_strategy}"
+      export TF_VAR_db_type="${local.db_type}"
       export TF_VAR_db_existing_strategy="${local.db_existing_strategy}"
       export TF_VAR_atp_ocid="${var.atp_ocid}"
       export TF_VAR_db_ocid="${var.db_ocid}"
@@ -68,10 +68,10 @@ locals {
   git_url = "https://${local.encode_user}:${local.encode_token}@devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.ocir_namespace}/projects/${oci_devops_project.test_project.name}/repositories/${oci_devops_repository.test_repository.name}"
 
   # Simplify the parameter values
-  deploy_strategy = lookup({"Virtual Machine": "compute", "Kubernetes": "kubernetes", "Function": "function"}, var.deploy_strategy, "error" )
+  deploy_type = lookup({"Virtual Machine": "compute", "Kubernetes": "kubernetes", "Function": "function"}, var.deploy_type, "error" )
   java_framework = lower(var.java_framework)
   language = lower(var.language)
-  db_strategy = lookup({"Autonomous Transaction Processing Database": "autonomous", "Database System": "database", "MySQL": "mysql"}, var.db_strategy, "error" )
+  db_type = lookup({"Autonomous Transaction Processing Database": "autonomous", "Database System": "database", "MySQL": "mysql"}, var.db_type, "error" )
   java_vm = lookup({"JDK": "jdk", "GraalVM": "graalvm"}, var.java_vm, "error" )
   db_existing_strategy = lookup({"Create New DB": "new", "Use Existing DB": "existing"}, var.db_existing_strategy, "error" )
   vcn_strategy = lookup({"Create New VCN": "new", "Use Existing VCN": "existing"}, var.vcn_strategy, "error" )

@@ -33,7 +33,7 @@ x=$x_max
 while [ $x -gt 0 ]
 do
   nslookup $TF_VAR_dns_name
-  sudo certbot --agree-tos --nginx --email $CERTIFICATE_EMAIL -d $TF_VAR_dns_name
+  sudo certbot --agree-tos --nginx --email $TF_VAR_certificate_email -d $TF_VAR_dns_name
   RESULT=$?
   if [ $RESULT -eq 0 ]; then
     echo "Success - certbot"

@@ -27,7 +27,7 @@ variableGroups:
   visible: true  
   variables:  
   - language
-  - deploy_strategy  
+  - deploy_type  
   - java_framework
   - java_vm
   - java_version
@@ -35,7 +35,7 @@ variableGroups:
 - title: User Interface
   visible: true  
   variables:
-  - ui_strategy
+  - ui_type
 
 - title: Deployment
   visible: true  
@@ -54,7 +54,7 @@ variableGroups:
 - title: "Database"
   visible: true
   variables:
-  - db_strategy
+  - db_type
   - db_existing_strategy
   - atp_ocid
   - db_ocid
@@ -111,7 +111,7 @@ variables:
     default: "Java"
     required: true
 
-  deploy_strategy:
+  deploy_type:
     visible: true
     type: enum
     title: Deployment 
@@ -131,10 +131,10 @@ variables:
           - "Java"  
         - or:  
           - eq:
-            - ${deploy_strategy}
+            - ${deploy_type}
             - "Kubernetes"  
           - eq:
-            - ${deploy_strategy}
+            - ${deploy_type}
             - "Virtual Machine"              
     type: enum
     title: Java Framework
@@ -154,10 +154,10 @@ variables:
           - "Java"  
         - or:  
           - eq:
-            - ${deploy_strategy}
+            - ${deploy_type}
             - "Kubernetes"  
           - eq:
-            - ${deploy_strategy}
+            - ${deploy_type}
             - "Virtual Machine"         
     type: enum
     title: Java Framework
@@ -181,10 +181,10 @@ variables:
               - "Helidon"  
         - or:  
           - eq:
-            - ${deploy_strategy}
+            - ${deploy_type}
             - "Kubernetes"  
           - eq:
-            - ${deploy_strategy}
+            - ${deploy_type}
             - "Virtual Machine"         
     type: enum
     title: Java Framework
@@ -241,7 +241,7 @@ variables:
   kubernetes_strategy:
     visible:
       eq:
-        - ${deploy_strategy}
+        - ${deploy_type}
         - "Kubernetes"
     type: enum
     enum:
@@ -255,7 +255,7 @@ variables:
     visible: 
       and:
         - eq:
-          - ${deploy_strategy}
+          - ${deploy_type}
           - "Kubernetes"      
         - eq:
           - ${kubernetes_strategy}
@@ -273,7 +273,7 @@ variables:
     visible:
       and:
         - eq:
-          - ${deploy_strategy}
+          - ${deploy_type}
           - "Kubernetes"      
         - eq:
           - ${kubernetes_strategy}
@@ -292,7 +292,7 @@ variables:
 
 ###################### Database
 
-  db_strategy:
+  db_type:
     visible: true
     type: enum
     title: Database Type
@@ -319,7 +319,7 @@ variables:
     visible:
       and:
         - eq:
-          - ${db_strategy}
+          - ${db_type}
           - "Autonomous Transaction Processing Database"
         - eq:
           - ${db_existing_strategy}
@@ -335,7 +335,7 @@ variables:
     visible:
       and:
         - eq:
-          - ${db_strategy}
+          - ${db_type}
           - "Database System"
         - eq:
           - ${db_existing_strategy}
@@ -351,7 +351,7 @@ variables:
     visible:
       and:
         - eq:
-          - ${db_strategy}
+          - ${db_type}
           - "MySQL"
         - eq:
           - ${db_existing_strategy}
@@ -383,7 +383,7 @@ variables:
     
 ###################### User Interface
 
-  ui_strategy:
+  ui_type:
     visible: true
     type: enum
     title: User Interface

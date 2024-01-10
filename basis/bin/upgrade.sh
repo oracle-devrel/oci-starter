@@ -3,8 +3,10 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR/..
 . env.sh
 
-## declare an array variable
-declare -a arr=("element1" "element2" "element3")
+## Remove variable that should not be exposed
+export `env | grep _ocid | sed 's/=.*/=__TO_FILL__/'`
+export DB_PASSWORD=__TO_FILL__
+export TF_VAR_auth_token=__TO_FILL__
 
 PARAM_LIST=""
 ## now loop through the above array

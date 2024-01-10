@@ -16,7 +16,7 @@ add_api_portal() {
 
 if [ "$APIM_HOST" != "" ]; then
   FIRST_LETTER_UPPERCASE=`echo $TF_VAR_prefix | sed -e "s/\b\(.\)/\u\1/g"`
-  if [ "$TF_VAR_ui_strategy" == "api" ]; then
+  if [ "$TF_VAR_ui_type" == "api" ]; then
     APIGW_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}  
     for APP_DIR in `app_dir_list`; do
       if [ -f src/${APP_DIR}/openapi_spec.yaml ]; then

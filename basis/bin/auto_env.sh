@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Enable BASH history for Stack Trace
+# Enable BASH history for Stack Trace. But do not store it.
 set -o history -o histexpand
+unset HISTFILE
 
 if [[ -z "${BIN_DIR}" ]]; then
   export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -119,7 +120,7 @@ else
   auto_echo TF_VAR_region=$TF_VAR_region
 
   # Kubernetes and OCIR
-  if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
+  if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     export TF_VAR_namespace=`oci os ns get | jq -r .data`
     auto_echo TF_VAR_namespace=$TF_VAR_namespace
     export TF_VAR_email=mail@domain.com
@@ -137,7 +138,7 @@ else
     export TF_VAR_openapi_spec=$(cat $PROJECT_DIR/src/app/openapi_spec.yaml)
   fi
 
-  if [ "$TF_VAR_deploy_strategy" == "hpc" ]; then
+  if [ "$TF_VAR_deploy_type" == "hpc" ]; then
     # Create synonyms for variables with another name in the oci-hpc stack
     export TF_VAR_ssh_key=$TF_VAR_ssh_public_key
     export TF_VAR_targetCompartment=$TF_VAR_compartment_ocid
@@ -183,7 +184,7 @@ if [ -f $STATE_FILE ]; then
   export OBJECT_STORAGE_URL=https://objectstorage.${TF_VAR_region}.oraclecloud.com
 
   # API GW
-  if [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ] || [ "$TF_VAR_ui_strategy" == "api" ]; then
+  if [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_ui_type" == "api" ]; then
     # APIGW URL
     get_attribute_from_tfstate "APIGW_HOSTNAME" "starter_apigw" "hostname"
     # APIGW Deployment id
@@ -191,7 +192,7 @@ if [ -f $STATE_FILE ]; then
   fi
 
   # Instance Pool
-  if [ "$TF_VAR_deploy_strategy" == "instance_pool" ]; then
+  if [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
     # XXX Does not work with Resource Manager XXX
     # Check in the terraform state is the compute is already created.
     get_id_from_tfstate "COMPUTE_OCID" "starter_instance"
@@ -201,7 +202,7 @@ if [ -f $STATE_FILE ]; then
   fi
 
   # Functions
-  if [ "$TF_VAR_deploy_strategy" == "function" ]; then
+  if [ "$TF_VAR_deploy_type" == "function" ]; then
     # OBJECT Storage URL
     export BUCKET_URL="https://objectstorage.${TF_VAR_region}.oraclecloud.com/n/${TF_VAR_namespace}/b/${TF_VAR_prefix}-public-bucket/o"
 
@@ -218,7 +219,7 @@ if [ -f $STATE_FILE ]; then
   fi
 
   # Container Instance
-  if [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then
+  if [ "$TF_VAR_deploy_type" == "container_instance" ]; then
     if [ -f $TARGET_DIR/docker_image_ui.txt ] || [ -f $TARGET_DIR/docker_image_app.txt ] ; then
       if [ -f $TARGET_DIR/docker_image_ui.txt ]; then
         export TF_VAR_docker_image_ui=`cat $TARGET_DIR/docker_image_ui.txt`
@@ -244,17 +245,17 @@ if [ -f $STATE_FILE ]; then
   get_output_from_tfstate "DB_URL" "db_url"
 
 
-  if [ "$TF_VAR_db_strategy" == "autonomous" ]; then
+  if [ "$TF_VAR_db_type" == "autonomous" ]; then
     get_output_from_tfstate "ORDS_URL" "ords_url"
   fi
 
-  if [ "$TF_VAR_db_strategy" == "database" ]; then
+  if [ "$TF_VAR_db_type" == "database" ]; then
     get_attribute_from_tfstate "DB_NODE_IP" "starter_node_vnic" "private_ip_address"
-  elif [ "$TF_VAR_db_strategy" == "db_free" ]; then
+  elif [ "$TF_VAR_db_type" == "db_free" ]; then
     get_output_from_tfstate "DB_NODE_IP" "db_free_ip"
   fi
 
-  if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
+  if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     # OKE
     get_output_from_tfstate "OKE_OCID" "oke_ocid"
     export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
