@@ -533,6 +533,8 @@ def env_sh_contents():
             tf_var_comment(contents, param)
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
     contents.append('')
+    if params.get('compartment_ocid') == None:
+        contents.append('# export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx')       
     for s in group_common_contents:
         contents.append(s)
 
@@ -543,29 +545,20 @@ def env_sh_contents():
     contents.append("  . $PROJECT_DIR/../../group_common_env.sh")      
     contents.append("elif [ -f $HOME/.oci_starter_profile ]; then")
     contents.append("  . $HOME/.oci_starter_profile")
-    contents.append("else")      
-    if params.get('compartment_ocid') == None:
-        contents.append('  # export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx')       
-
-    # for x in group_common_contents:
-    #     contents.append("  " + x)
-
+    # contents.append("else")      
     # contents.append('')
     # contents.append('  # API Management')
     # contents.append('  # export APIM_HOST=xxxx-xxx.adb.region.oraclecloudapps.com')
     # contents.append('')
-
-    if params.get('instance_shape') == None:   
-        contents.append('  # Compute Shape')
-        contents.append('  # export TF_VAR_instance_shape=VM.Standard.E4.Flex')
-        contents.append('')
-
+    # if params.get('instance_shape') == None:   
+    #    contents.append('  # Compute Shape')
+    #    contents.append('  # export TF_VAR_instance_shape=VM.Standard.E4.Flex')
+    #    contents.append('')
     # contents.append('  # Landing Zone')
     # contents.append('  # export TF_VAR_lz_appdev_cmp_ocid=$TF_VAR_compartment_ocid')
     # contents.append('  # export TF_VAR_lz_database_cmp_ocid=$TF_VAR_compartment_ocid')
     # contents.append('  # export TF_VAR_lz_network_cmp_ocid=$TF_VAR_compartment_ocid')
     # contents.append('  # export TF_VAR_lz_security_cmp_ocid=$TF_VAR_compartment_ocid')
-
     contents.append("fi")      
     contents.append('')
     contents.append('# Creation Details')
