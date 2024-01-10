@@ -266,7 +266,7 @@ def shape_rules():
 def tls_rules():
     if params.get('tls')=='none':
         params.pop('tls')
-    else:
+    elif params.get('tls'):
         params['dns_name'] = TO_FILL
         if params.get('tls')=='new_http_01':
             params['certificate_email'] = TO_FILL
