@@ -532,7 +532,7 @@ def env_sh_contents():
         else:
             tf_var_comment(contents, param)
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
-
+    contents.append('')
     for s in group_common_contents:
         contents.append(s)
 
@@ -586,8 +586,14 @@ def tf_var_comment(contents, param):
         'license': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED']
     }.get(param)
     if comments is not None:
+        b = true
         for comment in comments:
-            contents.append(f'# {get_tf_var(param)} : {comment}')
+            if b:
+                b = false
+                contents.append(f'# {get_tf_var(param)} : {comment}')
+            else:
+                contents.append(f'# {comment}')
+
 
 
 def write_env_sh():
