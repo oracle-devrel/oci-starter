@@ -3,9 +3,9 @@ variable "dns_name" { default="" }
 variable "dns_ip" { default="" }
 
 locals {
-{%- if deploy == "compute" and tls != "existing_ocid" %}  
+{%- if deploy_type == "compute" and tls != "existing_ocid" %}  
   dns_ip = local.compute_public_ip
-{%- elif deploy == "instance_pool" %}  
+{%- elif deploy_type == "instance_pool" %}  
   dns_ip = local.instance_pool_lb_ip
 {%- else %}  
   dns_ip = local.apigw_ip
@@ -30,7 +30,7 @@ resource "oci_dns_rrset" "starter_rrset" {
     }
 }
 
-{%- if deploy == "instance_pool" %}  
+{%- if deploy_type == "instance_pool" %}  
 resource "oci_load_balancer_listener" "starter_lb_https_listener" {
   load_balancer_id         = oci_load_balancer.starter_pool_lb.id
   name                     = "HTTP-443"
