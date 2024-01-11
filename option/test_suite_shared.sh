@@ -154,6 +154,16 @@ build_option() {
   fi  
   NAME=${NAME/_/-}
   start_test $NAME
+  if [ "$TEST_ERROR_ONLY" != "" ]; then
+    if grep -Fxq "$TEST_DIR" $TEST_HOME/error_rerun.sh
+    then
+      echo "OK - error_rerun.sh contains - $TEST_DIR" 
+    else
+      echo "SKIP - error_rerun.sh does not contains - $TEST_DIR" 
+      return
+    fi
+  fi
+
   cd $TEST_HOME/oci-starter
   if [ "$OPTION_GROUP_NAME" == "dummy" ]; then
     ./oci_starter.sh \
