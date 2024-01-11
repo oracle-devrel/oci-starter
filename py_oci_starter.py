@@ -82,7 +82,8 @@ default_options = {
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
                       '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid', '-psql_ocid',
                       '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token', '-tls',
-                      '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape','-db_install']
+                      '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape','-db_install', 
+                      '-ui', '-deploy', '-database', '-license']
 
 # hidden_options - allowed but not advertised
 hidden_options = ['-zip', '-group_common','-group_name']
