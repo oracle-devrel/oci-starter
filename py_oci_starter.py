@@ -1106,9 +1106,9 @@ mode = get_mode()
 unknown_params = missing_parameters(allowed_options(), prog_arg_dict().keys())
 illegal_params = check_values()
 if 'group_name' in params:
-  missing_params = missing_parameters(prog_arg_dict().keys(), mandatory_options(GROUP))
+  missing_params = missing_parameters(params.keys(), mandatory_options(GROUP))
 else:  
-  missing_params = missing_parameters(prog_arg_dict().keys(), mandatory_options(mode))
+  missing_params = missing_parameters(params.keys(), mandatory_options(mode))
 
 if len(unknown_params) > 0 or len(illegal_params) > 0 or len(missing_params) > 0:
     mode = ABORT
