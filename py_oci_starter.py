@@ -57,8 +57,8 @@ def prog_arg_dict():
 
 
 MANDATORY_OPTIONS = {
-    CLI: ['language', 'deploy_type'],
-    GROUP: ['group_name','group_common']
+    CLI: ['-language', '-deploy_type'],
+    GROUP: ['-group_name','-group_common']
 }
 
 def mandatory_options(mode):
@@ -1105,10 +1105,11 @@ params = get_params()
 mode = get_mode()
 unknown_params = missing_parameters(allowed_options(), prog_arg_dict().keys())
 illegal_params = check_values()
+dash_params={f'-{k}': v for k, v in params.items()}
 if 'group_name' in params:
-  missing_params = missing_parameters(params.keys(), mandatory_options(GROUP))
+  missing_params = missing_parameters(dash_params.keys(), mandatory_options(GROUP))
 else:  
-  missing_params = missing_parameters(params.keys(), mandatory_options(mode))
+  missing_params = missing_parameters(dash_params.keys(), mandatory_options(mode))
 
 if len(unknown_params) > 0 or len(illegal_params) > 0 or len(missing_params) > 0:
     mode = ABORT
