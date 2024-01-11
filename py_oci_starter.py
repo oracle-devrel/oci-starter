@@ -276,7 +276,7 @@ def tls_rules():
         elif params.get('tls')=='existing_ocid':
             params['dns_zone_name'] = TO_FILL
             params['certificate_ocid'] = TO_FILL
-        elif params.get('tls')=='existing_ocid':
+        elif params.get('tls')=='existing_dir':
             params['dns_zone_name'] = TO_FILL
             params['certificate_dir'] = TO_FILL
 
