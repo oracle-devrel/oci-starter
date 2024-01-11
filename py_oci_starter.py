@@ -57,7 +57,7 @@ def prog_arg_dict():
 
 
 MANDATORY_OPTIONS = {
-    CLI: ['-language', '-deploy'],
+    CLI: ['-language', '-deploy_type'],
     GROUP: ['-group_name','-group_common']
 }
 
