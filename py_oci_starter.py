@@ -70,9 +70,9 @@ default_options = {
     '-java_framework': 'springboot',
     '-java_vm': 'graalvm',
     '-java_version': '21',
-    '-ui': 'html',
-    '-database': 'atp',
-    '-license': 'included',
+    '-ui_type': 'html',
+    '-db_type': 'atp',
+    '-license_model': 'included',
     '-mode': CLI,
     '-infra_as_code': 'terraform_local',
     '-output_dir' : 'output',
@@ -82,7 +82,8 @@ default_options = {
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
                       '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid', '-psql_ocid',
                       '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token', '-tls',
-                      '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape','-db_install']
+                      '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape','-db_install', 
+                      '-ui', '-deploy', '-database', '-license']
 
 # hidden_options - allowed but not advertised
 hidden_options = ['-zip', '-group_common','-group_name']
@@ -1104,10 +1105,11 @@ params = get_params()
 mode = get_mode()
 unknown_params = missing_parameters(allowed_options(), prog_arg_dict().keys())
 illegal_params = check_values()
+dash_params={f'-{k}': v for k, v in params.items()}
 if 'group_name' in params:
-  missing_params = missing_parameters(prog_arg_dict().keys(), mandatory_options(GROUP))
+  missing_params = missing_parameters(dash_params.keys(), mandatory_options(GROUP))
 else:  
-  missing_params = missing_parameters(prog_arg_dict().keys(), mandatory_options(mode))
+  missing_params = missing_parameters(dash_params.keys(), mandatory_options(mode))
 
 if len(unknown_params) > 0 or len(illegal_params) > 0 or len(missing_params) > 0:
     mode = ABORT
@@ -1189,3 +1191,4 @@ else:
     readme= output_dir_orig + os.sep + "README.md"
     with open(readme, 'r') as fin:
         print(fin.read())
+
