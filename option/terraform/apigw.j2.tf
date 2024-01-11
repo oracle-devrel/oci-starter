@@ -8,15 +8,20 @@ resource oci_apigateway_gateway starter_apigw {
   endpoint_type = "PUBLIC"
   subnet_id = data.oci_core_subnet.starter_public_subnet.id
   freeform_tags = local.freeform_tags
+
+{%- if tls is defined %}
+  certificate_id = var.certificate_ocid
+{%- endif %}       
 }
 
 resource "oci_apigateway_api" "starter_api" {
   compartment_id = local.lz_appdev_cmp_ocid
   content       = var.openapi_spec
   display_name  = "${var.prefix}-api"
-  freeform_tags = local.freeform_tags
+  freeform_tags = local.freeform_tags   
 }
 
 locals {
-  apigw_ocid = oci_apigateway_gateway.starter_apigw.id
+  apigw_ocid = try(oci_apigateway_gateway.starter_apigw.id, "")
+  apigw_ip   = try(oci_apigateway_gateway.starter_apigw.ip_addresses[0].ip_address,"")
 }

@@ -1,10 +1,14 @@
 #!/bin/bash
+
+# Enable BASH history for Stack Trace. But do not store it.
+set -o history -o histexpand
+unset HISTFILE
+
 if [[ -z "${BIN_DIR}" ]]; then
   export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 fi
 if [[ -z "${PROJECT_DIR}" ]]; then
-  echo "Error: PROJECT_DIR not set"
-  exit
+  error_exit "PROJECT_DIR not set"
 fi
 
 # Target DIR
@@ -48,18 +52,18 @@ livelabs_green_button
 # XXX -> It would be safer to check also for TF_VAR_xxx containing __TO_FILL__ too
 
 if declare -p | grep -q "__TO_FILL__"; then
-  echo "Error: missing environment variables."
+  echo
+  echo "ERROR: missing environment variables"
+  echo
   declare -p | grep __TO_FILL__
   echo
   echo "Edit the file env.sh. Some variables needs to be filled:" 
   cat env.sh | grep __TO_FILL__
-  exit 1
+  error_exit "Missing environment variables."
 fi  
 
 if ! command -v jq &> /dev/null; then
-  echo "Command jq could not be found. Please install it"
-  echo "Ex on linux: sudo yum install jq -y"
-  exit 1
+  error_exit "Unix command jq not found. Please install it."
 fi
 
 #-- PRE terraform ----------------------------------------------------------
@@ -116,7 +120,7 @@ else
   auto_echo TF_VAR_region=$TF_VAR_region
 
   # Kubernetes and OCIR
-  if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
+  if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     export TF_VAR_namespace=`oci os ns get | jq -r .data`
     auto_echo TF_VAR_namespace=$TF_VAR_namespace
     export TF_VAR_email=mail@domain.com
@@ -134,13 +138,18 @@ else
     export TF_VAR_openapi_spec=$(cat $PROJECT_DIR/src/app/openapi_spec.yaml)
   fi
 
-  if [ "$TF_VAR_deploy_strategy" == "hpc" ]; then
+  if [ "$TF_VAR_deploy_type" == "hpc" ]; then
     # Create synonyms for variables with another name in the oci-hpc stack
     export TF_VAR_ssh_key=$TF_VAR_ssh_public_key
     export TF_VAR_targetCompartment=$TF_VAR_compartment_ocid
     export TF_VAR_ad=`oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r .data[0].name`
     export TF_VAR_bastion_ad=$TF_VAR_ad
   fi 
+
+  # TLS
+  if [ "$TF_VAR_dns_name" != "" ] && [ "$TF_VAR_certificate_ocid" == "" ]; then
+    export TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[].id`
+  fi
 
   # GIT
   if [ `git rev-parse --is-inside-work-tree 2>/dev/null` ]; then   
@@ -149,19 +158,24 @@ else
       export TF_VAR_git_url=`git config --get remote.origin.url`
       if [[ "$TF_VAR_git_url" == *"github.com"* ]]; then
         S1=${TF_VAR_git_url/git@github.com:/https:\/\/github.com\/}        
-        export TF_VAR_git_url=${S1/.git/\/blob\/}${GIT_BRANCH}
+        if [[ "$TF_VAR_git_url" == *".git"* ]]; then
+          export TF_VAR_git_url=${S1/.git/\/blob\/}${GIT_BRANCH}
+        else
+          export TF_VAR_git_url=${S1}/blob/${GIT_BRANCH}
+        fi
       elif [[ "$TF_VAR_git_url" == *"gitlab.com"* ]]; then
         S1=${TF_VAR_git_url/git@gitlab.com:/https:\/\/gitlab.com\/}        
         export TF_VAR_git_url=${S1/.git/\/-\/blob\/}${GIT_BRANCH}
       fi
       cd $PROJECT_DIR
       export GIT_RELATIVE_PATH=`git rev-parse --show-prefix`
-      cd -
+      cd - > /dev/null
       export TF_VAR_git_url=${TF_VAR_git_url}/${GIT_RELATIVE_PATH}
-      echo $TF_VAR_git_url
+      auto_echo TF_VAR_git_url=$TF_VAR_git_url
     fi  
   fi
 fi
+
 
 #-- POST terraform ----------------------------------------------------------
 export STATE_FILE=$TARGET_DIR/terraform.tfstate
@@ -170,15 +184,25 @@ if [ -f $STATE_FILE ]; then
   export OBJECT_STORAGE_URL=https://objectstorage.${TF_VAR_region}.oraclecloud.com
 
   # API GW
-  if [ "$TF_VAR_deploy_strategy" == "function" ] || [ "$TF_VAR_deploy_strategy" == "container_instance" ] || [ "$TF_VAR_ui_strategy" == "api" ]; then
+  if [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_ui_type" == "api" ]; then
     # APIGW URL
     get_attribute_from_tfstate "APIGW_HOSTNAME" "starter_apigw" "hostname"
     # APIGW Deployment id
     get_attribute_from_tfstate "APIGW_DEPLOYMENT_OCID" "starter_apigw_deployment" "id"
   fi
 
+  # Instance Pool
+  if [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
+    # XXX Does not work with Resource Manager XXX
+    # Check in the terraform state is the compute is already created.
+    get_id_from_tfstate "COMPUTE_OCID" "starter_instance"
+    if [ "$COMPUTE_OCID" != "" ]; then
+      export TF_VAR_compute_ready="true"
+    fi
+  fi
+
   # Functions
-  if [ "$TF_VAR_deploy_strategy" == "function" ]; then
+  if [ "$TF_VAR_deploy_type" == "function" ]; then
     # OBJECT Storage URL
     export BUCKET_URL="https://objectstorage.${TF_VAR_region}.oraclecloud.com/n/${TF_VAR_namespace}/b/${TF_VAR_prefix}-public-bucket/o"
 
@@ -195,7 +219,7 @@ if [ -f $STATE_FILE ]; then
   fi
 
   # Container Instance
-  if [ "$TF_VAR_deploy_strategy" == "container_instance" ]; then
+  if [ "$TF_VAR_deploy_type" == "container_instance" ]; then
     if [ -f $TARGET_DIR/docker_image_ui.txt ] || [ -f $TARGET_DIR/docker_image_app.txt ] ; then
       if [ -f $TARGET_DIR/docker_image_ui.txt ]; then
         export TF_VAR_docker_image_ui=`cat $TARGET_DIR/docker_image_ui.txt`
@@ -220,19 +244,22 @@ if [ -f $STATE_FILE ]; then
   get_output_from_tfstate "JDBC_URL" "jdbc_url"
   get_output_from_tfstate "DB_URL" "db_url"
 
-  if [ "$TF_VAR_db_strategy" == "autonomous" ]; then
+
+  if [ "$TF_VAR_db_type" == "autonomous" ]; then
     get_output_from_tfstate "ORDS_URL" "ords_url"
   fi
 
-  if [ "$TF_VAR_db_strategy" == "database" ]; then
+  if [ "$TF_VAR_db_type" == "database" ]; then
     get_attribute_from_tfstate "DB_NODE_IP" "starter_node_vnic" "private_ip_address"
-  elif [ "$TF_VAR_db_strategy" == "db_free" ]; then
+  elif [ "$TF_VAR_db_type" == "db_free" ]; then
     get_output_from_tfstate "DB_NODE_IP" "db_free_ip"
   fi
 
-  if [ "$TF_VAR_deploy_strategy" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
+  if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     # OKE
     get_output_from_tfstate "OKE_OCID" "oke_ocid"
+    export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
+    export INGRESS_LB_OCID=`oci lb load-balancer list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[] | select(.["ip-addresses"][0]["ip-address"]=="'$TF_VAR_ingress_ip'") | .id'`  
   fi
 
   # JMS

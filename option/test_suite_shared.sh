@@ -7,12 +7,33 @@ export COLOR_RED='\033[0;31m'
 export COLOR_GREEN='\033[0;32m'
 export COLOR_NONE='\033[0m' 
 
+# Default
+OPTION_TLS=none
+OPTION_GROUP_NAME=dummy
+OPTION_DB_INSTALL=default
+OPTION_SHAPE=amd
+
 # No color for terraforms logs
 export nocolorarg=1
 
+exit_on_error() {
+  RESULT=$?
+  if [ $RESULT -eq 0 ]; then
+    echo "Success"
+  else
+    echo "Failed (RESULT=$RESULT)"
+    exit $RESULT
+  fi  
+}
+
 start_test() {
   export TEST_NAME=$1
-  export TEST_DIR=$TEST_HOME/$OPTION_DEPLOY/$TEST_NAME
+  if [ "$OPTION_GROUP_NAME" != "none" ]; then
+    export TEST_DIR=$TEST_HOME/$OPTION_DEPLOY/$TEST_NAME
+  else
+    export TEST_DIR=$TEST_HOME/no_group/$OPTION_DEPLOY/$TEST_NAME
+    mkdir -p $TEST_DIR
+  fi
   echo "-- TEST: $OPTION_DEPLOY - $TEST_NAME ---------------------------------------"   
 }
 
@@ -82,6 +103,11 @@ build_test () {
   fi   
 }
 
+echo_errors_csv() {
+  echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,$OPTION_JAVA_FRAMEWORK,$OPTION_JAVA_VM,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/errors.csv 
+  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/error_rerun.sh
+}
+
 build_test_destroy () {
   BUILD_ID=1
   build_test
@@ -94,6 +120,7 @@ build_test_destroy () {
     echo "stop_token file dectected"
     echo "Exiting before destroy.sh"
     echo "Last directory: $TEST_DIR"
+    rm $TEST_HOME/stop_token
     exit
   fi  
   ./destroy.sh --auto-approve > destroy.log 2>&1  
@@ -107,14 +134,16 @@ build_test_destroy () {
     echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,-,-,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/result.csv 
   fi
   if [ "$CSV_JSON_OK" != "1" ] || [ "$CSV_HTML_OK" != "1" ]; then
-    echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,$OPTION_JAVA_FRAMEWORK,$OPTION_JAVA_VM,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/errors.csv 
-    echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/error_rerun.sh
+    echo_errors_csv
   fi
 }
 
 build_option() {
+  mkdir_deploy
   if [ "$OPTION_DB_INSTALL" == "shared_compute" ]; then
     NAME=shared-compute-${OPTION_DB}
+  elif [ "$OPTION_TLS" != "none" ]; then
+    NAME=tls-${OPTION_TLS}-${OPTION_DEPLOY}
   elif [ "$OPTION_LANG" == "java" ] && [ "$OPTION_DEPLOY" != "function" ]; then
     NAME=${OPTION_LANG}-${OPTION_JAVA_FRAMEWORK}-${OPTION_JAVA_VM}-${OPTION_DB}-${OPTION_UI}
   else
@@ -125,8 +154,19 @@ build_option() {
   fi  
   NAME=${NAME/_/-}
   start_test $NAME
+  if [ "$TEST_ERROR_ONLY" != "" ]; then
+    if grep -Fxq "$TEST_DIR" $TEST_HOME/error_rerun.sh
+    then
+      echo "OK - error_rerun.sh contains - $TEST_DIR" 
+    else
+      echo "SKIP - error_rerun.sh does not contains - $TEST_DIR" 
+      return
+    fi
+  fi
+
   cd $TEST_HOME/oci-starter
-  ./oci_starter.sh \
+  if [ "$OPTION_GROUP_NAME" == "dummy" ]; then
+    ./oci_starter.sh \
        -prefix $NAME \
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
@@ -136,8 +176,9 @@ build_option() {
        -database $OPTION_DB \
        -db_password $TEST_DB_PASSWORD \
        -db_install $OPTION_DB_INSTALL \
-       -group_common dummy \
+       -group_common $OPTION_GROUP_NAME \
        -shape $OPTION_SHAPE \
+       -tls $OPTION_TLS \
        -compartment_ocid $EX_COMPARTMENT_OCID \
        -vcn_ocid $TF_VAR_vcn_ocid \
        -public_subnet_ocid $TF_VAR_public_subnet_ocid \
@@ -151,27 +192,48 @@ build_option() {
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
        -fnapp_ocid $TF_VAR_fnapp_ocid > ${TEST_DIR}.log 2>&1 
-
+  else
+    ./oci_starter.sh \
+       -prefix tsone \
+       -deploy $OPTION_DEPLOY \
+       -ui $OPTION_UI \
+       -language $OPTION_LANG \
+       -java_framework $OPTION_JAVA_FRAMEWORK \
+       -java_vm $OPTION_JAVA_VM \
+       -database $OPTION_DB \
+       -db_password $TEST_DB_PASSWORD \
+       -db_install $OPTION_DB_INSTALL \
+       -group_common $OPTION_GROUP_NAME \
+       -shape $OPTION_SHAPE \
+       -tls $OPTION_TLS \
+       -compartment_ocid $EX_COMPARTMENT_OCID > ${TEST_DIR}.log 2>&1 
+  fi
 #      -db_compartment_ocid $EX_COMPARTMENT_OCID \
 
   if [ -d output ]; then 
     mkdir output/target
     cp $TEST_HOME/group_common/target/ssh* output/target/.
     rm -Rf $TEST_DIR
+    if [ -f ${TEST_DIR}_time.txt ]; then
+      rm ${TEST_DIR}_*
+    fi
     mv output $TEST_DIR    
     if [ -z $GENERATE_ONLY ]; then
       build_test_destroy
     fi           
   else
-    echo "Error: no output directory"  
+    echo "ERROR: no output directory"  
+    echo_errors_csv
   fi  
 }
 
 # Create the $OPTION_DEPLOY directory
 mkdir_deploy() {
-  mkdir $TEST_HOME/$OPTION_DEPLOY
-  echo '. $PROJECT_DIR/../../group_common_env.sh' > $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
-  chmod +x $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
+  if [ ! -d $TEST_HOME/$OPTION_DEPLOY ]; then
+    mkdir $TEST_HOME/$OPTION_DEPLOY
+    echo '. $PROJECT_DIR/../../group_common_env.sh' > $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
+    chmod +x $TEST_HOME/$OPTION_DEPLOY/group_common_env.sh
+  fi
 }
 
 
@@ -189,10 +251,12 @@ pre_test_suite() {
   git clone https://github.com/mgueury/oci-starter
 
   cd $TEST_HOME/oci-starter
-  ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,database,fnapp,apigw,oke,db_free -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
+  ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
+  exit_on_error
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
   ./build.sh
+  exit_on_error
   date
   echo "CSV_DATE,OPTION_DEPLOY,OPTION_LANG,OPTION_JAVA_FRAMEWORK,OPTION_JAVA_VM,OPTION_DB,OPTION_DB_INSTALL,OPTION_UI,OPTION_SHAPE,CSV_NAME,CSV_HTML_OK,CSV_JSON_OK,CSV_BUILD_SECOND,CSV_DESTROY_SECOND,CSV_RUN100_OK,CSV_RUN100_SECOND" > $TEST_HOME/result.csv 
 }

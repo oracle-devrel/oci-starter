@@ -88,7 +88,7 @@ build_option() {
     mv output $TEST_DIR               
     build_test_destroy
   else
-    echo "Error: no output directory"  
+    echo "ERROR: no output directory"  
   fi  
 }
 

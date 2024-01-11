@@ -1,7 +1,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: ##PREFIX##-app-service
+  name: {{ prefix }}-app-service
 spec:
   type: ExternalName
   externalName: ##ORDS_HOST##

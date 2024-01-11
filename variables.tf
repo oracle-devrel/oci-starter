@@ -33,12 +33,12 @@ variable "java_version" {}
 variable "vcn_strategy" {}
 variable "vcn_ocid" {default=""}
 variable "subnet_ocid" {default=""}
-variable "ui_strategy" {}
-variable "deploy_strategy" {}
+variable "ui_type" {}
+variable "deploy_type" {}
 variable "kubernetes_strategy" {default=""}
 variable "oke_strategy" {default=""}
 variable "oke_ocid" {default=""}
-variable "db_strategy" {}
+variable "db_type" {}
 variable "db_existing_strategy" {}
 variable "atp_ocid" {default=""}
 variable "db_ocid" {default=""}

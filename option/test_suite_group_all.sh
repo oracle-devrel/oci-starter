@@ -45,7 +45,6 @@ loop_shape() {
 }
 
 loop_db() {
-  OPTION_DB_INSTALL=default
   if [ "$OPTION_DEPLOY" != "instance_pool" ] ; then
     # OPTION_DB=database 
     # loop_ui  
@@ -83,8 +82,6 @@ loop_java_framework () {
 }
 
 loop_lang () {
-  mkdir_deploy
-
   OPTION_LANG=java 
   OPTION_JAVA_VM=jdk 
   if [ "$OPTION_DEPLOY" == "function" ]; then
@@ -126,16 +123,51 @@ loop_shared_compute() {
   OPTION_DB_INSTALL=shared_compute
   OPTION_UI=html
   OPTION_DB=db_free
-  mkdir_deploy
   build_option  
   OPTION_DB=mysql
   build_option   
 
   # Helidon 4
   OPTION_DB_INSTALL=default
-  OPTION_DB=ATP
+  OPTION_DB=atp
   OPTION_JAVA_FRAMEWORK=helidon4 
   build_option   
+}
+
+loop_tls_deploy() {
+  OPTION_DEPLOY=compute
+  build_option  
+  OPTION_DEPLOY=kubernetes
+  build_option  
+  OPTION_DEPLOY=instance_pool
+  build_option  
+  OPTION_DEPLOY=container_instance
+  build_option  
+  OPTION_DEPLOY=function
+  build_option  
+}
+
+loop_tls() {
+  # TLS
+  OPTION_GROUP_NAME=none
+  OPTION_LANG=java
+  OPTION_JAVA_VM=jdk
+  OPTION_JAVA_FRAMEWORK=springboot
+  OPTION_UI=html
+  OPTION_DB=none
+  OPTION_TLS=existing_dir
+  loop_tls_deploy
+  # existing_ocid is part of existing_dir
+
+  OPTION_TLS=new_http_01
+  OPTION_DEPLOY=compute
+  build_option  
+
+  OPTION_TLS=new_dns_01
+  OPTION_DEPLOY=container_instance
+  build_option  
+
+  OPTION_GROUP_NAME=dummy
 }
 
 loop_deploy() {
@@ -145,11 +177,16 @@ loop_deploy() {
   OPTION_DEPLOY=kubernetes
   loop_lang
   OPTION_DEPLOY=instance_pool 
-  loop_lang
+  OPTION_LANG=java
+  OPTION_JAVA_FRAMEWORK=springboot
+  OPTION_DB=atp 
+  loop_shape  
   OPTION_DEPLOY=container_instance 
   loop_lang
   OPTION_DEPLOY=function 
   loop_lang
+
+  loop_tls
 }
 
 generate_only() {
@@ -168,5 +205,6 @@ pre_test_suite
 # generate_only
 cd $TEST_HOME
 . ./group_common_env.sh
+# export TEST_ERROR_ONLY=TRUE
 loop_deploy
 post_test_suite

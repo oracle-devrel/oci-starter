@@ -7,5 +7,6 @@ data "oci_apigateway_gateway" "starter_apigw" {
 
 locals {
   apigw_ocid = var.apigw_ocid
+  apigw_ip   = try(data.oci_apigateway_gateway.starter_apigw.ip_addresses[0].ip_address,"")
 }
 

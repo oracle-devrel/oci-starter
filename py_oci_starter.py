@@ -57,8 +57,8 @@ def prog_arg_dict():
 
 
 MANDATORY_OPTIONS = {
-    CLI: ['-language', '-deploy', '-db_password'],
-    GROUP: ['-group_name','-group_common','-db_password']
+    CLI: ['-language', '-deploy'],
+    GROUP: ['-group_name','-group_common']
 }
 
 def mandatory_options(mode):
@@ -75,17 +75,24 @@ default_options = {
     '-license': 'included',
     '-mode': CLI,
     '-infra_as_code': 'terraform_local',
-    '-output_dir' : 'output'
+    '-output_dir' : 'output',
+    '-db_password' : TO_FILL
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
                       '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid', '-psql_ocid',
-                      '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token',
+                      '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token', '-tls',
                       '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape','-db_install']
 
 # hidden_options - allowed but not advertised
 hidden_options = ['-zip', '-group_common','-group_name']
 
+rename_params = {
+  'database': 'db_type',
+  'deploy'  : 'deploy_type',
+  'ui'      : 'ui_type',
+  'license' : 'license_model'
+}
 
 def allowed_options():
     return list(default_options.keys()) + hidden_options \
@@ -94,18 +101,19 @@ def allowed_options():
 
 allowed_values = {
     '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'forms', 'none'},
-    '-deploy': {'compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience'},
+    '-deploy_type': {'compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience'},
     '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     '-java_version': {'8', '11', '17', '21'},
     '-kubernetes': {'oke', 'docker'},
-    '-ui': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
-    '-database': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'mysql', 'psql', 'none'},
-    '-license': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
+    '-ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
+    '-db_type': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'mysql', 'psql', 'none'},
+    '-license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
     '-shape': {'amd','freetier_amd','ampere'},
-    '-db_install': {'default', 'shared_compute', 'kubernetes'}
+    '-db_install': {'default', 'shared_compute', 'kubernetes'},
+    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'}
 }
 
 def check_values():
@@ -119,16 +127,7 @@ def check_values():
 
 
 def get_tf_var(param):
-    special_case = {
-        'database': 'TF_VAR_db_strategy',
-        'deploy': 'TF_VAR_deploy_strategy',
-        'license': 'TF_VAR_license_model',
-        'ui': 'TF_VAR_ui_strategy'
-    }.get(param)
-    if special_case is not None:
-        return special_case
-    else:
-        return 'TF_VAR_' + param
+    return 'TF_VAR_' + param
 
 
 def longhand(key, abbreviations):
@@ -139,30 +138,42 @@ def longhand(key, abbreviations):
         return current
 
 
+def pop_param(dict,param):
+    if param in dict:
+        dict.pop(param)
+
+
+def save_params():
+    p = params.copy()
+    pop_param(p,"output_dir")
+    pop_param(p,"zip")
+    params['params'] = ",".join(p.keys())
+
+
 def db_rules():
-    if params.get('database') == 'rac':
+    if params.get('db_type') == 'rac':
         params['db_node_count'] = "2" 
 
-    params['database'] = longhand(
-        'database', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database'})
+    params['db_type'] = longhand(
+        'db_type', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database'})
 
-    if params.get('database') != 'autonomous':
+    if params.get('db_type') != 'autonomous':
         if params.get('language') == 'ords':
             error(f'OCI starter supports ORDS only on ATP (Autonomous)')
         if params.get('language') == 'apex':
             error(f'OCI starter supports APEX only on ATP (Autonomous)')
-    if params.get('database') == 'pluggable':
+    if params.get('db_type') == 'pluggable':
         if (params.get('db_ocid') is None and params.get('pdb_ocid') is None):
             error(f'Pluggable Database needs an existing DB_OCID or PDB_OCID')
     if params.get('db_user') == None:
         default_users = {'autonomous': 'admin', 'database': 'system', 'db_free': 'system',
                          'pluggable': 'system',  'mysql': 'root', 'psql': 'postgres', 'none': ''}
-        params['db_user'] = default_users[params['database']]
-    if params.get('database')=='none':
+        params['db_user'] = default_users[params['db_type']]
+    if params.get('db_type')=='none':
         params.pop('db_password')          
     # shared_compute is valid only in compute deployment
     if params.get('db_install') == "shared_compute":
-        if params.get('deploy')!='compute':
+        if params.get('deploy_type')!='compute':
             params.pop('db_install')            
 
 
@@ -177,8 +188,8 @@ def language_rules():
 
 
 def kubernetes_rules():
-    if 'deploy' in params:
-      params['deploy'] = longhand('deploy', {'oke': 'kubernetes', 'ci': 'container_instance'})
+    if 'deploy_type' in params:
+      params['deploy_type'] = longhand('deploy_type', {'oke': 'kubernetes', 'ci': 'container_instance'})
 
 
 def vcn_rules():
@@ -193,17 +204,17 @@ def vcn_rules():
     
  
 def ui_rules():
-    params['ui'] = longhand('ui', {'reactjs': 'ReactJS'})
-    if params.get('ui') == 'jsp':
+    params['ui_type'] = longhand('ui_type', {'reactjs': 'ReactJS'})
+    if params.get('ui_type') == 'jsp':
         params['language'] = 'java'
         params['java_framework'] = 'tomcat'
-    elif params.get('ui') == 'php':
+    elif params.get('ui_type') == 'php':
         params['language'] = 'php'
-    elif params.get('ui') == 'ruby':
+    elif params.get('ui_type') == 'ruby':
         params['language'] = 'ruby'
 
 def auth_token_rules():
-    if params.get('deploy') in [ 'kubernetes', 'container_instance', 'function' ] and params.get('auth_token') is None:
+    if params.get('deploy_type') in [ 'kubernetes', 'container_instance', 'function' ] and params.get('auth_token') is None:
         warning('-auth_token is not set. Will need to be set in env.sh')
         params['auth_token'] = TO_FILL
 
@@ -217,9 +228,9 @@ def compartment_rules():
 def license_rules():
     license_model = os.getenv('LICENSE_MODEL')
     if license_model is not None:
-        params['license'] = license_model
-    params['license'] = longhand(
-        'license', {'included': 'LICENSE_INCLUDED', 'byol': 'BRING_YOUR_OWN_LICENSE'})
+        params['license_model'] = license_model
+    params['license_model'] = longhand(
+        'license_model', {'included': 'LICENSE_INCLUDED', 'byol': 'BRING_YOUR_OWN_LICENSE'})
 
 
 def zip_rules():
@@ -233,11 +244,13 @@ def zip_rules():
         output_dir = "zip" + os.sep + params['zip'] + os.sep + zip_dir
         file_output('zip' + os.sep + params['zip'] + '.param', [json.dumps(params)])
 
-
 def group_common_rules():
     if  params.get('group_common'):
-       global a_group_common 
-       a_group_common=params.get('group_common').split(',')
+        if params.get('group_common')=='none':
+            params.pop('group_common')
+        else:
+            global a_group_common 
+            a_group_common=params.get('group_common').split(',')
 
 
 def shape_rules():
@@ -248,6 +261,24 @@ def shape_rules():
         if params.get('shape')=='ampere':
             params['instance_shape'] = 'VM.Standard.A1.Flex'
             params['instance_shape_config_memory_in_gbs'] = 8
+
+
+def tls_rules():
+    if params.get('tls')=='none':
+        params.pop('tls')
+    elif params.get('tls'):
+        params['dns_name'] = TO_FILL
+        if params.get('tls')=='new_http_01':
+            params['certificate_email'] = TO_FILL
+        elif params.get('tls')=='new_dns_01':
+            params['certificate_email'] = TO_FILL
+            params['dns_zone_name'] = TO_FILL
+        elif params.get('tls')=='existing_ocid':
+            params['dns_zone_name'] = TO_FILL
+            params['certificate_ocid'] = TO_FILL
+        elif params.get('tls')=='existing_dir':
+            params['dns_zone_name'] = TO_FILL
+            params['certificate_dir'] = TO_FILL
 
 
 def apply_rules():
@@ -262,6 +293,7 @@ def apply_rules():
     compartment_rules()
     license_rules()
     shape_rules()
+    tls_rules()
 
 
 def error(msg):
@@ -362,7 +394,12 @@ def missing_parameters(supplied_params, expected_params):
 
 
 def get_params():
-    return deprefix_keys({**default_options, **prog_arg_dict()})
+    params = deprefix_keys({**default_options, **prog_arg_dict()})
+    for key, value in rename_params.items():
+        if params.get(key):
+            params[value] = params[key]
+            params.pop(key)
+    return params
 
 
 def git_params():
@@ -417,10 +454,10 @@ Check LICENSE file (Apache 2.0)
     - db        : SQL files of the database
     - terraform : Terraform scripts (Command: plan.sh / apply.sh)'''
                 ]
-        if params['deploy'] in [ 'compute', 'instance_pool' ]:
+        if params['deploy_type'] in [ 'compute', 'instance_pool' ]:
             contents.append(
                 "    - compute   : Contains the deployment files to Compute")
-        elif params['deploy'] == 'kubernetes':
+        elif params['deploy_type'] == 'kubernetes':
             contents.append(
                 "    - oke       : Contains the deployment files to Kubernetes")
 
@@ -448,15 +485,21 @@ Check LICENSE file (Apache 2.0)
         contents.append("  ./build.sh")
     return contents
 
+def is_param_default_value(name):
+    return params.get(name) == default_options.get('-'+name)
+
 def env_param_list():
     env_params = list(params.keys())
-    exclude = ['mode', 'zip', 'prefix', 'shape']
+    exclude = ['mode', 'zip', 'prefix', 'shape', 'params', 'output_dir']
     if params.get('language') != 'java' or 'group_name' in params:
         exclude.extend(['java_vm', 'java_framework', 'java_version'])
     if 'group_name' in params:
-        exclude.extend(['ui', 'database', 'language', 'deploy', 'db_user', 'group_name'])
+        exclude.extend(['ui_type', 'db_type', 'language', 'deploy_type', 'db_user', 'group_name'])
     else:
         exclude.append('group_common')
+    if is_param_default_value('infra_as_code'):
+        exclude.append('infra_as_code')        
+
     print(exclude)
     for x in exclude:
         if x in env_params:
@@ -471,8 +514,6 @@ def env_sh_contents():
     contents.append(
         'PROJECT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )')
     contents.append(f'export BIN_DIR=$PROJECT_DIR/bin')
-    contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
-    contents.append(f'export OCI_STARTER_VERSION=1.5')
     contents.append('')
     contents.append('# Env Variables')
     if 'group_name' in params:
@@ -492,37 +533,38 @@ def env_sh_contents():
             tf_var_comment(contents, param)
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
     contents.append('')
+    if params.get('compartment_ocid') == None:
+        contents.append('# export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx')       
+    for s in group_common_contents:
+        contents.append(s)
+
+    contents.append('')
     contents.append("if [ -f $PROJECT_DIR/../group_common_env.sh ]; then")      
     contents.append("  . $PROJECT_DIR/../group_common_env.sh")      
     contents.append("elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then")      
     contents.append("  . $PROJECT_DIR/../../group_common_env.sh")      
     contents.append("elif [ -f $HOME/.oci_starter_profile ]; then")
     contents.append("  . $HOME/.oci_starter_profile")
-    contents.append("else")      
-    if params.get('compartment_ocid') == None:
-        contents.append('  # export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx')       
-
-    for x in group_common_contents:
-        contents.append("  " + x)
-
-    contents.append('')
-    contents.append('  # API Management')
-    contents.append('  # export APIM_HOST=xxxx-xxx.adb.region.oraclecloudapps.com')
-    contents.append('')
-
-    if params.get('instance_shape') == None:   
-        contents.append('  # Compute Shape')
-        contents.append('  # export TF_VAR_instance_shape=VM.Standard.E4.Flex')
-        contents.append('')
-
-    contents.append('  # Landing Zone')
-    contents.append('  # export TF_VAR_lz_appdev_cmp_ocid=$TF_VAR_compartment_ocid')
-    contents.append('  # export TF_VAR_lz_database_cmp_ocid=$TF_VAR_compartment_ocid')
-    contents.append('  # export TF_VAR_lz_network_cmp_ocid=$TF_VAR_compartment_ocid')
-    contents.append('  # export TF_VAR_lz_security_cmp_ocid=$TF_VAR_compartment_ocid')
-
+    # contents.append("else")      
+    # contents.append('')
+    # contents.append('  # API Management')
+    # contents.append('  # export APIM_HOST=xxxx-xxx.adb.region.oraclecloudapps.com')
+    # contents.append('')
+    # if params.get('instance_shape') == None:   
+    #    contents.append('  # Compute Shape')
+    #    contents.append('  # export TF_VAR_instance_shape=VM.Standard.E4.Flex')
+    #    contents.append('')
+    # contents.append('  # Landing Zone')
+    # contents.append('  # export TF_VAR_lz_appdev_cmp_ocid=$TF_VAR_compartment_ocid')
+    # contents.append('  # export TF_VAR_lz_database_cmp_ocid=$TF_VAR_compartment_ocid')
+    # contents.append('  # export TF_VAR_lz_network_cmp_ocid=$TF_VAR_compartment_ocid')
+    # contents.append('  # export TF_VAR_lz_security_cmp_ocid=$TF_VAR_compartment_ocid')
     contents.append("fi")      
-
+    contents.append('')
+    contents.append('# Creation Details')
+    contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
+    contents.append(f'export OCI_STARTER_VERSION=2.0')
+    contents.append(f'export OCI_STARTER_PARAMS="{params["params"]}"')
     contents.append('')
     contents.append(
         '# Get other env variables automatically (-silent flag can be passed)')
@@ -533,12 +575,18 @@ def env_sh_contents():
 def tf_var_comment(contents, param):
     comments = {
         'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
-        'db_password': ['Requires at least 12 characters, 2 letters in lowercase, 2 in uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345', 'If not filled, it will be generated randomly during the first build.'],
+        'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345', 'If not filled, it will be generated randomly during the first build.'],
         'license': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED']
     }.get(param)
     if comments is not None:
+        b=True
         for comment in comments:
-            contents.append(f'# {get_tf_var(param)} : {comment}')
+            if b:
+                b=False
+                contents.append(f'# {get_tf_var(param)} : {comment}')
+            else:
+                contents.append(f'# {comment}')
+
 
 
 def write_env_sh():
@@ -601,7 +649,6 @@ def cp_terraform(file1, file2=None, file3=None):
     if file3 is not None:
         append_file( output_dir + "/src/terraform/"+file1, "option/terraform/"+file3 )
 
-
 def output_copy_tree(src, target):
     copy_tree(src, output_dir + os.sep + target)
 
@@ -617,9 +664,9 @@ def output_remove(src):
 def output_rm_tree(src):
     shutil.rmtree(output_dir + os.sep + src)
  
-def cp_dir_src_db(db_type):
-    print("cp_dir_src_db "+db_type)
-    output_copy_tree("option/src/db/"+db_type, "src/db")
+def cp_dir_src_db(db_family):
+    print("cp_dir_src_db "+db_family)
+    output_copy_tree("option/src/db/"+db_family, "src/db")
 
 def output_replace_db_node_count():
     if params.get('db_node_count')!="2":
@@ -636,7 +683,7 @@ def output_replace_db_node_count():
        output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
        if params['language'] == "java" and params['java_framework'] == "springboot":
            output_copy_tree("option/src/app/java_springboot_rac", "src/app")
-       if params['ui'] == "html":
+       if params['ui_type'] == "html":
            output_copy_tree("option/src/ui/html_rac", "src/ui" )    
 
 # Copy the terraform for APIGW
@@ -651,11 +698,11 @@ def cp_terraform_apigw(append_tf):
         app_url = "http://${local.apigw_dest_private_ip}:8080/$${request.path[pathname]}" 
 
     if 'apigw_ocid' in params:
-        cp_terraform("apigw_existing.tf", "apigw_tags.tf", append_tf)
-        output_replace('##APP_URL##', app_url,"src/terraform/apigw_existing.tf")
+        cp_terraform("apigw_existing.j2.tf", "apigw_tags.tf", append_tf)
+        output_replace('##APP_URL##', app_url,"src/terraform/apigw_existing.j2.tf")
     else:
-        cp_terraform("apigw.tf", "apigw_tags.tf", append_tf)
-        output_replace('##APP_URL##', app_url, "src/terraform/apigw.tf")    
+        cp_terraform("apigw.j2.tf", "apigw_tags.tf", append_tf)
+        output_replace('##APP_URL##', app_url, "src/terraform/apigw.j2.tf")    
 
 #----------------------------------------------------------------------------
 # Create Directory (shared for group_common and output)
@@ -690,7 +737,7 @@ def create_dir_shared():
         cp_terraform("bastion_shared_compute.tf")   
     elif 'bastion_ocid' in params:
         cp_terraform("bastion_existing.tf")
-    elif params.get('database')!='none':
+    elif params.get('db_type')!='none':
         cp_terraform("bastion.tf")
 
 #----------------------------------------------------------------------------
@@ -702,36 +749,36 @@ def create_output_dir():
     if params['language'] == "none":
         output_rm_tree("src/app")
     else:
-        if params.get('deploy') == "function":
+        if params.get('deploy_type') == "function":
             app = "fn/fn_"+params['language']
         else:
             app = params['language']
 
-        if params['database'] == "autonomous" or params['database'] == "database" or params['database'] == "pluggable" or params['database'] == "db_free":
-            app_db = "oracle"
-        elif params['database'] == "mysql":
-            app_db = "mysql"
-        elif params['database'] == "psql":
-            app_db = "psql"
-        elif params['database'] == "none":
-            app_db = "none"
-        params['db_family'] = app_db    
+        if params['db_type'] == "autonomous" or params['db_type'] == "database" or params['db_type'] == "pluggable" or params['db_type'] == "db_free":
+            db_family = "oracle"
+        elif params['db_type'] == "mysql":
+            db_family = "mysql"
+        elif params['db_type'] == "psql":
+            db_family = "psql"
+        elif params['db_type'] == "none":
+            db_family = "none"
+        params['db_family'] = db_family    
 
         # Function Common
-        if params.get('deploy') == "function":
+        if params.get('deploy_type') == "function":
             output_copy_tree("option/src/app/fn/fn_common", "src/app")
          
         # Generic version for Oracle DB
         if os.path.exists("option/src/app/"+app):
             output_copy_tree("option/src/app/"+app, "src/app")
 
-        if params.get('deploy') != "function" and params['language'] == "java":
+        if params.get('deploy_type') != "function" and params['language'] == "java":
             # Java Framework
             app = "java_" + params['java_framework']
             output_copy_tree("option/src/app/"+app, "src/app")
 
         # Overwrite the generic version (ex for mysql)
-        app_dir = app+"_"+app_db
+        app_dir = app+"_"+db_family
         print("app_dir="+app_dir)
         if os.path.exists("option/src/app/"+app_dir):
             output_copy_tree("option/src/app/"+app_dir, "src/app")
@@ -747,20 +794,20 @@ def create_output_dir():
                     output_replace('##DOCKER_IMAGE##', 'openjdk:21-jdk-slim', "src/app/Dockerfile")
 
     # -- User Interface -----------------------------------------------------
-    if params.get('ui') == "none":
+    if params.get('ui_type') == "none":
         print("No UI")
         output_rm_tree("src/ui")
-    elif params.get('ui') == "api": 
+    elif params.get('ui_type') == "api": 
         print("API Only")
         output_rm_tree("src/ui")   
-        if params.get('deploy') in [ 'compute', 'instance_pool' ]:
+        if params.get('deploy_type') in [ 'compute', 'instance_pool' ]:
             cp_terraform_apigw("apigw_compute_append.tf")          
     else:
-        ui_lower = params.get('ui').lower()
+        ui_lower = params.get('ui_type').lower()
         output_copy_tree("option/src/ui/"+ui_lower, "src/ui")
 
     # -- Deployment ---------------------------------------------------------
-    if params.get('deploy') == "hpc":
+    if params.get('deploy_type') == "hpc":
         # remove normal shared terraform file
         output_terraform_dir = output_dir + os.sep + "src/terraform"
         for fname in os.listdir(output_terraform_dir):
@@ -771,10 +818,10 @@ def create_output_dir():
         output_remove( "src/terraform/variables.tf" )
         # replace with a prefilled one
         cp_terraform("hpc_variables.tf")
-    elif params.get('deploy') == "datascience":
+    elif params.get('deploy_type') == "datascience":
         cp_terraform("datascience.tf")
     elif params['language'] != "none":
-        if params.get('deploy') == "kubernetes":
+        if params.get('deploy_type') == "kubernetes":
             if 'oke_ocid' in params:
                 cp_terraform("oke_existing.tf", "oke_append.tf")
             else:
@@ -792,7 +839,7 @@ def create_output_dir():
             output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-app.yaml")
             output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-ui.yaml")
 
-        elif params.get('deploy') == "function":
+        elif params.get('deploy_type') == "function":
             if 'fnapp_ocid' in params:
                 cp_terraform("function_existing.tf", "function_append.tf")
             else:
@@ -803,11 +850,11 @@ def create_output_dir():
             else:
                 apigw_append = "apigw_fn_append.tf"
             if 'apigw_ocid' in params:
-                cp_terraform("apigw_existing.tf", "apigw_tags.tf", apigw_append)
+                cp_terraform("apigw_existing.j2.tf", "apigw_tags.tf", apigw_append)
             else:
-                cp_terraform("apigw.tf", "apigw_tags.tf", apigw_append)
+                cp_terraform("apigw.j2.tf", "apigw_tags.tf", apigw_append)
 
-        elif params.get('deploy') in [ 'compute', 'instance_pool' ]:
+        elif params.get('deploy_type') in [ 'compute', 'instance_pool' ]:
             if 'compute_ocid' in params:
                 cp_terraform("compute_existing.tf", "compute_append.tf")
             elif params.get("language") == 'forms':
@@ -816,13 +863,19 @@ def create_output_dir():
                 cp_terraform("compute.tf", "compute_append.tf")            
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
-            if params.get('deploy') == 'instance_pool':
-                cp_terraform("instance_pool.tf")            
+            if params.get('deploy_type') == 'instance_pool':
+                cp_terraform("instance_pool.j2.tf")            
+            elif params.get('tls') == 'existing_dir':
+                output_copy_tree("option/tls/compute_existing_dir", "src/tls")
+            elif params.get('tls') == 'new_http_01':
+                output_copy_tree("option/tls/new_http_01", "src/tls")
+            elif params.get('tls') == 'existing_ocid':
+                cp_terraform_apigw("apigw_compute_append.tf")   
 
-        elif params.get('deploy') == "container_instance":
+        elif params.get('deploy_type') == "container_instance":
             if 'group_common' not in params:
                 cp_terraform("container_instance_policy.tf")
-            if params.get('database') == "none":
+            if params.get('db_type') == "none":
                 cp_terraform("container_instance_nodb.tf")
             else:
                 cp_terraform("container_instance.tf")
@@ -831,39 +884,41 @@ def create_output_dir():
             output_copy_tree("option/container_instance", "bin")
             cp_terraform_apigw("apigw_ci_append.tf")          
 
+    if params.get('tls'):
+        cp_terraform("tls.j2.tf")
+        if params.get('deploy_type') == 'kubernetes':
+            cp_terraform_apigw("apigw_kubernetes_tls_append.tf")   
+
     if os.path.exists(output_dir + "/src/app/openapi_spec_append.yaml"):
         append_file( output_dir + "/src/app/openapi_spec.yaml", output_dir + "/src/app/openapi_spec_append.yaml")
         os.remove( output_dir + "/src/app/openapi_spec_append.yaml" )
 
     # -- Database ----------------------------------------------------------------
-    if params.get('database') != "none":
+    if params.get('db_type') != "none":
         cp_terraform("output.tf")
         output_mkdir("src/db")
 
-        if params.get('database') == "autonomous":
-            cp_dir_src_db("oracle")
+        cp_dir_src_db(db_family)
+        if params.get('db_type') == "autonomous":
             if 'atp_ocid' in params:
                 cp_terraform("atp_existing.tf", "atp_append.tf")
             else:
                 cp_terraform("atp.tf", "atp_append.tf")
 
-        if params.get('database') == "database":
-            cp_dir_src_db("oracle")
+        if params.get('db_type') == "database":
             if 'db_ocid' in params:
                 cp_terraform("dbsystem_existing.tf", "dbsystem_append.tf")
             else:
                 cp_terraform("dbsystem.tf", "dbsystem_append.tf")
                 output_replace_db_node_count()
 
-        if params.get('database') == "pluggable":
-            cp_dir_src_db("oracle")
+        if params.get('db_type') == "pluggable":
             if 'pdb_ocid' in params:
                 cp_terraform("dbsystem_pluggable_existing.tf")
             else:
                 cp_terraform("dbsystem_existing.tf", "dbsystem_pluggable.tf")
 
-        if params.get('database') == "db_free":
-            cp_dir_src_db("oracle")
+        if params.get('db_type') == "db_free":
             if params.get('db_install') == "shared_compute":
                cp_terraform("db_free_shared_compute.tf")
             else:     
@@ -871,8 +926,7 @@ def create_output_dir():
             output_copy_tree("option/src/db/db_free", "src/db")
             output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
 
-        if params.get('database') == "mysql":
-            cp_dir_src_db("mysql")
+        if params.get('db_type') == "mysql":
             if params.get('db_install') == "shared_compute":
                cp_terraform("mysql_shared_compute.tf")   
                output_copy_tree("option/src/db/mysql_shared_compute", "src/db")  
@@ -882,8 +936,7 @@ def create_output_dir():
             else:
                 cp_terraform("mysql.tf", "mysql_append.tf")
 
-        if params.get('database') == "psql":
-            cp_dir_src_db("psql")
+        if params.get('db_type') == "psql":
             if 'psql_ocid' in params:
                 cp_terraform("psql_existing.tf", "psql_append.tf")
             else:
@@ -896,7 +949,8 @@ def create_output_dir():
             src_path = os.path.join("src/app/db", f)
             dst_path = os.path.join("src/db", f)
             output_move(src_path, dst_path) 
-        os.rmdir(output_dir + "/src/app/db")                     
+        os.rmdir(output_dir + "/src/app/db")         
+
 
 #----------------------------------------------------------------------------
 # Create group_common Directory
@@ -905,7 +959,7 @@ def create_group_common_dir():
 
     # -- APP ----------------------------------------------------------------
     output_copy_tree("option/src/app/group_common", "src/app")
-    os.remove(output_dir + "/src/app/app.yaml")
+    os.remove(output_dir + "/src/app/app.j2.yaml")
 
     # -- User Interface -----------------------------------------------------
     output_rm_tree("src/ui")
@@ -957,9 +1011,9 @@ def create_group_common_dir():
 
     if 'apigw' in a_group_common:
         if 'apigw_ocid' in params:
-            cp_terraform("apigw_existing.tf", "apigw_tags.tf")
+            cp_terraform("apigw_existing.j2.tf", "apigw_tags.tf")
         else:
-            cp_terraform("apigw.tf", "apigw_tags.tf")
+            cp_terraform("apigw.j2.tf", "apigw_tags.tf")
             cp_terraform("log_group.tf")
 
     if 'jms' in a_group_common:
@@ -1016,19 +1070,25 @@ jinja2_db_params = {
 
 def jinja2_replace_template():
     db_param = jinja2_db_params.get( params.get('db_family') )
-    template_param = {**params, **db_param}
+    if db_param is None:  
+        template_param = params
+    else:   
+        template_param = {**params, **db_param}
 
     for subdir, dirs, files in os.walk(output_dir):
         for filename in files:    
             if filename.find('.j2.')>0 or filename.endswith('.j2'):
-                environment = Environment(loader=FileSystemLoader(subdir))
-                template = environment.get_template(filename)
-                db_param = jinja2_db_params.get( params.get('db_family') )
-                content = template.render( template_param )
                 output_file_path = os.path.join(subdir, filename.replace(".j2", ""))
-                with open(output_file_path, mode="w", encoding="utf-8") as output_file:
-                    output_file.write(content)
-                    print(f"Wrote {output_file}")
+                if os.path.isfile(output_file_path): 
+                    print(f"J2 - Skipping - destination file already exists: {output_file_path}") 
+                else:
+                    environment = Environment(loader=FileSystemLoader(subdir))
+                    template = environment.get_template(filename)
+                    db_param = jinja2_db_params.get( params.get('db_family') )
+                    content = template.render( template_param )
+                    with open(output_file_path, mode="w", encoding="utf-8") as output_file:
+                        output_file.write(content)
+                        print(f"J2 - Wrote {output_file_path}")
                 os.remove(os.path.join(subdir, filename))   
             if filename.endswith('_refresh.sh'):      
                 os.remove(os.path.join(subdir, filename))   
@@ -1056,20 +1116,16 @@ warnings = []
 errors = []
 
 if mode == CLI:
-    apply_rules()
-    if len(errors) > 0:
-        mode = ABORT
-    elif os.path.isdir(output_dir):
+    if os.path.isdir(output_dir):
         print("Output dir exists already.")
         mode = ABORT
     else:
-        print_warnings()
-
-if mode == GIT:
-    print("GIT mode currently not implemented.")
-    # git clone $GIT_URL
-    # cp ../mode/git/* $REPOSITORY_NAME/.
-    exit()
+        save_params()
+        apply_rules()
+        if len(errors) > 0:
+            mode = ABORT
+        else:
+            print_warnings()
 
 if mode == ABORT:
     print(help())
@@ -1084,6 +1140,7 @@ output_dir_orig = output_dir
 # Create a group
 if 'group_name' in params:
     create_group_common_dir()
+    jinja2_replace_template()
 
 # Add parameters to the creation if the project is to be used with a group
 if 'group_common' in params:
@@ -1097,7 +1154,7 @@ if 'group_common' in params:
     params['public_subnet_ocid'] = TO_FILL
     params['private_subnet_ocid'] = TO_FILL
     # Use a bastion only for the database
-    if params.get('database')!='none':
+    if params.get('db_type')!='none':
         params['bastion_ocid'] = TO_FILL
     to_ocid = { "atp": "atp_ocid", "database": "db_ocid", "mysql": "mysql_ocid", "psql": "psql_ocid", "oke": "oke_ocid", "fnapp": "fnapp_ocid", "apigw": "apigw_ocid", "jms": "jms_ocid", "compute": "compute_ocid"}
     for x in a_group_common:
@@ -1105,7 +1162,7 @@ if 'group_common' in params:
             ocid = to_ocid[x]
             params[ocid] = TO_FILL
 
-if 'deploy' in params:
+if 'deploy_type' in params:
     create_output_dir()
     jinja2_replace_template()
 

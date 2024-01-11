@@ -41,11 +41,15 @@ resource "oci_load_balancer_backend_set" "starter_pool_backend_set" {
 
 resource "oci_load_balancer_listener" "starter_pool_lb_listener" {
   load_balancer_id         = oci_load_balancer.starter_pool_lb.id
-  name                     = "http"
+  name                     = "HTTP-80"
   default_backend_set_name = oci_load_balancer_backend_set.starter_pool_backend_set.name
   port                     = 80
   protocol                 = "HTTP"
+{%- if tls == "new" %} 
+  path_route_set_name = oci_load_balancer_path_route_set.starter-bastion-routeset.name
+{%- endif %} 
 }
+
 
 resource "oci_core_instance_configuration" "starter_instance_configuration" {
   count          = var.compute_ready == "" ? 0 : 1
@@ -153,6 +157,10 @@ output "pooled_instances_hostname_labels" {
   value = [data.oci_core_instance.starter_instance_pool_instance_singular_datasource.*.hostname_label]
 }
 
-output "pool_lb_url" {
-  value = format("http://%s", oci_load_balancer.starter_pool_lb.ip_address_details[0].ip_address) 
+locals {
+  instance_pool_lb_ip = oci_load_balancer.starter_pool_lb.ip_address_details[0].ip_address
+}
+
+output "instance_pool_lb_ip" {
+  value = local.instance_pool_lb_ip
 }

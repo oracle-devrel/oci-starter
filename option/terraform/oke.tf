@@ -1,3 +1,6 @@
+#----------------------------------------------------------------------------
+# VARIABLES
+
 variable "oke_shape" {
   default = "VM.Standard2.1"
 }
@@ -11,6 +14,7 @@ variable "cluster_options_persistent_volume_config_defined_tags_value" {
 }
 
 #----------------------------------------------------------------------------
+# DATA
 
 data "oci_containerengine_cluster_option" "starter_cluster_option" {
   cluster_option_id = "all"
@@ -45,6 +49,7 @@ locals {
 }
 
 #----------------------------------------------------------------------------
+# SECURITY LISTS
 
 resource "oci_core_security_list" "starter_seclist_lb" {
   compartment_id = local.lz_network_cmp_ocid
@@ -268,6 +273,7 @@ resource oci_core_security_list starter_seclist_api {
 }
 
 #----------------------------------------------------------------------------
+# SUBNETS
 
 resource "oci_core_subnet" "starter_nodepool_subnet" {
   #Required
@@ -314,7 +320,23 @@ resource "oci_core_subnet" "starter_api_subnet" {
   freeform_tags     = local.freeform_tags
 }
 
+/*
+resource "oci_core_subnet" "starter_pod_subnet" {
+  #Required
+  cidr_block          = "10.0.40.0/24"
+  compartment_id      = local.lz_network_cmp_ocid
+  vcn_id              = oci_core_vcn.starter_vcn.id
+
+  # Provider code tries to maintain compatibility with old versions.
+  security_list_ids = [oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
+  display_name      = "${var.prefix}-oke-pod-subnet"
+  route_table_id    = oci_core_vcn.starter_vcn.default_route_table_id
+  freeform_tags     = local.freeform_tags
+}
+*/
+
 #----------------------------------------------------------------------------
+# CLUSTER
 
 resource "oci_containerengine_cluster" "starter_oke" {
   #Required
@@ -332,7 +354,6 @@ resource "oci_containerengine_cluster" "starter_oke" {
 
   options {
     service_lb_subnet_ids = [oci_core_subnet.starter_lb_subnet.id]
-
     #Optional
     add_ons {
       #Optional
@@ -350,10 +371,17 @@ resource "oci_containerengine_cluster" "starter_oke" {
       pods_cidr     = "10.1.0.0/16"
       services_cidr = "10.2.0.0/16"
     }
+
+    # cluster_pod_network_options {
+    #     cni_type = "OCI_VCN_IP_NATIVE"
+    # }
   }
 
   freeform_tags = local.freeform_tags
 }
+
+#----------------------------------------------------------------------------
+# NODE POOL
 
 resource "oci_containerengine_node_pool" "starter_node_pool" {
   #Required
@@ -379,6 +407,11 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
       fault_domains = ["FAULT-DOMAIN-1", "FAULT-DOMAIN-3"]
     }
     size = var.node_pool_node_config_details_size
+
+    # node_pool_pod_network_option_details {
+    #   cni_type = "OCI_VCN_IP_NATIVE"
+    #   pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
+    # }
   }
   ssh_public_key      = var.ssh_public_key
 
@@ -386,6 +419,31 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
 }
 
 #----------------------------------------------------------------------------
+# ADDONS 
+
+# Database Operator
+resource oci_containerengine_addon starter_oke_addon_dboperator {
+  addon_name                       = "OracleDatabaseOperator"
+  cluster_id                       = oci_containerengine_cluster.starter_oke.id
+  remove_addon_resources_on_delete = "true"
+}
+
+# WebLogic Operator
+resource oci_containerengine_addon starter_oke_addon_wlsoperator {
+  addon_name                       = "WeblogicKubernetesOperator"
+  cluster_id                       = oci_containerengine_cluster.starter_oke.id
+  remove_addon_resources_on_delete = "true"
+}
+
+# CertManager
+resource oci_containerengine_addon starter_oke_addon_certmanager {
+  addon_name                       = "CertManager"
+  cluster_id                       = oci_containerengine_cluster.starter_oke.id
+  remove_addon_resources_on_delete = "true"
+}
+
+#----------------------------------------------------------------------------
+# OUTPUTS
 
 output "node_pool" {
   value = {
@@ -397,6 +455,7 @@ output "node_pool" {
 }
 
 #----------------------------------------------------------------------------
+# LOCALS
 
 locals {
   oke_ocid = oci_containerengine_cluster.starter_oke.id

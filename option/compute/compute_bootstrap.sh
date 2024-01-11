@@ -122,6 +122,13 @@ else
     sudo awk -i inplace '/404.html/ && !x {print "        include conf.d/nginx_app.locations;"; x=1} 1' /etc/nginx/nginx.conf
 fi
 
+# TLS
+if [ -f nginx_tls.conf ]; then
+    echo "Adding nginx_tls.conf"
+    sudo cp nginx_tls.conf /etc/nginx/conf.d/.
+    sudo awk -i inplace '/# HTTPS server/ && !x {print "        include conf.d/nginx_tls.conf;"; x=1} 1' /etc/nginx/nginx.conf
+fi
+
 # SE Linux (for proxy_pass)
 sudo setsebool -P httpd_can_network_connect 1
 
@@ -136,6 +143,7 @@ fi
 
 # Firewalld
 sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent
 sudo firewall-cmd --reload
 
