@@ -307,7 +307,9 @@ livelabs_green_button() {
       return
     fi
     # Whoami user format ? 
-    if [[ `whoami` =~ ^ll.*_u.* ]]; then
+    W=$(whoami)
+    W=${W^^}
+    if [[ $W =~ ^LL.*_U.* ]]; then
       echo "LiveLabs - Green Button - whoami format detected"
     else
       return
