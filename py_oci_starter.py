@@ -114,7 +114,7 @@ allowed_values = {
     '-mode': {CLI, GIT, ZIP},
     '-shape': {'amd','freetier_amd','ampere'},
     '-db_install': {'default', 'shared_compute', 'kubernetes'},
-    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing', 'existing_ocid', 'existing_dir'}
+    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'}
 }
 
 def check_values():
