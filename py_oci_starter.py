@@ -114,7 +114,7 @@ allowed_values = {
     '-mode': {CLI, GIT, ZIP},
     '-shape': {'amd','freetier_amd','ampere'},
     '-db_install': {'default', 'shared_compute', 'kubernetes'},
-    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'}
+    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing', 'existing_ocid', 'existing_dir'}
 }
 
 def check_values():
@@ -577,7 +577,8 @@ def tf_var_comment(contents, param):
     comments = {
         'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
         'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345', 'If not filled, it will be generated randomly during the first build.'],
-        'license': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED']
+        'license': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
+        'certificate_ocid': ['OCID of the OCI Certificate','If the is not imported in OCI yet, use instead TF_VAR_certificate_dir=<directory where the certificate resides>', '# export TF_VAR_certificate_dir="__TO_FILL__"']
     }.get(param)
     if comments is not None:
         b=True
