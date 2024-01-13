@@ -171,7 +171,8 @@ def db_rules():
                          'pluggable': 'system',  'mysql': 'root', 'psql': 'postgres', 'none': ''}
         params['db_user'] = default_users[params['db_type']]
     if params.get('db_type')=='none':
-        params.pop('db_password')          
+        params.pop('db_user')     
+        params.pop('db_password')     
     # shared_compute is valid only in compute deployment
     if params.get('db_install') == "shared_compute":
         if params.get('deploy_type')!='compute':
@@ -577,7 +578,8 @@ def tf_var_comment(contents, param):
     comments = {
         'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
         'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345', 'If not filled, it will be generated randomly during the first build.'],
-        'license': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED']
+        'license': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
+        'certificate_ocid': ['OCID of the OCI Certificate','If the certificate is not imported in OCI, use instead TF_VAR_certificate_dir=<directory where the certificate resides>', 'export TF_VAR_certificate_dir="__TO_FILL__"']
     }.get(param)
     if comments is not None:
         b=True
@@ -586,7 +588,7 @@ def tf_var_comment(contents, param):
                 b=False
                 contents.append(f'# {get_tf_var(param)} : {comment}')
             else:
-                contents.append(f'# {comment}')
+                contents.append(f'#   {comment}')
 
 
 
