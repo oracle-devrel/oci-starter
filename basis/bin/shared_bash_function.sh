@@ -514,7 +514,7 @@ certificate_dir_before_terraform() {
   elif [ "$TF_VAR_certificate_ocid" != "" ]; then
     certificate_validity
   else 
-    exit_error "certificate_dir_before_terraform: missing variables TF_VAR_certificate_ocid or TF_VAR_certificate_dir"
+    error_exit "certificate_dir_before_terraform: missing variables TF_VAR_certificate_ocid or TF_VAR_certificate_dir"
   fi  
 }
 
@@ -536,7 +536,7 @@ certificate_post_deploy() {
 certificate_run_certbot_http_01()
 {
   if [ -z "$TF_VAR_certificate_email" ]; then
-    exit_error "TF_VAR_certificate_email is not defined."
+    error_exit "TF_VAR_certificate_email is not defined."
   fi   
 
   # Generate the certificate with Let'Encrypt on the COMPUTE
