@@ -486,7 +486,7 @@ certificate_dir_before_terraform() {
   if [ -d $PROJECT_DIR/src/tls/$TF_VAR_dns_name ]; then
     export TF_VAR_certificate_dir=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
     echo Using existing TF_VAR_certificate_dir=$TF_VAR_certificate_dir
-  elif [ -d $TF_VAR_certificate_dir ]; then
+  elif [ "$TF_VAR_certificate_dir" != "" ] && [ -d $TF_VAR_certificate_dir ]; then
     echo Using existing TF_VAR_certificate_dir=$TF_VAR_certificate_dir
   elif [ "$TF_VAR_tls" == "new_dns_01" ]; then
     # Create a new certificate via DNS-01
