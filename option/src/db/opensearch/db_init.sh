@@ -49,7 +49,7 @@ curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/_doc/30 \
 -H 'Content-Type: application/json; charset=utf-8' \
 --data-binary @- << EOF
 {
-  "deptno": "10",
+  "deptno": "30",
   "dname":  "SALES",
   "loc":    "CAIRO"
 }  
