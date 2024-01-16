@@ -2,7 +2,8 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
-echo OPENSEARCH_HOST=${DB_URL}
+export OPENSEARCH_HOST=${DB_URL}
+echo OPENSEARCH_HOST=$OPENSEARCH_HOST
 
 curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept \
 -H 'Content-Type: application/json; charset=utf-8' \
@@ -24,7 +25,7 @@ curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept \
 }
 EOF
 
-curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/10 \
+curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/_doc/10 \
 -H 'Content-Type: application/json; charset=utf-8' \
 --data-binary @- << EOF
 {
@@ -34,7 +35,7 @@ curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/10 \
 }  
 EOF
 
-curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/20 \
+curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/_doc/20 \
 -H 'Content-Type: application/json; charset=utf-8' \
 --data-binary @- << EOF
 {
@@ -44,7 +45,7 @@ curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/20 \
 }  
 EOF
 
-curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/30 \
+curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/_doc/30 \
 -H 'Content-Type: application/json; charset=utf-8' \
 --data-binary @- << EOF
 {
@@ -54,7 +55,7 @@ curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/30 \
 }  
 EOF
 
-curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/40 \
+curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/_doc/40 \
 -H 'Content-Type: application/json; charset=utf-8' \
 --data-binary @- << EOF
 {
@@ -63,3 +64,5 @@ curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/40 \
   "loc":    "JERUSALEM"
 }  
 EOF
+
+curl https://${OPENSEARCH_HOST}:9200/dept/_search?size=1000&scroll=1m&pretty=true

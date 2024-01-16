@@ -140,6 +140,29 @@ resource "oci_core_security_list" "starter_security_list" {
     }
   }  
 
+  // Opensearch
+  ingress_security_rules {
+    protocol  = "6" // tcp
+    source    = "10.0.0.0/8"
+    stateless = false
+
+    tcp_options {
+      min = 9200
+      max = 9200
+    }
+  }  
+
+  ingress_security_rules {
+    protocol  = "6" // tcp
+    source    = "10.0.0.0/8"
+    stateless = false
+
+    tcp_options {
+      min = 5601
+      max = 5601
+    }
+  }
+  
   // External access to Kubernetes API endpoint
   ingress_security_rules {
     protocol  = "6" // tcp
