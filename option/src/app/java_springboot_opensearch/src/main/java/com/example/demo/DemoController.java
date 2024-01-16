@@ -14,7 +14,7 @@ public class DemoController {
   private String dbPassword;
   private String dbInfo;
 
-  public record Dept( int deptno, String dname, String loc ) {}; 
+  public record Dept( String deptno, String dname, String loc ) {}; 
 
   @Autowired
   public DemoController(DbProperties properties) {
@@ -32,7 +32,7 @@ public class DemoController {
       Statement stmt = conn.createStatement();
       ResultSet rs = stmt.executeQuery("SELECT * FROM dept");
       while (rs.next()) {
-        depts.add(new Dept(rs.getInt(1), rs.getString(2), rs.getString(3) ));
+        depts.add(new Dept(rs.getString(1), rs.getString(2), rs.getString(3) ));
       }
       rs.close();
       stmt.close();

@@ -61,7 +61,8 @@ locals {
   db_url = data.oci_opensearch_opensearch_cluster.starter_opensearch.opensearch_fqdn
   db_port = "9200"
   db_host = local.db_url
-  jdbc_url = format("jdbc:opensearch://%s:9200/?hostnameVerification=false&trustSelfSigned=true", local.db_url)
+  # jdbc_url = format("jdbc:opensearch://https://%s:9200/?hostnameVerification=false&trustSelfSigned=true", local.db_url)
+  jdbc_url = format("jdbc:opensearch://https://%s:9200/?hostnameVerification=false", local.db_url)
 }
 {%- endif %}  
 
