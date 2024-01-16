@@ -43,6 +43,7 @@ variable "db_existing_strategy" {}
 variable "atp_ocid" {default=""}
 variable "db_ocid" {default=""}
 variable "mysql_ocid" {default=""}
+variable "opensearch_ocid" {default=""}
 variable "db_user" {default="admin"}
 variable "db_password" {}
 variable "vault_strategy" {}
