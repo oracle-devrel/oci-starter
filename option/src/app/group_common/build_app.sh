@@ -126,6 +126,7 @@ conditional_append atp TF_VAR_atp_ocid
 conditional_append database TF_VAR_db_ocid
 conditional_append mysql TF_VAR_mysql_ocid
 conditional_append psql TF_VAR_psql_ocid
+conditional_append opensearch TF_VAR_opensearch_ocid
 conditional_append oke TF_VAR_oke_ocid
 conditional_append apigw TF_VAR_apigw_ocid
 conditional_append fnapp TF_VAR_fnapp_ocid
