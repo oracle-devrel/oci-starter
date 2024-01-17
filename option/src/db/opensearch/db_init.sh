@@ -31,7 +31,7 @@ curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/_doc/10 \
 {
   "deptno": "10",
   "dname":  "ACCOUNTING",
-  "loc":    "RYAD"
+  "loc":    "DUBAI"
 }  
 EOF
 
@@ -41,7 +41,7 @@ curl -0 -v -X PUT https://${OPENSEARCH_HOST}:9200/dept/_doc/20 \
 {
   "deptno": "20",
   "dname":  "RESEARCH",
-  "loc":    "DUBAI"
+  "loc":    "OPENSEARCH"
 }  
 EOF
 

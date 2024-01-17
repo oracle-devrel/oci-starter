@@ -30,7 +30,7 @@ public class DemoController {
     try {
       Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
       Statement stmt = conn.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM dept");
+      ResultSet rs = stmt.executeQuery("SELECT detpno, dname, loc FROM dept");
       while (rs.next()) {
         depts.add(new Dept(rs.getInt(1), rs.getString(2), rs.getString(3) ));
       }

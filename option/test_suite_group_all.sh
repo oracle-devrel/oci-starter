@@ -54,6 +54,8 @@ loop_db() {
     loop_shape  
     OPTION_DB=mysql
     loop_shape
+    OPTION_DB=opensearch
+    loop_shape
   fi  
   OPTION_DB=none
   loop_shape

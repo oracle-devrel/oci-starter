@@ -1083,7 +1083,6 @@ jinja2_db_params = {
         "pomArtifactId": "opensearch-sql-jdbc",
         "pomVersion": "1.4.0.1",
         "jdbcDriverClassName": "org.opensearch.jdbc.Driver"
-        # jdbc:opensearch://localhost:9200
     },
     "none": {}
 }

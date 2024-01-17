@@ -45,6 +45,10 @@ if [ -z "$TF_VAR_psql_ocid" ]; then
    get_id_from_tfstate "TF_VAR_psql_ocid" "starter_psql" 
 fi   
 
+if [ -z "$TF_VAR_opensearch_ocid" ]; then
+   get_id_from_tfstate "TF_VAR_opensearch_ocid" "starter_opensearch" 
+fi   
+
 get_output_from_tfstate "TF_VAR_oke_ocid" "oke_ocid"
 
 if [ -z "$TF_VAR_apigw_ocid" ]; then
