@@ -22,7 +22,7 @@
 			<groupId>{{ pomGroupId }}</groupId>
 			<artifactId>{{ pomArtifactId }}</artifactId>
 {%- if db_family == "opensearch" %}  
-			<version>{{ pomVersion }}</artifactId>
+			<version>{{ pomVersion }}</version>
 {%- endif %}    	
 		</dependency>  
 {%- endif %}    	
