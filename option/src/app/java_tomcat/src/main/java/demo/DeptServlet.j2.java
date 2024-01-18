@@ -33,7 +33,7 @@ public class DeptServlet extends HttpServlet {
 			Connection conn = DriverManager.getConnection(System.getenv("JDBC_URL"), System.getenv("DB_USER"),
 					System.getenv("DB_PASSWORD"));
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM dept");
+			ResultSet rs = stmt.executeQuery("SELECT deptno, dname, loc FROM dept");
 			while (rs.next()) {
 				if (counter++ > 0) {
 					sb.append(",");

@@ -13,6 +13,6 @@ insert into dept values (10, 'ACCOUNTING', 'BRUSSELS');
 insert into dept values (20, 'RESEARCH',   'MYSQL');
 insert into dept values (30, 'SALES',      'ROME');
 insert into dept values (40, 'OPERATIONS', 'MADRID');
-select * from dept;
+select deptno, dname, loc from dept;
 
 

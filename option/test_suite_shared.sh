@@ -156,9 +156,9 @@ build_option() {
   start_test $NAME
   if [ "$TEST_ERROR_ONLY" != "" ]; then
     if grep -q "$TEST_DIR" $TEST_HOME/error_rerun.sh; then
-      echo "OK - error_rerun.sh contains - $TEST_DIR" 
+      echo "FOUND in error_rerun.sh: $TEST_DIR" 
     else
-      echo "SKIP - error_rerun.sh does not contains - $TEST_DIR" 
+      echo "SKIP not in error_rerun.sh: $TEST_DIR" 
       return
     fi
   fi
