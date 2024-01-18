@@ -37,6 +37,9 @@
 			<groupId>{{ pomGroupId }}</groupId>
 			<artifactId>{{ pomArtifactId }}</artifactId>
 			<scope>runtime</scope>
+{%- if db_family == "opensearch" %}  
+			<version>{{ pomVersion }}</version>
+{%- endif %}   
 		</dependency>  
 {%- endif %}     
     <dependency>
