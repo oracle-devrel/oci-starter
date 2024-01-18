@@ -37,7 +37,7 @@ public class DemoController {
       try {
         conn = pds.getConnection();
         stmt = conn.createStatement();
-        rset = stmt.executeQuery("SELECT detpno, dname, loc FROM dept");
+        rset = stmt.executeQuery("SELECT deptno, dname, loc FROM dept");
         while (rset.next()) {
           depts.add(new Dept(rset.getInt(1), rset.getString(2), rset.getString(3)));
         }

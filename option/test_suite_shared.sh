@@ -264,6 +264,7 @@ pre_test_suite() {
 pre_git_refresh() {
   cd $TEST_HOME/oci-starter
   git pull origin main
+  echo "----------------------------------------------" >> $TEST_HOME/error_rerun.sh
 }
 
 post_test_suite() {

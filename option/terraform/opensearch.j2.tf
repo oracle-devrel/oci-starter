@@ -55,7 +55,7 @@ data "oci_opensearch_opensearch_cluster" "starter_opensearch" {
 }
 {%- endif %}  
 
-{%- if group_common is not defined %}
+{%- if group_name is not defined %}
 locals {
   # TNS Connect String (Description....)
   db_url = data.oci_opensearch_opensearch_cluster.starter_opensearch.opensearch_fqdn
