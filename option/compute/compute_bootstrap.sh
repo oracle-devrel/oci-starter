@@ -22,7 +22,7 @@ sudo sed -i s/^SELINUX=.*$/SELINUX=permissive/ /etc/selinux/config
 install_java() {
   # Install the JVM (jdk or graalvm)
   if [ "$TF_VAR_java_vm" == "graalvm" ]; then
-    # graalvm
+    # GraalVM
     if [ "$TF_VAR_java_version" == 8 ]; then
       sudo dnf install -y graalvm21-ee-8-jdk 
       sudo update-alternatives --set java /usr/lib64/graalvm/graalvm22-ee-java8/bin/java
@@ -39,7 +39,9 @@ install_java() {
       # sudo update-alternatives --set native-image /usr/lib64/graalvm/graalvm-java21/lib/svm/bin/native-image
     fi   
   else
-    # jdk 
+    # JDK 
+    # Needed due to concurrency
+    sudo dnf install -y alsa-lib 
     if [ "$TF_VAR_java_version" == 8 ]; then
       sudo dnf install -y java-1.8.0-openjdk
     elif [ "$TF_VAR_java_version" == 11 ]; then
