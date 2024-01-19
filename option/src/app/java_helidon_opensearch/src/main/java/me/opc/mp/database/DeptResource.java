@@ -20,7 +20,8 @@ public class DeptResource {
     @Path("dept")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dept> getDept() throws Exception {
-        String db_url=System.getenv("JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL").substring(s.indexOf("https://")+8,s.indexOf(":9200"));
+        String s=System.getenv("JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL");
+        String db_url=s.substring(s.indexOf("https://")+8,s.indexOf(":9200"));
         URL url = new URL("https://"+db_url+":9200/dept/_search?size=1000&scroll=1m&pretty=true");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");

@@ -27,6 +27,13 @@
 {%- endif %}                
 		</dependency>  
 {%- endif %}    	
+{%- if db_family == "opensearch" %}  
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.1.4</version>
+        </dependency>
+{%- endif %}                
         <dependency>
             <groupId>io.helidon.microprofile.bundles</groupId>
             <artifactId>helidon-microprofile-core</artifactId>
