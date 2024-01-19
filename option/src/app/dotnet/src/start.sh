@@ -5,4 +5,4 @@ export PATH=$HOME/.dotnet:$PATH
 export DB_USER="##DB_USER##"
 export DB_PASSWORD="##DB_PASSWORD##"
 export DB_URL="##DB_URL##"
-dotnet run
+dotnet run 2>&1 | tee app.log

@@ -22,9 +22,12 @@ class DeptController {
 
     @Get(uri = "dept") 
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     List<Dept> dept() {
+        {%- if db_family == "opensearch" %}
+        return deptRepository.findDept();
+        {%- else %}
         return deptRepository.findAll();
+        {%- endif %}	
     }
 
     @Get(uri = "info") 
