@@ -1,12 +1,14 @@
 package main
- 
+
 import (
-    "fmt"
-    "os"
+	"context"
+	"encoding/json"
+	"os"
+	"io"
     "net/http"
-    "github.com/gin-gonic/gin"
-    "encoding/json"
-    "io/ioutil"
+    "fmt"
+    "io/ioutil"    
+	fdk "github.com/fnproject/fdk-go"
 )
 
 type Dept struct {
@@ -27,7 +29,11 @@ type Result struct {
 	} `json:"hits"`
 }
 
-func dept(c *gin.Context) {
+func main() {
+	fdk.Handle(fdk.HandlerFunc(myHandler))
+}
+
+func myHandler(ctx context.Context, in io.Reader, out io.Writer) {
     response, err := http.Get("https://"+os.Getenv("DB_URL")+":9200/dept/_search?size=1000&scroll=1m&pretty=true")
     if err != nil {
         fmt.Print(err.Error())
@@ -46,25 +52,12 @@ func dept(c *gin.Context) {
         fmt.Println(err2)
         os.Exit(1)
     }
-    fmt.Println(body)
     var d [] Dept;   
     for _, hit := range body.Hits.Hits {
         d = append(d, Dept{hit.Source.Deptno, hit.Source.Dname,hit.Source.Loc})
     }
     fmt.Println(d)
-    c.IndentedJSON(http.StatusOK, d)
-}
-
-func info(c *gin.Context) {
-    var s string =  "GoLang / OpenSearch"
-    c.Data(http.StatusOK, "text/html", []byte(s))
-}
-
-func main() {
-    router := gin.Default()
-    router.GET("/info", info)
-    router.GET("/dept", dept)
-    router.Run(":8080")
+	json.NewEncoder(out).Encode(&d)
 }
 
 
