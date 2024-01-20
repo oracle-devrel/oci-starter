@@ -6,4 +6,6 @@ oracledb
 mysql-connector-python==8.0.28
 {%- elif db_family == "psql" %}
 psycopg2-binary
+{%- elif db_family == "opensearch" %}
+requests
 {%- endif %}
