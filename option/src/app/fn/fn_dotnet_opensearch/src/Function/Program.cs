@@ -1,13 +1,24 @@
 using System;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Net.Http;
 using Fnproject.Fn.Fdk;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("Function.Tests")]
 namespace Function
 {
     class Starter
     {
+        public class Dept
+        {
+            public string? deptno { get; set; }
+            public string? dname { get; set; }
+            public string? loc { get; set; }
+        }
+
         public class Source
         {
             public string deptno { get; set; }
@@ -28,7 +39,7 @@ namespace Function
             public Hits hits { get; set; }
         }
 
-        private static HttpClient client = new();
+        private static HttpClient client = new HttpClient();
 
         public string dept()
         {
@@ -57,11 +68,13 @@ namespace Function
             {
                 Console.WriteLine(ex.Message);
             }
-            return a;
+            return JsonSerializer.Serialize(a);
         }
 
         static void Main(string[] args) { Fdk.Handle(args[0]); }
     }
 }
+
+
 
 
