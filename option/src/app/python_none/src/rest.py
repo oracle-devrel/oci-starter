@@ -1,7 +1,6 @@
 import os 
 from app import app
 from flask import jsonify
-from flask import flash, request
 
 @app.route('/dept')
 def dept():

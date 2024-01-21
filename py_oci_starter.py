@@ -1064,27 +1064,33 @@ jinja2_db_params = {
         "pomGroupId": "com.oracle.database.jdbc",
         "pomArtifactId": "ojdbc8",
         "pomVersion": "19.3.0.0",
-        "jdbcDriverClassName": "oracle.jdbc.OracleDriver"
+        "jdbcDriverClassName": "oracle.jdbc.OracleDriver",
+        "dbName": "Oracle"
     },
     "mysql": { 
         "pomGroupId": "mysql",
         "pomArtifactId": "mysql-connector-java",
         "pomVersion": "8.0.31",
-        "jdbcDriverClassName": "com.mysql.cj.jdbc.Driver"
+        "jdbcDriverClassName": "com.mysql.cj.jdbc.Driver",
+        "dbName": "MySQL"
     },
     "psql": { 
         "pomGroupId": "org.postgresql",
         "pomArtifactId": "postgresql",
         "pomVersion": "42.7.0",
-        "jdbcDriverClassName": "org.postgresql.Driver"
+        "jdbcDriverClassName": "org.postgresql.Driver",
+        "dbName": "PostgreSQL"
     },
     "opensearch": { 
         "pomGroupId": "org.opensearch.driver",
         "pomArtifactId": "opensearch-sql-jdbc",
         "pomVersion": "1.4.0.1",
-        "jdbcDriverClassName": "org.opensearch.jdbc.Driver"
+        "jdbcDriverClassName": "org.opensearch.jdbc.Driver",
+        "dbName": "OpenSearch"
     },
-    "none": {}
+    "none": {
+        "dbName": "No Database"
+    }
 }
 
 def jinja2_replace_template():

@@ -6,7 +6,7 @@ import psycopg2
 @app.route('/dept')
 def dept():
     try:
-        conn = conn = psycopg2.connect(
+        conn = psycopg2.connect(
             host=os.getenv('DB_URL'),
             database="postgres",
             user=os.getenv('DB_USER'),

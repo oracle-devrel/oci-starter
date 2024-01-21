@@ -2,7 +2,6 @@ import os
 import json
 from app import app
 from flask import jsonify
-from flask import flash, request
 import oracledb
 
 @app.route('/dept')
