@@ -80,9 +80,11 @@ def dept():
     except Exception as e:
         print(traceback.format_exc(), flush=True)
         print(e, flush=True)
+    {%- if db_family != "opensearch" %}
     finally:
         cursor.close() 
         conn.close() 
+    {%- endif %}
     {%- endif %}        
 
 @app.route('/info')
