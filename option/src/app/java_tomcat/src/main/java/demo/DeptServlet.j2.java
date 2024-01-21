@@ -25,6 +25,16 @@ public class DeptServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		{%- if db_family == "none" %}		
+		response.getWriter().append("""
+			[ 
+			   { "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"},
+			   { "deptno": "20", "dname": "RESEARCH", "loc": "Cape Town"},
+			   { "deptno": "30", "dname": "SALES", "loc": "Brussels"},
+			   { "deptno": "40", "dname": "OPERATIONS", "loc": "San Francisco"}
+		   ] 
+		   """);   
+		{%- else %}		
 		int counter = 0;
 		StringBuffer sb = new StringBuffer();
 		sb.append("[");
@@ -47,5 +57,6 @@ public class DeptServlet extends HttpServlet {
 		}
 		sb.append("]");
 		response.getWriter().append(sb);
+		{%- endif %}		
 	}
 }
