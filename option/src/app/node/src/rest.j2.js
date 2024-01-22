@@ -24,7 +24,7 @@ app.get('/dept', async (req, res) => {
         { "deptno": "30", "dname": "SALES", "loc": "Brussels"}, \
         { "deptno": "40", "dname": "OPERATIONS", "loc": "San Francisco"} \
     ]')
-    {%- elsif db_family == "oracle" %}
+    {%- elif db_family == "oracle" %}
     let con = await oracledb.getConnection({ user: process.env.DB_USER, password: process.env.DB_PASSWORD, connectionString: process.env.DB_URL });
     result = await con.execute(
         `select deptno, dname, loc from DEPT`,

@@ -210,7 +210,8 @@ build_option() {
   fi
 #      -db_compartment_ocid $EX_COMPARTMENT_OCID \
 
-  if [ -d output ]; then 
+  RESULT=$?
+  if [ $RESULT -eq 0 ] && [ -d output ]; then 
     mkdir output/target
     cp $TEST_HOME/group_common/target/ssh* output/target/.
     rm -Rf $TEST_DIR
@@ -222,7 +223,8 @@ build_option() {
       build_test_destroy
     fi           
   else
-    echo "ERROR: no output directory"  
+    echo -e "${COLOR_RED}ERROR ./oci_starter.sh failed.${COLOR_NONE}"
+    echo "Check ${TEST_DIR}.log"
     echo_errors_csv
   fi  
 }
