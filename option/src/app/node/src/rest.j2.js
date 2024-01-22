@@ -55,7 +55,7 @@ app.get('/dept', async (req, res) => {
     });
     con.end();          
     {%- elif db_family == "psql" %}
-    const pool = new Pool({
+    let con = new Pool({
         host: process.env.DB_URL,
         database: 'postgres',
         user: process.env.DB_USER,
@@ -65,7 +65,7 @@ app.get('/dept', async (req, res) => {
             rejectUnauthorized: false
         }
     })
-    pool.query("SELECT deptno, dname, loc FROM dept", function (err, result, field) {
+    con.query("SELECT deptno, dname, loc FROM dept", function (err, result, field) {
         if (err) throw err;
             console.log(result);
             res.send(result.rows)
