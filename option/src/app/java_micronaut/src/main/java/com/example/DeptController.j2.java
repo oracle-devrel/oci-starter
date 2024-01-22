@@ -14,7 +14,7 @@ import static io.micronaut.http.HttpHeaders.LOCATION;
 @ExecuteOn(TaskExecutors.IO)  
 @Controller("/")  
 class DeptController {
-    {%- if db_family != "opensearch" %}
+    {%- if db_family != "none" and db_family != "opensearch"  %}
     @Inject
     DeptRepository deptRepository;
 
