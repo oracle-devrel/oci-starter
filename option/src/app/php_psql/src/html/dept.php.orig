@@ -15,13 +15,13 @@ if (!$conn) {
 // Select all rows from the table
 $sql = "SELECT deptno, dname, loc FROM dept";
 $result = pg_query($conn, $sql);
-$results = pg_fetch_all($result);
-
-// Encode the array as JSON and output it
-header('Content-type: application/json');
-echo json_encode($results);
+$data = pg_fetch_all($result);
 
 // Close the connection
 pg_free_result($result);
 pg_close($conn);
+
+// Encode the array as JSON and output it
+header('Content-type: application/json');
+echo json_encode($data);
 ?>
