@@ -80,7 +80,7 @@ $result = array();
 foreach ($response->hits->hits as $hit) {
   $result[] = array( "deptno" => $hit->_source->deptno, "dname" => $hit->_source->dname, "loc" => $hit->_source->loc );
 }
-
+{%- endif %}
 {%- endif %}
 
 header('Content-type: application/json');
