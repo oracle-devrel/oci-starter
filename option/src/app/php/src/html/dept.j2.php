@@ -76,9 +76,9 @@ pg_close($conn);
 $response = file_get_contents("https://" .  $db_url . ":9200/dept/_search?size=1000&scroll=1m&pretty=true");
 $response = json_decode($response);
 
-$result = array();
+$data = array();
 foreach ($response->hits->hits as $hit) {
-  $result[] = array( "deptno" => $hit->_source->deptno, "dname" => $hit->_source->dname, "loc" => $hit->_source->loc );
+  $data[] = array( "deptno" => $hit->_source->deptno, "dname" => $hit->_source->dname, "loc" => $hit->_source->loc );
 }
 {%- endif %}
 {%- endif %}

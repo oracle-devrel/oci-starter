@@ -1,0 +1,27 @@
+const express = require('express')
+const app = express()
+const port = 8080
+
+{% block import %}{% endblock %}
+
+app.get('/info', (req, res) => {
+    res.send('NodeJS - Express / {{ dbName }}')
+})
+
+app.get('/dept', async (req, res) => {
+    {%- if db_family == "none" %}
+      {% block none %}{% endblock %}  
+    {%- elif db_family == "oracle" %}
+      {% block oracle %}{% endblock %}   
+    {%- elif db_family == "mysql" %}
+      {% block mysql %}{% endblock %}   
+    {%- elif db_family == "psql" %}
+      {% block psql %}{% endblock %}   
+    {%- elif db_family == "opensearch" %}
+      {% block opensearch %}{% endblock %}   
+    {%- endif %}
+})
+
+app.listen(port, () => {
+    console.log(`OCI Starter: listening on port ${port}`)
+})
