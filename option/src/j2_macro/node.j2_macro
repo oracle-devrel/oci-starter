@@ -1,8 +1,19 @@
+{% macro dependencies() -%}
+    {%- if db_family == "oracle" %}
+    ,"oracledb": "^6.0.0"
+    {%- elif db_family == "mysql" %}
+    ,"mysql2": "^2.3.3"
+    {%- elif db_family == "psql" %}
+    ,"pg": "^8.11.3"
+    {%- elif db_family == "opensearch" %}
+    ,"node-fetch": "^2.6.1"
+    {%- endif %}        
+{%- endmacro -%}
+
 {%- macro import() %}
 {%- if db_family == "oracle" -%}
 const oracledb = require('oracledb');
 {%- elif db_family == "mysql" -%}
-// const mysql = require('mysql2');
 const mysql = require('mysql2/promise');
 {%- elif db_family == "psql" -%}
 const Pool = require('pg').Pool
@@ -47,14 +58,14 @@ const fetch = require("node-fetch");
 
 {% macro mysql() -%}
     const aDbURL= process.env.DB_URL.split(":");
-    const connection = await mysql.createConnection({
+    const con = await mysql.createConnection({
         host: aDbURL[0],
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: "db1"
     });
-    const [rows, fields] = await connection.execute("SELECT deptno, dname, loc FROM dept");
-    connection.end();   
+    const [rows, fields] = await con.execute("SELECT deptno, dname, loc FROM dept");
+    con.end();   
 {%- endmacro -%}
 
 {% macro psql() -%}
@@ -73,30 +84,6 @@ const fetch = require("node-fetch");
 {%- endmacro -%}
 
 {% macro opensearch() -%}
-    // XXXX does not work for FN XXXXX //
-/*
-    var url = "https://"+process.env.DB_URL+":9200/dept/_search?size=1000&scroll=1m&pretty=true"
-    console.log("url:" + url);
-
-    https.get(url, function(http_res){
-        var body = '';
-        http_res.on('data', function(chunk){
-            body += chunk;
-        });
-        http_res.on('end', function(){
-            var j= JSON.parse(body);
-            console.log(j);
-            result = [];
-            for (i in j.hits.hits) {
-                hit = j.hits.hits[i]
-                result.push({"deptno":hit._source.deptno,"dname":hit._source.dname,"loc":hit._source.loc })
-            }
-            res.send(result)
-        });
-    }).on('error', function(e){
-            console.log("Got an error: ", e);
-    });
-*/
     var url = "https://"+process.env.DB_URL+":9200/dept/_search?size=1000&scroll=1m&pretty=true"
     console.log("url:" + url);
 
@@ -110,3 +97,4 @@ const fetch = require("node-fetch");
         rows.push({"deptno":hit._source.deptno,"dname":hit._source.dname,"loc":hit._source.loc })
     }      
 {%- endmacro -%}
+

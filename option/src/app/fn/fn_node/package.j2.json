@@ -1,18 +1,14 @@
+{% import "node.j2_macro" as m with context %}
 {
-	"name": "fn-starter",
+	"name": "Starter",
 	"version": "1.0.0",
-	"description": "example function",
+	"description": "OCI Starter",
 	"main": "func.js",
-	"author": "",
+	"author": "You",
 	"license": "Apache-2.0",
 	"dependencies": {
 		"@fnproject/fdk": ">=0.0.43"
-        {%- if db_family == "oracle" %}
-        ,"oracledb": "^6.0.0"
-        {%- elif db_family == "mysql" %}
-        ,"mysql2": "^2.3.3"
-        {%- elif db_family == "psql" %}
-        ,"pg": "^8.11.3"
-        {%- endif %}      		
+		{{ m.dependencies() }}   
 	}
 }
+
