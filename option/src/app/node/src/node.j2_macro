@@ -12,7 +12,6 @@ const { DiffieHellmanGroup } = require('crypto');
 {%- endmacro -%}
 
 {%- macro dept() -%}
-xxxxx
 {%- if db_family == "none" -%}{{ nodb() }}
 {%- elif db_family == "oracle" -%}{{ oracle() }}
 {%- elif db_family == "mysql" -%}{{ mysql() }}
