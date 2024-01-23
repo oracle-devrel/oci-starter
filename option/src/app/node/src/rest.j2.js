@@ -3,8 +3,8 @@ const express = require('express')
 const app = express()
 const port = 8080
 
-{% import "node.j2_macro" as macros %}
-{{ macros.import() }}
+{% import "node.j2_macro" as m %}
+{{ m.import() }}
 
 app.get('/info', (req, res) => {
     res.send('NodeJS - Express / {{ dbName }}')
@@ -12,15 +12,15 @@ app.get('/info', (req, res) => {
 
 app.get('/dept', async (req, res) => {
     {%- if db_family == "none" %}
-      {{ macros.none() }}
+      {{ m.none() }}
     {%- elif db_family == "oracle" %}
-      {{ macros.oracle() }}
+      {{ m.oracle() }}
     {%- elif db_family == "mysql" %}
-      {{ macros.mysql() }}
+      {{ m.mysql() }}
     {%- elif db_family == "psql" %}
-      {{ macros.psql() }}
+      {{ m.psql() }}
     {%- elif db_family == "opensearch" %}
-      {{ macros.opensearch() }}
+      {{ m.opensearch() }}
     {%- endif %}
 })
 

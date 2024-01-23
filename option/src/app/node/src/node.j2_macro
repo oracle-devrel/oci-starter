@@ -8,7 +8,7 @@ const Pool = require('pg').Pool
 {%- elif db_family == "opensearch" %}
 const https = require('https'); 
 {%- endif %}
-{% endmacro %}
+{%- endmacro -%}
 
 {% macro none() %}
 res.send('[ \
@@ -17,7 +17,7 @@ res.send('[ \
     { "deptno": "30", "dname": "SALES", "loc": "Brussels"}, \
     { "deptno": "40", "dname": "OPERATIONS", "loc": "San Francisco"} \
 ]')
-{% endmacro %}
+{%- endmacro -%}
 
 {% macro oracle() %}
 let con = await oracledb.getConnection({ user: process.env.DB_USER, password: process.env.DB_PASSWORD, connectionString: process.env.DB_URL });
@@ -34,7 +34,7 @@ while ((row = await rs.getRow())) {
 await rs.close();
 res.send(arr)
 await con.close();
-{% endmacro %}
+{%- endmacro -%}
 
 {% macro mysql() %}
 const aDbURL= process.env.DB_URL.split(":");
@@ -51,7 +51,7 @@ con.query("SELECT deptno, dname, loc FROM dept", function (err, result, field) {
         res.send(result)
 });
 con.end(); 
-{% endmacro %}
+{%- endmacro -%}
 
 {% macro psql() %}
 let con = new Pool({
@@ -69,7 +69,7 @@ con.query("SELECT deptno, dname, loc FROM dept", function (err, result, field) {
         console.log(result);
         res.send(result.rows)
 });
-{% endmacro %}
+{%- endmacro -%}
 
 {% macro opensearch() %}
 var url = "https://"+process.env.DB_URL+":9200/dept/_search?size=1000&scroll=1m&pretty=true"
@@ -93,4 +93,4 @@ https.get(url, function(http_res){
 }).on('error', function(e){
         console.log("Got an error: ", e);
 });
-{% endmacro %}
+{%- endmacro -%}
