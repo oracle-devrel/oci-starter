@@ -1,4 +1,4 @@
-{% import "../node.j2_macro" as m with context %}
+{% import "node.j2_macro" as m with context %}
 const express = require('express')
 const app = express()
 const port = 8080
