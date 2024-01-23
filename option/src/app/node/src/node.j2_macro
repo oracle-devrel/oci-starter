@@ -1,3 +1,5 @@
+#jinja2: lstrip_blocks: "True", trim_blocks: "False"
+
 {%- macro import() %}
 {%- if db_family == "oracle" -%}
 const oracledb = require('oracledb');
