@@ -21,6 +21,22 @@
     {%- endif %}        
 {%- endmacro -%}
 
+{% macro class_def() -%}
+{%- if db_family == "opensearch" %}
+type Result struct {
+	Hits struct {
+		Hits []struct {
+			Source struct {
+				Deptno string `json:"deptno"`
+				Dname  string `json:"dname"`
+				Loc    string `json:"loc"`
+			} `json:"_source"`
+		} `json:"hits"`
+	} `json:"hits"`
+}
+{%- endif %}        
+{%- endmacro -%}
+
 {%- macro dept() -%}
     {%- if db_family == "none" %}
     var d = []Dept{

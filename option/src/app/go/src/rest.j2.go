@@ -3,11 +3,11 @@ package main
  
 import (
     "fmt"
-    "database/sql"
-    {{ m.import() }}
     "os"
     "net/http"
     "github.com/gin-gonic/gin"
+    "database/sql"
+    {{ m.import() }}
 )
 
 type Dept struct {
@@ -15,6 +15,8 @@ type Dept struct {
     Dname string `json:"dname"`
     Loc string `json:"loc"`
 }
+
+{{ m.class_def() }}
 
 func dept(c *gin.Context) {
     {{ m.dept() }}
