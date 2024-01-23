@@ -12,7 +12,7 @@ app.get('/info', (req, res) => {
 
 app.get('/dept', async (req, res) => {
     {%- if db_family == "none" %}
-      {{ m.none() }}
+      {{ m.nodb() }}
     {%- elif db_family == "oracle" %}
       {{ m.oracle() }}
     {%- elif db_family == "mysql" %}
