@@ -1,0 +1,122 @@
+{% macro import() -%}
+{%- if db_family == "oracle" %}
+using Oracle.ManagedDataAccess.Client;
+{%- elif db_family == "mysql" %}
+using MySql.Data.MySqlClient;
+{%- elif db_family == "psql" %}
+using Npgsql;
+{%- elif db_family == "opensearch" %}
+using System.Text.Json;
+{%- endif %}        
+{%- endmacro -%}
+
+
+{% macro class_def() -%}
+{%- if db_family == "opensearch" %}
+    public class Source
+    {
+        public string deptno { get; set; }
+        public string dname { get; set; }
+        public string loc { get; set; }
+
+    }    
+    public class Hit
+    {
+        public Source _source { get; set; }
+    }    
+    public class Hits
+    {
+        public  List<Hit> hits { get; set; }
+    }    
+    public class Result
+    {
+        public Hits hits { get; set; }
+    }    
+    private static HttpClient client = new();
+{%- endif %}        
+{%- endmacro -%}
+
+{%- macro dept() -%}
+    {%- if db_family == "none" %}
+        var a = new Dept[]
+        {
+            new Dept { deptno = "10", dname = "ACCOUNTING", loc = "Seoul" },
+            new Dept { deptno = "20", dname = "RESEARCH", loc = "Cape Town" },
+            new Dept { deptno = "30", dname = "SALES", loc = "Brussels" },
+            new Dept { deptno = "40", dname = "OPERATIONS", loc = "San Francisco" }
+        };
+    {%- elif db_family == "opensearch" %}
+        List<Dept> a = new List<Dept>();
+        client.BaseAddress = new Uri(@"https://"+Environment.GetEnvironmentVariable("DB_URL")+":9200");
+
+        var task = Task.Run(() => client.GetAsync("/dept/_search?size=1000&scroll=1m&pretty=true"));
+        task.Wait();
+        HttpResponseMessage response = task.Result;
+
+        var task2 = Task.Run(() => response.Content.ReadAsStringAsync());
+        task2.Wait();
+        string data = task2.Result;
+        Result result = JsonSerializer.Deserialize<Result>(data);            
+
+        Console.WriteLine( result );
+        try
+        {
+            foreach (var hit in result.hits.hits )
+            {
+                Dept d = new Dept { deptno = hit._source.deptno, dname = hit._source.dname, loc = hit._source.loc };
+                a.Add(d);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    {%- else %}
+        string user = Environment.GetEnvironmentVariable("DB_USER");
+        string pwd = Environment.GetEnvironmentVariable("DB_PASSWORD");
+        string db = Environment.GetEnvironmentVariable("DB_URL");
+        List<Dept> a = new List<Dept>();
+        try
+        {
+            {%- if db_family == "oracle" %}
+            string conStringUser = "User Id=" + user + ";Password=" + pwd + ";Data Source=" + db + ";";
+            OracleConnection con = new OracleConnection(conStringUser))
+            OracleCommand cmd = con.CreateCommand()
+            con.Open();
+            Console.WriteLine("Connected to database");
+
+            cmd.CommandText = "SELECT deptno, dname, loc FROM dept";
+            OracleDataReader reader = cmd.ExecuteReader();
+            {%- elif db_family == "mysql" %}
+            string conStringUser = @"server=" + db + ";userid=" + user + ";password=" + pwd + ";database=db1";
+            using var con = new MySqlConnection(conStringUser);
+            con.Open();
+            Console.WriteLine("Connected to database");
+
+            using var cmd = new MySqlCommand("SELECT deptno, dname, loc FROM dept", con);
+            using MySqlDataReader reader = cmd.ExecuteReader();
+            {%- elif db_family == "psql" %}
+            string conStringUser = @"Server=" + db + ";User Id=" + user + ";Password=" + pwd + ";Database=postgres;Trust Server Certificate=true";
+            using var con = new NpgsqlConnection(conStringUser);
+            con.Open();
+            Console.WriteLine("Connected to database");
+
+            //Retrieve sample data
+            using var cmd = new NpgsqlCommand("SELECT deptno, dname, loc FROM dept", con);
+            using NpgsqlDataReader reader = cmd.ExecuteReader();
+            {%- endif %}
+            while (reader.Read())
+            {
+                Dept d = new Dept { deptno = reader.GetInt64(0).ToString(), dname = reader.GetString(1), loc = reader.GetString(2) };
+                // Dept d = new Dept { deptno = reader.GetString(0), dname = reader.GetString(1), loc = reader.GetString(2) };
+                a.Add(d);
+            }
+            reader.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    {%- endif %}  
+    print(a, flush=True) 
+{%- endmacro -%}   

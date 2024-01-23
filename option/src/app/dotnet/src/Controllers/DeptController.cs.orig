@@ -21,8 +21,8 @@ public class DeptController : ControllerBase
     [Route("dept")]
     public IEnumerable<Dept> Get()
     {
-        string conStringUser = "User Id=" + user + ";Password=" + pwd + ";Data Source=" + db + ";";
         List<Dept> a = new List<Dept>();
+        string conStringUser = "User Id=" + user + ";Password=" + pwd + ";Data Source=" + db + ";";
 
         using (OracleConnection con = new OracleConnection(conStringUser))
         {
