@@ -12,15 +12,15 @@ const https = require('https');
 
 {% macro dept() %}
 {%- if db_family == "none" %}
-{{ m.nodb() }}
+{{ nodb() }}
 {%- elif db_family == "oracle" %}
-{{ m.oracle() }}
+{{ oracle() }}
 {%- elif db_family == "mysql" %}
-{{ m.mysql() }}
+{{ mysql() }}
 {%- elif db_family == "psql" %}
-{{ m.psql() }}
+{{ psql() }}
 {%- elif db_family == "opensearch" %}
-{{ m.opensearch() }}
+{{ opensearch() }}
 {%- endif %}
 {%- endmacro -%}
 
