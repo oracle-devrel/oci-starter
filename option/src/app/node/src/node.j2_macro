@@ -1,26 +1,26 @@
 {%- macro import() %}
-{%- if db_family == "oracle" %}
+{%- if db_family == "oracle" -%}
 const oracledb = require('oracledb');
-{%- elif db_family == "mysql" %}
+{%- elif db_family == "mysql" -%}
 const mysql = require('mysql2');
-{%- elif db_family == "psql" %}
+{%- elif db_family == "psql" -%}
 const Pool = require('pg').Pool
-{%- elif db_family == "opensearch" %}
+{%- elif db_family == "opensearch" -%}
 const https = require('https'); 
 const { DiffieHellmanGroup } = require('crypto');
 {%- endif %}
 {%- endmacro -%}
 
 {%- macro dept() %}
-{%- if db_family == "none" %}
+{%- if db_family == "none" -%}
 {{ nodb() }}
-{%- elif db_family == "oracle" %}
+{%- elif db_family == "oracle" -%}
 {{ oracle() }}
-{%- elif db_family == "mysql" %}
+{%- elif db_family == "mysql" -%}
 {{ mysql() }}
-{%- elif db_family == "psql" %}
+{%- elif db_family == "psql" -%}
 {{ psql() }}
-{%- elif db_family == "opensearch" %}
+{%- elif db_family == "opensearch" -%}
 {{ opensearch() }}
 {%- endif -%}
 {%- endmacro -%}
