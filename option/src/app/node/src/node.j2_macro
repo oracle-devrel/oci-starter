@@ -10,20 +10,6 @@ const https = require('https');
 {%- endif %}
 {%- endmacro -%}
 
-{% macro dept() %}
-{%- if db_family == "none" %}
-{{ nodb() }}
-{%- elif db_family == "oracle" %}
-{{ oracle() }}
-{%- elif db_family == "mysql" %}
-{{ mysql() }}
-{%- elif db_family == "psql" %}
-{{ psql() }}
-{%- elif db_family == "opensearch" %}
-{{ opensearch() }}
-{%- endif %}
-{%- endmacro -%}
-
 {% macro nodb() %}
     res.send('[ \
         { "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"}, \
@@ -107,4 +93,18 @@ const https = require('https');
     }).on('error', function(e){
             console.log("Got an error: ", e);
     });
+{%- endmacro -%}
+
+{% macro dept() %}
+{%- if db_family == "none" %}
+{{ nodb() }}
+{%- elif db_family == "oracle" %}
+{{ oracle() }}
+{%- elif db_family == "mysql" %}
+{{ mysql() }}
+{%- elif db_family == "psql" %}
+{{ psql() }}
+{%- elif db_family == "opensearch" %}
+{{ opensearch() }}
+{%- endif %}
 {%- endmacro -%}
