@@ -1114,14 +1114,9 @@ def jinja2_replace_template():
                     with open(output_file_path, mode="w", encoding="utf-8") as output_file:
                         output_file.write(content)
                         print(f"J2 - Wrote {output_file_path}")
-                os.remove(os.path.join(subdir, filename))   
-    for subdir, dirs, files in os.walk(output_dir):
-        for filename in files:                 
+                os.remove(os.path.join(subdir, filename))                
             if filename.endswith('_refresh.sh'):      
                 os.remove(os.path.join(subdir, filename))   
-            if filename.endswith('.j2_macro'):      
-                os.remove(os.path.join(subdir, filename))   
-
 
 #----------------------------------------------------------------------------
 

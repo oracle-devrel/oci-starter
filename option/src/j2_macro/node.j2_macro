@@ -7,8 +7,7 @@ const mysql = require('mysql2/promise');
 {%- elif db_family == "psql" -%}
 const Pool = require('pg').Pool
 {%- elif db_family == "opensearch" -%}
-const https = require('https'); 
-const { DiffieHellmanGroup } = require('crypto');
+const fetch = require("node-fetch");
 {%- endif %}
 {%- endmacro -%}
 
@@ -75,6 +74,7 @@ const { DiffieHellmanGroup } = require('crypto');
 
 {% macro opensearch() -%}
     // XXXX does not work for FN XXXXX //
+/*
     var url = "https://"+process.env.DB_URL+":9200/dept/_search?size=1000&scroll=1m&pretty=true"
     console.log("url:" + url);
 
@@ -96,4 +96,17 @@ const { DiffieHellmanGroup } = require('crypto');
     }).on('error', function(e){
             console.log("Got an error: ", e);
     });
+*/
+    var url = "https://"+process.env.DB_URL+":9200/dept/_search?size=1000&scroll=1m&pretty=true"
+    console.log("url:" + url);
+
+    const response = await fetch(url);
+    const j = await response.json();
+    console.log(json);
+    console.log(j);
+    rows = [];
+    for (i in j.hits.hits) {
+        hit = j.hits.hits[i]
+        rows.push({"deptno":hit._source.deptno,"dname":hit._source.dname,"loc":hit._source.loc })
+    }      
 {%- endmacro -%}
