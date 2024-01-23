@@ -1,9 +1,7 @@
-
+{% import "node.j2_macro" as m with context %}
 const express = require('express')
 const app = express()
 const port = 8080
-
-{% import "node.j2_macro" as m with context %}
 {{ m.import() }}
 
 app.get('/info', (req, res) => {
