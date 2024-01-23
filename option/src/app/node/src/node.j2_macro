@@ -13,17 +13,11 @@ const { DiffieHellmanGroup } = require('crypto');
 
 {%- macro dept() -%}
 xxxxx
-{%- if db_family == "none" -%}
-{{ nodb() }}
-{%- elif db_family == "oracle" -%}
-yyyyy
-{{ oracle() }}
-{%- elif db_family == "mysql" -%}
-{{ mysql() }}
-{%- elif db_family == "psql" -%}
-{{ psql() }}
-{%- elif db_family == "opensearch" -%}
-{{ opensearch() }}
+{%- if db_family == "none" -%}{{ nodb() }}
+{%- elif db_family == "oracle" -%}{{ oracle() }}
+{%- elif db_family == "mysql" -%}{{ mysql() }}
+{%- elif db_family == "psql" -%}{{ psql() }}
+{%- elif db_family == "opensearch" -%}{{ opensearch() }}
 {%- endif -%}
 {%- endmacro -%}
 
@@ -36,7 +30,7 @@ yyyyy
     ]')
 {%- endmacro -%}
 
-{%+ macro oracle() +%}
+{%- macro oracle()%}
     let con = await oracledb.getConnection({ user: process.env.DB_USER, password: process.env.DB_PASSWORD, connectionString: process.env.DB_URL });
     result = await con.execute(
         `select deptno, dname, loc from DEPT`,
