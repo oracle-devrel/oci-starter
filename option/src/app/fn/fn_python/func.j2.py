@@ -3,7 +3,7 @@ import io
 import json
 import logging
 import os
-import oracledb
+{{ m.import() }}
 
 from fdk import response
 

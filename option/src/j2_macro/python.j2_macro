@@ -65,7 +65,6 @@ import requests
         response = requests.get(url)
         j = response.json()
         print(j, flush=True)
-        a = []
         for hit in j["hits"]["hits"]:
             a.append( {"deptno": hit["_source"]["deptno"], "dname": hit["_source"]["dname"], "loc": hit["_source"]["loc"]} )
         {%- endif %}
