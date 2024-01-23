@@ -1,5 +1,3 @@
-#jinja2: lstrip_blocks: "True", trim_blocks: "False"
-
 {%- macro import() %}
 {%- if db_family == "oracle" -%}
 const oracledb = require('oracledb');
@@ -22,7 +20,7 @@ const { DiffieHellmanGroup } = require('crypto');
 {%- endif -%}
 {%- endmacro -%}
 
-{%- macro nodb() %}
+{% macro nodb() -%}
     res.send('[ \
         { "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"}, \
         { "deptno": "20", "dname": "RESEARCH", "loc": "Cape Town"}, \
@@ -48,7 +46,7 @@ const { DiffieHellmanGroup } = require('crypto');
     await con.close();
 {%- endmacro -%}
 
-{%- macro mysql() %}
+{% macro mysql() -%}
     const aDbURL= process.env.DB_URL.split(":");
     let con = mysql.createConnection({
         host: aDbURL[0],
@@ -65,7 +63,7 @@ const { DiffieHellmanGroup } = require('crypto');
     con.end(); 
 {%- endmacro -%}
 
-{%- macro psql() %}
+{% macro psql() -%}
     let con = new Pool({
         host: process.env.DB_URL,
         database: 'postgres',
@@ -83,7 +81,7 @@ const { DiffieHellmanGroup } = require('crypto');
     });
 {%- endmacro -%}
 
-{%- macro opensearch() %}
+{% macro opensearch() -%}
     var url = "https://"+process.env.DB_URL+":9200/dept/_search?size=1000&scroll=1m&pretty=true"
     console.log("url:" + url);
 
