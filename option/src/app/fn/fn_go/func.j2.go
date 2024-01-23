@@ -4,12 +4,9 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	fdk "github.com/fnproject/fdk-go"
-	"database/sql"
     {{ m.import() }}
-	"os"
 )
 
 type Dept struct {
