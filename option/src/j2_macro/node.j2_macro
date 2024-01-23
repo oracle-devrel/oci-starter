@@ -89,7 +89,6 @@ const fetch = require("node-fetch");
 
     const response = await fetch(url);
     const j = await response.json();
-    console.log(json);
     console.log(j);
     rows = [];
     for (i in j.hits.hits) {
