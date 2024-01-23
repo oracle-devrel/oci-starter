@@ -12,13 +12,11 @@ public class DemoController {
   private String dbUrl;
   private String dbUser;
   private String dbPassword;
-  private String dbInfo;
 
   public record Dept( int deptno, String dname, String loc ) {}; 
 
   @Autowired
   public DemoController(DbProperties properties) {
-    dbInfo = properties.getInfo();
   }
 
   @RequestMapping(value = "/dept", method = RequestMethod.GET, produces = { "application/json" })  
