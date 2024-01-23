@@ -11,17 +11,7 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/dept', async (req, res) => {
-    {%- if db_family == "none" %}
-      {{ m.nodb() }}
-    {%- elif db_family == "oracle" %}
-      {{ m.oracle() }}
-    {%- elif db_family == "mysql" %}
-      {{ m.mysql() }}
-    {%- elif db_family == "psql" %}
-      {{ m.psql() }}
-    {%- elif db_family == "opensearch" %}
-      {{ m.opensearch() }}
-    {%- endif %}
+    {{ m.dept() }}
 })
 
 app.listen(port, () => {

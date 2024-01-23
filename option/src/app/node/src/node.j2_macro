@@ -97,7 +97,7 @@ const { DiffieHellmanGroup } = require('crypto');
 {%- endmacro -%}
 
 {% macro dept() %}
-Dxxxxxxx
+xxxxxxx
 xxxxxxx
 {%- if db_family == "none" %}
 {{ nodb() }}
