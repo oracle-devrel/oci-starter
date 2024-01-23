@@ -657,6 +657,9 @@ def cp_terraform(file1, file2=None, file3=None):
 def output_copy_tree(src, target):
     copy_tree(src, output_dir + os.sep + target)
 
+def output_copy_file(src, target):
+    shutil.copy2(src, output_dir + os.sep + target)
+
 def output_move(src, target):
     shutil.move(output_dir + os.sep + src, output_dir + os.sep + target)
 
@@ -774,6 +777,9 @@ def create_output_dir():
         # Function Common
         if params.get('deploy_type') == "function":
             output_copy_tree("option/src/app/fn/fn_common", "src/app")
+            j2_macro = "option/src/app/"+params['language']+"/"+params['language']+".j2_macro"
+            if os.path.exists(j2_macro):
+                output_copy_file(j2_macro, "src/app")
          
         # Generic version for Oracle DB
         if os.path.exists("option/src/app/"+app):
@@ -1115,8 +1121,13 @@ def jinja2_replace_template():
                         output_file.write(content)
                         print(f"J2 - Wrote {output_file_path}")
                 os.remove(os.path.join(subdir, filename))   
+    for subdir, dirs, files in os.walk(output_dir):
+        for filename in files:                 
             if filename.endswith('_refresh.sh'):      
                 os.remove(os.path.join(subdir, filename))   
+            if filename.endswith('.j2_macro'):      
+                os.remove(os.path.join(subdir, filename))   
+
 
 #----------------------------------------------------------------------------
 
