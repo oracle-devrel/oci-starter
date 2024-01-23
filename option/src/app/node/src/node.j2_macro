@@ -10,7 +10,7 @@ const https = require('https');
 {%- endif %}
 {%- endmacro -%}
 
-{% macro none() %}
+{% macro nodb() %}
 res.send('[ \
     { "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"}, \
     { "deptno": "20", "dname": "RESEARCH", "loc": "Cape Town"}, \
