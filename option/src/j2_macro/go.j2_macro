@@ -11,6 +11,13 @@
 {%- endmacro -%}
 
 {% macro import() -%}
+    {%- if db_family != "none" %}
+    "fmt"
+    "os"
+    {%- if db_family != "opensearch" %}
+    "database/sql"    
+    {%- endif %}           
+    {%- endif %}           
     {%- if db_family == "oracle" %}
     _ "github.com/godror/godror"
     {%- elif db_family == "mysql" %}
