@@ -9,7 +9,7 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/dept', async (req, res) => {
-    {{ m.dept() }}
+{{ m.dept() }}
 })
 
 app.listen(port, () => {
