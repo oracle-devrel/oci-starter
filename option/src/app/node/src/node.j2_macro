@@ -7,6 +7,7 @@ const mysql = require('mysql2');
 const Pool = require('pg').Pool
 {%- elif db_family == "opensearch" %}
 const https = require('https'); 
+const { DiffieHellmanGroup } = require('crypto');
 {%- endif %}
 {%- endmacro -%}
 
@@ -96,6 +97,8 @@ const https = require('https');
 {%- endmacro -%}
 
 {% macro dept() %}
+Dxxxxxxx
+xxxxxxx
 {%- if db_family == "none" %}
 {{ nodb() }}
 {%- elif db_family == "oracle" %}
