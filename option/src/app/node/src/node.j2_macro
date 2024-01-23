@@ -1,4 +1,4 @@
-{%- macro import() -%}
+{%+ macro import() %}
 {%- if db_family == "oracle" %}
 const oracledb = require('oracledb');
 {%- elif db_family == "mysql" %}
