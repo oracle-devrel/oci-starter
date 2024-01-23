@@ -1,4 +1,4 @@
-{%+ macro import() %}
+{%- macro import() %}
 {%- if db_family == "oracle" %}
 const oracledb = require('oracledb');
 {%- elif db_family == "mysql" %}
@@ -11,7 +11,7 @@ const { DiffieHellmanGroup } = require('crypto');
 {%- endif %}
 {%- endmacro -%}
 
-{%- macro dept() -%}
+{%- macro dept() %}
 {%- if db_family == "none" %}
 {{ nodb() }}
 {%- elif db_family == "oracle" %}
@@ -22,10 +22,10 @@ const { DiffieHellmanGroup } = require('crypto');
 {{ psql() }}
 {%- elif db_family == "opensearch" %}
 {{ opensearch() }}
-{%- endif %}
+{%- endif -%}
 {%- endmacro -%}
 
-{% macro nodb() %}
+{%- macro nodb() %}
     res.send('[ \
         { "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"}, \
         { "deptno": "20", "dname": "RESEARCH", "loc": "Cape Town"}, \
@@ -34,7 +34,7 @@ const { DiffieHellmanGroup } = require('crypto');
     ]')
 {%- endmacro -%}
 
-{%+ macro oracle() %}
+{%- macro oracle() %}
     let con = await oracledb.getConnection({ user: process.env.DB_USER, password: process.env.DB_PASSWORD, connectionString: process.env.DB_URL });
     result = await con.execute(
         `select deptno, dname, loc from DEPT`,
@@ -51,7 +51,7 @@ const { DiffieHellmanGroup } = require('crypto');
     await con.close();
 {%- endmacro -%}
 
-{% macro mysql() %}
+{%- macro mysql() %}
     const aDbURL= process.env.DB_URL.split(":");
     let con = mysql.createConnection({
         host: aDbURL[0],
@@ -68,7 +68,7 @@ const { DiffieHellmanGroup } = require('crypto');
     con.end(); 
 {%- endmacro -%}
 
-{% macro psql() %}
+{%- macro psql() %}
     let con = new Pool({
         host: process.env.DB_URL,
         database: 'postgres',
@@ -86,7 +86,7 @@ const { DiffieHellmanGroup } = require('crypto');
     });
 {%- endmacro -%}
 
-{% macro opensearch() %}
+{%- macro opensearch() %}
     var url = "https://"+process.env.DB_URL+":9200/dept/_search?size=1000&scroll=1m&pretty=true"
     console.log("url:" + url);
 
@@ -109,4 +109,3 @@ const { DiffieHellmanGroup } = require('crypto');
             console.log("Got an error: ", e);
     });
 {%- endmacro -%}
-
