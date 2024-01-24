@@ -24,7 +24,7 @@ public class DeptResource {
     @GET
     @Path("dept")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Dept> getDept() {
+    public List<Dept> getDept() throws Exception {
         {%- if db_family == "none" %}
         {{ m.nodb() }}
         {%- elif db_family == "opensearch" %}
@@ -32,7 +32,6 @@ public class DeptResource {
         {%- else %}
         return entityManager.createNamedQuery("getDept", Dept.class).getResultList();
         {%- endif %}	
-
     }
 
     @GET
