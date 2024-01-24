@@ -128,5 +128,4 @@ using System.Text.Json;
             Console.WriteLine(ex.Message);
         }
     {%- endif %}  
-    print(a, flush=True) 
 {%- endmacro -%}   

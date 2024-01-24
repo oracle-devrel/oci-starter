@@ -9,27 +9,25 @@ using System.Threading.Tasks;
 {{ m.import() }} 
 
 [assembly: InternalsVisibleTo("Function.Tests")]
-namespace Function
+namespace Function;
+class Starter
 {
-    class Starter
+    public class Dept
     {
-        public class Dept
-        {
-            public string? deptno { get; set; }
-            public string? dname { get; set; }
-            public string? loc { get; set; }
-        }
-
-        {{ m.class_def() }} 
-
-        public string dept()
-        {
-            {{ m.dept() }} 
-            return JsonSerializer.Serialize(a);
-        }
-
-        static void Main(string[] args) { Fdk.Handle(args[0]); }
+        public string? deptno { get; set; }
+        public string? dname { get; set; }
+        public string? loc { get; set; }
     }
+
+    {{ m.class_def() }} 
+
+    public string dept()
+    {
+        {{ m.dept() }} 
+        return JsonSerializer.Serialize(a);
+    }
+
+    static void Main(string[] args) { Fdk.Handle(args[0]); }
 }
 
 

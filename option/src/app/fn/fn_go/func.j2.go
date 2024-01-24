@@ -15,6 +15,8 @@ type Dept struct {
     Loc string `json:"loc"`
 }
 
+{{ m.class_def() }}
+
 func main() {
 	fdk.Handle(fdk.HandlerFunc(myHandler))
 }
