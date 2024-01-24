@@ -90,8 +90,8 @@ using System.Text.Json;
         {
             {%- if db_family == "oracle" %}
             string conStringUser = "User Id=" + user + ";Password=" + pwd + ";Data Source=" + db + ";";
-            OracleConnection con = new OracleConnection(conStringUser))
-            OracleCommand cmd = con.CreateCommand()
+            OracleConnection con = new OracleConnection(conStringUser);
+            OracleCommand cmd = con.CreateCommand();
             con.Open();
             Console.WriteLine("Connected to database");
 

@@ -1,6 +1,4 @@
 {% import "dotnet.j2_macro" as m with context %}
-package main
- 
 using System;
 using System.Data;
 using System.Text.Json;
