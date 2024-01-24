@@ -25,8 +25,8 @@
     {%- elif db_family == "psql" %}
     _ "github.com/lib/pq"    
     {%- elif db_family == "opensearch" %}
-    "net/http"
     "io/ioutil"
+    "encoding/json"
     {%- endif %}        
 {%- endmacro -%}
 
