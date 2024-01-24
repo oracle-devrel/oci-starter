@@ -25,10 +25,10 @@
     _ "github.com/lib/pq"    
     {%- elif db_family == "opensearch" %}
     "io/ioutil"
-    {%- if deploy_type == "compute" %}
-    "encoding/json"
-    {%- else %}
+    {%- if deploy_type == "function" %}
     "net/http"
+    {%- else %}
+    "encoding/json"
     {%- endif %}
     {%- endif %}        
 {%- endmacro -%}
