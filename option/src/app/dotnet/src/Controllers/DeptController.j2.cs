@@ -3,6 +3,7 @@ package main
  
 using System;
 using System.Data;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 {{ m.import() }}
 
