@@ -25,8 +25,9 @@ if [ ! -z "$UI_URL" ]; then
       sleep 5
     fi
     if [ "$TF_VAR_deploy_type" == "compute" ]; then
-      # Get the compute install log
+      # Get the compute logs
       scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:/home/opc/*.log target/.
+      scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:/home/opc/app/*.log target/.
     fi 
 
     # Retry several time. Needed for ORDS or Go or Tomcat that takes more time to start

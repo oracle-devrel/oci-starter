@@ -98,7 +98,7 @@ using System.Text.Json;
             cmd.CommandText = "SELECT deptno, dname, loc FROM dept";
             OracleDataReader reader = cmd.ExecuteReader();
             {%- elif db_family == "mysql" %}
-            string conStringUser = @"server=" + db + ";userid=" + user + ";password=" + pwd + ";database=db1";
+            string conStringUser = @"server=" + db.Split(':')[0] + ";userid=" + user + ";password=" + pwd + ";database=db1";
             using var con = new MySqlConnection(conStringUser);
             con.Open();
             Console.WriteLine("Connected to database");
