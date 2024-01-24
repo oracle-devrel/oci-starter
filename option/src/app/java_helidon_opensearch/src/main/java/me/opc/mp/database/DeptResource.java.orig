@@ -25,21 +25,18 @@ public class DeptResource {
         URL url = new URL("https://"+db_url+":9200/dept/_search?size=1000&scroll=1m&pretty=true");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
-        if (conn.getResponseCode() != 200) {
-            throw new RuntimeException("Error code : " + conn.getResponseCode());
-        }
         BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
         String body = br.lines().collect(Collectors.joining());
         conn.disconnect();
 
-        List<Dept> d = new ArrayList<Dept>();
+        List<Dept> rows = new ArrayList<Dept>();
         JsonObject jsonObject = Json.createReader(new StringReader(body)).readObject();
         JsonArray hitsArray = jsonObject.getJsonObject("hits").getJsonArray("hits");   
         for (JsonObject hit : hitsArray.getValuesAs(JsonObject.class)) {
             JsonObject source = hit.getJsonObject("_source");
-            d.add(new Dept(Integer.valueOf(source.getString("deptno")), source.getString("dname"), source.getString("loc") ));
+            rows.add(new Dept(Integer.valueOf(source.getString("deptno")), source.getString("dname"), source.getString("loc") ));
         }
-        return d;
+        return rows;
     }
 
     @GET

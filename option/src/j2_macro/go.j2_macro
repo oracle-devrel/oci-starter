@@ -6,8 +6,11 @@
     github.com/go-sql-driver/mysql v1.7.0
     {%- elif db_family == "psql" %}
     github.com/lib/pq v1.10.9
+    {%- elif db_family == "opensearch" %}
     {%- if deploy_type == "compute" %}
     "encoding/json"
+    {%- else %}
+    "net/http"
     {%- endif %}
     {%- endif %}
 {%- endmacro -%}
