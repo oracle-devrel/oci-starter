@@ -2,10 +2,10 @@
 package main
  
 import (
-	"context"
-	"encoding/json"
-	"io"
-	fdk "github.com/fnproject/fdk-go"
+    "context"
+    "encoding/json"
+    "io"
+    fdk "github.com/fnproject/fdk-go"
     {{ m.import() }}
 )
 
@@ -18,7 +18,7 @@ type Dept struct {
 {{ m.class_def() }}
 
 func main() {
-	fdk.Handle(fdk.HandlerFunc(myHandler))
+    fdk.Handle(fdk.HandlerFunc(myHandler))
 }
 
 func myHandler(ctx context.Context, in io.Reader, out io.Writer) {
