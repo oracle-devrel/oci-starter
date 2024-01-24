@@ -5,7 +5,7 @@
     rows.add(new Dept(30, "SALES", "Brussels"));
     rows.add(new Dept(40, "OPERATIONS", "San Francisco"));
     return rows; 
-{% macro nodb() -%}    
+{%- endmacro -%}   
 
 
 {% macro opensearch() -%}    
@@ -26,4 +26,4 @@
         rows.add(new Dept(Integer.valueOf(source.getString("deptno")), source.getString("dname"), source.getString("loc") ));
     }
     return rows;
-{% macro opensearch() -%}    
+{%- endmacro -%}   
