@@ -47,6 +47,7 @@ resource oci_logging_log export_starter_fn_application_invoke {
 locals {
   fnapp_ocid = oci_functions_application.starter_fn_application.id
 }
+{%- endif %}
 
 {%- if group_name is not defined %}
 variable "fn_image" { default = "" }
