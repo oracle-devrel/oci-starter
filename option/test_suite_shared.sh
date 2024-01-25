@@ -154,7 +154,7 @@ build_option() {
     NAME=${NAME}-$OPTION_SHAPE
   fi  
   if [ "$OPTION_INFRA_AS_CODE" == "resource_manager" ]; then
-    NAME=${NAME}-$rm
+    NAME=${NAME}-rm
   fi  
   NAME=${NAME/_/-}
   start_test $NAME
