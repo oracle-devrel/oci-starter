@@ -38,7 +38,7 @@ loop_ui() {
 loop_shape() {
   OPTION_SHAPE=amd 
   loop_ui
-  if [ "$OPTION_DEPLOY" == "compute" ] && [ "$OPTION_DB" == "none" ] && [ "$OPTION_JAVA_VM" != "graalvm-native" ] then
+  if [ "$OPTION_DEPLOY" == "compute" ] && [ "$OPTION_DB" == "none" ] && [ "$OPTION_JAVA_VM" != "graalvm-native" ]; then
     OPTION_SHAPE=ampere
     loop_ui
   fi

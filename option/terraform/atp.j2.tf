@@ -42,6 +42,7 @@ data "oci_database_autonomous_database" "starter_atp" {
   #Required
   autonomous_database_id = oci_database_autonomous_database.starter_atp.id
 }
+{%- endif %}
 
 {%- if group_name is not defined %}
 locals {
