@@ -1,6 +1,6 @@
 {%- if db_install == "shared_compute" %}
-output "bastion_public_ip" {
-  value = oci_core_instance.starter_instance.public_ip
+data "oci_core_instance" "starter_bastion" {
+  instance_id = oci_core_instance.starter_instance.id
 }
 
 {%- elif bastion_ocid is defined %}
