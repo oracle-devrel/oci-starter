@@ -1,4 +1,11 @@
-# Defines the number of instances to deploy
+{%- if compute_ocid is defined %}
+variable "compute_ocid" {}
+
+data "oci_core_instance" "starter_instance" {
+    instance_id = var.compute_ocid
+}
+
+{%- else %}   
 resource "oci_core_instance" "starter_instance" {
 
   availability_domain = data.oci_identity_availability_domain.ad.name
@@ -58,9 +65,17 @@ resource "oci_core_instance" "starter_instance" {
   freeform_tags = local.freeform_tags
 }
 
+data "oci_core_instance" "starter_instance" {
+    instance_id = oci_core_instance.starter_instance.id
+}
+{%- endif %}   
+
 locals {
-  compute_ocid = oci_core_instance.starter_instance.id
-  compute_public_ip = oci_core_instance.starter_instance.public_ip
-  compute_private_ip = oci_core_instance.starter_instance.private_ip
+  compute_ocid = data.oci_core_instance.starter_instance.id
+  compute_public_ip = data.oci_core_instance.starter_instance.public_ip
+  compute_private_ip = data.oci_core_instance.starter_instance.private_ip
 }
 
+output "compute_ip" {
+  value = local.compute_public_ip
+}

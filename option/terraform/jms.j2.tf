@@ -1,3 +1,16 @@
+{%- if fleet_ocid is defined %}
+var fleet_ocid {}
+
+# JMS Fleet
+data oci_jms_fleet starter_fleet {
+  fleet_id = var.fleet_ocid
+}
+
+output fleet_ocid {
+  value=var.fleet_ocid
+}
+
+{%- else %}   
 # Groups names
 locals {
 # jms_group="${var.prefix}-fleet-managers"
@@ -110,4 +123,4 @@ output fleet_ocid {
 output install_key_ocid {
   value=oci_management_agent_management_agent_install_key.starter_install_key.id
 }
-
+{%- endif %}   

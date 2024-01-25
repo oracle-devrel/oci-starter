@@ -1,3 +1,54 @@
+{%- if fnapp_ocid is defined %}
+variable fnapp_ocid {}
+
+data "oci_functions_application" "test_application" {
+    #Required
+    application_id = var.fnapp_ocid
+}
+
+locals {
+  fnapp_ocid = var.fnapp_ocid
+}
+
+{%- else %}   
+resource "oci_functions_application" "starter_fn_application" {
+  #Required
+  compartment_id = local.lz_appdev_cmp_ocid
+  display_name   = "${var.prefix}-fn-application"
+  subnet_ids     = [data.oci_core_subnet.starter_private_subnet.id]
+
+  image_policy_config {
+    #Required
+    is_policy_enabled = false
+  }
+
+  freeform_tags = local.freeform_tags
+}
+
+resource oci_logging_log export_starter_fn_application_invoke {
+  configuration {
+    compartment_id = local.lz_security_cmp_ocid
+    source {
+      category    = "invoke"
+      resource    = local.fnapp_ocid
+      service     = "functions"
+      source_type = "OCISERVICE"
+    }
+  }
+  display_name       = "starter-fn-application-invoke"
+  is_enabled         = "true"
+  log_group_id       = oci_logging_log_group.starter_log_group.id
+  log_type           = "SERVICE"
+  retention_duration = "30"
+
+  freeform_tags = local.freeform_tags
+}
+
+locals {
+  fnapp_ocid = oci_functions_application.starter_fn_application.id
+}
+
+{%- if group_name is not defined %}
 variable "fn_image" { default = "" }
 variable "fn_db_url" { default = "" }
 
@@ -62,4 +113,4 @@ resource "oci_objectstorage_bucket" "starter_bucket" {
 locals {
   bucket_url = "https://objectstorage.${var.region}.oraclecloud.com/n/${var.namespace}/b/${var.prefix}-public-bucket/o"
 }
-
+{%- endif %}  

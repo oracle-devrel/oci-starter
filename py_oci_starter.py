@@ -101,7 +101,7 @@ def allowed_options():
 
 
 allowed_values = {
-    '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'forms', 'none'},
+    '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
     '-deploy_type': {'compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience'},
     '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
@@ -654,6 +654,22 @@ def cp_terraform(file1, file2=None, file3=None):
     if file3 is not None:
         append_file( output_dir + "/src/terraform/"+file1, "option/terraform/"+file3 )
 
+def cp_terraform_existing( param_name, file1, file2=None, file3=None):
+    file_name = file1
+    if param_name in params:
+        file_name = file1.replace(".j2.", "_existing.j2.")
+    print("cp_terraform_existing: " + file_name)
+    shutil.copy2("option/terraform/"+file1, output_dir + "/src/terraform/"+file_name)
+
+    # Append a second file
+    if file2 is not None:
+        append_file( output_dir + "/src/terraform/"+file_name, "option/terraform/"+file2 )
+
+    # Append a third file
+    if file3 is not None:
+        append_file( output_dir + "/src/terraform/"+file_name, "option/terraform/"+file3 )
+
+
 def output_copy_tree(src, target):
     copy_tree(src, output_dir + os.sep + target)
 
@@ -675,15 +691,15 @@ def cp_dir_src_db(db_family):
 
 def output_replace_db_node_count():
     if params.get('db_node_count')!="2":
-       output_replace('##db_node_count##', "1", "src/terraform/dbsystem.tf")
-       output_replace('##db_edition##', "ENTERPRISE_EDITION", "src/terraform/dbsystem.tf")
-       output_replace('##storage_management##', "LVM", "src/terraform/dbsystem.tf")
-       output_replace('##cpu_core_count##', "1", "src/terraform/dbsystem.tf")
+       output_replace('##db_node_count##', "1", "src/terraform/dbsystem.j2.tf")
+       output_replace('##db_edition##', "ENTERPRISE_EDITION", "src/terraform/dbsystem.j2.tf")
+       output_replace('##storage_management##', "LVM", "src/terraform/dbsystem.j2.tf")
+       output_replace('##cpu_core_count##', "1", "src/terraform/dbsystem.j2.tf")
     else:
-       output_replace('##db_node_count##', "2", "src/terraform/dbsystem.tf")
-       output_replace('##db_edition##', "ENTERPRISE_EDITION_EXTREME_PERFORMANCE", "src/terraform/dbsystem.tf")
-       output_replace('##storage_management##', "ASM", "src/terraform/dbsystem.tf")
-       output_replace('##cpu_core_count##', "4", "src/terraform/dbsystem.tf")
+       output_replace('##db_node_count##', "2", "src/terraform/dbsystem.j2.tf")
+       output_replace('##db_edition##', "ENTERPRISE_EDITION_EXTREME_PERFORMANCE", "src/terraform/dbsystem.j2.tf")
+       output_replace('##storage_management##', "ASM", "src/terraform/dbsystem.j2.tf")
+       output_replace('##cpu_core_count##', "4", "src/terraform/dbsystem.j2.tf")
        output_copy_tree("option/src/db/rac", "src/db")
        output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
        if params['language'] == "java" and params['java_framework'] == "springboot":
@@ -702,11 +718,10 @@ def cp_terraform_apigw(append_tf):
     else:
         app_url = "http://${local.apigw_dest_private_ip}:8080/$${request.path[pathname]}" 
 
+    cp_terraform_existing("apigw_ocid", "apigw.j2.tf", append_tf)
     if 'apigw_ocid' in params:
-        cp_terraform("apigw_existing.j2.tf", "apigw_tags.tf", append_tf)
         output_replace('##APP_URL##', app_url,"src/terraform/apigw_existing.j2.tf")
     else:
-        cp_terraform("apigw.j2.tf", "apigw_tags.tf", append_tf)
         output_replace('##APP_URL##', app_url, "src/terraform/apigw.j2.tf")    
 
 #----------------------------------------------------------------------------
@@ -727,23 +742,13 @@ def create_dir_shared():
         output_copy_tree("option/infra_as_code/terraform_local", "src/terraform")
 
     # -- Network ------------------------------------------------------------
-    if 'vcn_ocid' in params:
-        cp_terraform("network_existing.tf")
-    else:
-        if params.get('shape') == "freetier_amd" or params.get('shape') == "ampere"  :
-            cp_terraform("network.tf","network_append_freetier.tf")
-        else:
-            cp_terraform("network.tf","network_append.tf")
+    cp_terraform_existing("vcn_ocid", "network.j2.tf")
 
     # -- Bastion ------------------------------------------------------------
     # Currently limited to provision the database ? 
     # XXXX In the future maybe as build machine ?
-    if params.get('db_install') == "shared_compute":
-        cp_terraform("bastion_shared_compute.tf")   
-    elif 'bastion_ocid' in params:
-        cp_terraform("bastion_existing.tf")
-    elif params.get('db_type')!='none':
-        cp_terraform("bastion.tf")
+    if params.get('db_install') == "shared_compute" or 'bastion_ocid' in params or params.get('db_type')!='none':
+        cp_terraform_existing("bastion_ocid", "bastion.j2.tf")
 
 #----------------------------------------------------------------------------
 # Create Output Directory
@@ -829,10 +834,7 @@ def create_output_dir():
         cp_terraform("datascience.tf")
     elif params['language'] != "none":
         if params.get('deploy_type') == "kubernetes":
-            if 'oke_ocid' in params:
-                cp_terraform("oke_existing.tf", "oke_append.tf")
-            else:
-                cp_terraform("oke.tf", "oke_append.tf")
+            cp_terraform_existing( "oke_ocid", "oke.j2.tf")
             output_mkdir("src/oke")
             output_copy_tree("option/oke", "src/oke")
             output_move("src/oke/oke_deploy.sh", "bin/oke_deploy.sh")
@@ -847,27 +849,17 @@ def create_output_dir():
             output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-ui.yaml")
 
         elif params.get('deploy_type') == "function":
-            if 'fnapp_ocid' in params:
-                cp_terraform("function_existing.tf", "function_append.tf")
-            else:
-                cp_terraform("function.tf", "function_append.tf")
+            cp_terraform_existing("fnapp_ocid", "function.j2.tf")
+            if 'fnapp_ocid' not in params:
                 cp_terraform("log_group.tf")
             if params['language'] == "ords":
                 apigw_append = "apigw_fn_ords_append.tf"
             else:
                 apigw_append = "apigw_fn_append.tf"
-            if 'apigw_ocid' in params:
-                cp_terraform("apigw_existing.j2.tf", "apigw_tags.tf", apigw_append)
-            else:
-                cp_terraform("apigw.j2.tf", "apigw_tags.tf", apigw_append)
+            cp_terraform_existing("apigw_ocid", "apigw.j2.tf", apigw_append)
 
         elif params.get('deploy_type') in [ 'compute', 'instance_pool' ]:
-            if 'compute_ocid' in params:
-                cp_terraform("compute_existing.tf", "compute_append.tf")
-            elif params.get("language") == 'forms':
-                cp_terraform("compute_forms.tf", "compute_append.tf")
-            else:
-                cp_terraform("compute.tf", "compute_append.tf")            
+            cp_terraform_existing("compute_ocid", "compute.j2.tf")
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
             if params.get('deploy_type') == 'instance_pool':
@@ -880,12 +872,9 @@ def create_output_dir():
                 cp_terraform_apigw("apigw_compute_append.tf")   
 
         elif params.get('deploy_type') == "container_instance":
+            cp_terraform("container_instance.j2.tf")
             if 'group_common' not in params:
                 cp_terraform("container_instance_policy.tf")
-            if params.get('db_type') == "none":
-                cp_terraform("container_instance_nodb.tf")
-            else:
-                cp_terraform("container_instance.tf")
 
             # output_mkdir src/container_instance
             output_copy_tree("option/container_instance", "bin")
@@ -907,29 +896,18 @@ def create_output_dir():
 
         cp_dir_src_db(db_family)
         if params.get('db_type') == "autonomous":
-            if 'atp_ocid' in params:
-                cp_terraform("atp_existing.tf", "atp_append.tf")
-            else:
-                cp_terraform("atp.tf", "atp_append.tf")
+            cp_terraform_existing("atp_ocid", "atp.j2.tf")
 
         if params.get('db_type') == "database":
-            if 'db_ocid' in params:
-                cp_terraform("dbsystem_existing.tf", "dbsystem_append.tf")
-            else:
-                cp_terraform("dbsystem.tf", "dbsystem_append.tf")
+            cp_terraform_existing("db_ocid", "dbsystem.j2.tf")
+            if 'db_ocid' not in params:
                 output_replace_db_node_count()
 
         if params.get('db_type') == "pluggable":
-            if 'pdb_ocid' in params:
-                cp_terraform("dbsystem_pluggable_existing.tf")
-            else:
-                cp_terraform("dbsystem_existing.tf", "dbsystem_pluggable.tf")
+            cp_terraform_existing("pdb_ocid", "dbsystem_pluggable.j2.tf")
 
         if params.get('db_type') == "db_free":
-            if params.get('db_install') == "shared_compute":
-               cp_terraform("db_free_shared_compute.tf")
-            else:     
-               cp_terraform("db_free.tf")
+            cp_terraform("db_free.j2.tf")
             output_copy_tree("option/src/db/db_free", "src/db")
             output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
 
@@ -938,19 +916,14 @@ def create_output_dir():
                cp_terraform("mysql_shared_compute.tf")   
                output_copy_tree("option/src/db/mysql_shared_compute", "src/db")  
                output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")       
-            elif 'mysql_ocid' in params:
-                cp_terraform("mysql_existing.tf", "mysql_append.tf")
             else:
-                cp_terraform("mysql.tf", "mysql_append.tf")
+                cp_terraform_existing("mysql_ocid", "mysql.j2.tf")
 
         if params.get('db_type') == "psql":
-            if 'psql_ocid' in params:
-                cp_terraform("psql_existing.tf", "psql_append.tf")
-            else:
-                cp_terraform("psql.tf", "psql_append.tf")
+            cp_terraform_existing("psql_ocid", "psql.j2.tf")
 
         if params.get('db_type') == "opensearch":
-            cp_terraform("opensearch.j2.tf")
+            cp_terraform_existing("opensearch_ocid", "opensearch.j2.tf")
 
     if os.path.exists(output_dir + "/src/app/db"):
         allfiles = os.listdir(output_dir + "/src/app/db")
@@ -976,73 +949,49 @@ def create_group_common_dir():
 
     # -- Common -------------------------------------------------------------
     if "atp" in a_group_common:
-        if 'atp_ocid' in params:
-            cp_terraform("atp_existing.tf")
-        else:
-            cp_terraform("atp.tf")
+        cp_terraform_existing("atp_ocid", "atp.j2.tf")
 
     if "database" in a_group_common:
-        if 'db_ocid' in params:
-            cp_terraform("dbsystem_existing.tf")
-        else:
-            cp_terraform("dbsystem.tf")
+        cp_terraform_existing("db_ocid", "dbsystem.j2.tf")
+        if 'db_ocid' not in params:
             output_replace_db_node_count()
 
     if "db_free" in a_group_common:
-        cp_terraform("db_free.tf")
+        cp_terraform("db_free.j2.tf")
         output_copy_tree("option/src/db/db_free", "src/db")
         output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")            
 
     if "mysql" in a_group_common:
-        if 'mysql_ocid' in params:
-            cp_terraform("mysql_existing.tf")
-        else:
-            cp_terraform("mysql.tf")
+        cp_terraform_existing("mysql_ocid", "mysql.j2.tf")
 
     if "psql" in a_group_common:
-        if 'psql_ocid' in params:
-            cp_terraform("psql_existing.tf")
-        else:
-            cp_terraform("psql.tf")            
+        cp_terraform_existing("psql_ocid", "psql.j2.tf")
 
     if "opensearch" in a_group_common:
-        cp_terraform("opensearch.j2.tf")
+        cp_terraform_existing("opensearch_ocid", "opensearch.j2.tf")
 
     if 'oke' in a_group_common:
-        if 'oke_ocid' in params:
-            cp_terraform("oke_existing.tf", "oke_append.tf")
-        else:
-            cp_terraform("oke.tf", "oke_append.tf")
+        cp_terraform_existing("oke_ocid", "oke.j2.tf")
+        if 'oke_ocid' not in params:
             shutil.copy2("option/oke/oke_destroy.sh", output_dir +"/bin")
 
     if 'fnapp' in a_group_common:
-        if 'fnapp_ocid' in params:
-            cp_terraform("function_existing.tf")
-        else:
-            cp_terraform("function.tf")
+        cp_terraform_existing("fnapp_ocid", "function.j2.tf")
+        if 'fnapp_ocid' not in params:
             cp_terraform("log_group.tf")
 
     if 'apigw' in a_group_common:
-        if 'apigw_ocid' in params:
-            cp_terraform("apigw_existing.j2.tf", "apigw_tags.tf")
-        else:
-            cp_terraform("apigw.j2.tf", "apigw_tags.tf")
+        cp_terraform_existing("apigw_ocid", "apigw.j2.tf")
+        if 'apigw_ocid' not in params:
             cp_terraform("log_group.tf")
 
     if 'jms' in a_group_common:
-        if 'jms_ocid' in params:
-            cp_terraform("jms_existing.tf")
-        else:
-            cp_terraform("jms.tf")            
+        cp_terraform_existing("jms_ocid", "jms.j2.tf")
+        if 'jms_ocid' not in params:
             cp_terraform("log_group.tf")
 
     if 'compute' in a_group_common:
-        if 'compute_ocid' in params:
-            cp_terraform("compute_existing.tf", "compute_append.tf")
-        elif params.get("language") == 'forms':
-            cp_terraform("compute_forms.tf", "compute_append.tf")            
-        else:
-            cp_terraform("compute.tf", "compute_append.tf")            
+        cp_terraform_existing("compute_ocid", "compute.j2.tf")
 
     # Container Instance Common
     cp_terraform("container_instance_policy.tf")

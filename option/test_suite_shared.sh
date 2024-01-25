@@ -12,6 +12,7 @@ OPTION_TLS=none
 OPTION_GROUP_NAME=dummy
 OPTION_DB_INSTALL=default
 OPTION_SHAPE=amd
+OPTION_INFRA_AS_CODE=terraform_local
 
 # No color for terraforms logs
 export nocolorarg=1
@@ -152,6 +153,9 @@ build_option() {
   if [ "$OPTION_SHAPE" != "amd" ]; then
     NAME=${NAME}-$OPTION_SHAPE
   fi  
+  if [ "$OPTION_INFRA_AS_CODE" == "resource_manager" ]; then
+    NAME=${NAME}-$rm
+  fi  
   NAME=${NAME/_/-}
   start_test $NAME
   if [ "$TEST_ERROR_ONLY" != "" ]; then
@@ -176,6 +180,7 @@ build_option() {
        -db_password $TEST_DB_PASSWORD \
        -db_install $OPTION_DB_INSTALL \
        -group_common $OPTION_GROUP_NAME \
+       -infra_as_code $OPTION_INFRA_AS_CODE \
        -shape $OPTION_SHAPE \
        -tls $OPTION_TLS \
        -compartment_ocid $EX_COMPARTMENT_OCID \
@@ -204,6 +209,7 @@ build_option() {
        -db_password $TEST_DB_PASSWORD \
        -db_install $OPTION_DB_INSTALL \
        -group_common $OPTION_GROUP_NAME \
+       -infra_as_code $OPTION_INFRA_AS_CODE \
        -shape $OPTION_SHAPE \
        -tls $OPTION_TLS \
        -compartment_ocid $EX_COMPARTMENT_OCID > ${TEST_DIR}.log 2>&1 

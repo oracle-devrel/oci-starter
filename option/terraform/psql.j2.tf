@@ -1,4 +1,14 @@
 // ------------------------ PostgreSQL -----------------------------
+{%- if psql_ocid is defined %}
+variable "psql_ocid" {}
+
+# Compatibility with postgresql_existing.tf 
+data "oci_psql_db_system" "starter_psql" {
+  #Required
+  db_system_id =  var.psql_ocid
+}
+
+{%- else %}   
 resource "oci_psql_db_system" "starter_psql" {
   compartment_id      = local.lz_database_cmp_ocid
   instance_count = "1"
@@ -30,3 +40,15 @@ data "oci_psql_db_system" "starter_psql" {
   #Required
   db_system_id = oci_psql_db_system.starter_psql.id
 }
+{%- endif %}  
+
+{%- if group_name is not defined %}
+locals {
+    db_host = data.oci_psql_db_system.starter_psql.network_details[0].primary_db_endpoint_private_ip
+    db_port = "5432"
+    db_url = local.db_host
+    // jdbc:postgresql://localhost:5432/postgres
+    jdbc_url = format("jdbc:postgresql://%s:%s/postgres", local.db_host, local.db_port )
+}
+{%- endif %}  
+

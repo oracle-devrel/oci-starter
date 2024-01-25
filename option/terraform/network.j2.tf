@@ -1,4 +1,22 @@
 # --- Network ---
+{%- if vcn_ocid is defined %}
+variable "vcn_ocid" {}
+variable "public_subnet_ocid" {}
+variable "private_subnet_ocid" {}
+
+data "oci_core_vcn" "starter_vcn" {
+  vcn_id = var.vcn_ocid
+}
+
+data "oci_core_subnet" "starter_public_subnet" {
+  subnet_id = var.public_subnet_ocid
+}
+
+data "oci_core_subnet" "starter_private_subnet" {
+  subnet_id = var.private_subnet_ocid
+}
+
+{%- else %}  
 resource "oci_core_vcn" "starter_vcn" {
   cidr_block     = "10.0.0.0/16"
   compartment_id = local.lz_network_cmp_ocid
@@ -214,3 +232,39 @@ data "oci_core_subnet" "starter_public_subnet" {
 data "oci_core_subnet" "starter_private_subnet" {
   subnet_id = oci_core_subnet.starter_private_subnet.id
 }
+
+{%- if shape == "freetier_amd" or shape == "ampere" %}
+resource "oci_core_route_table" "starter_route_private" {
+  compartment_id = local.lz_network_cmp_ocid
+  vcn_id         = oci_core_vcn.starter_vcn.id
+  display_name   = "${var.prefix}-route-private"
+
+  route_rules {
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_internet_gateway.starter_internet_gateway.id
+  }
+}
+
+{%- else %} 
+resource "oci_core_nat_gateway" "starter_nat_gateway" {
+  compartment_id = local.lz_network_cmp_ocid
+  vcn_id         = oci_core_vcn.starter_vcn.id
+  display_name   = "${var.prefix}-nat-gateway"
+  freeform_tags  = local.freeform_tags
+}
+
+resource "oci_core_route_table" "starter_route_private" {
+  compartment_id = local.lz_network_cmp_ocid
+  vcn_id         = oci_core_vcn.starter_vcn.id
+  display_name   = "${var.prefix}-route-private"
+
+  route_rules {
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_nat_gateway.starter_nat_gateway.id
+  }
+}
+
+{%- endif %} 
+{%- endif %} 

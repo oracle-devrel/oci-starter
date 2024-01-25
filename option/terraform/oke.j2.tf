@@ -1,3 +1,12 @@
+{%- if oke_ocid is defined %}
+variable "oke_ocid" {}
+
+locals {
+  oke_ocid = var.oke_ocid
+}
+
+{%- else %}  
+
 #----------------------------------------------------------------------------
 # VARIABLES
 
@@ -459,4 +468,9 @@ output "node_pool" {
 
 locals {
   oke_ocid = oci_containerengine_cluster.starter_oke.id
+}
+{%- endif %}  
+
+output "oke_ocid" {
+  value = local.oke_ocid
 }

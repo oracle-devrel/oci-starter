@@ -1,3 +1,16 @@
+{%- if db_install == "shared_compute" %}
+output "bastion_public_ip" {
+  value = oci_core_instance.starter_instance.public_ip
+}
+
+{%- elif bastion_ocid is defined %}
+variable "bastion_ocid" {}
+
+data "oci_core_instance" "starter_bastion" {
+  instance_id = var.bastion_ocid
+}
+
+{%- elif db_type != "none" %}
 resource "oci_core_instance" "starter_bastion" {
 
   availability_domain = data.oci_identity_availability_domain.ad.name
@@ -44,7 +57,11 @@ resource "oci_core_instance" "starter_bastion" {
   freeform_tags = local.freeform_tags   
 }
 
-# Output the public IPs 
+data "oci_core_instance" "starter_bastion" {
+  instance_id = oci_core_instance.starter_bastion.id
+}
+{%- endif %}
+
 output "bastion_public_ip" {
-  value = oci_core_instance.starter_bastion.public_ip
+  value = data.oci_core_instance.starter_bastion.public_ip
 }

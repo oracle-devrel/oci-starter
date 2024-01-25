@@ -1,4 +1,10 @@
 # DB23c Free in OCI Compute
+{%- if db_install == "shared_compute" %}
+locals {
+  db_free_ip = oci_core_instance.starter_instance.private_ip
+}
+
+{%- else %}  
 resource "oci_core_instance" "starter_db_free" {
 
   availability_domain = data.oci_identity_availability_domain.ad.name
@@ -52,7 +58,10 @@ resource "oci_core_instance" "starter_db_free" {
 
 locals {
   db_free_ip = oci_core_instance.starter_db_free.private_ip
-  # TNS Connect String (Description....)
+}
+{%- endif %}  
+
+locals {
   db_url = format("%s:1521/FREEPDB1", local.db_free_ip)
   db_host = "todo"
   jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
