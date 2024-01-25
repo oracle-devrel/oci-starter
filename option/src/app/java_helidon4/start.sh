@@ -2,7 +2,8 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
-export JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL="##JDBC_URL##"
+export JDBC_URL="##JDBC_URL##"
+export JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL=$JDBC_URL
 export TF_VAR_java_vm=##TF_VAR_java_vm##
 
 if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
