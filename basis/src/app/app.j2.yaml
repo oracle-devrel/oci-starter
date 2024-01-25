@@ -36,12 +36,12 @@ spec:
               name: {{ prefix }}-db-secret
               key: spring_application_json
 {%- endif %}        
+{%- endif %}
         - name: JDBC_URL
           valueFrom:
             secretKeyRef:
               name: {{ prefix }}-db-secret
               key: jdbc_url
-{%- endif %}        
 {%- else %}        
         - name: DB_URL
           valueFrom:
