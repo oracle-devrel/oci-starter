@@ -149,6 +149,7 @@ loop_compute_other() {
 
   # Helidon 4
   OPTION_JAVA_FRAMEWORK=helidon4 
+  OPTION_DB=atp
   build_option  
 
   # Java Compute ATP / No Compartment

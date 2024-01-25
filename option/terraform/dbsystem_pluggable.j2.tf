@@ -1,5 +1,5 @@
 # Database Cloud
-{%- if db_ocid is defined %}
+{%- if pdb_ocid is defined %}
 variable "pdb_ocid" {}
 
 data "oci_database_pluggable_database" "starter_pluggable_database" {
