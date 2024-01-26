@@ -144,7 +144,7 @@ loop_compute_other() {
   OPTION_INFRA_AS_CODE=terraform_local
 
   # Pluggable DB 
-  OPTION_DB=pluggable
+  OPTION_DB=pdb
   build_option   
 
   # Helidon 4

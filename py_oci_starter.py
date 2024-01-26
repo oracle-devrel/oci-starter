@@ -108,7 +108,7 @@ allowed_values = {
     '-java_version': {'8', '11', '17', '21'},
     '-kubernetes': {'oke', 'docker'},
     '-ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
-    '-db_type': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'mysql', 'psql', 'opensearch', 'none'},
+    '-db_type': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'none'},
     '-license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
@@ -156,7 +156,7 @@ def db_rules():
         params['db_node_count'] = "2" 
 
     params['db_type'] = longhand(
-        'db_type', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database'})
+        'db_type', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database', 'pdb': 'pluggable'})
 
     if params.get('db_type') != 'autonomous':
         if params.get('language') == 'ords':

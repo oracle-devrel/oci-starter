@@ -90,14 +90,14 @@ build_test () {
     fi
     echo "RESULT INFO:                   "`cat /tmp/result.info` | cut -c 1-100
   else
-    echo "No file /tmp/result.html"
+    echo "${COLOR_RED}No file /tmp/result.html${COLOR_NONE}"
   fi
-  mv /tmp/result.html ${TEST_DIR}_result_$BUILD_ID.html
-  mv /tmp/result.json ${TEST_DIR}_result_$BUILD_ID.json
-  mv /tmp/result.info ${TEST_DIR}_result_$BUILD_ID.info
-  mv /tmp/result_html.log ${TEST_DIR}_result_html_$BUILD_ID.log
-  mv /tmp/result_json.log ${TEST_DIR}_result_json_$BUILD_ID.log
-  mv /tmp/result_info.log ${TEST_DIR}_result_info_$BUILD_ID.log
+  mv /tmp/result.html ${TEST_DIR}_result_$BUILD_ID.html 2>/dev/null;
+  mv /tmp/result.json ${TEST_DIR}_result_$BUILD_ID.json 2>/dev/null;
+  mv /tmp/result.info ${TEST_DIR}_result_$BUILD_ID.info 2>/dev/null;
+  mv /tmp/result_html.log ${TEST_DIR}_result_html_$BUILD_ID.log 2>/dev/null;
+  mv /tmp/result_json.log ${TEST_DIR}_result_json_$BUILD_ID.log 2>/dev/null;
+  mv /tmp/result_info.log ${TEST_DIR}_result_info_$BUILD_ID.log 2>/dev/null;
 
   if [ "$CSV_JSON_OK" == "1" ]; then
     test_run_100
