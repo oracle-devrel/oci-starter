@@ -64,7 +64,7 @@ public class HelloFunction {
       {%- endif %}	
       System.out.println("After connection");
       Statement stmt = conn.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM dept");
+      ResultSet rs = stmt.executeQuery("SELECT deptno, dname, loc FROM dept");
       while (rs.next()) {
         if (counter++ > 0) {
           sb.append(",");

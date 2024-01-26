@@ -1,9 +1,4 @@
+{% import "python.j2_macro" as m with context %}
 Flask
 flask-cors
-{%- if db_family == "oracle" %}
-oracledb
-{%- elif db_family == "mysql" %}
-mysql-connector-python
-{%- elif db_family == "psql" %}
-psycopg2
-{%- endif %}
+{{ m.requirements() }}   

@@ -1,180 +1,233 @@
 #!/bin/bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
-export TEST_HOME=$SCRIPT_DIR/test
-. $HOME/bin/env_oci_starter_testsuite.sh
+export TEST_HOME=$SCRIPT_DIR/test_group_all
+. $SCRIPT_DIR/test_suite_shared.sh
+export BUILD_COUNT=1
 
-# No color for terraforms logs
-export nocolorarg=1
-
-#----------------------------------------------------------------------------
-export EX_MYSQL_OCID=$EX_SHARED_MYSQL_OCID
-export EX_VNC_OCID=$EX_SHARED_VNC_OCID
-export EX_SUBNET_OCID=$EX_SHARED_SUBNET_OCID
-
-#----------------------------------------------------------------------------
-start_test () {
-  export TEST_NAME=$1
-  export TEST_DIR=$TEST_HOME/$TEST_NAME
-  echo "-- Start test $TEST_NAME ---------------------------------------"   
-  cd $TEST_HOME/oci-starter
-}
-
-build_test () {
-  SECONDS=0
-  # Change to the TEST_HOME directory first in case that the creation of TEST_DIR failed
-  cd $TEST_HOME
-  cd $TEST_DIR
-  pwd
-  ./build.sh > build_$BUILD_ID.log 2>&1  
-  echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
-  if [ -f /tmp/result.html ]; then
-    if grep -q -i "starter" /tmp/result.html; then
-      echo "RESULT HTML: OK"
-    else
-      echo "RESULT HTML: ***** BAD ******"
-    fi
-    if grep -q -i "deptno" /tmp/result.json; then
-      echo "RESULT JSON: OK                "`cat /tmp/result.json | cut -c 1-80`... 
-    else
-      echo "RESULT JSON: ***** BAD ******  "`cat /tmp/result.json | cut -c 1-80`... 
-    fi
-    echo "RESULT INFO:                   "`cat /tmp/result.info | cut -c 1-80`
+loop_ui() {
+  if [ "$OPTION_LANG" == "php" ]; then
+    OPTION_UI=php 
+    build_option
+  elif [ "$OPTION_LANG" == "apex" ]; then
+    OPTION_UI=apex 
+    build_option    
   else
-    echo "No file /tmp/result.html"
+    OPTION_UI=html 
+    build_option
+    # Test all the UIs with ORDS only
+    if [ "$OPTION_DEPLOY" == "kubernetes" ] && [ "$OPTION_LANG" == "ords" ]; then
+      OPTION_UI=reactjs
+      build_option
+      OPTION_UI=angular
+      build_option
+      OPTION_UI=jet
+      build_option
+    fi 
+    if [ "$OPTION_JAVA_FRAMEWORK" == "tomcat" ]; then
+      OPTION_UI=jsp
+      build_option
+    fi  
+    if [ "$OPTION_LANG" == "node" ] && [ "$OPTION_DB" == "atp" ]; then
+      OPTION_UI=api
+      build_option
+    fi     
   fi
-  mv /tmp/result.html ${TEST_DIR}_result_$BUILD_ID.html
-  mv /tmp/result.json ${TEST_DIR}_result_$BUILD_ID.json
-  mv /tmp/result.info ${TEST_DIR}_result_$BUILD_ID.info
-  mv /tmp/result_html.log ${TEST_DIR}_result_html_$BUILD_ID.log
-  mv /tmp/result_json.log ${TEST_DIR}_result_json_$BUILD_ID.log
-  mv /tmp/result_info.log ${TEST_DIR}_result_info_$BUILD_ID.log
 }
 
-build_test_destroy () {
-  if [ -d output ]; then
-    mv output $TEST_DIR
-    BUILD_ID=1
-    build_test
-    BUILD_ID=2
-    build_test
-    ./destroy.sh --auto-approve > destroy.log 2>&1  
-    echo "destroy_secs=$SECONDS" >> ${TEST_DIR}_time.txt
-    cat ${TEST_DIR}_time.txt
-  else
-    echo "ERROR: no output directory"  
+loop_shape() {
+  OPTION_SHAPE=amd 
+  loop_ui
+  if [ "$OPTION_DEPLOY" == "compute" ] && [ "$OPTION_DB" == "none" ] && [ "$OPTION_JAVA_VM" != "graalvm-native" ]; then
+    OPTION_SHAPE=ampere
+    loop_ui
+  fi
+}
+
+loop_db() {
+  if [ "$OPTION_DEPLOY" != "instance_pool" ] ; then
+    # OPTION_DB=database 
+    # loop_ui  
+    OPTION_DB=atp 
+    loop_shape
+    OPTION_DB=psql 
+    loop_shape  
+    OPTION_DB=mysql
+    loop_shape
+    OPTION_DB=opensearch
+    loop_shape
   fi  
+  OPTION_DB=none
+  loop_shape
 }
 
-if [ -d test ]; then
-  echo "test directory already exists"
-  exit;
-fi
+loop_java_vm() {
+  OPTION_JAVA_VM=jdk 
+  loop_db
+  if [ "$OPTION_JAVA_FRAMEWORK" == "springboot" ] ; then
+    OPTION_JAVA_VM=graalvm
+    loop_db
+  fi  
 
-# Avoid already set variables
-unset "${!TF_VAR@}"
+  if [ -n "$TEST_GRAALVM_NATIVE" ] && [ "$OPTION_JAVA_FRAMEWORK" != "tomcat" ] ; then
+    if [ "$OPTION_DEPLOY" == "compute" ] || [ "$OPTION_DEPLOY" == "kubernetes" ]; then 
+      OPTION_JAVA_VM=graalvm-native
+      loop_db
+    fi 
+  fi
+}
 
-mkdir test
-cd test
-# git clone https://github.com/MarcGueury/oci-starter
-git clone https://github.com/mgueury/oci-starter
+loop_java_framework () {
+  OPTION_JAVA_FRAMEWORK=springboot 
+  loop_java_vm
+  OPTION_JAVA_FRAMEWORK=helidon 
+  loop_java_vm
+  OPTION_JAVA_FRAMEWORK=micronaut
+  loop_java_vm
+  OPTION_JAVA_FRAMEWORK=tomcat
+  loop_db
+  # Reset the value to default
+  OPTION_JAVA_FRAMEWORK=springboot
+}
 
-date
+loop_lang () {
+  OPTION_LANG=java 
+  OPTION_JAVA_VM=jdk 
+  if [ "$OPTION_DEPLOY" == "function" ]; then
+    # Dummy value, not used
+    OPTION_JAVA_FRAMEWORK=helidon
+    loop_db
+  else
+    loop_java_framework
+  fi
+  if [ "$OPTION_DEPLOY" != "function" ]; then
+    OPTION_LANG=php
+    loop_db
+  fi
+  if [ "$OPTION_DEPLOY" == "compute" ]; then
+    OPTION_LANG=apex
+    OPTION_DB=atp 
+    loop_shape
+  fi    
+  OPTION_LANG=go
+  loop_db  
+  OPTION_LANG=node 
+  loop_db
+  OPTION_LANG=python
+  loop_db
+  OPTION_LANG=dotnet
+  loop_db
+  # XXXX ORDS works only with ATP (DBSystems is not test/done)
+  OPTION_LANG=ords
+  OPTION_DB=atp 
+  loop_ui
+}
 
-OCI_STARTER="./oci_starter.sh -prefix tsuite -compartment_ocid $EX_COMPARTMENT_OCID"
+loop_compute_other() {
+  # Shared compute / LiveLabs Green Button
+  OPTION_SHAPE=amd
+  OPTION_LANG=java
+  OPTION_JAVA_VM=jdk
+  OPTION_JAVA_FRAMEWORK=springboot
+  OPTION_DB_INSTALL=shared_compute
+  OPTION_UI=html
+  OPTION_DB=db_free
+  build_option  
+  OPTION_DB=mysql
+  build_option   
 
-# Java Compute ATP / No Compartment
-start_test 01_JAVA_HELIDON_COMPUTE_ATP
-./oci_starter.sh -language java -java_framework helidon -deploy compute -db_password $TEST_DB_PASSWORD > $TEST_DIR.log 2>&1  
-build_test_destroy
+  # Resource Manager
+  OPTION_DB_INSTALL=default
+  OPTION_DB=atp
+  OPTION_INFRA_AS_CODE=resource_manager
+  build_option   
+  OPTION_INFRA_AS_CODE=terraform_local
 
-start_test 01B_JAVA_HELIDON_COMPUTE_ATP_RESOURCE_MANAGER
-./oci_starter.sh -language java -java_framework helidon -deploy compute -db_password $TEST_DB_PASSWORD -infra_as_code resource_manager > $TEST_DIR.log 2>&1  
-build_test_destroy
+  # Pluggable DB 
+  OPTION_DB=pdb
+  build_option   
 
-# Java Compute ATP + Existing Subnet
-start_test 02_JAVA_HELIDON_COMPUTE_ATP_EX_SUBNET
-$OCI_STARTER -language java -java_framework helidon -deploy compute -db_password $TEST_DB_PASSWORD -vcn_ocid $EX_VNC_OCID -public_subnet_ocid $EX_SUBNET_OCID -private_subnet_ocid $EX_SUBNET_OCID > $TEST_DIR.log 2>&1  
-build_test_destroy
+  # Helidon 4
+  OPTION_JAVA_FRAMEWORK=helidon4 
+  OPTION_DB=atp
+  build_option  
 
-# DB System
-start_test 03_JAVA_SPRINGBOOT_COMPUTE_PLUGGABLE_NEW
-$OCI_STARTER -language java -database pluggable -deploy compute -db_password $TEST_DB_PASSWORD -db_password $TEST_DB_PASSWORD -db_compartment_ocid $EX_DB_COMPARTMENT_OCID -db_ocid $EX_DB_OCID -vcn_ocid $EX_VNC_OCID -public_subnet_ocid $EX_SUBNET_OCID -private_subnet_ocid $EX_SUBNET_OCID > $TEST_DIR.log 2>&1  
-build_test_destroy
- 
-# DB System
-start_test 03B_JAVA_SPRINGBOOT_COMPUTE_PLUGGABLE_EXISTING
-$OCI_STARTER -language java -database pluggable -deploy compute -db_password $TEST_DB_PASSWORD -db_password $TEST_DB_PASSWORD -pdb_ocid $EX_PDB_OCID -vcn_ocid $EX_VNC_OCID -public_subnet_ocid $EX_SUBNET_OCID -private_subnet_ocid $EX_SUBNET_OCID > $TEST_DIR.log 2>&1  
-build_test_destroy
+  # Java Compute ATP / No Compartment
+  # XXX Not possible in tenancy XXX
+}
 
-# GraalVM
-start_test 04_JAVA_SPRINGBOOT_COMPUTE_ATP_GRAALVM
-$OCI_STARTER -language java -java_vm graalvm -deploy compute -db_password $TEST_DB_PASSWORD > $TEST_DIR.log 2>&1   
-build_test_destroy
+loop_tls_deploy() {
+  OPTION_DEPLOY=compute
+  build_option  
+  OPTION_DEPLOY=kubernetes
+  build_option  
+  OPTION_DEPLOY=instance_pool
+  build_option  
+  OPTION_DEPLOY=container_instance
+  build_option  
+  OPTION_DEPLOY=function
+  build_option  
+}
 
-# SpringBoot
-start_test 05_JAVA_SPRINGBOOT_COMPUTE_ATP
-$OCI_STARTER -language java -java_framework springboot -deploy compute -db_password $TEST_DB_PASSWORD > $TEST_DIR.log 2>&1   
-build_test_destroy
+loop_tls() {
+  # TLS
+  OPTION_GROUP_NAME=none
+  OPTION_LANG=java
+  OPTION_JAVA_VM=jdk
+  OPTION_JAVA_FRAMEWORK=springboot
+  OPTION_UI=html
+  OPTION_DB=none
+  OPTION_TLS=existing_dir
+  loop_tls_deploy
+  # existing_ocid is part of existing_dir
 
-# SpringBoot Resource Manager
-start_test 05B_JAVA_SPRINGBOOT_COMPUTE_ATP_RESOURCE_MANAGER
-$OCI_STARTER -language java -java_framework springboot -deploy compute -db_password $TEST_DB_PASSWORD -infra_as_code resource_manager > $TEST_DIR.log 2>&1   
-build_test_destroy
+  OPTION_TLS=new_http_01
+  OPTION_DEPLOY=compute
+  build_option  
 
-# DB System
-start_test 06_JAVA_SPRINGBOOT_COMPUTE_DATABASE
-$OCI_STARTER -language java -database database -deploy compute -db_password $TEST_DB_PASSWORD > $TEST_DIR.log 2>&1  
-build_test_destroy
+  OPTION_TLS=new_dns_01
+  OPTION_DEPLOY=container_instance
+  build_option  
 
-# Mysql + SpringBoot
-start_test 07_JAVA_SPRINGBOOT_COMPUTE_MYSQL
-$OCI_STARTER -language java -database mysql -deploy compute -db_password $TEST_DB_PASSWORD > $TEST_DIR.log 2>&1  
-build_test_destroy
+  OPTION_GROUP_NAME=dummy
+}
 
-# Java Compute + Existing ATP + Existing Subnet
-start_test 08_JAVA_SPRINGBOOT_COMPUTE_EX_ATP_SUBNET
-$OCI_STARTER -language java -deploy compute -db_password $TEST_DB_PASSWORD -atp_ocid $EX_SHARED_ATP_OCID -vcn_ocid $EX_VNC_OCID -public_subnet_ocid $EX_SUBNET_OCID -private_subnet_ocid $EX_SUBNET_OCID > $TEST_DIR.log 2>&1  
-build_test_destroy
+loop_deploy() {
+  OPTION_DEPLOY=compute
+  loop_compute_other
+  loop_lang  
+  OPTION_DEPLOY=kubernetes
+  loop_lang
+  OPTION_DEPLOY=instance_pool 
+  OPTION_LANG=java
+  OPTION_JAVA_FRAMEWORK=springboot
+  OPTION_DB=atp 
+  loop_shape  
+  OPTION_DEPLOY=container_instance 
+  loop_lang
+  OPTION_DEPLOY=function 
+  loop_lang
 
-# Java Compute + Existing DB + Existing Subnet
-start_test 09_JAVA_SPRINGBOOT_COMPUTE_EX_DB_SUBNET
-$OCI_STARTER -language java -deploy compute -database database -db_password $TEST_DB_PASSWORD -db_compartment_ocid $EX_DB_COMPARTMENT_OCID -db_ocid $EX_DB_OCID -vcn_ocid $EX_VNC_OCID -public_subnet_ocid $EX_SUBNET_OCID -private_subnet_ocid $EX_SUBNET_OCID > $TEST_DIR.log 2>&1  
-build_test_destroy
+  loop_tls
+}
 
-# Java Compute + Existing MYSQL + Existing Subnet
-start_test 10_JAVA_SPRINGBOOT_COMPUTE_EX_MYSQL_SUBNET
-$OCI_STARTER -language java -deploy compute -database mysql -db_password $TEST_DB_PASSWORD -mysql_ocid $EX_MYSQL_OCID -vcn_ocid $EX_VNC_OCID -public_subnet_ocid $EX_SUBNET_OCID -private_subnet_ocid $EX_SUBNET_OCID > $TEST_DIR.log 2>&1  
-build_test_destroy
+generate_only() {
+  if [ -d $TEST_HOME ]; then    
+    echo "$TEST_HOME directory detected"
+  else
+    echo "$TEST_HOME does not exist"
+    exit
+  fi
+  rm -rf $TEST_HOME/compute $TEST_HOME/kubernetes $TEST_HOME/container_instance $TEST_HOME/function
+  export GENERATE_ONLY=true
+}
 
-# Java Compute + Existing MYSQL + Existing Subnet
-start_test 11_ORDS_COMPUTE_ATP
-$OCI_STARTER -language ords -deploy compute -db_password $TEST_DB_PASSWORD > $TEST_DIR.log 2>&1  
-build_test_destroy
-
-# OKE + Helidon
-start_test 50_JAVA_SPRINGBOOT_OKE_ATP
-$OCI_STARTER -language java -deploy kubernetes -auth_token $OCI_TOKEN -db_password $TEST_DB_PASSWORD > $TEST_DIR.log 2>&1  
-build_test_destroy
-
-# OKE + Helidon + DB System
-start_test 51_JAVA_SPRINGBOOT_OKE_MYSQL
-$OCI_STARTER -language java -deploy kubernetes -database database -auth_token $OCI_TOKEN -db_password $TEST_DB_PASSWORD > $TEST_DIR.log 2>&1  
-build_test_destroy
-
-# OKE + SPRINGBOOT + MYSQL + RESOURCE MANAGER
-start_test 52_JAVA_SPRINGBOOT_OKE_MYSQL_RESOURCEMANAGER
-$OCI_STARTER -infra_as_code resource_manager -language java -java_framework springboot -deploy kubernetes -database mysql -auth_token $OCI_TOKEN -db_password $TEST_DB_PASSWORD > $TEST_DIR.log 2>&1  
-build_test_destroy
-
-# Function + JAVA + ATP
-start_test 100_JAVA_FUNCTION
-$OCI_STARTER -language java -deploy function -auth_token $OCI_TOKEN -db_password $TEST_DB_PASSWORD > $TEST_DIR.log 2>&1  
-build_test_destroy
-
-# Function + NODE + RESOURCEMANAGER
-start_test 101_NODE_FUNCTION_RESOURCEMANAGER
-$OCI_STARTER -infra_as_code resource_manager -language node -deploy function -auth_token $OCI_TOKEN -db_password $TEST_DB_PASSWORD > $TEST_DIR.log 2>&1  
-build_test_destroy
-
-date
+pre_test_suite
+# pre_git_refresh
+# generate_only
+cd $TEST_HOME
+. ./group_common_env.sh
+# export TEST_ERROR_ONLY=TRUE
+# export TEST_GRAALVM_NATIVE=TRUE
+loop_deploy
+post_test_suite

@@ -45,6 +45,10 @@ if [ -z "$TF_VAR_psql_ocid" ]; then
    get_id_from_tfstate "TF_VAR_psql_ocid" "starter_psql" 
 fi   
 
+if [ -z "$TF_VAR_opensearch_ocid" ]; then
+   get_id_from_tfstate "TF_VAR_opensearch_ocid" "starter_opensearch" 
+fi   
+
 get_output_from_tfstate "TF_VAR_oke_ocid" "oke_ocid"
 
 if [ -z "$TF_VAR_apigw_ocid" ]; then
@@ -122,6 +126,7 @@ conditional_append atp TF_VAR_atp_ocid
 conditional_append database TF_VAR_db_ocid
 conditional_append mysql TF_VAR_mysql_ocid
 conditional_append psql TF_VAR_psql_ocid
+conditional_append opensearch TF_VAR_opensearch_ocid
 conditional_append oke TF_VAR_oke_ocid
 conditional_append apigw TF_VAR_apigw_ocid
 conditional_append fnapp TF_VAR_fnapp_ocid

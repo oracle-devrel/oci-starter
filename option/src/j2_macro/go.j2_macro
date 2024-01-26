@@ -1,0 +1,118 @@
+{% macro mod() -%}
+    github.com/gorilla/mux v1.8.0
+    {%- if db_family == "oracle" %}
+    github.com/godror/godror v0.35.1
+    {%- elif db_family == "mysql" %}
+    github.com/go-sql-driver/mysql v1.7.0
+    {%- elif db_family == "psql" %}
+    github.com/lib/pq v1.10.9
+    {%- endif %}
+{%- endmacro -%}
+
+{% macro import() -%}
+    {%- if db_family != "none" %}
+    "fmt"
+    "os"
+    {%- if db_family != "opensearch" %}
+    "database/sql"    
+    {%- endif %}           
+    {%- endif %}           
+    {%- if db_family == "oracle" %}
+    _ "github.com/godror/godror"
+    {%- elif db_family == "mysql" %}
+    _ "github.com/go-sql-driver/mysql"
+    {%- elif db_family == "psql" %}
+    _ "github.com/lib/pq"    
+    {%- elif db_family == "opensearch" %}
+    "io/ioutil"
+    {%- if deploy_type == "function" %}
+    "net/http"
+    {%- else %}
+    "encoding/json"
+    {%- endif %}
+    {%- endif %}        
+{%- endmacro -%}
+
+{% macro class_def() -%}
+{%- if db_family == "opensearch" %}
+type Result struct {
+    Hits struct {
+        Hits []struct {
+            Source struct {
+                Deptno string `json:"deptno"`
+                Dname  string `json:"dname"`
+                Loc    string `json:"loc"`
+            } `json:"_source"`
+        } `json:"hits"`
+    } `json:"hits"`
+}
+{%- endif %}        
+{%- endmacro -%}
+
+{%- macro dept() -%}
+    {%- if db_family == "none" %}
+    var d = []Dept{
+        Dept{Deptno: "10", Dname: "ACCOUNTING", Loc: "Seoul"},
+        Dept{Deptno: "20", Dname: "RESEARCH", Loc: "Cape Town"},
+        Dept{Deptno: "30", Dname: "SALES", Loc: "Brussels"},
+        Dept{Deptno: "40", Dname: "OPERATIONS", Loc: "San Francisco"},
+    }     
+    {%- elif db_family == "opensearch" -%}
+    response, err := http.Get("https://"+os.Getenv("DB_URL")+":9200/dept/_search?size=1000&scroll=1m&pretty=true")
+    if err != nil {
+        fmt.Print(err.Error())
+        os.Exit(1)
+    }
+    jsonData, err := ioutil.ReadAll(response.Body)
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+    fmt.Println(string(jsonData))
+
+    body := Result{}
+    err2 := json.Unmarshal([]byte(jsonData), &body)
+    if err2 != nil {
+        fmt.Println(err2)
+        os.Exit(1)
+    }
+    fmt.Println(body)
+    var d [] Dept;   
+    for _, hit := range body.Hits.Hits {
+        d = append(d, Dept{hit.Source.Deptno, hit.Source.Dname,hit.Source.Loc})
+    }
+    {%- else %}
+    {%- if db_family == "oracle" -%}
+    db, err := sql.Open("godror", os.Getenv("DB_USER")+"/"+os.Getenv("DB_PASSWORD")+"@"+os.Getenv("DB_URL"))
+    {%- elif db_family == "mysql" -%}
+    db, err := sql.Open("mysql", os.Getenv("DB_USER")+":"+os.Getenv("DB_PASSWORD")+"@tcp("+os.Getenv("DB_URL")+")/db1")
+    {%- elif db_family == "psql" -%}
+    psqlInfo := fmt.Sprintf("host=%s port=5432 user=%s password=%s dbname=postgres sslmode=require",
+                 os.Getenv("DB_URL"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"))
+    db, err := sql.Open("postgres", psqlInfo)    
+    {%- elif db_family == "opensearch" -%}
+    {%- endif %}
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    defer db.Close()
+     
+    rows,err := db.Query("select deptno, dname, loc from dept")
+    if err != nil {
+        fmt.Println("Error running query")
+        fmt.Println(err)
+        return
+    }
+    defer rows.Close()
+    fmt.Println(rows)
+
+    var d []Dept
+    for rows.Next() {
+        var dept=new(Dept)
+        rows.Scan(&dept.Deptno, &dept.Dname, &dept.Loc)   
+        fmt.Println(dept.Deptno, dept.Dname, dept.Loc) 
+        d = append(d, *dept)
+    }
+    {%- endif %}        
+{%- endmacro -%}

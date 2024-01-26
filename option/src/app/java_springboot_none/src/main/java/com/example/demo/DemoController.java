@@ -12,23 +12,21 @@ public class DemoController {
   private String dbUrl;
   private String dbUser;
   private String dbPassword;
-  private String dbInfo;
 
   public record Dept( int deptno, String dname, String loc ) {}; 
 
   @Autowired
   public DemoController(DbProperties properties) {
-    dbInfo = properties.getInfo();
   }
 
   @RequestMapping(value = "/dept", method = RequestMethod.GET, produces = { "application/json" })  
   public List<Dept> query() {
-    List<Dept> depts = new ArrayList<Dept>();
-    depts.add(new Dept(10, "ACCOUNTING", "Seoul" ));
-    depts.add(new Dept(20, "RESEARCH", "Cape Town" ));
-    depts.add(new Dept(30, "SALES", "Brussels"));
-    depts.add(new Dept(40, "OPERATIONS", "San Francisco"));
-    return depts;
+    List<Dept> rows = new ArrayList<Dept>();
+    rows.add(new Dept(10, "ACCOUNTING", "Seoul" ));
+    rows.add(new Dept(20, "RESEARCH", "Cape Town" ));
+    rows.add(new Dept(30, "SALES", "Brussels"));
+    rows.add(new Dept(40, "OPERATIONS", "San Francisco"));
+    return rows;
   }
 
   @RequestMapping(value = "/info", method = RequestMethod.GET, produces ={ "text/plain" })  

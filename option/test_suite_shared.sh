@@ -12,6 +12,7 @@ OPTION_TLS=none
 OPTION_GROUP_NAME=dummy
 OPTION_DB_INSTALL=default
 OPTION_SHAPE=amd
+OPTION_INFRA_AS_CODE=terraform_local
 
 # No color for terraforms logs
 export nocolorarg=1
@@ -89,14 +90,14 @@ build_test () {
     fi
     echo "RESULT INFO:                   "`cat /tmp/result.info` | cut -c 1-100
   else
-    echo "No file /tmp/result.html"
+    echo "${COLOR_RED}No file /tmp/result.html${COLOR_NONE}"
   fi
-  mv /tmp/result.html ${TEST_DIR}_result_$BUILD_ID.html
-  mv /tmp/result.json ${TEST_DIR}_result_$BUILD_ID.json
-  mv /tmp/result.info ${TEST_DIR}_result_$BUILD_ID.info
-  mv /tmp/result_html.log ${TEST_DIR}_result_html_$BUILD_ID.log
-  mv /tmp/result_json.log ${TEST_DIR}_result_json_$BUILD_ID.log
-  mv /tmp/result_info.log ${TEST_DIR}_result_info_$BUILD_ID.log
+  mv /tmp/result.html ${TEST_DIR}_result_$BUILD_ID.html 2>/dev/null;
+  mv /tmp/result.json ${TEST_DIR}_result_$BUILD_ID.json 2>/dev/null;
+  mv /tmp/result.info ${TEST_DIR}_result_$BUILD_ID.info 2>/dev/null;
+  mv /tmp/result_html.log ${TEST_DIR}_result_html_$BUILD_ID.log 2>/dev/null;
+  mv /tmp/result_json.log ${TEST_DIR}_result_json_$BUILD_ID.log 2>/dev/null;
+  mv /tmp/result_info.log ${TEST_DIR}_result_info_$BUILD_ID.log 2>/dev/null;
 
   if [ "$CSV_JSON_OK" == "1" ]; then
     test_run_100
@@ -152,13 +153,16 @@ build_option() {
   if [ "$OPTION_SHAPE" != "amd" ]; then
     NAME=${NAME}-$OPTION_SHAPE
   fi  
+  if [ "$OPTION_INFRA_AS_CODE" == "resource_manager" ]; then
+    NAME=${NAME}-rm
+  fi  
   NAME=${NAME/_/-}
   start_test $NAME
   if [ "$TEST_ERROR_ONLY" != "" ]; then
     if grep -q "$TEST_DIR" $TEST_HOME/error_rerun.sh; then
-      echo "OK - error_rerun.sh contains - $TEST_DIR" 
+      echo "FOUND in error_rerun.sh: $TEST_DIR" 
     else
-      echo "SKIP - error_rerun.sh does not contains - $TEST_DIR" 
+      echo "SKIP not in error_rerun.sh: $TEST_DIR" 
       return
     fi
   fi
@@ -176,6 +180,7 @@ build_option() {
        -db_password $TEST_DB_PASSWORD \
        -db_install $OPTION_DB_INSTALL \
        -group_common $OPTION_GROUP_NAME \
+       -infra_as_code $OPTION_INFRA_AS_CODE \
        -shape $OPTION_SHAPE \
        -tls $OPTION_TLS \
        -compartment_ocid $EX_COMPARTMENT_OCID \
@@ -187,6 +192,7 @@ build_option() {
        -db_ocid $TF_VAR_db_ocid \
        -mysql_ocid $TF_VAR_mysql_ocid \
        -psql_ocid $TF_VAR_psql_ocid \
+       -opensearch_ocid $TF_VAR_opensearch_ocid \
        -auth_token $OCI_TOKEN \
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
@@ -203,13 +209,15 @@ build_option() {
        -db_password $TEST_DB_PASSWORD \
        -db_install $OPTION_DB_INSTALL \
        -group_common $OPTION_GROUP_NAME \
+       -infra_as_code $OPTION_INFRA_AS_CODE \
        -shape $OPTION_SHAPE \
        -tls $OPTION_TLS \
        -compartment_ocid $EX_COMPARTMENT_OCID > ${TEST_DIR}.log 2>&1 
   fi
 #      -db_compartment_ocid $EX_COMPARTMENT_OCID \
 
-  if [ -d output ]; then 
+  RESULT=$?
+  if [ $RESULT -eq 0 ] && [ -d output ]; then 
     mkdir output/target
     cp $TEST_HOME/group_common/target/ssh* output/target/.
     rm -Rf $TEST_DIR
@@ -221,7 +229,8 @@ build_option() {
       build_test_destroy
     fi           
   else
-    echo "ERROR: no output directory"  
+    echo -e "${COLOR_RED}ERROR ./oci_starter.sh failed.${COLOR_NONE}"
+    echo "Check ${TEST_DIR}.log"
     echo_errors_csv
   fi  
 }
@@ -250,7 +259,7 @@ pre_test_suite() {
   git clone https://github.com/mgueury/oci-starter
 
   cd $TEST_HOME/oci-starter
-  ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
+  ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,opensearch,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
   exit_on_error
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
@@ -263,6 +272,7 @@ pre_test_suite() {
 pre_git_refresh() {
   cd $TEST_HOME/oci-starter
   git pull origin main
+  echo "----------------------------------------------" >> $TEST_HOME/error_rerun.sh
 }
 
 post_test_suite() {

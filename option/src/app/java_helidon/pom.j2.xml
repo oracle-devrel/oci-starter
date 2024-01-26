@@ -22,8 +22,16 @@
 			<groupId>{{ pomGroupId }}</groupId>
 			<artifactId>{{ pomArtifactId }}</artifactId>
             <scope>runtime</scope>
+{%- if db_family == "opensearch" %}  
+			<version>{{ pomVersion }}</version>
+{%- endif %}                
 		</dependency>  
 {%- endif %}    	
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.1.4</version>
+        </dependency>
         <dependency>
             <groupId>io.helidon.microprofile.bundles</groupId>
             <artifactId>helidon-microprofile-core</artifactId>
