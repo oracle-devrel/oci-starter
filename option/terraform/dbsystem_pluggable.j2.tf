@@ -31,7 +31,7 @@ data "oci_database_databases" "starter_dbs" {
 resource "oci_database_pluggable_database" "starter_pluggable_database" {
   #Required
   container_database_id = data.oci_database_databases.starter_dbs.databases.0.id
-  pdb_name =  "${var.prefix}pdb"
+  pdb_name =  substr("${var.prefix}pdb", 0, 29)
 
   pdb_admin_password = var.db_password
   should_pdb_admin_account_be_locked = false
