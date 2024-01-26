@@ -145,6 +145,11 @@ else
     export TF_VAR_ad=`oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r .data[0].name`
     export TF_VAR_bastion_ad=$TF_VAR_ad
   fi 
+  
+  # Base DB - version
+  if [ "$TF_VAR_db_type" == "database" ]; then
+    export TF_VAR_db_version=`oci db version list --compartment-id $TF_VAR_compartment_ocid --db-system-shape VM.Standard.E4.Flex | jq -r ".data | last | .version"`
+  fi
 
   # TLS
   if [ "$TF_VAR_dns_name" != "" ] && [ "$TF_VAR_certificate_ocid" == "" ]; then

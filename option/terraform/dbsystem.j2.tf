@@ -16,6 +16,7 @@ data "oci_database_db_homes" "starter_db_homes" {
 }
 
 {%- else %}   
+variable "db_version" {}
 
 variable n_character_set {
   default = "AL16UTF16"
@@ -37,8 +38,8 @@ resource "oci_database_db_system" "starter_dbsystem" {
       pdb_name       = "PDB1"
     }
 
-    // XXX The last version should be dynamic
-    db_version   = "23.0.0"
+    // XXX Not sure what happens when a new version is available XXX
+    db_version   = var.db_version
     display_name = "${var.prefix}home"
   }
 
