@@ -147,7 +147,7 @@ else
   fi 
   
   # Base DB - version
-  if [ "$TF_VAR_db_type" == "database" ]; then
+  if [ "$TF_VAR_db_type" == "database" ] || [ $TF_VAR_group_common != "" ]; then
     export TF_VAR_db_version=`oci db version list --compartment-id $TF_VAR_compartment_ocid --db-system-shape VM.Standard.E4.Flex | jq -r ".data | last | .version"`
   fi
 
