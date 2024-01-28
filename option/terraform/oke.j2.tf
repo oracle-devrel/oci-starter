@@ -434,6 +434,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
 #----------------------------------------------------------------------------
 # ADDONS 
 
+/*
 # Database Operator
 resource oci_containerengine_addon starter_oke_addon_dboperator {
   addon_name                       = "OracleDatabaseOperator"
@@ -454,6 +455,7 @@ resource oci_containerengine_addon starter_oke_addon_certmanager {
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
   remove_addon_resources_on_delete = "true"
 }
+*/
 
 #----------------------------------------------------------------------------
 # OUTPUTS
