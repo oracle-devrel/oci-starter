@@ -75,12 +75,14 @@ from borneo import QueryRequest
         for hit in j["hits"]["hits"]:
             a.append( {"deptno": hit["_source"]["deptno"], "dname": hit["_source"]["dname"], "loc": hit["_source"]["loc"]} )
         {%- elif db_family == "nosql" %}
-        region = os.getenv('TF_VAR_region')
-        at_provider = SignatureProvider.create_with_instance_principal(region=region)
-         config = NoSQLHandleConfig(region, at_provider)
+        provider = SignatureProvider.create_with_instance_principal()
+        config = NoSQLHandleConfig( os.getenv('TF_VAR_region'), provider )
+        config.set_default_compartment( os.getenv('TF_VAR_compartment_ocid') )
         handle = NoSQLHandle(config)
         request = QueryRequest().set_statement('select deptno, dname, loc from dept')
-        a = handle.query_iterable(request)
+        result = handle.query_iterable(request)
+        for row in result:
+            a.append(row)
         {%- endif %}
 
         {%- if db_family != "opensearch" and db_family != "nosql" %}
