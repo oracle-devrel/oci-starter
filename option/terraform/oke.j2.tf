@@ -442,6 +442,7 @@ resource oci_containerengine_addon starter_oke_addon_dboperator {
   remove_addon_resources_on_delete = "true"
 }
 
+
 # WebLogic Operator
 resource oci_containerengine_addon starter_oke_addon_wlsoperator {
   addon_name                       = "WeblogicKubernetesOperator"

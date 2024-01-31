@@ -8,6 +8,9 @@ mysql-connector-python==8.0.28
 psycopg2-binary
 {%- elif db_family == "opensearch" %}
 requests
+{%- elif db_family == "nosql" %}
+borneo
+oci
 {%- endif %}
 {%- endmacro -%}
 
@@ -20,6 +23,10 @@ import mysql.connector
 import psycopg2
 {%- elif db_family == "opensearch" %}
 import requests
+{%- elif db_family == "nosql" %}
+from borneo import NoSQLHandle, NoSQLHandleConfig, Regions
+from borneo.iam import SignatureProvider
+from borneo import QueryRequest
 {%- endif %}
 {%- endmacro -%}
 
@@ -67,9 +74,16 @@ import requests
         print(j, flush=True)
         for hit in j["hits"]["hits"]:
             a.append( {"deptno": hit["_source"]["deptno"], "dname": hit["_source"]["dname"], "loc": hit["_source"]["loc"]} )
+        {%- elif db_family == "nosql" %}
+        region = os.getenv('TF_VAR_region')
+        at_provider = SignatureProvider.create_with_instance_principal(region=region)
+         config = NoSQLHandleConfig(region, at_provider)
+        handle = NoSQLHandle(config)
+        request = QueryRequest().set_statement('select deptno, dname, loc from dept')
+        a = handle.query_iterable(request)
         {%- endif %}
 
-        {%- if db_family != "opensearch" %}
+        {%- if db_family != "opensearch" and db_family != "nosql" %}
         print("Successfully connected to database", flush=True)
         cursor = conn.cursor()
         cursor.execute("SELECT deptno, dname, loc FROM dept")
@@ -80,7 +94,7 @@ import requests
     except Exception as e:
         print(traceback.format_exc(), flush=True)
         print(e, flush=True)
-    {%- if db_family != "opensearch" %}
+    {%- if db_family != "opensearch" and db_family != "nosql" %}
     finally:
         cursor.close() 
         conn.close() 
