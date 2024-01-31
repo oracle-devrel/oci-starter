@@ -6,8 +6,8 @@
     github.com/go-sql-driver/mysql v1.7.0
     {%- elif db_family == "psql" %}
     github.com/lib/pq v1.10.9
-    {%- elif db_family == "psql" %}
-    github.com/oracle/nosql-go-sdk/nosqldb v1.4.2 
+    {%- elif db_family == "nosql" %}
+    github.com/oracle/nosql-go-sdk v1.4.2 
     {%- endif %}
 {%- endmacro -%}
 
