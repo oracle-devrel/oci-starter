@@ -15,7 +15,7 @@
     {%- if db_family != "none" %}
     "fmt"
     "os"
-    {%- if db_family != "opensearch" %}
+    {%- if db_family != "opensearch" and db_family != "nosql" %}
     "database/sql"    
     {%- endif %}           
     {%- endif %}           
@@ -89,6 +89,7 @@ type Result struct {
     {%- elif db_family == "nosql" -%}
     sp, err := iam.NewSignatureProviderWithInstancePrincipal(os.Getenv("TF_VAR_compartment_ocid"))
     if err != nil {
+        fmt.Println("NoSQL Login error")
         return
     }
     cfg := nosqldb.Config{
