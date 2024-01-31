@@ -108,7 +108,7 @@ allowed_values = {
     '-java_version': {'8', '11', '17', '21'},
     '-kubernetes': {'oke', 'docker'},
     '-ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
-    '-db_type': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'none'},
+    '-db_type': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
     '-license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
@@ -168,7 +168,7 @@ def db_rules():
             error(f'Pluggable Database needs an existing DB_OCID or PDB_OCID')
     if params.get('db_user') == None:
         default_users = {'autonomous': 'admin', 'database': 'system', 'db_free': 'system',
-                         'pluggable': 'system',  'mysql': 'root', 'psql': 'postgres', 'opensearch': '', 
+                         'pluggable': 'system',  'mysql': 'root', 'psql': 'postgres', 'opensearch': '', 'nosql': '', 
                          'none': ''}
         params['db_user'] = default_users[params['db_type']]
     if params.get('db_type')=='none':
@@ -328,13 +328,13 @@ oci-starter.sh
    -auth_token (optional)
    -bastion_ocid' (optional)
    -compartment_ocid (default tenancy_ocid)
-   -database (default atp | dbsystem | pluggable | mysql | psql | opensearch | none )
+   -database (default atp | dbsystem | pluggable | mysql | psql | opensearch | nosql | none )
    -db_ocid (optional)
    -db_password (mandatory)
    -db_user (default admin)
    -deploy (mandatory) compute | kubernetes | function | container_instance 
    -fnapp_ocid (optional)
-   -group_common (optional) atp | database | mysql | psql | opensearch | fnapp | apigw | oke | jms 
+   -group_common (optional) atp | database | mysql | psql | opensearch | nosql | fnapp | apigw | oke | jms 
    -group_name (optional)
    -java_framework (default helidon | springboot | tomcat)
    -java_version (default 21 | 17 | 11 | 8)
@@ -772,6 +772,8 @@ def create_output_dir():
             db_family = "psql"
         elif params['db_type'] == "opensearch":
             db_family = "opensearch"
+        elif params['db_type'] == "nosql":
+            db_family = "nosql"
         elif params['db_type'] == "none":
             db_family = "none"
         params['db_family'] = db_family    
@@ -925,6 +927,9 @@ def create_output_dir():
         if params.get('db_type') == "opensearch":
             cp_terraform_existing("opensearch_ocid", "opensearch.j2.tf")
 
+        if params.get('db_type') == "nosql":
+            cp_terraform_existing("nosql_ocid", "nosql.j2.tf")
+
     if os.path.exists(output_dir + "/src/app/db"):
         allfiles = os.listdir(output_dir + "/src/app/db")
         # iterate on all files to move them to destination folder
@@ -969,6 +974,9 @@ def create_group_common_dir():
 
     if "opensearch" in a_group_common:
         cp_terraform_existing("opensearch_ocid", "opensearch.j2.tf")
+
+    if "nosql" in a_group_common:
+        cp_terraform_existing("nosql_ocid", "nosql.j2.tf")
 
     if 'oke' in a_group_common:
         cp_terraform_existing("oke_ocid", "oke.j2.tf")
@@ -1036,6 +1044,9 @@ jinja2_db_params = {
         "pomVersion": "1.4.0.1",
         "jdbcDriverClassName": "org.opensearch.jdbc.Driver",
         "dbName": "OpenSearch"
+    },
+    "nosql": {
+        "dbName": "NoSQL"
     },
     "none": {
         "dbName": "No Database"
@@ -1131,7 +1142,7 @@ if 'group_common' in params:
     # Use a bastion only for the database
     if params.get('db_type')!='none':
         params['bastion_ocid'] = TO_FILL
-    to_ocid = { "atp": "atp_ocid", "database": "db_ocid", "mysql": "mysql_ocid", "psql": "psql_ocid", "opensearch": "opensearch_ocid", "oke": "oke_ocid", "fnapp": "fnapp_ocid", "apigw": "apigw_ocid", "jms": "jms_ocid", "compute": "compute_ocid"}
+    to_ocid = { "atp": "atp_ocid", "database": "db_ocid", "mysql": "mysql_ocid", "psql": "psql_ocid", "opensearch": "opensearch_ocid", "nosql": "nosql_ocid", "oke": "oke_ocid", "fnapp": "fnapp_ocid", "apigw": "apigw_ocid", "jms": "jms_ocid", "compute": "compute_ocid"}
     for x in a_group_common:
         if x in to_ocid:
             ocid = to_ocid[x]

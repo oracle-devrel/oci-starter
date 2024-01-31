@@ -7,6 +7,8 @@
     ,"pg": "^8.11.3"
     {%- elif db_family == "opensearch" %}
     ,"node-fetch": "^2.6.1"
+    {%- elif db_family == "nosql" -%}
+    ,"oracle-nosqldb": "^5.2",
     {%- endif %}        
 {%- endmacro -%}
 
@@ -19,6 +21,21 @@ const mysql = require('mysql2/promise');
 const Pool = require('pg').Pool
 {%- elif db_family == "opensearch" -%}
 const fetch = require("node-fetch");
+{%- elif db_family == "nosql" -%}
+const NoSQLClient = require('oracle-nosqldb').NoSQLClient;
+let client = createClient();
+
+function createClient() {
+    return new NoSQLClient({
+        region: process.env.TF_VAR_REGION,
+        compartment:process.env.TF_VAR_COMPARTMENT_OCID,
+        auth: {
+            iam: {
+                useInstancePrincipal: true
+            }
+        }
+    });
+}
 {%- endif %}
 {%- endmacro -%}
 
@@ -96,4 +113,14 @@ const fetch = require("node-fetch");
         rows.push({"deptno":hit._source.deptno,"dname":hit._source.dname,"loc":hit._source.loc })
     }      
 {%- endmacro -%}
+
+{% macro nosql() -%}
+    let statement = `SELECT deptno, dname, loc FROM demo`;
+    const rows = [];
+    let rs = await client.query(statement);
+    console.log(rs.rows);
+    rows.push.apply(rows, rs.rows);
+    console.log(rows);
+{%- endmacro -%}
+
 
