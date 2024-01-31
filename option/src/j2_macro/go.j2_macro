@@ -34,6 +34,8 @@
     {%- endif %}
     {%- elif db_family == "nosql" %}
     "github.com/oracle/nosql-go-sdk/nosqldb"
+    "github.com/oracle/nosql-go-sdk/nosqldb/auth/iam"
+    "github.com/oracle/nosql-go-sdk/nosqldb/common/region"
     {%- endif %}        
 {%- endmacro -%}
 
@@ -92,7 +94,7 @@ type Result struct {
     }
     cfg := nosqldb.Config{
         AuthorizationProvider: sp,
-        Region: os.Getenv("TF_VAR_region"),
+        Endpoint: os.Getenv("TF_VAR_nosql_endpoint"),
     }
     client, err := nosqldb.NewClient(cfg)
     req := &nosqldb.QueryRequest{ Statement:   "select deptno, dname, loc from dept" }
