@@ -6,6 +6,8 @@
     github.com/go-sql-driver/mysql v1.7.0
     {%- elif db_family == "psql" %}
     github.com/lib/pq v1.10.9
+    {%- elif db_family == "psql" %}
+    github.com/oracle/nosql-go-sdk/nosqldb v1.4.2 
     {%- endif %}
 {%- endmacro -%}
 
@@ -30,6 +32,8 @@
     {%- else %}
     "encoding/json"
     {%- endif %}
+    {%- elif db_family == "nosql" %}
+    "github.com/oracle/nosql-go-sdk/nosqldb"
     {%- endif %}        
 {%- endmacro -%}
 
@@ -81,6 +85,20 @@ type Result struct {
     for _, hit := range body.Hits.Hits {
         d = append(d, Dept{hit.Source.Deptno, hit.Source.Dname,hit.Source.Loc})
     }
+    {%- elif db_family == "nosql" -%}
+    sp, err := iam.NewSignatureProviderWithInstancePrincipal(os.Getenv("TF_VAR_compartment_ocid"))
+    if err != nil {
+        return
+    }
+    cfg := nosqldb.Config{
+        AuthorizationProvider: sp,
+        Region: os.Getenv("TF_VAR_region"),
+    }
+    client, err := nosqldb.NewClient(cfg)
+	req := &nosqldb.QueryRequest{ Statement:   "select deptno, dname, loc from dept" }
+    res, err := client.Query(req)
+    d, err := res.GetResults()
+    fmt.Println(d)
     {%- else %}
     {%- if db_family == "oracle" -%}
     db, err := sql.Open("godror", os.Getenv("DB_USER")+"/"+os.Getenv("DB_PASSWORD")+"@"+os.Getenv("DB_URL"))
