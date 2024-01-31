@@ -95,7 +95,7 @@ type Result struct {
         Region: os.Getenv("TF_VAR_region"),
     }
     client, err := nosqldb.NewClient(cfg)
-	req := &nosqldb.QueryRequest{ Statement:   "select deptno, dname, loc from dept" }
+    req := &nosqldb.QueryRequest{ Statement:   "select deptno, dname, loc from dept" }
     res, err := client.Query(req)
     d, err := res.GetResults()
     fmt.Println(d)
