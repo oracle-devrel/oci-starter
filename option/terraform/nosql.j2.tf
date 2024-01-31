@@ -21,7 +21,7 @@ resource "oci_identity_dynamic_group" "starter_nosql_dyngroup" {
   compartment_id = var.tenancy_ocid
   name           = "${var.prefix}-nosql-dyngroup"
   description    = "${var.prefix}-nosql-dyngroup"
-  matching_rule  = "ANY {instance.compartment.id = '${var.compartment_ocid}', ALL {resource.type = 'fnfunc', resource.compartment.id ='${var.compartment_ocid} }, ALL {resource.type = 'computecontainerinstance', resource.compartment.id ='${var.compartment_ocid} }}"
+  matching_rule  = "ANY {instance.compartment.id = '${var.compartment_ocid}', ALL {resource.type = 'fnfunc', resource.compartment.id ='${var.compartment_ocid}'}, ALL {resource.type = 'computecontainerinstance', resource.compartment.id ='${var.compartment_ocid}' }}"
   freeform_tags = local.freeform_tags
 }
 

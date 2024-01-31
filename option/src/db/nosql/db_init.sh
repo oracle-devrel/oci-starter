@@ -12,6 +12,7 @@ touch $HOME/.oci/config
 oci setup repair-file-permissions --file $HOME/.oci/config 
 
 export TF_VAR_compartment_ocid=`curl -s -H "Authorization: Bearer Oracle" -L http://169.254.169.254/opc/v2/instance/ | jq -r .compartmentId`
+export OCI_CLI_AUTH=instance_principal
 # oci nosql table create -c $TF_VAR_compartment_ocid --name dept --ddl-statement "CREATE TABLE dept(deptno LONG, dname STRING, loc STRING, PRIMARY KEY (SHARD(deptno)) ) USING TTL 1 DAYS"  --table-limits "{  \"maxReadUnits\": 50,  \"maxStorageInGBs\": 1,\"maxWriteUnits\": 1}"
 oci nosql query execute -c $TF_VAR_compartment_ocid --statement 'INSERT INTO dept (deptno, dname, loc) values (10, "ACCOUNTING", "BRUSSELS")'
 oci nosql query execute -c $TF_VAR_compartment_ocid --statement 'INSERT INTO dept (deptno, dname, loc) values (20, "RESEARCH", "NOSQL")'

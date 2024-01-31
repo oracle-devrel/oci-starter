@@ -8,7 +8,7 @@
     {%- elif db_family == "opensearch" %}
     ,"node-fetch": "^2.6.1"
     {%- elif db_family == "nosql" -%}
-    ,"oracle-nosqldb": "^5.2",
+    ,"oracle-nosqldb": "^5.2"
     {%- endif %}        
 {%- endmacro -%}
 
@@ -27,8 +27,8 @@ let client = createClient();
 
 function createClient() {
     return new NoSQLClient({
-        region: process.env.TF_VAR_REGION,
-        compartment:process.env.TF_VAR_COMPARTMENT_OCID,
+        region: process.env.TF_VAR_region,
+        compartment:process.env.TF_VAR_compartment_ocid,
         auth: {
             iam: {
                 useInstancePrincipal: true
@@ -116,12 +116,9 @@ function createClient() {
 {%- endmacro -%}
 
 {% macro nosql() -%}
-    let statement = `SELECT deptno, dname, loc FROM demo`;
-    const rows = [];
+    let statement = `SELECT deptno, dname, loc FROM dept`;
     let rs = await client.query(statement);
-    console.log(rs.rows);
-    rows.push.apply(rows, rs.rows);
-    console.log(rows);
+    let rows = rs.rows;
 {%- endmacro -%}
 
 
