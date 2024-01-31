@@ -253,11 +253,11 @@ get_user_details() {
 # Get the user interface URL
 get_ui_url() {
   if [ "$TF_VAR_deploy_type" == "compute" ]; then
-    if [ "$TF_VAR_tls" == "existing_ocid" ]; then
+    if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_tls" == "existing_ocid" ]; then
       export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     else 
       export UI_URL=http://${COMPUTE_IP}
-      if [ "$TF_VAR_certificate_ocid" != "" ]; then
+      if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
         export UI_HTTP=$UI_URL
         export UI_URL=https://${TF_VAR_dns_name}
       fi
@@ -265,20 +265,20 @@ get_ui_url() {
   elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
     get_output_from_tfstate INSTANCE_POOL_LB_IP instance_pool_lb_ip 
     export UI_URL=http://${INSTANCE_POOL_LB_IP}
-    if [ "$TF_VAR_certificate_ocid" != "" ]; then
+    if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
       export UI_HTTP=$UI_URL
       export UI_URL=https://${TF_VAR_dns_name}
     fi
   elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
     export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
     export UI_URL=http://${TF_VAR_ingress_ip}/${TF_VAR_prefix}
-    if [ "$TF_VAR_certificate_ocid" != "" ]; then
+    if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
       export UI_HTTP=$UI_URL
       export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     fi
   elif [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ]; then  
     export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
-    if [ "$TF_VAR_certificate_ocid" != "" ]; then
+    if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
       export UI_HTTP=$UI_URL
       export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     fi   
@@ -352,9 +352,9 @@ livelabs_green_button() {
     fi  
     
     # LiveLabs support only E4 Shapes
-    if grep -q '# export TF_VAR_instance_shape=VM.Standard.E4.Flex' $PROJECT_DIR/env.sh; then
-      sed -i "s&# export TF_VAR_instance_shape=&export TF_VAR_instance_shape=&" $PROJECT_DIR/env.sh
-    fi
+    # if grep -q '# export TF_VAR_instance_shape=VM.Standard.E4.Flex' $PROJECT_DIR/env.sh; then
+    #   sed -i "s&# export TF_VAR_instance_shape=&export TF_VAR_instance_shape=&" $PROJECT_DIR/env.sh
+    # fi
 
   fi
 }
