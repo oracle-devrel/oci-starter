@@ -21,17 +21,16 @@ resource "oci_identity_dynamic_group" "starter_nosql_dyngroup" {
   compartment_id = var.tenancy_ocid
   name           = "${var.prefix}-nosql-dyngroup"
   description    = "${var.prefix}-nosql-dyngroup"
-  matching_rule  = "ANY {instance.compartment.id = '${var.compartment_ocid}'}"
+  matching_rule  = "ANY {instance.compartment.id = '${var.compartment_ocid}', ALL {resource.type = 'fnfunc', resource.compartment.id ='${var.compartment_ocid} }, ALL {resource.type = 'computecontainerinstance', resource.compartment.id ='${var.compartment_ocid} }}"
   freeform_tags = local.freeform_tags
 }
 
 resource "oci_identity_policy" "starter_nosql_policy" {
-  provider       = oci.home_region
   name           = "${var.prefix}-nosql-policy"
   description    = "${var.prefix}-nosql-policy"
   compartment_id = var.compartment_ocid
   statements = [
-    "Allow dynamic-group starter_nosql_dyngroup to manage nosql-family in compartment id ${var.compartment_ocid}",
+    "Allow dynamic-group ${var.prefix}-nosql-dyngroup to manage nosql-family in compartment id ${var.compartment_ocid}",
   ]
   freeform_tags = local.freeform_tags
 }

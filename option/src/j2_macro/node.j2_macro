@@ -45,6 +45,7 @@ function createClient() {
 {%- elif db_family == "mysql" -%}{{ mysql() }}
 {%- elif db_family == "psql" -%}{{ psql() }}
 {%- elif db_family == "opensearch" -%}{{ opensearch() }}
+{%- elif db_family == "nosql" -%}{{ nosql() }}
 {%- endif -%}
 {%- endmacro -%}
 
