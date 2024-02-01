@@ -2,8 +2,9 @@
 package demo;
 
 import java.sql.*;
-import javax.json.*;
+import java.util.*;
 
+import jakarta.json.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
