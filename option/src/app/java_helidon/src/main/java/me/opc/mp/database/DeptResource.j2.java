@@ -17,7 +17,7 @@ import jakarta.ws.rs.core.MediaType;
  */
 @Path("/")
 public class DeptResource {
-    {%- if db_family != "none" and db_family != "opensearch" %}
+    {%- if db_family == "oracle" or db_family == "mysql" or db_family == "psql" %}
     @PersistenceContext(unitName = "pu1")
     private EntityManager entityManager;
     {%- endif %}	

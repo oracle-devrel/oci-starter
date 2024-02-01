@@ -4,6 +4,7 @@
 import oracle.nosql.driver.*;
 import oracle.nosql.driver.iam.*;
 import oracle.nosql.driver.ops.*;
+import oracle.nosql.driver.values.*;
 {%- endif %}       
 {%- endmacro -%}   
 
@@ -17,10 +18,10 @@ import oracle.nosql.driver.ops.*;
 {%- endmacro -%}   
 
 {% macro nosql() -%}    
+        List<Dept> rows = new ArrayList<Dept>();
         SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
-        NoSQLHandleConfig config = new NoSQLHandleConfig(); 
-        config.setDefaultCompartment( System.getenv("TF_VAR_region") );
-        config.setAuthorizationProvider(sp);
+        NoSQLHandleConfig config = new NoSQLHandleConfig( System.getenv("TF_VAR_nosql_endpoint"), authProvider); 
+        config.setDefaultCompartment( System.getenv("TF_VAR_compartment_ocid") );
         NoSQLHandle handle = NoSQLHandleFactory.createNoSQLHandle(config); 
 
         QueryRequest queryRequest = new QueryRequest().setStatement("SELECT deptno, dname, loc FROM dept");
@@ -28,9 +29,10 @@ import oracle.nosql.driver.ops.*;
         do {
           List<MapValue> results = queryResult.getResults();
           for (MapValue row : results) {
-            rows.add( new Dept( row.get("deptno"), row.get("dname"), row.get("loc")) );
+            rows.add( new Dept( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
           }
         } while (!queryRequest.isDone());
+        return rows; 
 {%- endmacro -%}   
 
 {% macro opensearch() -%}    

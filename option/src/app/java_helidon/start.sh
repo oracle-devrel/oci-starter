@@ -2,6 +2,8 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
+{% import "start_sh.j2_macro" as m with context %}
+{{ m.env() }}
 export JDBC_URL="##JDBC_URL##"
 export JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL=$JDBC_URL
 export TF_VAR_java_vm=##TF_VAR_java_vm##
