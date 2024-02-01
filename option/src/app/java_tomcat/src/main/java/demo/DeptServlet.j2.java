@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+{{ m.import() }}
 
 public record Dept( int deptno, String dname, String loc ) {}; 
 
@@ -71,7 +71,7 @@ public class DeptServlet extends HttpServlet {
 			jsonArray.add(Json.createObjectBuilder().add("deptno", row.deptno).add("dname", row.dname).add("loc", row.loc ));
 		}
 		jsonArray.build();
-		return jsonArray.toString();
+		response.getWriter().append( jsonArray.toString() );
 		{%- endif %}		
 	}
 }
