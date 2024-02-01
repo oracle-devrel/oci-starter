@@ -2,9 +2,8 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
-export JDBC_URL="##JDBC_URL##"
-export JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL=$JDBC_URL
-export TF_VAR_java_vm=##TF_VAR_java_vm##
+{% import "start_sh.j2_macro" as m with context %}
+{{ m.env() }}
 
 if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
   ./helidon -Doracle.jdbc.fanEnabled=false > app.log 2>&1 
