@@ -15,7 +15,7 @@ import oracle.nosql.driver.values.*;
         {{ m.nodb() }}
         {%- elif db_family == "opensearch" %}
         {{ m.opensearch() }}
-        {%- elif db_family == "opensearch" %}
+        {%- elif db_family == "nosql" %}
         {{ m.nosql() }}
         {%- endif %}
         return rows; 

@@ -11,6 +11,7 @@ import java.util.*;
 
 import jakarta.inject.Inject;
 import static io.micronaut.http.HttpHeaders.LOCATION;
+{{ m.import() }}
 
 @ExecuteOn(TaskExecutors.IO)  
 @Controller("/")  

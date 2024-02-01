@@ -1,3 +1,4 @@
+{% import "java.j2_macro" as m with context %}
 package demo;
 
 import java.sql.*;
