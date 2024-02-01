@@ -15,10 +15,9 @@ import static io.micronaut.http.HttpHeaders.LOCATION;
 @ExecuteOn(TaskExecutors.IO)  
 @Controller("/")  
 class DeptController {
-    {%- if db_family != "none" %}
+    {%- if db_family_type == "sql" %}
     @Inject
     DeptRepository deptRepository;
-
     {%- endif %}	
     DeptController() { 
     }
@@ -26,13 +25,10 @@ class DeptController {
     @Get(uri = "dept") 
     @Produces(MediaType.APPLICATION_JSON)
     List<Dept> dept() {
-        {%- if db_family == "none" %}
-        {{ m.nodb() }}
-        {%- elif db_family == "opensearch" %}
-        // Use a custom find to be able to specify the exact SQL command.
-        return deptRepository.findDept();
-        {%- else %}
+        {%- if db_family_type == "sql" %}
         return deptRepository.findAll();
+        {%- else %}
+        {{ m.dept_other() }}
         {%- endif %}	
     }
 

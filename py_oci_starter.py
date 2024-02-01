@@ -1018,13 +1018,16 @@ def create_group_common_dir():
 
 jinja2_db_params = {
     "oracle": { 
+        "db_family_type": "sql",
         "pomGroupId": "com.oracle.database.jdbc",
         "pomArtifactId": "ojdbc8",
         "pomVersion": "19.3.0.0",
         "jdbcDriverClassName": "oracle.jdbc.OracleDriver",
-        "dbName": "Oracle"
+        "dbName": "Oracle",
+
     },
     "mysql": { 
+        "db_family_type": "sql",
         "pomGroupId": "mysql",
         "pomArtifactId": "mysql-connector-java",
         "pomVersion": "8.0.31",
@@ -1032,6 +1035,7 @@ jinja2_db_params = {
         "dbName": "MySQL"
     },
     "psql": { 
+        "db_family_type": "sql",
         "pomGroupId": "org.postgresql",
         "pomArtifactId": "postgresql",
         "pomVersion": "42.7.0",
@@ -1039,6 +1043,7 @@ jinja2_db_params = {
         "dbName": "PostgreSQL"
     },
     "opensearch": { 
+        "db_family_type": "none",
         "pomGroupId": "org.opensearch.driver",
         "pomArtifactId": "opensearch-sql-jdbc",
         "pomVersion": "1.4.0.1",
@@ -1046,9 +1051,11 @@ jinja2_db_params = {
         "dbName": "OpenSearch"
     },
     "nosql": {
+        "db_family_type": "none",
         "dbName": "NoSQL"
     },
     "none": {
+        "db_family_type": "none",
         "dbName": "No Database"
     }
 }

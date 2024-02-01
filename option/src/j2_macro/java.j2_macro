@@ -8,17 +8,46 @@ import oracle.nosql.driver.values.*;
 {%- endif %}       
 {%- endmacro -%}   
 
-{% macro nodb() -%}    
+{% macro dept_other() -%}    
+   {%- if db_family != "sql" %}
         List<Dept> rows = new ArrayList<Dept>();
+        {%- if db_family == "none" %}
+        {{ m.nodb() }}
+        {%- elif db_family == "opensearch" %}
+        {{ m.opensearch() }}
+        {%- elif db_family == "opensearch" %}
+        {{ m.nosql() }}
+        {%- endif %}
+        return rows; 
+   {%- endif %}
+{%- endmacro -%}   
+
+{% macro nodb() -%}    
         rows.add(new Dept(10, "ACCOUNTING", "Seoul" ));
         rows.add(new Dept(20, "RESEARCH", "Cape Town" ));
         rows.add(new Dept(30, "SALES", "Brussels"));
         rows.add(new Dept(40, "OPERATIONS", "San Francisco"));
-        return rows; 
+{%- endmacro -%}   
+
+{% macro opensearch() -%}    
+        String s=System.getenv("JDBC_URL");
+        String db_url=s.substring(s.indexOf("https://")+8,s.indexOf(":9200"));
+        URL url = new URL("https://"+db_url+":9200/dept/_search?size=1000&scroll=1m&pretty=true");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+        String body = br.lines().collect(Collectors.joining());
+        conn.disconnect();
+
+        JsonObject jsonObject = Json.createReader(new StringReader(body)).readObject();
+        JsonArray hitsArray = jsonObject.getJsonObject("hits").getJsonArray("hits");   
+        for (JsonObject hit : hitsArray.getValuesAs(JsonObject.class)) {
+            JsonObject source = hit.getJsonObject("_source");
+            rows.add(new Dept(Integer.valueOf(source.getString("deptno")), source.getString("dname"), source.getString("loc") ));
+        }
 {%- endmacro -%}   
 
 {% macro nosql() -%}    
-        List<Dept> rows = new ArrayList<Dept>();
         SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
         NoSQLHandleConfig config = new NoSQLHandleConfig( System.getenv("TF_VAR_nosql_endpoint"), authProvider); 
         config.setDefaultCompartment( System.getenv("TF_VAR_compartment_ocid") );
@@ -32,25 +61,4 @@ import oracle.nosql.driver.values.*;
             rows.add( new Dept( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
           }
         } while (!queryRequest.isDone());
-        return rows; 
-{%- endmacro -%}   
-
-{% macro opensearch() -%}    
-        String s=System.getenv("JDBC_URL");
-        String db_url=s.substring(s.indexOf("https://")+8,s.indexOf(":9200"));
-        URL url = new URL("https://"+db_url+":9200/dept/_search?size=1000&scroll=1m&pretty=true");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-        String body = br.lines().collect(Collectors.joining());
-        conn.disconnect();
-
-        List<Dept> rows = new ArrayList<Dept>();
-        JsonObject jsonObject = Json.createReader(new StringReader(body)).readObject();
-        JsonArray hitsArray = jsonObject.getJsonObject("hits").getJsonArray("hits");   
-        for (JsonObject hit : hitsArray.getValuesAs(JsonObject.class)) {
-            JsonObject source = hit.getJsonObject("_source");
-            rows.add(new Dept(Integer.valueOf(source.getString("deptno")), source.getString("dname"), source.getString("loc") ));
-        }
-        return rows;
 {%- endmacro -%}   

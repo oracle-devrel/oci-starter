@@ -17,7 +17,7 @@ import jakarta.ws.rs.core.MediaType;
  */
 @Path("/")
 public class DeptResource {
-    {%- if db_family == "oracle" or db_family == "mysql" or db_family == "psql" %}
+    {%- if db_family_type == "sql" %}
     @PersistenceContext(unitName = "pu1")
     private EntityManager entityManager;
     {%- endif %}	
@@ -26,14 +26,10 @@ public class DeptResource {
     @Path("dept")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dept> getDept() throws Exception {
-        {%- if db_family == "none" %}
-        {{ m.nodb() }}
-        {%- elif db_family == "opensearch" %}
-        {{ m.opensearch() }}
-        {%- elif db_family == "nosql" %}
-        {{ m.nosql() }}        
-        {%- else %}
+        {%- if db_family_type == "sql" %}
         return entityManager.createNamedQuery("getDept", Dept.class).getResultList();
+        {%- else %}
+        {{ m.dept_other() }}
         {%- endif %}	
     }
 
