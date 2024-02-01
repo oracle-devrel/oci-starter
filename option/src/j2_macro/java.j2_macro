@@ -10,6 +10,12 @@ import oracle.nosql.driver.values.*;
 
 {% macro dept_other() -%}    
    {%- if db_family != "sql" %}
+        dept_other_no_return()
+        return rows; 
+   {%- endif %}
+{%- endmacro -%}   
+
+{% macro dept_other_no_return() -%}    
         List<Dept> rows = new ArrayList<Dept>();
         {%- if db_family == "none" %}
         {{ nodb() }}
@@ -18,9 +24,7 @@ import oracle.nosql.driver.values.*;
         {%- elif db_family == "nosql" %}
         {{ nosql() }}
         {%- endif %}
-        return rows; 
-   {%- endif %}
-{%- endmacro -%}   
+{%- endmacro -%}  
 
 {% macro nodb() -%}    
         rows.add(new Dept(10, "ACCOUNTING", "Seoul" ));

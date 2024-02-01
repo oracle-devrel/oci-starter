@@ -64,14 +64,13 @@ public class DeptServlet extends HttpServlet {
 		   ] 
 		   """);   
         */
-		List<Dept> rows = new ArrayList<Dept>();
-		{{ m.dept_other() }}
-		JsonArray jsonArray = Json.createArrayBuilder();
+		{{ m.dept_other_no_return() }}
+		JsonArray builder = Json.createArrayBuilder();
 		for(Dept row : rows) {
-			jsonArray.add(Json.createObjectBuilder().add("deptno", row.deptno).add("dname", row.dname).add("loc", row.loc ));
+			builder.add(Json.createObjectBuilder().add("deptno", row.deptno).add("dname", row.dname).add("loc", row.loc ));
 		}
-		jsonArray.build();
-		response.getWriter().append( jsonArray.toString() );
+		builder.build();
+		response.getWriter().append( builder.toString() );
 		{%- endif %}		
 	}
 }
