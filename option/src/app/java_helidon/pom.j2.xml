@@ -17,7 +17,13 @@
     </properties>
 
     <dependencies>
-{%- if db_family != "none" %}  
+{%- if db_family == "nosql" %}  
+        <dependency>
+            <groupId>com.oracle.nosql.sdk</groupId>
+            <artifactId>nosqldriver</artifactId>
+            <version>5.4.14</version>
+        </dependency>
+{%- elif db_family != "none" %}  
 		<dependency>
 			<groupId>{{ pomGroupId }}</groupId>
 			<artifactId>{{ pomArtifactId }}</artifactId>

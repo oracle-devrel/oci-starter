@@ -1,4 +1,7 @@
 // NoSQL
+// See https://docs.oracle.com/en/cloud/paas/nosql-cloud/dtddt/#GUID-BF198255-AA9E-4BA2-9849-D5C2E5B57ED9
+//     https://docs.oracle.com/en/cloud/paas/nosql-cloud/uxxxx/#articletitle
+
 {%- if nosql_ocid is defined %}
 // Existing
 

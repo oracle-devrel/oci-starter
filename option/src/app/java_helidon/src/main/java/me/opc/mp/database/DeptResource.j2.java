@@ -10,6 +10,7 @@ import javax.json.*;
 import jakarta.persistence.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+{{ m.import() }}
 
 /**
  * Dept Table 
@@ -29,6 +30,8 @@ public class DeptResource {
         {{ m.nodb() }}
         {%- elif db_family == "opensearch" %}
         {{ m.opensearch() }}
+        {%- elif db_family == "nosql" %}
+        {{ m.nosql() }}        
         {%- else %}
         return entityManager.createNamedQuery("getDept", Dept.class).getResultList();
         {%- endif %}	

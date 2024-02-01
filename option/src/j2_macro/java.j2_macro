@@ -1,3 +1,12 @@
+
+{% macro import() -%}    
+{%- if db_family == "nosql" -%}
+import oracle.nosql.driver.*;
+import oracle.nosql.driver.iam.*;
+import oracle.nosql.driver.ops.*;
+{%- endif %}       
+{%- endmacro -%}   
+
 {% macro nodb() -%}    
         List<Dept> rows = new ArrayList<Dept>();
         rows.add(new Dept(10, "ACCOUNTING", "Seoul" ));
@@ -7,6 +16,22 @@
         return rows; 
 {%- endmacro -%}   
 
+{% macro nosql() -%}    
+        SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
+        NoSQLHandleConfig config = new NoSQLHandleConfig(); 
+        config.setDefaultCompartment( System.getenv("TF_VAR_region") );
+        config.setAuthorizationProvider(sp);
+        NoSQLHandle handle = NoSQLHandleFactory.createNoSQLHandle(config); 
+
+        QueryRequest queryRequest = new QueryRequest().setStatement("SELECT deptno, dname, loc FROM dept");
+        QueryResult queryResult = handle.query(queryRequest);
+        do {
+          List<MapValue> results = queryResult.getResults();
+          for (MapValue row : results) {
+            rows.add( new Dept( row.get("deptno"), row.get("dname"), row.get("loc")) );
+          }
+        } while (!queryRequest.isDone());
+{%- endmacro -%}   
 
 {% macro opensearch() -%}    
         String s=System.getenv("JDBC_URL");
