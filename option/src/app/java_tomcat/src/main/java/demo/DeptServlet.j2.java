@@ -30,27 +30,7 @@ public class DeptServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		{%- if db_family == "none" %}		
-		/*
-		response.getWriter().append("""
-			[ 
-			   { "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"},
-			   { "deptno": "20", "dname": "RESEARCH", "loc": "Cape Town"},
-			   { "deptno": "30", "dname": "SALES", "loc": "Brussels"},
-			   { "deptno": "40", "dname": "OPERATIONS", "loc": "San Francisco"}
-		   ] 
-		   """);   
-        */
-		List<Dept> rows = new ArrayList<Dept>();
-		{{ m.none() }}
-		JsonArray jsonArray = Json.createArrayBuilder();
-		for(Dept row : rows) {
-			jsonArray.add(Json.createObjectBuilder().add("deptno", row.deptno).add("dname", row.dname).add("loc", row.loc ));
-		}
-		jsonArray.build();
-		return jsonArray.toString();
-
-		{%- else %}		
+		{%- if db_family_type == "sql" %}		
 		int counter = 0;
 		StringBuffer sb = new StringBuffer();
 		sb.append("[");
@@ -73,6 +53,25 @@ public class DeptServlet extends HttpServlet {
 		}
 		sb.append("]");
 		response.getWriter().append(sb);
+		{%- else %}		
+		/*
+		response.getWriter().append("""
+			[ 
+			   { "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"},
+			   { "deptno": "20", "dname": "RESEARCH", "loc": "Cape Town"},
+			   { "deptno": "30", "dname": "SALES", "loc": "Brussels"},
+			   { "deptno": "40", "dname": "OPERATIONS", "loc": "San Francisco"}
+		   ] 
+		   """);   
+        */
+		List<Dept> rows = new ArrayList<Dept>();
+		{{ m.dept() }}
+		JsonArray jsonArray = Json.createArrayBuilder();
+		for(Dept row : rows) {
+			jsonArray.add(Json.createObjectBuilder().add("deptno", row.deptno).add("dname", row.dname).add("loc", row.loc ));
+		}
+		jsonArray.build();
+		return jsonArray.toString();
 		{%- endif %}		
 	}
 }
