@@ -12,11 +12,11 @@ import oracle.nosql.driver.values.*;
    {%- if db_family != "sql" %}
         List<Dept> rows = new ArrayList<Dept>();
         {%- if db_family == "none" %}
-        {{ m.nodb() }}
+        {{ nodb() }}
         {%- elif db_family == "opensearch" %}
-        {{ m.opensearch() }}
+        {{ opensearch() }}
         {%- elif db_family == "nosql" %}
-        {{ m.nosql() }}
+        {{ nosql() }}
         {%- endif %}
         return rows; 
    {%- endif %}
