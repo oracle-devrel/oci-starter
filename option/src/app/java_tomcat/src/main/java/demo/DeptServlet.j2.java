@@ -2,6 +2,7 @@
 package demo;
 
 import java.sql.*;
+import javax.json.*;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,6 +10,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+
+public record Dept( int deptno, String dname, String loc ) {}; 
 
 /**
  * Servlet implementation class DeptServlet
@@ -27,6 +31,7 @@ public class DeptServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		{%- if db_family == "none" %}		
+		/*
 		response.getWriter().append("""
 			[ 
 			   { "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"},
@@ -35,6 +40,16 @@ public class DeptServlet extends HttpServlet {
 			   { "deptno": "40", "dname": "OPERATIONS", "loc": "San Francisco"}
 		   ] 
 		   """);   
+        */
+		List<Dept> rows = new ArrayList<Dept>();
+		{{ m.none() }}
+		JsonArray jsonArray = Json.createArrayBuilder();
+		for(Dept row : rows) {
+			jsonArray.add(Json.createObjectBuilder().add("deptno", row.deptno).add("dname", row.dname).add("loc", row.loc ));
+		}
+		jsonArray.build();
+		return jsonArray.toString();
+
 		{%- else %}		
 		int counter = 0;
 		StringBuffer sb = new StringBuffer();
