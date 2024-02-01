@@ -64,7 +64,7 @@ public class DeptServlet extends HttpServlet {
 		   """);   
         */
 		{{ m.dept_other_no_return() }}
-		JsonArray builder = Json.createArrayBuilder();
+		JsonArrayBuilder builder = Json.createArrayBuilder();
 		for(Dept row : rows) {
 			builder.add(Json.createObjectBuilder().add("deptno", row.deptno()).add("dname", row.dname()).add("loc", row.loc()));
 		}
