@@ -1,3 +1,4 @@
+{% import "java.j2_macro" as m with context %}
 package com.example.demo;
 
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +19,16 @@ public class DemoController {
 
   @Autowired
   public DemoController(DbProperties properties) {
-    dbInfo = properties.getInfo();
+    {%- if db_family_type == "sql" %}
     dbUrl = System.getenv("JDBC_URL");
     dbUser = System.getenv("DB_USER");
     dbPassword = System.getenv("DB_PASSWORD");
+    {%- endif %}
   }
 
   @RequestMapping(value = "/dept", method = RequestMethod.GET, produces = { "application/json" })  
   public List<Dept> query() {
+    {%- if db_family_type == "sql" %}
     List<Dept> rows = new ArrayList<Dept>();
     try {
       Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -41,6 +44,9 @@ public class DemoController {
       System.err.println(e.getMessage());
     }
     return rows;
+    {%- else %}
+    {{ m.dept_other() }}
+    {%- endif %}	
   }
 
   @RequestMapping(value = "/info", method = RequestMethod.GET, produces ={ "text/plain" })  
