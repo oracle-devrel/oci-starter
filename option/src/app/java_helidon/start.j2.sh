@@ -4,7 +4,6 @@ cd $SCRIPT_DIR
 
 {% import "start_sh.j2_macro" as m with context %}
 {{ m.env() }}
-export JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL=$JDBC_URL
 
 if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
   ./helidon -Doracle.jdbc.fanEnabled=false > app.log 2>&1 

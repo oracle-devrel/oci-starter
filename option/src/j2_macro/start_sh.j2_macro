@@ -13,7 +13,7 @@ export TF_VAR_nosql_endpoint="nosql.${TF_VAR_region}.oci.${regionDomain}"
 export DB_USER="##DB_USER##"
 export DB_PASSWORD="##DB_PASSWORD##"
 export JDBC_URL="##JDBC_URL##"
-{%- if java_framework == "helidon" or java_framework == "helidon4" -%}
+{%- if java_framework == "helidon" or java_framework == "helidon4" %}
 export JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL=$JDBC_URL
 {%- endif %}
 {%- else -%}
