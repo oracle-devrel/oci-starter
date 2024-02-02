@@ -56,6 +56,8 @@ loop_db() {
     loop_shape
     OPTION_DB=opensearch
     loop_shape
+    OPTION_DB=nosql
+    loop_shape
   fi  
   OPTION_DB=none
   loop_shape
