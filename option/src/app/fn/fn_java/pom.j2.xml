@@ -12,13 +12,8 @@
     <version>1.0.0</version>
 
     <dependencies>
-{%- if db_family !="none" %}  
-		<dependency>
-			<groupId>{{ pomGroupId }}</groupId>
-			<artifactId>{{ pomArtifactId }}</artifactId>
-            <version>{{ pomVersion }}</version>
-		</dependency>  
-{%- endif %}        
+        {% import "java.j2_macro" as m with context %}
+        {{ m.dependencies() }}
         <dependency>
             <groupId>com.fnproject.fn</groupId>
             <artifactId>api</artifactId>

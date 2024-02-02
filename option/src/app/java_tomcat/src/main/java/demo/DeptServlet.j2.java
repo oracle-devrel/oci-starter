@@ -2,7 +2,6 @@
 package demo;
 
 import java.sql.*;
-import java.util.*;
 
 import com.fasterxml.jackson.databind.*;
 import jakarta.servlet.ServletException;

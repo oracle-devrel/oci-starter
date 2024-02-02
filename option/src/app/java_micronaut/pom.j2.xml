@@ -32,22 +32,9 @@
   </repositories>
 
   <dependencies>
-{%- if db_family == "nosql" %}  
-    <dependency>
-      <groupId>com.oracle.nosql.sdk</groupId>
-      <artifactId>nosqldriver</artifactId>
-      <version>5.4.14</version>
-    </dependency>  
-{%- elif db_family !="none" %}  
-		<dependency>
-			<groupId>{{ pomGroupId }}</groupId>
-			<artifactId>{{ pomArtifactId }}</artifactId>
-			<scope>runtime</scope>
-{%- if db_family == "opensearch" %}  
-			<version>{{ pomVersion }}</version>
-{%- endif %}   
-		</dependency>  
-{%- endif %}     
+    {% import "java.j2_macro" as m with context %}
+    {{ m.dependencies() }}
+
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-http-server-netty</artifactId>
@@ -167,5 +154,3 @@
     </plugins>
   </build>
 </project>
-
-

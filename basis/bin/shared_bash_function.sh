@@ -107,7 +107,7 @@ error_exit() {
   echo
   LEN=${#BASH_LINENO[@]}
   printf "%-40s %-10s %-20s\n" "STACK TRACE"  "LINE" "FUNCTION"
-  for (( INDEX=0; INDEX<$LEN; INDEX++ ))
+  for (( INDEX=${LEN}-1; INDEX>=0; INDEX--))
   do
      printf "   %-37s %-10s %-20s\n" ${BASH_SOURCE[${INDEX}]#$PROJECT_DIR/}  ${BASH_LINENO[$(($INDEX-1))]} ${FUNCNAME[${INDEX}]}
   done

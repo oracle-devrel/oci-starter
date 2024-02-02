@@ -1,11 +1,7 @@
 {% import "java.j2_macro" as m with context %}
 package me.opc.mp.database;
 
-import java.util.*;
-import java.util.stream.*;
-import java.io.*;
-import java.net.*;
-import javax.json.*;
+import jakarta.json.*;
 
 import jakarta.persistence.*;
 import jakarta.ws.rs.*;
