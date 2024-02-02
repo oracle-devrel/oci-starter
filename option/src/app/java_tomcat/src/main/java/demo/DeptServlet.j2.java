@@ -4,7 +4,7 @@ package demo;
 import java.sql.*;
 import java.util.*;
 
-import jakarta.json.*;
+import com.fasterxml.jackson.databind.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -64,12 +64,11 @@ public class DeptServlet extends HttpServlet {
 		   """);   
         */
 		{{ m.dept_other_no_return() }}
-		JsonArrayBuilder builder = Json.createArrayBuilder();
-		for(Dept row : rows) {
-			builder.add(Json.createObjectBuilder().add("deptno", row.deptno()).add("dname", row.dname()).add("loc", row.loc()));
-		}
-		builder.build();
-		response.getWriter().append( builder.toString() );
+		// Jackson is included per default in Tomcat
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rows);
+		System.out.println(json);
+		response.getWriter().append( json );
 		{%- endif %}		
 	}
 }
