@@ -8,14 +8,14 @@ import oracle.nosql.driver.values.*;
 {%- endif %}       
 {%- endmacro -%}   
 
-{% macro dept_other() -%}    
+{% macro dept() -%}    
    {%- if db_family != "sql" %}
-        {{ dept_other_no_return() }}
+        {{ dept_no_return() }}
         return rows; 
    {%- endif %}
 {%- endmacro -%}   
 
-{% macro dept_other_no_return() -%}    
+{% macro dept_no_return() -%}    
         List<Dept> rows = new ArrayList<Dept>();
         {%- if db_family_type == "sql" %}
         {{ sql() }}        
