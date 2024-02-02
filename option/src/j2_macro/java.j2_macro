@@ -15,29 +15,29 @@ import java.util.stream.*;
 
 {% macro dependencies() -%}
 {%- if db_family == "nosql" %}  
-        <dependency>
-            <groupId>com.oracle.nosql.sdk</groupId>
-            <artifactId>nosqldriver</artifactId>
-            <version>5.4.14</version>
-        </dependency>
+      <dependency>
+        <groupId>com.oracle.nosql.sdk</groupId>
+        <artifactId>nosqldriver</artifactId>
+        <version>5.4.14</version>
+      </dependency>
 {%- elif db_family != "none" %}  
-        <dependency>
-            <groupId>{{ pomGroupId }}</groupId>
-            <artifactId>{{ pomArtifactId }}</artifactId>
-            <version>{{ pomVersion }}</version>
-        </dependency>  
-{%- endif %}        
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
-            <version>1.1.4</version>
-        </dependency>
+      <dependency>
+        <groupId>{{ pomGroupId }}</groupId>
+        <artifactId>{{ pomArtifactId }}</artifactId>
+        <version>{{ pomVersion }}</version>
+      </dependency>  
+{%- endif %}
+      <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.json</artifactId>
+        <version>1.1.4</version>
+      </dependency>
 {%- endmacro -%}  
 
 {% macro dept() -%}
    {%- if db_family != "sql" %}
-        {{ dept_no_return() }}
-        return rows; 
+      {{ dept_no_return() }}
+      return rows; 
    {%- endif %}
 {%- endmacro -%}
 
