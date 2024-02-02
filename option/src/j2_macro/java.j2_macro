@@ -10,7 +10,7 @@ import oracle.nosql.driver.values.*;
 
 {% macro dept_other() -%}    
    {%- if db_family != "sql" %}
-        dept_other_no_return()
+        {{ dept_other_no_return() }}
         return rows; 
    {%- endif %}
 {%- endmacro -%}   
