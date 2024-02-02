@@ -36,8 +36,8 @@ import java.util.stream.*;
 
 {% macro dept() -%}
    {%- if db_family != "sql" %}
-      {{ dept_no_return() }}
-      return rows; 
+        {{ dept_no_return() }}
+        return rows; 
    {%- endif %}
 {%- endmacro -%}
 
