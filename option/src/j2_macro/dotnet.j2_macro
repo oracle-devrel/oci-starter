@@ -5,6 +5,8 @@
       <PackageReference Include="MySql.Data" Version="8.0.31" />
       {%- elif db_family == "psql" %}
       <PackageReference Include="Npgsql" Version="8.0.1" />
+      {%- elif db_family == "nosql" %}
+      <PackageReference Include="Oracle.NoSQL.SDK" Version="5.2.0" />      
       {%- endif %}
 {%- endmacro -%}
 
@@ -17,9 +19,10 @@ using MySql.Data.MySqlClient;
 using Npgsql;
 {%- elif db_family == "opensearch" %}
 using System.Text.Json;
+{%- elif db_family == "nosql" %}
+using Oracle.NoSQL.SDK;
 {%- endif %}        
 {%- endmacro -%}
-
 
 {% macro class_def() -%}
 {%- if db_family == "opensearch" %}
@@ -79,6 +82,24 @@ using System.Text.Json;
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
+        }
+    {%- elif db_family == "nosql" %}
+        var client = new NoSQLClient(
+            {
+                Region= Environment.GetEnvironmentVariable("TF_VAR_region"),
+                Compartment=Environment.GetEnvironmentVariable("TF_VAR_compartment_ocid"),
+                AuthorizationProvider=IAMAuthorizationProvider.CreateWithInstancePrincipal()
+            });
+        try {
+            var result = await client.QueryAsync(
+            "SELECT deptno, dname, loc FROM dept");
+            foreach (var row in result.Rows )
+            {
+                a.Add(row);
+            }
+        }
+        catch(Exception ex) {
             Console.WriteLine(ex.Message);
         }
     {%- else %}
