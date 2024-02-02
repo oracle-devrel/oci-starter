@@ -30,45 +30,13 @@ public class DeptServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		{%- if db_family_type == "sql" %}		
-		int counter = 0;
-		StringBuffer sb = new StringBuffer();
-		sb.append("[");
-		try {
-			Class.forName("{{ jdbcDriverClassName }}");
-			Connection conn = DriverManager.getConnection(System.getenv("JDBC_URL"), System.getenv("DB_USER"),
-					System.getenv("DB_PASSWORD"));
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT deptno, dname, loc FROM dept");
-			while (rs.next()) {
-				if (counter++ > 0) {
-					sb.append(",");
-				}
-				sb.append("{\"deptno\": \"" + rs.getInt(1) + "\", \"dname\": \"" + rs.getString(2) + "\", \"loc\": \""
-						+ rs.getString(3) + "\"}");
-			}
-		} catch (Exception e) {
-			System.err.println("Exception:" + e.getMessage());
-			e.printStackTrace();
-		}
-		sb.append("]");
-		response.getWriter().append(sb);
-		{%- else %}		
-		/*
-		response.getWriter().append("""
-			[ 
-			   { "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"},
-			   { "deptno": "20", "dname": "RESEARCH", "loc": "Cape Town"},
-			   { "deptno": "30", "dname": "SALES", "loc": "Brussels"},
-			   { "deptno": "40", "dname": "OPERATIONS", "loc": "San Francisco"}
-		   ] 
-		   """);   
-        */
-		{{ m.dept_other_no_return() }}
-		// Jackson is included per default in Tomcat
+		Class.forName("{{ jdbcDriverClassName }}");	
+		{%- endif %}		
+		{{ m.dept_no_return() }}
+		// Jackson 
 		ObjectMapper objectMapper = new ObjectMapper();
 		String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rows);
 		System.out.println(json);
 		response.getWriter().append( json );
-		{%- endif %}		
 	}
 }

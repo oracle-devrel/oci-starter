@@ -29,7 +29,7 @@ public class DeptResource {
         {%- if db_family_type == "sql" %}
         return entityManager.createNamedQuery("getDept", Dept.class).getResultList();
         {%- else %}
-        {{ m.dept_other() }}
+        {{ m.dept() }}
         {%- endif %}	
     }
 

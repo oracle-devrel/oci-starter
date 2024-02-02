@@ -16,8 +16,6 @@ import static io.micronaut.http.HttpHeaders.LOCATION;
 @ExecuteOn(TaskExecutors.IO)  
 @Controller("/")  
 class DeptController {
-    public record Dept( int deptno, String dname, String loc ) {}; 
-
     {%- if db_family_type == "sql" %}
     @Inject
     DeptRepository deptRepository;
@@ -31,7 +29,7 @@ class DeptController {
         {%- if db_family_type == "sql" %}
         return deptRepository.findAll();
         {%- else %}
-        {{ m.dept_other() }}
+        {{ m.dept() }}
         {%- endif %}	
     }
 
