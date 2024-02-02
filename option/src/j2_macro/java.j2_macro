@@ -2,14 +2,15 @@
 {% macro import() -%}    
 import java.io.*;
 import java.util.*;
-{%- if db_family == "nosql" -%}
+{%- if db_family == "nosql" %}
 import oracle.nosql.driver.*;
 import oracle.nosql.driver.iam.*;
 import oracle.nosql.driver.ops.*;
 import oracle.nosql.driver.values.*;
-{%- elif db_family == "opensearch" -%}
+{%- elif db_family == "opensearch" %}
 import java.net.*;
 import java.util.stream.*;
+import javax.json.*;
 {%- endif %}       
 {%- endmacro -%}   
 

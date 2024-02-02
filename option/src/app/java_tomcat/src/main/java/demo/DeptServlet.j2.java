@@ -26,8 +26,7 @@ public class DeptServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		{%- if db_family_type == "sql" %}		
 		Class.forName("{{ jdbcDriverClassName }}");	
 		{%- endif %}		
