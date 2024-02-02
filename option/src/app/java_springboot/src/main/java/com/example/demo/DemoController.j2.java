@@ -18,7 +18,7 @@ public class DemoController {
   }
 
   @RequestMapping(value = "/dept", method = RequestMethod.GET, produces = { "application/json" })  
-  public List<Dept> query() {
+  public List<Dept> query() throws Exception {
     {{ m.dept() }}
   }
 

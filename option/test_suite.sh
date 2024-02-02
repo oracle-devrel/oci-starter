@@ -56,8 +56,11 @@ loop_db() {
     loop_shape
     OPTION_DB=opensearch
     loop_shape
-    OPTION_DB=nosql
-    loop_shape
+    # NoSQL has no PHP Support
+    if [ "$OPTION_LANG" != "php" ]; then
+      OPTION_DB=nosql
+      loop_shape
+    fi 
   fi  
   OPTION_DB=none
   loop_shape
@@ -103,6 +106,7 @@ loop_lang () {
   else
     loop_java_framework
   fi
+  # OCI Function has no PHP support
   if [ "$OPTION_DEPLOY" != "function" ]; then
     OPTION_LANG=php
     loop_db

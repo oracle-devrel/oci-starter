@@ -90,7 +90,7 @@ build_test () {
     fi
     echo "RESULT INFO:                   "`cat /tmp/result.info` | cut -c 1-100
   else
-    echo "${COLOR_RED}No file /tmp/result.html${COLOR_NONE}"
+    echo -e "${COLOR_RED}No file /tmp/result.html${COLOR_NONE}"
   fi
   mv /tmp/result.html ${TEST_DIR}_result_$BUILD_ID.html 2>/dev/null;
   mv /tmp/result.json ${TEST_DIR}_result_$BUILD_ID.json 2>/dev/null;
