@@ -85,18 +85,18 @@ using Oracle.NoSQL.SDK;
             Console.WriteLine(ex.Message);
         }
     {%- elif db_family == "nosql" %}
-        var client = new NoSQLClient(
-            {
-                Region= Environment.GetEnvironmentVariable("TF_VAR_region"),
+        var client = new NoSQLClient( new NoSQLConfig{
+                Endpoint=Environment.GetEnvironmentVariable("TF_VAR_nosql_endpoint"),
                 Compartment=Environment.GetEnvironmentVariable("TF_VAR_compartment_ocid"),
                 AuthorizationProvider=IAMAuthorizationProvider.CreateWithInstancePrincipal()
             });
         try {
-            var result = await client.QueryAsync(
-            "SELECT deptno, dname, loc FROM dept");
+            var task = Task.Run(() => client.QueryAsync("SELECT deptno, dname, loc FROM dept"));
+            task.Wait();
+            var result = task.Result;
             foreach (var row in result.Rows )
             {
-                a.Add(row);
+                a.Add( new Dept{ deptno = row.GetValueAtIndex(0).AsInt64.ToString(), dname = row.GetValueAtIndex(1).AsString, loc = row.GetValueAtIndex(2).AsString } );
             }
         }
         catch(Exception ex) {
