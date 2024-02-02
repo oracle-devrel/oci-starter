@@ -1021,7 +1021,7 @@ jinja2_db_params = {
         "db_family_type": "sql",
         "pomGroupId": "com.oracle.database.jdbc",
         "pomArtifactId": "ojdbc8",
-        "pomVersion": "19.3.0.0",
+        "pomVersion": "21.11.0.0",
         "jdbcDriverClassName": "oracle.jdbc.OracleDriver",
         "dbName": "Oracle",
 
