@@ -135,7 +135,7 @@ else
 
   if [ "$TF_VAR_db_type" == "nosql" ]; then
     // XXXX Incorrect need the regionDomain
-    export TF_VAR_nosql_endpoint="https://nosql.${TF_VAR_region}.oci.oraclecloud.com/"
+    export TF_VAR_nosql_endpoint="nosql.${TF_VAR_region}.oci.oraclecloud.com"
   fi
 
   # OpenAPI Spec
