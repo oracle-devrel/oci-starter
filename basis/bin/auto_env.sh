@@ -133,7 +133,7 @@ else
     export KUBECONFIG=$TARGET_DIR/kubeconfig_starter
   fi
 
-  if [ -f $TF_VAR_db_type == "nosql" ]; then
+  if [ "$TF_VAR_db_type" == "nosql" ]; then
     // XXXX Incorrect need the regionDomain
     export TF_VAR_nosql_endpoint="https://nosql.${TF_VAR_region}.oci.oraclecloud.com/"
   fi
