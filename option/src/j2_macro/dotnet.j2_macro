@@ -88,7 +88,11 @@ using Oracle.NoSQL.SDK;
         var client = new NoSQLClient( new NoSQLConfig{
                 Endpoint=Environment.GetEnvironmentVariable("TF_VAR_nosql_endpoint"),
                 Compartment=Environment.GetEnvironmentVariable("TF_VAR_compartment_ocid"),
+                {%- if deploy_type in ["compute", "instance_pool"] -%}
                 AuthorizationProvider=IAMAuthorizationProvider.CreateWithInstancePrincipal()
+                {%- else -%}
+                AuthorizationProvider=IAMAuthorizationProvider.CreateWithResourcePrincipal()
+                {%- endif -%}                
             });
         try {
             var task = Task.Run(() => client.QueryAsync("SELECT deptno, dname, loc FROM dept"));

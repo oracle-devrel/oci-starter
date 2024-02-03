@@ -87,7 +87,11 @@ type Result struct {
         d = append(d, Dept{hit.Source.Deptno, hit.Source.Dname,hit.Source.Loc})
     }
     {%- elif db_family == "nosql" -%}
+    {%- if deploy_type in ["compute", "instance_pool"] -%}
     sp, err := iam.NewSignatureProviderWithInstancePrincipal(os.Getenv("TF_VAR_compartment_ocid"))
+    {%- else -%}
+    sp, err := iam.NewSignatureProviderWithResourcePrincipal(os.Getenv("TF_VAR_compartment_ocid"))
+    {%- endif -%}
     if err != nil {
         fmt.Println("NoSQL Login error")
         return
@@ -100,6 +104,8 @@ type Result struct {
     req := &nosqldb.QueryRequest{ Statement:   "select deptno, dname, loc from dept" }
     res, err := client.Query(req)
     d, err := res.GetResults()
+    {%- elif db_family == "nosql" %}
+
     {%- else %}
     {%- if db_family == "oracle" -%}
     db, err := sql.Open("godror", os.Getenv("DB_USER")+"/"+os.Getenv("DB_PASSWORD")+"@"+os.Getenv("DB_URL"))

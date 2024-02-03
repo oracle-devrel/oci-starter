@@ -21,11 +21,11 @@ import javax.json.*;
         <artifactId>nosqldriver</artifactId>
         <version>5.4.14</version>
       </dependency>
-{%- elif db_family != "none" %}  
+{%- elif db_family_type == "sql" %}  
       <dependency>
         <groupId>{{ pomGroupId }}</groupId>
         <artifactId>{{ pomArtifactId }}</artifactId>
-        {%- if language != "java" and java_framework != "springboot" %}
+        {%- if language != "java" or java_framework != "springboot" or deploy_type == "function" %}
         <version>{{ pomVersion }}</version>
         {%- endif %}
       </dependency>  
@@ -99,7 +99,11 @@ import javax.json.*;
 {%- endmacro -%}   
 
 {% macro nosql() -%}    
+        {%- if deploy_type in ["compute", "instance_pool"] -%}
         SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
+        {%- else -%}
+        SignatureProvider authProvider = SignatureProvider.createWithResourcePrincipal();
+        {%- endif -%}
         NoSQLHandleConfig config = new NoSQLHandleConfig( System.getenv("TF_VAR_nosql_endpoint"), authProvider); 
         config.setDefaultCompartment( System.getenv("TF_VAR_compartment_ocid") );
         NoSQLHandle handle = NoSQLHandleFactory.createNoSQLHandle(config); 

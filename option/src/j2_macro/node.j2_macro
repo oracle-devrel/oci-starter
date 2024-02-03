@@ -31,7 +31,11 @@ function createClient() {
         compartment:process.env.TF_VAR_compartment_ocid,
         auth: {
             iam: {
+                {%- if deploy_type in ["compute", "instance_pool"] -%}
                 useInstancePrincipal: true
+                {%- else -%}
+                useResourcePrincipal: true
+                {%- endif -%}   
             }
         }
     });

@@ -75,7 +75,11 @@ from borneo import QueryRequest
         for hit in j["hits"]["hits"]:
             a.append( {"deptno": hit["_source"]["deptno"], "dname": hit["_source"]["dname"], "loc": hit["_source"]["loc"]} )
         {%- elif db_family == "nosql" %}
+        {%- if deploy_type in ["compute", "instance_pool"] -%}
         provider = SignatureProvider.create_with_instance_principal()
+        {%- else -%}
+        provider = SignatureProvider.create_with_resource_principal()
+        {%- endif -%}        
         config = NoSQLHandleConfig( os.getenv('TF_VAR_region'), provider )
         config.set_default_compartment( os.getenv('TF_VAR_compartment_ocid') )
         handle = NoSQLHandle(config)
