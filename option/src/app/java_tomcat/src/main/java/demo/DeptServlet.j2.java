@@ -27,19 +27,7 @@ public class DeptServlet extends HttpServlet {
     *      response)
     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-        {%- if db_family_type == "sql" %}        
-        Class.forName("{{ jdbcDriverClassName }}");    
-        {%- endif %}        
-        {{ m.dept_no_return() }}
-        // Jackson 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rows);
-        System.out.println(json);
+        {{ m.dept_string() }}
         response.getWriter().append( json );
-        } catch (Exception e) {
-            System.err.println("Exception:" + e.getMessage());
-            e.printStackTrace();
-        }        
     }
 }

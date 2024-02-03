@@ -133,6 +133,11 @@ else
     export KUBECONFIG=$TARGET_DIR/kubeconfig_starter
   fi
 
+  if [ -f $TF_VAR_db_type == "nosql" ]; then
+    // XXXX Incorrect need the regionDomain
+    export TF_VAR_nosql_endpoint="https://nosql.${TF_VAR_region}.oci.oraclecloud.com/"
+  fi
+
   # OpenAPI Spec
   if [ -f $PROJECT_DIR/src/app/openapi_spec.yaml ]; then
     export TF_VAR_openapi_spec=$(cat $PROJECT_DIR/src/app/openapi_spec.yaml)

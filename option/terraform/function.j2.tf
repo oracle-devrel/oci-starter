@@ -64,6 +64,11 @@ resource "oci_functions_function" "starter_fn_function" {
     DB_URL      = var.fn_db_url,
     DB_USER     = var.db_user,
     DB_PASSWORD = var.db_password,
+    {%- if db_type == "nosql" %} 
+    TF_VAR_compartment_ocid = var.compartment_ocid,
+    TF_VAR_region = var.region,
+    TF_VAR_nosql_endpoint = var.nosql_endpoint,
+    {%- endif %}     
   }
   #Optional
   timeout_in_seconds = "300"

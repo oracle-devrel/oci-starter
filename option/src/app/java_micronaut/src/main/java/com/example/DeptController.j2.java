@@ -24,12 +24,16 @@ class DeptController {
 
     @Get(uri = "dept") 
     @Produces(MediaType.APPLICATION_JSON)
-    List<Dept> dept() {
+    List<Dept> dept() throws Exception {
         {%- if db_family_type == "sql" %}
         return deptRepository.findAll();
         {%- else %}
         {{ m.dept() }}
         {%- endif %}	
+        } catch (Exception e) {
+            System.err.println("Exception:" + e.getMessage());
+            e.printStackTrace();
+        }     
     }
 
     @Get(uri = "info") 
