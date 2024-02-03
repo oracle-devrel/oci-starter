@@ -10,6 +10,6 @@ public class HelloFunction {
 
     public String handleRequest(String input) {
         {{ m.dept_string() }}
-        response.getWriter().append( json );
+        return json;
     }
 }
