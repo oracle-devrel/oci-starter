@@ -27,7 +27,7 @@ let client = createClient();
 
 function createClient() {
     return new NoSQLClient({
-        region: process.env.TF_VAR_region,
+        endpoint: process.env.TF_VAR_nosql_endpoint,
         compartment:process.env.TF_VAR_compartment_ocid,
         auth: {
             iam: {

@@ -14,7 +14,7 @@ variable "oke_shape" {
   default = "VM.Standard.E3.Flex"
 }
 
-variable "node_pool_node_config_details_size" {
+variable "node_pool_size" {
     default = 1
 }
 
@@ -398,11 +398,11 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
   compartment_id     = local.lz_appdev_cmp_ocid
   kubernetes_version = data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions[length(data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions)-1]
   name               = "${var.prefix}-pool"
-	node_shape         = var.oke_shape
-	node_shape_config {
-		memory_in_gbs = "32"
-		ocpus = "1"
-	}
+  node_shape         = var.oke_shape
+  node_shape_config {
+    memory_in_gbs = "32"
+    ocpus = "1"
+  }
 
   node_source_details {
     #Required

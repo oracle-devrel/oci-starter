@@ -30,7 +30,6 @@ resource oci_container_instances_container_instance starter_container_instance {
       {%- endif %} 
       {%- if db_type == "nosql" %} 
       "TF_VAR_compartment_ocid" = var.compartment_ocid,
-      "TF_VAR_region" = var.region,
       "TF_VAR_nosql_endpoint" = var.nosql_endpoint,
       {%- endif %} 
     }    
