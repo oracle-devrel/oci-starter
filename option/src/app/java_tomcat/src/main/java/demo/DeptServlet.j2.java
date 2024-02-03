@@ -16,25 +16,30 @@ import java.io.IOException;
  * Servlet implementation class DeptServlet
  */
 public class DeptServlet extends HttpServlet {
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public DeptServlet() {
-	}
+    /**
+    * @see HttpServlet#HttpServlet()
+    */
+    public DeptServlet() {
+    }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		{%- if db_family_type == "sql" %}		
-		Class.forName("{{ jdbcDriverClassName }}");	
-		{%- endif %}		
-		{{ m.dept_no_return() }}
-		// Jackson 
-		ObjectMapper objectMapper = new ObjectMapper();
-		String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rows);
-		System.out.println(json);
-		response.getWriter().append( json );
-	}
+    /**
+    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+    *      response)
+    */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+        {%- if db_family_type == "sql" %}        
+        Class.forName("{{ jdbcDriverClassName }}");    
+        {%- endif %}        
+        {{ m.dept_no_return() }}
+        // Jackson 
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rows);
+        System.out.println(json);
+        response.getWriter().append( json );
+        } catch (Exception e) {
+            System.err.println("Exception:" + e.getMessage());
+            e.printStackTrace();
+        }        
+    }
 }

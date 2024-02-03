@@ -25,7 +25,7 @@ import javax.json.*;
       <dependency>
         <groupId>{{ pomGroupId }}</groupId>
         <artifactId>{{ pomArtifactId }}</artifactId>
-        {%- if language != "java" or java_framework != "springboot" or deploy_type == "function" %}
+        {%- if java_framework != "springboot" or deploy_type == "function" %}
         <version>{{ pomVersion }}</version>
         {%- endif %}
       </dependency>  
