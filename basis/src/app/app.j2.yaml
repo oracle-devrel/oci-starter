@@ -48,7 +48,7 @@ spec:
             secretKeyRef:
               name: {{ prefix }}-db-secret
               key: db_url
-{%- endif %}        
+{%- endif %}      
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -63,6 +63,18 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP              
+{%- if db_type == "nosql" %}
+        - name: TF_VAR_compartment_ocid
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: TF_VAR_compartment_ocid
+        - name: TF_VAR_nosql_endpoint
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: TF_VAR_nosql_endpoint
+{%- endif %}  
       imagePullSecrets:
       - name: ocirsecret        
 ---

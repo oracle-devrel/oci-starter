@@ -118,7 +118,7 @@ import javax.json.*;
 {% macro nosql() -%}    
         System.out.println( "TF_VAR_compartment_ocid=" + System.getenv("TF_VAR_compartment_ocid") );
         System.out.println( "TF_VAR_nosql_endpoint=" + System.getenv("TF_VAR_nosql_endpoint") );
-        {%- if deploy_type in ["compute", "instance_pool"] %}
+        {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
         SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
         {%- else %}
         SignatureProvider authProvider = SignatureProvider.createWithResourcePrincipal();
