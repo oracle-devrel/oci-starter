@@ -24,11 +24,6 @@ if [ ! -z "$UI_URL" ]; then
       kubectl get all
       sleep 5
     fi
-    if [ "$TF_VAR_deploy_type" == "compute" ]; then
-      # Get the compute logs
-      scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:/home/opc/*.log target/.
-      scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:/home/opc/app/*.log target/.
-    fi 
 
     # Retry several time. Needed for ORDS or Go or Tomcat that takes more time to start
     x=1
@@ -57,6 +52,12 @@ if [ ! -z "$UI_URL" ]; then
       rm /tmp/cookie.txt
     fi  
     curl $UI_URL/app/info -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_info.log > /tmp/result.info
+
+    if [ "$TF_VAR_deploy_type" == "compute" ]; then
+      # Get the compute logs
+      scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:/home/opc/*.log target/.
+      scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:/home/opc/app/*.log target/.
+    fi 
   fi
   if [ "$TF_VAR_ui_type" != "api" ]; then
     echo - User Interface: $UI_URL/
