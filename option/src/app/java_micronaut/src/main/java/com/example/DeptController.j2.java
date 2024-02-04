@@ -35,6 +35,6 @@ class DeptController {
     @Get(uri = "info") 
     @Produces(MediaType.TEXT_PLAIN)
     String info() {
-        return "Java - Micronaut / {{ dbName }}";
+        return "Java - Micronaut - {{ dbName }}";
     }
 }

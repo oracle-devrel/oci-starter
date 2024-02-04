@@ -28,15 +28,6 @@ spec:
             secretKeyRef:
               name: {{ prefix }}-db-secret
               key: jdbc_url
-{%- else %}        
-{%- if java_framework == "springboot" %}
-        - name: SPRING_APPLICATION_JSON
-          valueFrom:
-            secretKeyRef:
-              name: {{ prefix }}-db-secret
-              key: spring_application_json
-{%- endif %}        
-{%- endif %}
         - name: JDBC_URL
           valueFrom:
             secretKeyRef:

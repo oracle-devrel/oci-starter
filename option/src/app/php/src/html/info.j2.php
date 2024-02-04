@@ -1,1 +1,1 @@
-<?php echo ("PHP / {{ dbName }}"); ?> 
+<?php echo ("PHP - {{ dbName }}"); ?> 

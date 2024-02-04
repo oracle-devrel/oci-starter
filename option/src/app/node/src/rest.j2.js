@@ -5,7 +5,7 @@ const port = 8080
 {{ m.import() }}
 
 app.get('/info', (req, res) => {
-    res.send('NodeJS - Express / {{ dbName }}')
+    res.send('NodeJS - Express - {{ dbName }}')
 })
 
 app.get('/dept', async (req, res) => {

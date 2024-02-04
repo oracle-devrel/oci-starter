@@ -31,6 +31,6 @@ public class DeptResource {
     @Path("info")
     @Produces(MediaType.TEXT_PLAIN)
     public String getInfo() {
-        return "Java - Helidon / {{ dbName }}";
+        return "Java - Helidon - {{ dbName }}";
     }
 }
