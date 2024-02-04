@@ -64,7 +64,11 @@ resource "oci_functions_function" "starter_fn_function" {
   image          = var.fn_image
   memory_in_mbs  = "2048"
   config = {
+    {%- if db_family_type == "sql" %} 
+    JDBC_URL      = var.fn_db_url,
+    {%- else %}     
     DB_URL      = var.fn_db_url,
+    {%- endif %}     
     DB_USER     = var.db_user,
     DB_PASSWORD = var.db_password,
     {%- if db_type == "nosql" %} 

@@ -87,6 +87,7 @@ import javax.json.*;
             conn.close();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
+            e.printStackTrace();
         }
 {%- endmacro -%}  
 
