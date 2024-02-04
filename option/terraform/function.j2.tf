@@ -52,6 +52,9 @@ locals {
 {%- if group_name is not defined %}
 variable "fn_image" { default = "" }
 variable "fn_db_url" { default = "" }
+{%- if db_type == "nosql" %} 
+variable nosql_endpoint {}
+{%- endif %} 
 
 resource "oci_functions_function" "starter_fn_function" {
   #Required
