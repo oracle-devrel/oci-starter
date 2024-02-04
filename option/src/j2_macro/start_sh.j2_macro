@@ -8,7 +8,7 @@ curl -s -H "Authorization: Bearer Oracle" -L http://169.254.169.254/opc/v2/insta
 export TF_VAR_compartment_ocid=`cat /tmp/instance.json | jq -r .compartmentId`
 export region=`cat /tmp/instance.json | jq -r .region`
 export regionDomain=`cat /tmp/instance.json | jq -r .regionInfo.realmDomainComponent`
-export TF_VAR_nosql_endpoint="nosql.${TF_VAR_region}.oci.${regionDomain}"
+export TF_VAR_nosql_endpoint="nosql.${region}.oci.${regionDomain}"
 {%- elif language == "java" -%}
 export DB_USER="##DB_USER##"
 export DB_PASSWORD="##DB_PASSWORD##"
