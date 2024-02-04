@@ -54,7 +54,7 @@ spec:
         - name: POD_IP
           valueFrom:
             fieldRef:
-              fieldPath: status.podIP       
+              fieldPath: status.podIP
 {%- if db_type == "nosql" %}
         - name: TF_VAR_compartment_ocid
           valueFrom:
@@ -66,7 +66,7 @@ spec:
             secretKeyRef:
               name: {{ prefix }}-db-secret
               key: TF_VAR_nosql_endpoint
-{%- endif %}                       
+{%- endif %}
       imagePullSecrets:
       - name: ocirsecret        
 ---
