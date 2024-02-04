@@ -88,7 +88,7 @@ type Result struct {
         d = append(d, Dept{hit.Source.Deptno, hit.Source.Dname,hit.Source.Loc})
     }
     {%- elif db_family == "nosql" -%}
-    {%- if deploy_type in ["compute", "instance_pool"] %}
+    {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
     sp, err := iam.NewSignatureProviderWithInstancePrincipal(os.Getenv("TF_VAR_compartment_ocid"))
     {%- else %}
     sp, err := iam.NewSignatureProviderWithResourcePrincipal(os.Getenv("TF_VAR_compartment_ocid"))
