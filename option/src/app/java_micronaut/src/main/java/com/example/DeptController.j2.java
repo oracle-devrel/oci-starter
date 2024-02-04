@@ -29,11 +29,7 @@ class DeptController {
         return deptRepository.findAll();
         {%- else %}
         {{ m.dept() }}
-        {%- endif %}	
-        } catch (Exception e) {
-            System.err.println("Exception:" + e.getMessage());
-            e.printStackTrace();
-        }     
+        {%- endif %}	   
     }
 
     @Get(uri = "info") 

@@ -1,8 +1,6 @@
 {% import "java.j2_macro" as m with context %}
 package me.opc.mp.database;
 
-import jakarta.json.*;
-
 import jakarta.persistence.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
