@@ -3,6 +3,7 @@ package com.example.fn;
 
 import com.fnproject.fn.api.RuntimeContext;
 import java.sql.*;
+import com.fasterxml.jackson.databind.*;
 {{ m.import() }}
 
 public class HelloFunction {
