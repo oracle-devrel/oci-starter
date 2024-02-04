@@ -35,6 +35,7 @@
     {%- elif db_family == "nosql" %}
     "github.com/oracle/nosql-go-sdk/nosqldb"
     "github.com/oracle/nosql-go-sdk/nosqldb/auth/iam"
+    "github.com/oracle/nosql-go-sdk/nosqldb/types"
     {%- endif %}        
 {%- endmacro -%}
 
@@ -101,11 +102,24 @@ type Result struct {
         Endpoint: os.Getenv("TF_VAR_nosql_endpoint"),
     }
     client, err := nosqldb.NewClient(cfg)
-    req := &nosqldb.QueryRequest{ Statement:   "select deptno, dname, loc from dept" }
-    res, err := client.Query(req)
-    d, err := res.GetResults()
-    {%- elif db_family == "nosql" %}
-
+    queryReq := &nosqldb.QueryRequest{ Statement: "select deptno, dname, loc from dept" }
+    var d []*types.MapValue
+    for {
+        queryRes, err := client.Query(queryReq)
+        if err != nil {
+            fmt.Printf("Query failed: %v\n", err)
+            return
+        }
+        res, err := queryRes.GetResults()
+        if err != nil {
+            fmt.Printf("GetResults() failed: %v\n", err)
+            return
+        }
+        d = append(d, res...)
+        if queryReq.IsDone() {
+            break
+        }
+    }
     {%- else %}
     {%- if db_family == "oracle" -%}
     db, err := sql.Open("godror", os.Getenv("DB_USER")+"/"+os.Getenv("DB_PASSWORD")+"@"+os.Getenv("DB_URL"))
