@@ -82,6 +82,9 @@ from borneo import QueryRequest
         {%- endif %}        
         config = NoSQLHandleConfig( os.getenv('TF_VAR_nosql_endpoint'), provider )
         config.set_default_compartment( os.getenv('TF_VAR_compartment_ocid') )
+        {%- if deploy_type == "function" %}
+        config.set_logger( None )
+        {%- endif %}        
         handle = NoSQLHandle(config)
         request = QueryRequest().set_statement('select deptno, dname, loc from dept')
         result = handle.query_iterable(request)
