@@ -112,7 +112,7 @@ function createClient() {
     const response = await fetch(url);
     const j = await response.json();
     console.log(j);
-    rows = [];
+    let rows = [];
     for (i in j.hits.hits) {
         hit = j.hits.hits[i]
         rows.push({"deptno":hit._source.deptno,"dname":hit._source.dname,"loc":hit._source.loc })
@@ -120,9 +120,16 @@ function createClient() {
 {%- endmacro -%}
 
 {% macro nosql() -%}
-    let statement = `SELECT deptno, dname, loc FROM dept`;
-    let rs = await client.query(statement);
-    let rows = rs.rows;
+    let rows = [];
+    const opt = {};
+    do {
+        const result = await client.query('SELECT deptno, dname, loc FROM dept', opt);
+        for(let row of result.rows) {
+            rows.push( row );
+        }
+        opt.continuationKey = result.continuationKey;
+    } while(opt.continuationKey);
+
 {%- endmacro -%}
 
 

@@ -87,9 +87,11 @@ from borneo import QueryRequest
         {%- endif %}        
         handle = NoSQLHandle(config)
         request = QueryRequest().set_statement('select deptno, dname, loc from dept')
-        result = handle.query_iterable(request)
-        for row in result:
-            a.append(row)
+        while True: 
+            result = handle.query(request)
+            for row in result:
+                a.append(row)
+            if request.is_done(): break        
         {%- endif %}
 
         {%- if db_family != "opensearch" and db_family != "nosql" %}

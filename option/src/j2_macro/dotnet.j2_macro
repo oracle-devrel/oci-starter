@@ -96,13 +96,17 @@ using Oracle.NoSQL.SDK;
                 {%- endif %}                
             });
         try {
-            var task = Task.Run(() => client.QueryAsync("SELECT deptno, dname, loc FROM dept"));
-            task.Wait();
-            var result = task.Result;
-            foreach (var row in result.Rows )
-            {
-                a.Add( new Dept{ deptno = row.GetValueAtIndex(0).AsInt32.ToString(), dname = row.GetValueAtIndex(1).AsString, loc = row.GetValueAtIndex(2).AsString } );
+            var options = new QueryOptions();
+            do {
+                var task = Task.Run(() => var result = await client.QueryAsync("SELECT id, name FROM users ORDER BY name", options);
+                task.Wait();
+                var result = task.Result;
+                foreach(var row of result.Rows) {
+                    a.Add( new Dept{ deptno = row.GetValueAtIndex(0).AsInt32.ToString(), dname = row.GetValueAtIndex(1).AsString, loc = row.GetValueAtIndex(2).AsString } );
+                }
+                options.ContinuationKey = result.ContinuationKey;
             }
+            while(options.ContinuationKey != null);
         }
         catch(Exception ex) {
             Console.WriteLine(ex.Message);
