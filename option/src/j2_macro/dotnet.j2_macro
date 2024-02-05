@@ -98,10 +98,10 @@ using Oracle.NoSQL.SDK;
         try {
             var options = new QueryOptions();
             do {
-                var task = Task.Run(() => var result = await client.QueryAsync("select deptno, dname, loc from dept", options));
+                var task = Task.Run(() => client.QueryAsync("select deptno, dname, loc from dept", options));
                 task.Wait();
                 var result = task.Result;
-                foreach(var row of result.Rows) {
+                foreach(var row in result.Rows) {
                     a.Add( new Dept{ deptno = row.GetValueAtIndex(0).AsInt32.ToString(), dname = row.GetValueAtIndex(1).AsString, loc = row.GetValueAtIndex(2).AsString } );
                 }
                 options.ContinuationKey = result.ContinuationKey;
