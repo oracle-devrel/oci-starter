@@ -419,7 +419,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
       #optional
       fault_domains = ["FAULT-DOMAIN-1", "FAULT-DOMAIN-3"]
     }
-    size = var.node_pool_node_config_details_size
+    size = var.node_pool_size
 
     # node_pool_pod_network_option_details {
     #   cni_type = "OCI_VCN_IP_NATIVE"
