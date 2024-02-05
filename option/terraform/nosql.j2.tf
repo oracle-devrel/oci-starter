@@ -37,11 +37,9 @@ resource "oci_identity_policy" "starter_nosql_policy" {
   ]
   freeform_tags = local.freeform_tags
 }
-
 {%- endif %}  
 
 {%- if group_name is not defined %}
-// XXXX to remove
 locals {
     db_host = "none"
     db_url = "none"

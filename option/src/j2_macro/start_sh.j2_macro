@@ -1,5 +1,4 @@
 {%- macro env() %}
-
 {%- if language == "java" -%}
 export TF_VAR_java_vm=##TF_VAR_java_vm##
 {%- endif %}
