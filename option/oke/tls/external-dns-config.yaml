@@ -1,0 +1,5 @@
+auth:
+  region: ##REGION##
+  useWorkloadIdentity: true
+compartment: ##COMPARMENT_OCID##
+

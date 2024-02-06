@@ -13,10 +13,14 @@ if [ ! -f $KUBECONFIG ]; then
  
   # Deploy Latest ingress-nginx
   kubectl create clusterrolebinding starter_clst_adm --clusterrole=cluster-admin --user=$TF_VAR_user_ocid
-  LATEST_INGRESS_CONTROLLER=`curl --silent "https://api.github.com/repos/kubernetes/ingress-nginx/releases/latest" | jq -r .name`
-  echo LATEST_INGRESS_CONTROLLER=$LATEST_INGRESS_CONTROLLER
-  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$LATEST_INGRESS_CONTROLLER/deploy/static/provider/cloud/deploy.yaml
-  
+  # LATEST_INGRESS_CONTROLLER=`curl --silent "https://api.github.com/repos/kubernetes/ingress-nginx/releases/latest" | jq -r .name`
+  # echo LATEST_INGRESS_CONTROLLER=$LATEST_INGRESS_CONTROLLER
+  # kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$LATEST_INGRESS_CONTROLLER/deploy/static/provider/cloud/deploy.yaml
+  helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
+   --namespace ingress-nginx \
+   --create-namespace \
+   --set controller.enableExternalDNS=true 
+
   # Wait for the deployment
   echo "Waiting for Ingress Controller Pods..."
   kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=600s
@@ -55,6 +59,22 @@ if [ "$ORDS_URL" != "" ]; then
   sed -i "s&##ORDS_HOST##&$ORDS_HOST&" $TARGET_DIR/app.yaml
   sed -i "s&##ORDS_HOST##&$ORDS_HOST&" $TARGET_DIR/ingress-app.yaml
 fi 
+
+# External DNS, create it just once
+if [ -f "src/oke/tls/external-dns-config.yaml" ] && [ ! -f "$TARGET_DIR/external-dns-config.yaml"]; then
+  # ccm-letsencrypt-prod.yaml
+  sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-prod.yaml > $TARGET_DIR/ccm-letsencrypt-prod
+  # external-dns.yaml
+  sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns.yaml > $TARGET_DIR/external-dns.yaml
+  sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns.yaml > $TARGET_DIR/external-dns-config.yaml
+  # external-dns-config.yaml
+  sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls//external-dns-config.yaml > $TARGET_DIR/external-dns-config.yaml
+  # apply
+  kubectl apply -f $TARGET_DIR/ccm-letsencrypt-prod.yaml
+  kubectl create secret generic external-dns-config --from-file=$TARGET_DIR/external-dns-config.yaml
+  kubectl apply -f $TARGET_DIR/external-dns.yaml
+fi 
+
 
 # delete the old pod, just to be sure a new image is pulled
 kubectl delete pod ${TF_VAR_prefix}-ui --ignore-not-found=true

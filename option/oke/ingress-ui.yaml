@@ -4,6 +4,8 @@ metadata:
   name: ##PREFIX##-ui-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2   
+    # cert-manager.io/issuer: "letsencrypt-prod"
+    # external-dns.alpha.kubernetes.io/hostname: ingress-external-dns2.oracloud.be 
 spec:
   ingressClassName: nginx
   rules:
