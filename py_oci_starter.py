@@ -885,7 +885,7 @@ def create_output_dir():
 
     if params.get('tls'):
         cp_terraform("tls.j2.tf")
-        if params.get('deploy_type') == 'kubernetes':
+        if params.get('deploy_type') == 'kubernetes' and params.get('tls') != 'new_http_01':
             cp_terraform_apigw("apigw_kubernetes_tls_append.tf")   
 
     if os.path.exists(output_dir + "/src/app/openapi_spec_append.yaml"):

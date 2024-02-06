@@ -12,11 +12,13 @@ locals {
 {%- endif %}       
 }
 
-{%- if deploy_type == "kubernetes" and tls == "new_http_01" %}  
-# Todo: Maybe add a test the OKE_OCID is not defined ?
-#       Better use Workload Access Principal - https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contenggrantingworkloadaccesstoresources.htm
-# This is needed for External DNS
+{%- if deploy_type == "kubernetes" and tls == "new_http_01" %}
+{%- if oke_ocid is defined %}
+# Policy defined in group_common
+{%- else %}
+# Todo: Better use Workload Access Principal - https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contenggrantingworkloadaccesstoresources.htm
 
+# This is needed for External DNS
 resource "oci_identity_dynamic_group" "starter_instance_dyngroup" {
   compartment_id = var.tenancy_ocid
   name           = "${var.prefix}-instance-dyngroup"
@@ -35,6 +37,7 @@ resource "oci_identity_policy" "oke_tls_policy" {
     "Allow any-user to manage dns in compartment id ${var.compartment_ocid} where all {request.principal.type='workload',request.principal.cluster_id='${local.oke_ocid}',request.principal.service_account='external-dns'}"
   ]
 }
+{%- endif %}
 {%- else %}  
 resource "oci_dns_rrset" "starter_rrset" {
     # XXXX Advanced case with DNS not in OCI XXXX ?
