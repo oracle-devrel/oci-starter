@@ -9,6 +9,12 @@ metadata:
     # nginx.ingress.kubernetes.io/session-cookie-path: "/"    
 spec:
   ingressClassName: nginx
+{%- if tls == "new_http_01" %}     
+  tls:
+  - hosts:
+    - ##DNS_NAME##
+    secretName: ##PREFIX##-tls-secret  
+{%- endif %}      
   rules:
     - http:
         paths:
