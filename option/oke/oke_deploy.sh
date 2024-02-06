@@ -24,14 +24,15 @@ if [ ! -f $KUBECONFIG ]; then
 
     # ccm-letsencrypt-prod.yaml
     sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-prod.yaml > $TARGET_DIR/ccm-letsencrypt-prod
+    kubectl apply -f $TARGET_DIR/ccm-letsencrypt-prod.yaml
+
+    # external-dns-config.yaml
+    sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls//external-dns-config.yaml > $TARGET_DIR/external-dns-config.yaml
+    kubectl create secret generic external-dns-config --from-file=$TARGET_DIR/external-dns-config.yaml
+
     # external-dns.yaml
     sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns.yaml > $TARGET_DIR/external-dns.yaml
     sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns.yaml > $TARGET_DIR/external-dns-config.yaml
-    # external-dns-config.yaml
-    sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls//external-dns-config.yaml > $TARGET_DIR/external-dns-config.yaml
-    # apply
-    kubectl apply -f $TARGET_DIR/ccm-letsencrypt-prod.yaml
-    kubectl create secret generic external-dns-config --from-file=$TARGET_DIR/external-dns-config.yaml
     kubectl apply -f $TARGET_DIR/external-dns.yaml
   else
     helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
@@ -76,10 +77,6 @@ if [ "$ORDS_URL" != "" ]; then
   ORDS_HOST=`basename $(dirname $ORDS_URL)`
   sed -i "s&##ORDS_HOST##&$ORDS_HOST&" $TARGET_DIR/app.yaml
   sed -i "s&##ORDS_HOST##&$ORDS_HOST&" $TARGET_DIR/ingress-app.yaml
-fi 
-
-# External DNS, create it just once
-if [ "$TF_VAR_tls" == "new_http_01" ]; then
 fi 
 
 # delete the old pod, just to be sure a new image is pulled
