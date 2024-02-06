@@ -16,4 +16,6 @@ spec:
     solvers:
       - http01:
           ingress:
-            ingressClassName: nginx
+            class: nginx
+            # in 1.13
+            # ingressClassName: nginx

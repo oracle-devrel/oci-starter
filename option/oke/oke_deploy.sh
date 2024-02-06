@@ -23,8 +23,10 @@ if [ ! -f $KUBECONFIG ]; then
     --set controller.enableExternalDNS=true 
 
     # ccm-letsencrypt-prod.yaml
-    sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-prod.yaml > $TARGET_DIR/ccm-letsencrypt-prod
+    sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-prod.yaml > $TARGET_DIR/ccm-letsencrypt-prod.yaml
     kubectl apply -f $TARGET_DIR/ccm-letsencrypt-prod.yaml
+    sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-staging.yaml > $TARGET_DIR/ccm-letsencrypt-staging.yaml
+    kubectl apply -f $TARGET_DIR/ccm-letsencrypt-staging.yaml
 
     # external-dns-config.yaml
     sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls//external-dns-config.yaml > $TARGET_DIR/external-dns-config.yaml
@@ -71,6 +73,13 @@ fi
 sed "s&##DOCKER_PREFIX##&${DOCKER_PREFIX}&" src/app/app.yaml > $TARGET_DIR/app.yaml
 sed "s&##DOCKER_PREFIX##&${DOCKER_PREFIX}&" src/ui/ui.yaml > $TARGET_DIR/ui.yaml
 cp src/oke/ingress-app.yaml $TARGET_DIR/ingress-app.yaml
+cp src/oke/ingress-ui.yaml $TARGET_DIR/ingress-ui.yaml
+
+# TLS - Domain Name
+if [ "$TF_VAR_tls" == "new_http_01" ]; then
+  sed -i "s&##DOMAIN_NAME##&$TF_VAR_domain_name&" $TARGET_DIR/ingress-app.yaml
+  sed -i "s&##DOMAIN_NAME##&$TF_VAR_domain_name&" $TARGET_DIR/ingress-ui.yaml
+fi
 
 # If present, replace the ORDS URL
 if [ "$ORDS_URL" != "" ]; then
@@ -89,5 +98,5 @@ kubectl wait --for=delete deployment/${TF_VAR_prefix}-dep --timeout=30s
 kubectl apply -f $TARGET_DIR/app.yaml
 kubectl apply -f $TARGET_DIR/ui.yaml
 kubectl apply -f $TARGET_DIR/ingress-app.yaml
-kubectl apply -f src/oke/ingress-ui.yaml
+kubectl apply -f $TARGET_DIR/ingress-ui.yaml
 
