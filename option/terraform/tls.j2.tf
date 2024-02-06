@@ -7,6 +7,8 @@ locals {
   dns_ip = local.compute_public_ip
 {%- elif deploy_type == "instance_pool" %}  
   dns_ip = local.instance_pool_lb_ip
+{%- elif deploy_type == "kubernetes" and tls == "new_http_01" %}
+# No Locals
 {%- else %}  
   dns_ip = local.apigw_ip
 {%- endif %}       
