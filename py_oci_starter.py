@@ -848,8 +848,8 @@ def create_output_dir():
 
             output_replace('##PREFIX##', params["prefix"], "src/app/app.yaml")
             output_replace('##PREFIX##', params["prefix"], "src/ui/ui.yaml")
-            output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-app.yaml")
-            output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-ui.yaml")
+            output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-app.j2.yaml")
+            output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-ui.j2.yaml")
 
         elif params.get('deploy_type') == "function":
             cp_terraform_existing("fnapp_ocid", "function.j2.tf")

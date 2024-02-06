@@ -77,8 +77,8 @@ cp src/oke/ingress-ui.yaml $TARGET_DIR/ingress-ui.yaml
 
 # TLS - Domain Name
 if [ "$TF_VAR_tls" == "new_http_01" ]; then
-  sed -i "s&##DOMAIN_NAME##&$TF_VAR_domain_name&" $TARGET_DIR/ingress-app.yaml
-  sed -i "s&##DOMAIN_NAME##&$TF_VAR_domain_name&" $TARGET_DIR/ingress-ui.yaml
+  sed -i "s&##DNS_NAME##&$TF_VAR_dns_name&" $TARGET_DIR/ingress-app.yaml
+  sed -i "s&##DNS_NAME##&$TF_VAR_dns_name&" $TARGET_DIR/ingress-ui.yaml
 fi
 
 # If present, replace the ORDS URL

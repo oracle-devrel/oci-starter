@@ -14,9 +14,13 @@ spec:
   - hosts:
     - ##DNS_NAME##
     secretName: ##PREFIX##-tls-secret  
-{%- endif %}      
+  rules:
+  - host: ##DNS_NAME##
+      http:
+{%- else %}    
   rules:
     - http:
+{%- endif %} 
         paths:
           - path: /##PREFIX##/app(/|$)(.*)
             pathType: ImplementationSpecific
