@@ -75,7 +75,6 @@ if [ -f "src/oke/tls/external-dns-config.yaml" ] && [ ! -f "$TARGET_DIR/external
   kubectl apply -f $TARGET_DIR/external-dns.yaml
 fi 
 
-
 # delete the old pod, just to be sure a new image is pulled
 kubectl delete pod ${TF_VAR_prefix}-ui --ignore-not-found=true
 kubectl delete deployment ${TF_VAR_prefix}-dep --ignore-not-found=true
