@@ -4,7 +4,19 @@ kind: Ingress
 metadata:
   name: ##PREFIX##-app-ingress
   annotations:
+{%- if language == "apex" %}     
+    nginx.ingress.kubernetes.io/rewrite-target: /ords/r/apex_app/apex_app/$2
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/upstream-vhost: "##ORDS_HOST##"
+{%- elif language == "ords" %}     
+    nginx.ingress.kubernetes.io/rewrite-target: /ords/starter/module/$2
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/upstream-vhost: "##ORDS_HOST##"
+{%- elif language == "java" and java_framework == "tomcat" %}     
+    nginx.ingress.kubernetes.io/rewrite-target: /starter-1.0/$2   
+{%- else %}    
     nginx.ingress.kubernetes.io/rewrite-target: /$2    
+{%- endif %} 
     # nginx.ingress.kubernetes.io/affinity: "cookie"   
     # nginx.ingress.kubernetes.io/session-cookie-path: "/"    
 spec:
@@ -28,5 +40,8 @@ spec:
               service:
                 name: ##PREFIX##-app-service
                 port:
+{%- if language in [ "apex", "ords" ] %}     
+                  number: 443
+{%- else %}    
                   number: 80
-
+{%- endif %} 

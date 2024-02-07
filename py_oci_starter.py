@@ -843,9 +843,6 @@ def create_output_dir():
             output_move("src/oke/oke_deploy.sh", "bin/oke_deploy.sh")
             output_move("src/oke/oke_destroy.sh", "bin/oke_destroy.sh")
 
-            if os.path.exists(output_dir+"/src/app/ingress-app.yaml"):
-                output_move("src/app/ingress-app.yaml", "src/oke/ingress-app.yaml")
-
             output_replace('##PREFIX##', params["prefix"], "src/app/app.yaml")
             output_replace('##PREFIX##', params["prefix"], "src/ui/ui.yaml")
             output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-app.j2.yaml")
