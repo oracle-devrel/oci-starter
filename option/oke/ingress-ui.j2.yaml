@@ -23,7 +23,7 @@ spec:
     - ##DNS_NAME##
     secretName: ##PREFIX##-tls-secret  
   rules:
-  - host: ##DNS_NAME##
+    - host: ##DNS_NAME##
       http:
 {%- else %}    
   rules:
