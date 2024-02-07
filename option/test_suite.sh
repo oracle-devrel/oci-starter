@@ -192,11 +192,16 @@ loop_tls() {
   OPTION_DEPLOY=compute
   build_option  
 
+  OPTION_TLS=new_http_01
+  OPTION_DEPLOY=kubernetes
+  build_option  
+
   OPTION_TLS=new_dns_01
   OPTION_DEPLOY=container_instance
   build_option  
 
   OPTION_GROUP_NAME=dummy
+  OPTION_TLS=none 
 }
 
 loop_deploy() {
