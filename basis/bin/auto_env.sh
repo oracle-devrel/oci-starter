@@ -1,8 +1,12 @@
 #!/bin/bash
 
-# Enable BASH history for Stack Trace. But do not store it.
-set -o history -o histexpand
-unset HISTFILE
+# Enable BASH history for Stack Trace.
+# - Do not store in HISTFILE 
+# - Do not use it when env.sh if called from bash directly.
+if [ "$0" != "-bash" ]; then
+  unset HISTFILE
+  set -o history -o histexpand
+fi
 
 if [[ -z "${BIN_DIR}" ]]; then
   export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )

@@ -13,6 +13,8 @@ OPTION_GROUP_NAME=dummy
 OPTION_DB_INSTALL=default
 OPTION_SHAPE=amd
 OPTION_INFRA_AS_CODE=terraform_local
+OPTION_JAVA_FRAMEWORK=springboot
+OPTION_JAVA_VM=jdk
 
 # No color for terraforms logs
 export nocolorarg=1
