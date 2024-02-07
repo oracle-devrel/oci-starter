@@ -14,7 +14,7 @@ variable "oke_shape" {
   default = "VM.Standard.E3.Flex"
 }
 
-variable "node_pool_node_config_details_size" {
+variable "node_pool_size" {
     default = 1
 }
 
@@ -398,11 +398,11 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
   compartment_id     = local.lz_appdev_cmp_ocid
   kubernetes_version = data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions[length(data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions)-1]
   name               = "${var.prefix}-pool"
-	node_shape         = var.oke_shape
-	node_shape_config {
-		memory_in_gbs = "32"
-		ocpus = "1"
-	}
+  node_shape         = var.oke_shape
+  node_shape_config {
+    memory_in_gbs = "32"
+    ocpus = "1"
+  }
 
   node_source_details {
     #Required
@@ -419,7 +419,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
       #optional
       fault_domains = ["FAULT-DOMAIN-1", "FAULT-DOMAIN-3"]
     }
-    size = var.node_pool_node_config_details_size
+    size = var.node_pool_size
 
     # node_pool_pod_network_option_details {
     #   cni_type = "OCI_VCN_IP_NATIVE"
@@ -441,6 +441,7 @@ resource oci_containerengine_addon starter_oke_addon_dboperator {
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
   remove_addon_resources_on_delete = "true"
 }
+*/
 
 # WebLogic Operator
 resource oci_containerengine_addon starter_oke_addon_wlsoperator {
@@ -455,7 +456,6 @@ resource oci_containerengine_addon starter_oke_addon_certmanager {
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
   remove_addon_resources_on_delete = "true"
 }
-*/
 
 #----------------------------------------------------------------------------
 # OUTPUTS

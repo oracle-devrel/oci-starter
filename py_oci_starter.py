@@ -80,7 +80,7 @@ default_options = {
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
-                      '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid', '-psql_ocid', '-opensearch_ocid',
+                      '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid', '-psql_ocid', '-opensearch_ocid', '-nosql_ocid',
                       '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token', '-tls',
                       '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape','-db_install', 
                       '-ui', '-deploy', '-database', '-license']
@@ -108,7 +108,7 @@ allowed_values = {
     '-java_version': {'8', '11', '17', '21'},
     '-kubernetes': {'oke', 'docker'},
     '-ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
-    '-db_type': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'none'},
+    '-db_type': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
     '-license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
@@ -168,7 +168,7 @@ def db_rules():
             error(f'Pluggable Database needs an existing DB_OCID or PDB_OCID')
     if params.get('db_user') == None:
         default_users = {'autonomous': 'admin', 'database': 'system', 'db_free': 'system',
-                         'pluggable': 'system',  'mysql': 'root', 'psql': 'postgres', 'opensearch': '', 
+                         'pluggable': 'system',  'mysql': 'root', 'psql': 'postgres', 'opensearch': '', 'nosql': '', 
                          'none': ''}
         params['db_user'] = default_users[params['db_type']]
     if params.get('db_type')=='none':
@@ -328,13 +328,13 @@ oci-starter.sh
    -auth_token (optional)
    -bastion_ocid' (optional)
    -compartment_ocid (default tenancy_ocid)
-   -database (default atp | dbsystem | pluggable | mysql | psql | opensearch | none )
+   -database (default atp | dbsystem | pluggable | mysql | psql | opensearch | nosql | none )
    -db_ocid (optional)
    -db_password (mandatory)
    -db_user (default admin)
    -deploy (mandatory) compute | kubernetes | function | container_instance 
    -fnapp_ocid (optional)
-   -group_common (optional) atp | database | mysql | psql | opensearch | fnapp | apigw | oke | jms 
+   -group_common (optional) atp | database | mysql | psql | opensearch | nosql | fnapp | apigw | oke | jms 
    -group_name (optional)
    -java_framework (default helidon | springboot | tomcat)
    -java_version (default 21 | 17 | 11 | 8)
@@ -345,6 +345,7 @@ oci-starter.sh
    -mysql_ocid (optional)
    -psql_ocid (optional)
    -opensearch_ocid (optional)
+   -nosql_ocid (optional)
    -oke_ocid (optional)
    -prefix (default starter)
    -public_subnet_ocid (optional)
@@ -772,6 +773,8 @@ def create_output_dir():
             db_family = "psql"
         elif params['db_type'] == "opensearch":
             db_family = "opensearch"
+        elif params['db_type'] == "nosql":
+            db_family = "nosql"
         elif params['db_type'] == "none":
             db_family = "none"
         params['db_family'] = db_family    
@@ -840,13 +843,10 @@ def create_output_dir():
             output_move("src/oke/oke_deploy.sh", "bin/oke_deploy.sh")
             output_move("src/oke/oke_destroy.sh", "bin/oke_destroy.sh")
 
-            if os.path.exists(output_dir+"/src/app/ingress-app.yaml"):
-                output_move("src/app/ingress-app.yaml", "src/oke/ingress-app.yaml")
-
             output_replace('##PREFIX##', params["prefix"], "src/app/app.yaml")
             output_replace('##PREFIX##', params["prefix"], "src/ui/ui.yaml")
-            output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-app.yaml")
-            output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-ui.yaml")
+            output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-app.j2.yaml")
+            output_replace('##PREFIX##', params["prefix"], "src/oke/ingress-ui.j2.yaml")
 
         elif params.get('deploy_type') == "function":
             cp_terraform_existing("fnapp_ocid", "function.j2.tf")
@@ -882,7 +882,7 @@ def create_output_dir():
 
     if params.get('tls'):
         cp_terraform("tls.j2.tf")
-        if params.get('deploy_type') == 'kubernetes':
+        if params.get('deploy_type') == 'kubernetes' and params.get('tls') != 'new_http_01':
             cp_terraform_apigw("apigw_kubernetes_tls_append.tf")   
 
     if os.path.exists(output_dir + "/src/app/openapi_spec_append.yaml"):
@@ -924,6 +924,9 @@ def create_output_dir():
 
         if params.get('db_type') == "opensearch":
             cp_terraform_existing("opensearch_ocid", "opensearch.j2.tf")
+
+        if params.get('db_type') == "nosql":
+            cp_terraform_existing("nosql_ocid", "nosql.j2.tf")
 
     if os.path.exists(output_dir + "/src/app/db"):
         allfiles = os.listdir(output_dir + "/src/app/db")
@@ -970,6 +973,9 @@ def create_group_common_dir():
     if "opensearch" in a_group_common:
         cp_terraform_existing("opensearch_ocid", "opensearch.j2.tf")
 
+    if "nosql" in a_group_common:
+        cp_terraform_existing("nosql_ocid", "nosql.j2.tf")
+
     if 'oke' in a_group_common:
         cp_terraform_existing("oke_ocid", "oke.j2.tf")
         if 'oke_ocid' not in params:
@@ -1010,13 +1016,16 @@ def create_group_common_dir():
 
 jinja2_db_params = {
     "oracle": { 
+        "db_family_type": "sql",
         "pomGroupId": "com.oracle.database.jdbc",
         "pomArtifactId": "ojdbc8",
-        "pomVersion": "19.3.0.0",
+        "pomVersion": "21.11.0.0",
         "jdbcDriverClassName": "oracle.jdbc.OracleDriver",
-        "dbName": "Oracle"
+        "dbName": "Oracle",
+
     },
     "mysql": { 
+        "db_family_type": "sql",
         "pomGroupId": "mysql",
         "pomArtifactId": "mysql-connector-java",
         "pomVersion": "8.0.31",
@@ -1024,6 +1033,7 @@ jinja2_db_params = {
         "dbName": "MySQL"
     },
     "psql": { 
+        "db_family_type": "sql",
         "pomGroupId": "org.postgresql",
         "pomArtifactId": "postgresql",
         "pomVersion": "42.7.0",
@@ -1031,13 +1041,19 @@ jinja2_db_params = {
         "dbName": "PostgreSQL"
     },
     "opensearch": { 
+        "db_family_type": "none",
         "pomGroupId": "org.opensearch.driver",
         "pomArtifactId": "opensearch-sql-jdbc",
         "pomVersion": "1.4.0.1",
         "jdbcDriverClassName": "org.opensearch.jdbc.Driver",
         "dbName": "OpenSearch"
     },
+    "nosql": {
+        "db_family_type": "none",
+        "dbName": "NoSQL"
+    },
     "none": {
+        "db_family_type": "none",
         "dbName": "No Database"
     }
 }
@@ -1131,7 +1147,7 @@ if 'group_common' in params:
     # Use a bastion only for the database
     if params.get('db_type')!='none':
         params['bastion_ocid'] = TO_FILL
-    to_ocid = { "atp": "atp_ocid", "database": "db_ocid", "mysql": "mysql_ocid", "psql": "psql_ocid", "opensearch": "opensearch_ocid", "oke": "oke_ocid", "fnapp": "fnapp_ocid", "apigw": "apigw_ocid", "jms": "jms_ocid", "compute": "compute_ocid"}
+    to_ocid = { "atp": "atp_ocid", "database": "db_ocid", "mysql": "mysql_ocid", "psql": "psql_ocid", "opensearch": "opensearch_ocid", "nosql": "nosql_ocid", "oke": "oke_ocid", "fnapp": "fnapp_ocid", "apigw": "apigw_ocid", "jms": "jms_ocid", "compute": "compute_ocid"}
     for x in a_group_common:
         if x in to_ocid:
             ocid = to_ocid[x]

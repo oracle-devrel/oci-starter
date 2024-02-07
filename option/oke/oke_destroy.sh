@@ -33,5 +33,6 @@ fi
 kubectl delete ingress,services --all
 
 # Delete the ingress controller
-kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.4.0/deploy/static/provider/cloud/deploy.yaml
+helm uninstall ingress-nginx --namespace ingress-nginx
+# kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.4.0/deploy/static/provider/cloud/deploy.yaml
 

@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ##PREFIX##-ui-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2   
+    # nginx.ingress.kubernetes.io/affinity: "cookie"   
+    # nginx.ingress.kubernetes.io/session-cookie-path: "/"    
+{%- if tls == "new_http_01" %}  
+    cert-manager.io/issuer: "letsencrypt-prod"
+    # Logs: 
+    # - kubectl get certificate
+    # - kubectl get certificaterequest
+    # - kubectl describe issuer letsencrypt-prod   
+    external-dns.alpha.kubernetes.io/hostname: ##DNS_NAME##
+    # Logs: kubectl logs external-dns-xxxx
+{%- endif %}    
+spec:
+  ingressClassName: nginx
+{%- if tls == "new_http_01" %}     
+  tls:
+  - hosts:
+    - ##DNS_NAME##
+    secretName: ##PREFIX##-tls-secret  
+  rules:
+    - host: ##DNS_NAME##
+      http:
+{%- else %}    
+  rules:
+    - http:
+{%- endif %}    
+        paths:
+          - path: /##PREFIX##(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: ##PREFIX##-ui-service
+                port:
+                  number: 80

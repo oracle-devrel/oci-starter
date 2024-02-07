@@ -5,6 +5,8 @@
       <PackageReference Include="MySql.Data" Version="8.0.31" />
       {%- elif db_family == "psql" %}
       <PackageReference Include="Npgsql" Version="8.0.1" />
+      {%- elif db_family == "nosql" %}
+      <PackageReference Include="Oracle.NoSQL.SDK" Version="5.2.0" />      
       {%- endif %}
 {%- endmacro -%}
 
@@ -17,9 +19,10 @@ using MySql.Data.MySqlClient;
 using Npgsql;
 {%- elif db_family == "opensearch" %}
 using System.Text.Json;
+{%- elif db_family == "nosql" %}
+using Oracle.NoSQL.SDK;
 {%- endif %}        
 {%- endmacro -%}
-
 
 {% macro class_def() -%}
 {%- if db_family == "opensearch" %}
@@ -81,11 +84,38 @@ using System.Text.Json;
         {
             Console.WriteLine(ex.Message);
         }
+    {%- elif db_family == "nosql" %}
+        List<Dept> a = new List<Dept>();
+        var client = new NoSQLClient( new NoSQLConfig{
+                Endpoint=Environment.GetEnvironmentVariable("TF_VAR_nosql_endpoint"),
+                Compartment=Environment.GetEnvironmentVariable("TF_VAR_compartment_ocid"),
+                {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+                AuthorizationProvider=IAMAuthorizationProvider.CreateWithInstancePrincipal()
+                {%- else %}
+                AuthorizationProvider=IAMAuthorizationProvider.CreateWithResourcePrincipal()
+                {%- endif %}                
+            });
+        try {
+            var options = new QueryOptions();
+            do {
+                var task = Task.Run(() => client.QueryAsync("select deptno, dname, loc from dept", options));
+                task.Wait();
+                var result = task.Result;
+                foreach(var row in result.Rows) {
+                    a.Add( new Dept{ deptno = row.GetValueAtIndex(0).AsInt32.ToString(), dname = row.GetValueAtIndex(1).AsString, loc = row.GetValueAtIndex(2).AsString } );
+                }
+                options.ContinuationKey = result.ContinuationKey;
+            }
+            while(options.ContinuationKey != null);
+        }
+        catch(Exception ex) {
+            Console.WriteLine(ex.Message);
+        }
     {%- else %}
+        List<Dept> a = new List<Dept>();
         string user = Environment.GetEnvironmentVariable("DB_USER");
         string pwd = Environment.GetEnvironmentVariable("DB_PASSWORD");
         string db = Environment.GetEnvironmentVariable("DB_URL");
-        List<Dept> a = new List<Dept>();
         try
         {
             {%- if db_family == "oracle" %}

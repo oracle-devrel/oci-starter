@@ -52,6 +52,9 @@ locals {
 {%- if group_name is not defined %}
 variable "fn_image" { default = "" }
 variable "fn_db_url" { default = "" }
+{%- if db_type == "nosql" %} 
+variable nosql_endpoint {}
+{%- endif %} 
 
 resource "oci_functions_function" "starter_fn_function" {
   #Required
@@ -61,9 +64,17 @@ resource "oci_functions_function" "starter_fn_function" {
   image          = var.fn_image
   memory_in_mbs  = "2048"
   config = {
+    {%- if language == "java" %} 
+    JDBC_URL      = var.fn_db_url,
+    {%- else %}     
     DB_URL      = var.fn_db_url,
+    {%- endif %}     
     DB_USER     = var.db_user,
     DB_PASSWORD = var.db_password,
+    {%- if db_type == "nosql" %} 
+    TF_VAR_compartment_ocid = var.compartment_ocid,
+    TF_VAR_nosql_endpoint = var.nosql_endpoint,
+    {%- endif %}     
   }
   #Optional
   timeout_in_seconds = "300"

@@ -56,6 +56,11 @@ loop_db() {
     loop_shape
     OPTION_DB=opensearch
     loop_shape
+    # NoSQL has no PHP Support
+    if [ "$OPTION_LANG" != "php" ]; then
+      OPTION_DB=nosql
+      loop_shape
+    fi 
   fi  
   OPTION_DB=none
   loop_shape
@@ -84,6 +89,7 @@ loop_java_framework () {
   loop_java_vm
   OPTION_JAVA_FRAMEWORK=micronaut
   loop_java_vm
+  OPTION_JAVA_VM=jdk 
   OPTION_JAVA_FRAMEWORK=tomcat
   loop_db
   # Reset the value to default
@@ -100,6 +106,7 @@ loop_lang () {
   else
     loop_java_framework
   fi
+  # OCI Function has no PHP support
   if [ "$OPTION_DEPLOY" != "function" ]; then
     OPTION_LANG=php
     loop_db
@@ -185,11 +192,16 @@ loop_tls() {
   OPTION_DEPLOY=compute
   build_option  
 
+  OPTION_TLS=new_http_01
+  OPTION_DEPLOY=kubernetes
+  build_option  
+
   OPTION_TLS=new_dns_01
   OPTION_DEPLOY=container_instance
   build_option  
 
   OPTION_GROUP_NAME=dummy
+  OPTION_TLS=none 
 }
 
 loop_deploy() {

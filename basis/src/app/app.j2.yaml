@@ -28,14 +28,6 @@ spec:
             secretKeyRef:
               name: {{ prefix }}-db-secret
               key: jdbc_url
-{%- else %}        
-{%- if java_framework == "springboot" %}
-        - name: SPRING_APPLICATION_JSON
-          valueFrom:
-            secretKeyRef:
-              name: {{ prefix }}-db-secret
-              key: spring_application_json
-{%- endif %}        
 {%- endif %}
         - name: JDBC_URL
           valueFrom:
@@ -48,7 +40,7 @@ spec:
             secretKeyRef:
               name: {{ prefix }}-db-secret
               key: db_url
-{%- endif %}        
+{%- endif %}      
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -62,7 +54,19 @@ spec:
         - name: POD_IP
           valueFrom:
             fieldRef:
-              fieldPath: status.podIP              
+              fieldPath: status.podIP
+{%- if db_type == "nosql" %}
+        - name: TF_VAR_compartment_ocid
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: TF_VAR_compartment_ocid
+        - name: TF_VAR_nosql_endpoint
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: TF_VAR_nosql_endpoint
+{%- endif %}
       imagePullSecrets:
       - name: ocirsecret        
 ---

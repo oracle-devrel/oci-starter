@@ -1,8 +1,12 @@
 #!/bin/bash
 
-# Enable BASH history for Stack Trace. But do not store it.
-set -o history -o histexpand
-unset HISTFILE
+# Enable BASH history for Stack Trace.
+# - Do not store in HISTFILE 
+# - Do not use it when env.sh is called from bash directly.
+if [ "$0" != "-bash" ]; then
+  unset HISTFILE
+  set -o history -o histexpand
+fi
 
 if [[ -z "${BIN_DIR}" ]]; then
   export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -131,6 +135,11 @@ else
     export DOCKER_PREFIX=${TF_VAR_ocir}/${TF_VAR_namespace}
     auto_echo DOCKER_PREFIX=$DOCKER_PREFIX
     export KUBECONFIG=$TARGET_DIR/kubeconfig_starter
+  fi
+
+  if [ "$TF_VAR_db_type" == "nosql" ]; then
+    # export TF_VAR_nosql_endpoint="nosql.${TF_VAR_region}.oci.oraclecloud.com"
+    export TF_VAR_nosql_endpoint=`oci nosql table list --compartment-id $TF_VAR_compartment_ocid -d 2>&1 | grep "Endpoint: https" | sed "s#.* https:\/\/##" | sed "s#/.*##"`
   fi
 
   # OpenAPI Spec
@@ -263,8 +272,10 @@ if [ -f $STATE_FILE ]; then
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     # OKE
     get_output_from_tfstate "OKE_OCID" "oke_ocid"
-    export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
-    export INGRESS_LB_OCID=`oci lb load-balancer list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[] | select(.["ip-addresses"][0]["ip-address"]=="'$TF_VAR_ingress_ip'") | .id'`  
+    if [ -f $KUBECONFIG ]; then
+      export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
+      export INGRESS_LB_OCID=`oci lb load-balancer list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[] | select(.["ip-addresses"][0]["ip-address"]=="'$TF_VAR_ingress_ip'") | .id'`  
+    fi
   fi
 
   # JMS

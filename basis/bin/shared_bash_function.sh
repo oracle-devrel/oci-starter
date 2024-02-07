@@ -107,7 +107,7 @@ error_exit() {
   echo
   LEN=${#BASH_LINENO[@]}
   printf "%-40s %-10s %-20s\n" "STACK TRACE"  "LINE" "FUNCTION"
-  for (( INDEX=0; INDEX<$LEN; INDEX++ ))
+  for (( INDEX=${LEN}-1; INDEX>=0; INDEX--))
   do
      printf "   %-37s %-10s %-20s\n" ${BASH_SOURCE[${INDEX}]#$PROJECT_DIR/}  ${BASH_LINENO[$(($INDEX-1))]} ${FUNCNAME[${INDEX}]}
   done
@@ -520,15 +520,17 @@ certificate_dir_before_terraform() {
 
 # Certificate - Post Deploy
 certificate_post_deploy() {
-  if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
+  if [ "$TF_VAR_tls" == "new_http_01" ]; then
+    if [ "$TF_VAR_deploy_type" == "compute" ]; then
+      certificate_run_certbot_http_01
+    elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
+      echo "Skip: TLS - Kubernetes - HTTP_01"
+    fi
+  elif [ "$TF_VAR_deploy_type" == "kubernetes"  ]; then
     # Set the TF_VAR_ingress_ip
     get_ui_url 
     src/terraform/apply.sh --auto-approve -no-color
     exit_on_error
-  elif [ "$TF_VAR_tls" == "new_http_01" ]; then
-    if [ "$TF_VAR_deploy_type" == "compute" ]; then
-      certificate_run_certbot_http_01
-    fi
   fi  
 }
 

@@ -6,6 +6,10 @@ variable docker_image_app {
     default=""
 }
 
+{%- if db_type == "nosql" %} 
+variable nosql_endpoint {}
+{%- endif %} 
+
 resource oci_container_instances_container_instance starter_container_instance {
   count = var.docker_image_ui == "" ? 0 : 1
   availability_domain = data.oci_identity_availability_domain.ad.name
@@ -23,7 +27,10 @@ resource oci_container_instances_container_instance starter_container_instance {
       "DB_PASSWORD" = var.db_password,
       "JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL" = local.jdbc_url
       {%- endif %} 
-      "SPRING_APPLICATION_JSON" = "{ \"db.info\": \"Java - SpringBoot\" }",
+      {%- if db_type == "nosql" %} 
+      "TF_VAR_compartment_ocid" = var.compartment_ocid,
+      "TF_VAR_nosql_endpoint" = var.nosql_endpoint,
+      {%- endif %} 
     }    
   }
   containers {

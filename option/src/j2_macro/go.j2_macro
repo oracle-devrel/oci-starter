@@ -6,6 +6,8 @@
     github.com/go-sql-driver/mysql v1.7.0
     {%- elif db_family == "psql" %}
     github.com/lib/pq v1.10.9
+    {%- elif db_family == "nosql" %}
+    github.com/oracle/nosql-go-sdk v1.4.2 
     {%- endif %}
 {%- endmacro -%}
 
@@ -13,7 +15,7 @@
     {%- if db_family != "none" %}
     "fmt"
     "os"
-    {%- if db_family != "opensearch" %}
+    {%- if db_family != "opensearch" and db_family != "nosql" %}
     "database/sql"    
     {%- endif %}           
     {%- endif %}           
@@ -30,6 +32,10 @@
     {%- else %}
     "encoding/json"
     {%- endif %}
+    {%- elif db_family == "nosql" %}
+    "github.com/oracle/nosql-go-sdk/nosqldb"
+    "github.com/oracle/nosql-go-sdk/nosqldb/auth/iam"
+    "github.com/oracle/nosql-go-sdk/nosqldb/types"
     {%- endif %}        
 {%- endmacro -%}
 
@@ -80,6 +86,39 @@ type Result struct {
     var d [] Dept;   
     for _, hit := range body.Hits.Hits {
         d = append(d, Dept{hit.Source.Deptno, hit.Source.Dname,hit.Source.Loc})
+    }
+    {%- elif db_family == "nosql" -%}
+    {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+    sp, err := iam.NewSignatureProviderWithInstancePrincipal(os.Getenv("TF_VAR_compartment_ocid"))
+    {%- else %}
+    sp, err := iam.NewSignatureProviderWithResourcePrincipal(os.Getenv("TF_VAR_compartment_ocid"))
+    {%- endif %}
+    if err != nil {
+        fmt.Println("NoSQL Login error")
+        return
+    }
+    cfg := nosqldb.Config{
+        AuthorizationProvider: sp,
+        Endpoint: os.Getenv("TF_VAR_nosql_endpoint"),
+    }
+    client, err := nosqldb.NewClient(cfg)
+    queryReq := &nosqldb.QueryRequest{ Statement: "select deptno, dname, loc from dept" }
+    var d []*types.MapValue
+    for {
+        queryRes, err := client.Query(queryReq)
+        if err != nil {
+            fmt.Printf("Query failed: %v\n", err)
+            return
+        }
+        res, err := queryRes.GetResults()
+        if err != nil {
+            fmt.Printf("GetResults() failed: %v\n", err)
+            return
+        }
+        d = append(d, res...)
+        if queryReq.IsDone() {
+            break
+        }
     }
     {%- else %}
     {%- if db_family == "oracle" -%}

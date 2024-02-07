@@ -13,6 +13,8 @@ OPTION_GROUP_NAME=dummy
 OPTION_DB_INSTALL=default
 OPTION_SHAPE=amd
 OPTION_INFRA_AS_CODE=terraform_local
+OPTION_JAVA_FRAMEWORK=springboot
+OPTION_JAVA_VM=jdk
 
 # No color for terraforms logs
 export nocolorarg=1
@@ -90,7 +92,7 @@ build_test () {
     fi
     echo "RESULT INFO:                   "`cat /tmp/result.info` | cut -c 1-100
   else
-    echo "${COLOR_RED}No file /tmp/result.html${COLOR_NONE}"
+    echo -e "${COLOR_RED}ERROR: No file /tmp/result.html${COLOR_NONE}"
   fi
   mv /tmp/result.html ${TEST_DIR}_result_$BUILD_ID.html 2>/dev/null;
   mv /tmp/result.json ${TEST_DIR}_result_$BUILD_ID.json 2>/dev/null;
@@ -193,6 +195,7 @@ build_option() {
        -mysql_ocid $TF_VAR_mysql_ocid \
        -psql_ocid $TF_VAR_psql_ocid \
        -opensearch_ocid $TF_VAR_opensearch_ocid \
+       -nosql_ocid $TF_VAR_nosql_ocid \
        -auth_token $OCI_TOKEN \
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
@@ -259,10 +262,12 @@ pre_test_suite() {
   git clone https://github.com/mgueury/oci-starter
 
   cd $TEST_HOME/oci-starter
-  ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,opensearch,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
+  ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN
   exit_on_error
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
+  echo "# Test Suite use 2 nodes to avoid error: Too Many Pods (110 pods/node K8s limit)" >> env.sh
+  echo "export TF_VAR_node_pool_size=2" >> env.sh
   ./build.sh
   exit_on_error
   date

@@ -21,7 +21,7 @@ func dept(c *gin.Context) {
 }
 
 func info(c *gin.Context) {
-    var s string =  "GoLang / {{ dbName }}"
+    var s string =  "GoLang - {{ dbName }}"
     c.Data(http.StatusOK, "text/html", []byte(s))
 }
 

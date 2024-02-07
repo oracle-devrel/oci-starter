@@ -7,6 +7,8 @@
     ,"pg": "^8.11.3"
     {%- elif db_family == "opensearch" %}
     ,"node-fetch": "^2.6.1"
+    {%- elif db_family == "nosql" -%}
+    ,"oracle-nosqldb": "^5.2"
     {%- endif %}        
 {%- endmacro -%}
 
@@ -19,6 +21,25 @@ const mysql = require('mysql2/promise');
 const Pool = require('pg').Pool
 {%- elif db_family == "opensearch" -%}
 const fetch = require("node-fetch");
+{%- elif db_family == "nosql" -%}
+const NoSQLClient = require('oracle-nosqldb').NoSQLClient;
+let client = createClient();
+
+function createClient() {
+    return new NoSQLClient({
+        endpoint: process.env.TF_VAR_nosql_endpoint,
+        compartment:process.env.TF_VAR_compartment_ocid,
+        auth: {
+            iam: {
+                {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+                useInstancePrincipal: true
+                {%- else %}
+                useResourcePrincipal: true
+                {%- endif %}   
+            }
+        }
+    });
+}
 {%- endif %}
 {%- endmacro -%}
 
@@ -28,6 +49,7 @@ const fetch = require("node-fetch");
 {%- elif db_family == "mysql" -%}{{ mysql() }}
 {%- elif db_family == "psql" -%}{{ psql() }}
 {%- elif db_family == "opensearch" -%}{{ opensearch() }}
+{%- elif db_family == "nosql" -%}{{ nosql() }}
 {%- endif -%}
 {%- endmacro -%}
 
@@ -90,10 +112,24 @@ const fetch = require("node-fetch");
     const response = await fetch(url);
     const j = await response.json();
     console.log(j);
-    rows = [];
+    let rows = [];
     for (i in j.hits.hits) {
         hit = j.hits.hits[i]
         rows.push({"deptno":hit._source.deptno,"dname":hit._source.dname,"loc":hit._source.loc })
     }      
 {%- endmacro -%}
+
+{% macro nosql() -%}
+    let rows = [];
+    const opt = {};
+    do {
+        const result = await client.query('SELECT deptno, dname, loc FROM dept', opt);
+        for(let row of result.rows) {
+            rows.push( row );
+        }
+        opt.continuationKey = result.continuationKey;
+    } while(opt.continuationKey);
+
+{%- endmacro -%}
+
 

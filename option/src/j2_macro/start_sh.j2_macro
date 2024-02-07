@@ -1,0 +1,24 @@
+{%- macro env() %}
+{%- if language == "java" -%}
+export TF_VAR_java_vm=##TF_VAR_java_vm##
+{%- endif %}
+{% if db_family == "nosql" -%}
+curl -s -H "Authorization: Bearer Oracle" -L http://169.254.169.254/opc/v2/instance/ > /tmp/instance.json
+export TF_VAR_compartment_ocid=`cat /tmp/instance.json | jq -r .compartmentId`
+export region=`cat /tmp/instance.json | jq -r .region`
+export regionDomain=`cat /tmp/instance.json | jq -r .regionInfo.realmDomainComponent`
+export TF_VAR_nosql_endpoint="nosql.${region}.oci.${regionDomain}"
+{%- elif language == "java" -%}
+export DB_USER="##DB_USER##"
+export DB_PASSWORD="##DB_PASSWORD##"
+export JDBC_URL="##JDBC_URL##"
+{%- if java_framework == "helidon" or java_framework == "helidon4" %}
+export JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL=$JDBC_URL
+{%- endif %}
+{%- else -%}
+export DB_USER="##DB_USER##"
+export DB_PASSWORD="##DB_PASSWORD##"
+export DB_URL="##DB_URL##"
+{%- endif %}
+{%- endmacro -%}
+
