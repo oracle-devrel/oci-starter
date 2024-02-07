@@ -2,7 +2,7 @@
 
 # Enable BASH history for Stack Trace.
 # - Do not store in HISTFILE 
-# - Do not use it when env.sh if called from bash directly.
+# - Do not use it when env.sh is called from bash directly.
 if [ "$0" != "-bash" ]; then
   unset HISTFILE
   set -o history -o histexpand
