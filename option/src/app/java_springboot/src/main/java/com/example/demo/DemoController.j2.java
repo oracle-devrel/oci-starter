@@ -11,7 +11,6 @@ import java.sql.*;{{m.import()}}
 public class DemoController {
     public record Dept(int deptno, String dname, String loc) {
     };
-
     {{ m.constructor() }}
 
     @RequestMapping(value = "/dept", method = RequestMethod.GET, produces = { "application/json" })  
