@@ -45,7 +45,7 @@ import javax.json.*;
     @Autowired
     public DemoController(DbProperties properties) {
     {%- elif java_framework == "helidon" %}
-    public DemoResource() {
+    public DeptResource() {
     {%- elif java_framework == "micronaut" %}
     public DeptController() {
     {%- elif java_framework == "tomcat" %}
