@@ -27,6 +27,14 @@ import requests
 from borneo import NoSQLHandle, NoSQLHandleConfig, Regions
 from borneo.iam import SignatureProvider
 from borneo import QueryRequest
+
+# NoSQL connection  
+def get_connection():
+        provider = SignatureProvider.create_with_instance_principal()
+        config = NoSQLHandleConfig( os.getenv('TF_VAR_nosql_endpoint'), provider )
+        config.set_default_compartment( os.getenv('TF_VAR_compartment_ocid') )
+        return ( NoSQLHandle(config))
+handle = get_connection()
 {%- endif %}
 {%- endmacro -%}
 

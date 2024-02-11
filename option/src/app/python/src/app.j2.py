@@ -4,7 +4,6 @@ import traceback
 from flask import Flask
 from flask import jsonify
 from flask_cors import CORS
-
 {{ m.import() }}
 
 app = Flask(__name__)

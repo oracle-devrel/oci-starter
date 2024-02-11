@@ -26,6 +26,19 @@ if [ "$1" != "--auto-approve" ]; then
 fi
 
 . env.sh
+
+# Check if there is something to destroy.
+if [ -f $TARGET_DIR/$STATE_FILE ]; then
+  export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
+  if [ "$TF_RESOURCE" == "0" ]; then
+    echo "No resource in terraform state file. Nothing to destroy."
+    exit 
+  fi
+else
+  echo "File $STATE_FILE does not exist. Nothing to destroy."
+  exit 
+fi
+
 if [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
   title "OKE Destroy"
   bin/oke_destroy.sh --auto-approve
@@ -34,7 +47,7 @@ elif [ "$TF_VAR_deploy_type" == "function" ]; then
   oci os object bulk-delete -bn ${TF_VAR_prefix}-public-bucket --force
 fi
 
-if [ -f $TARGET_DIR/terraform.tfstate ]; then
+if [ -f $TARGET_DIR/$STATE_FILE ]; then
   title "Terraform Destroy"
   src/terraform/destroy.sh --auto-approve -no-color
   exit_on_error
