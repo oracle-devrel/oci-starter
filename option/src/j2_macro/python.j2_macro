@@ -40,8 +40,7 @@ def get_connection():
         {%- if deploy_type == "function" %}
         config.set_logger( None )
         {%- endif %}        
-        handle = NoSQLHandle(config)
-
+        return NoSQLHandle(config)
 handle = get_connection()
 {%- endif %}
 {%- endmacro -%}
