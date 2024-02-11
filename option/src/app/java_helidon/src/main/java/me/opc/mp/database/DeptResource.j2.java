@@ -16,6 +16,8 @@ public class DeptResource {
     private EntityManager entityManager;
     {%- endif %}	
 
+    {{ m.constructor() }}
+
     @GET
     @Path("dept")
     @Produces(MediaType.APPLICATION_JSON)

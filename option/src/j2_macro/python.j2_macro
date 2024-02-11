@@ -30,17 +30,17 @@ from borneo import QueryRequest
 
 # NoSQL connection  
 def get_connection():
-        {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
-        provider = SignatureProvider.create_with_instance_principal()
-        {%- else %}
-        provider = SignatureProvider.create_with_resource_principal()
-        {%- endif %}        
-        config = NoSQLHandleConfig( os.getenv('TF_VAR_nosql_endpoint'), provider )
-        config.set_default_compartment( os.getenv('TF_VAR_compartment_ocid') )
-        {%- if deploy_type == "function" %}
-        config.set_logger( None )
-        {%- endif %}        
-        return NoSQLHandle(config)
+    {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+    provider = SignatureProvider.create_with_instance_principal()
+    {%- else %}
+    provider = SignatureProvider.create_with_resource_principal()
+    {%- endif %}        
+    config = NoSQLHandleConfig( os.getenv('TF_VAR_nosql_endpoint'), provider )
+    config.set_default_compartment( os.getenv('TF_VAR_compartment_ocid') )
+    {%- if deploy_type == "function" %}
+    config.set_logger( None )
+    {%- endif %}        
+    return NoSQLHandle(config)
 handle = get_connection()
 {%- endif %}
 {%- endmacro -%}

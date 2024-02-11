@@ -37,6 +37,34 @@ import javax.json.*;
     </dependency>   
 {%- endmacro -%}  
 
+{% macro constructor() -%}
+    {%- if db_family == "nosql" %}
+    private final NoSQLHandle handle;
+    {%- endif %}
+
+    {%- if java_framework == "springboot" %}
+    @Autowired
+    public DemoController(DbProperties properties) {
+    {%- else java_framework == "helidon" %}
+    public DemoResource() {
+    {%- else java_framework == "micronaut" %}
+    public DeptController() {
+    {%- else java_framework == "tomcat" %}
+    public DeptServlet() {
+    {%- endif %}
+    {%- if db_family == "nosql" %}
+        {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+        SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
+        {%- else %}
+        SignatureProvider authProvider = SignatureProvider.createWithResourcePrincipal();
+        {%- endif %}        
+        NoSQLHandleConfig config = new NoSQLHandleConfig( System.getenv("TF_VAR_nosql_endpoint"), authProvider);
+        config.setDefaultCompartment( System.getenv("TF_VAR_compartment_ocid") );
+        handle = NoSQLHandleFactory.createNoSQLHandle(config);
+    {%- endif %}
+    }
+{%- endmacro -%}
+
 {% macro dept() -%}
    {%- if db_family != "sql" %}
         {{ dept_no_return() }}
@@ -117,17 +145,6 @@ import javax.json.*;
 {%- endmacro -%}   
 
 {% macro nosql() -%}    
-        System.out.println( "TF_VAR_compartment_ocid=" + System.getenv("TF_VAR_compartment_ocid") );
-        System.out.println( "TF_VAR_nosql_endpoint=" + System.getenv("TF_VAR_nosql_endpoint") );
-        {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
-        SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
-        {%- else %}
-        SignatureProvider authProvider = SignatureProvider.createWithResourcePrincipal();
-        {%- endif %}
-        NoSQLHandleConfig config = new NoSQLHandleConfig( System.getenv("TF_VAR_nosql_endpoint"), authProvider); 
-        config.setDefaultCompartment( System.getenv("TF_VAR_compartment_ocid") );
-        NoSQLHandle handle = NoSQLHandleFactory.createNoSQLHandle(config); 
-
         QueryRequest queryRequest = new QueryRequest().setStatement("SELECT deptno, dname, loc FROM dept");
         QueryResult queryResult = handle.query(queryRequest);
         do {
