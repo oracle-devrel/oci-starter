@@ -30,6 +30,7 @@ from borneo import QueryRequest
 
 # NoSQL connection  
 def get_connection():
+        {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
         provider = SignatureProvider.create_with_instance_principal()
         {%- else %}
         provider = SignatureProvider.create_with_resource_principal()
@@ -40,6 +41,7 @@ def get_connection():
         config.set_logger( None )
         {%- endif %}        
         handle = NoSQLHandle(config)
+
 handle = get_connection()
 {%- endif %}
 {%- endmacro -%}
