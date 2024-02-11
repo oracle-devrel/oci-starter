@@ -28,7 +28,7 @@ fi
 . env.sh
 
 # Check if there is something to destroy.
-if [ -f $TARGET_DIR/$STATE_FILE ]; then
+if [ -f $STATE_FILE ]; then
   export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
   if [ "$TF_RESOURCE" == "0" ]; then
     echo "No resource in terraform state file. Nothing to destroy."
