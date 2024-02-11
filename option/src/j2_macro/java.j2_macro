@@ -45,11 +45,11 @@ import javax.json.*;
     {%- if java_framework == "springboot" %}
     @Autowired
     public DemoController(DbProperties properties) {
-    {%- else java_framework == "helidon" %}
+    {%- elif java_framework == "helidon" %}
     public DemoResource() {
-    {%- else java_framework == "micronaut" %}
+    {%- elif java_framework == "micronaut" %}
     public DeptController() {
-    {%- else java_framework == "tomcat" %}
+    {%- elif java_framework == "tomcat" %}
     public DeptServlet() {
     {%- endif %}
     {%- if db_family == "nosql" %}
