@@ -56,6 +56,9 @@ import javax.json.*;
     public DeptController() {
     {%- elif java_framework == "tomcat" %}
     public DeptServlet() {
+        if( handle!= null ) {
+            return;
+        }
     {%- endif %}
     {%- if db_family == "nosql" %}
         {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
