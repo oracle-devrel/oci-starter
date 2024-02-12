@@ -1120,7 +1120,7 @@ if mode == CLI:
 
 if mode == ABORT:
     print(help())
-    exit()
+    exit(1)
 
 print(f'Mode: {mode}')
 print(f'params: {params}')
