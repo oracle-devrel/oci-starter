@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.*;
 {{ m.import() }}
 
 public class HelloFunction {
-    public HelloFunction() {}
+    {{ m.constructor() }}
 
     public String handleRequest(String input) {
         {{ m.dept_string() }}

@@ -38,10 +38,15 @@ import javax.json.*;
 
 {% macro constructor() -%}
     {%- if db_family == "nosql" %}
+    {%- if java_framework == "helidon" %}
+    static NoSQLHandle handle;
+    {%- else %}
     private final NoSQLHandle handle;
     {%- endif %}
 
-    {%- if java_framework == "springboot" %}
+    {%- if deploy_type == "function" %}
+    public HelloFunction() {
+    {%- elif java_framework == "springboot" %}
     @Autowired
     public DemoController(DbProperties properties) {
     {%- elif java_framework == "helidon" %}
