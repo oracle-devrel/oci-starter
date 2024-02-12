@@ -43,6 +43,7 @@ import javax.json.*;
     {%- else %}
     private final NoSQLHandle handle;
     {%- endif %}
+    {%- endif %}
 
     {%- if deploy_type == "function" %}
     public HelloFunction() {
