@@ -36,6 +36,9 @@ import javax.json.*;
     <dependency>
       <groupId>com.oracle.database.jdbc</groupId>
       <artifactId>ucp</artifactId>
+      {%- if java_framework != "springboot" or deploy_type == "function" %}
+      <version>{{ pomVersion }}</version>
+      {%- endif %}
     </dependency>    
 {%- endif %}   
     <dependency>
