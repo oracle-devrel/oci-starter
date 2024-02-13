@@ -1,7 +1,7 @@
 {% macro import() -%}    
 import java.io.*;
 import java.util.*;
-{%- if db_type == "oracle" %}
+{%- if db_type == "oracle" and java_framework != "micronaut" %}
 import oracle.ucp.jdbc.PoolDataSourceFactory;
 import oracle.ucp.jdbc.PoolDataSource;
 {%- elif db_family == "nosql" %}
