@@ -1,7 +1,10 @@
 {% macro import() -%}    
 import java.io.*;
 import java.util.*;
-{%- if db_family == "nosql" %}
+{%- if db_type == "oracle" %}
+import oracle.ucp.jdbc.PoolDataSourceFactory;
+import oracle.ucp.jdbc.PoolDataSource;
+{%- elif db_family == "nosql" %}
 import oracle.nosql.driver.*;
 import oracle.nosql.driver.iam.*;
 import oracle.nosql.driver.ops.*;
@@ -44,7 +47,10 @@ import javax.json.*;
     private final NoSQLHandle handle;
     {%- endif %}
     {%- endif %}
-
+    {%- if db_family == "oracle" %}
+    static PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
+    {%- endif %}
+  
     {%- if deploy_type == "function" %}
     public HelloFunction() {
     {%- elif java_framework == "springboot" %}
@@ -60,7 +66,15 @@ import javax.json.*;
     {%- elif java_framework == "tomcat" %}
     public DeptServlet() {
     {%- endif %}
-    {%- if db_family == "nosql" %}
+    {%- if db_family == "oracle" %}
+        pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
+        pds.setURL(System.getenv("JDBC_URL"));
+        pds.setUser(System.getenv("DB_USER"));
+        pds.setPassword(System.getenv("DB_PASSWORD"));
+        pds.setInitialPoolSize(3);
+        pds.setMinPoolSize(3);
+        pds.setMaxPoolSize(10);    
+    {%- elif db_family == "nosql" %}
         {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
         SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
         {%- else %}
@@ -112,6 +126,26 @@ import javax.json.*;
 
 {% macro sql() -%} 
         try {
+{%- if db_family == "oracle" %}
+            Connection conn = null;
+            Statement stmt = null;
+            ResultSet rset = null;
+            try {
+                conn = pds.getConnection();
+                stmt = conn.createStatement();
+                rset = stmt.executeQuery("SELECT deptno, dname, loc FROM dept");
+                while (rset.next()) {
+                    rows.add(new Dept(rset.getInt(1), rset.getString(2), rset.getString(3)));
+                }
+            } finally {
+                if (rset != null)
+                    rset.close();
+                if (stmt != null)
+                    stmt.close();
+                if (conn != null)
+                    conn.close();
+            }
+{%- else %}
             Connection conn = DriverManager.getConnection( System.getenv("JDBC_URL") , System.getenv("DB_USER"), System.getenv("DB_PASSWORD"));
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT deptno, dname, loc FROM dept");
@@ -121,6 +155,7 @@ import javax.json.*;
             rs.close();
             stmt.close();
             conn.close();
+{%- endif %}
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             e.printStackTrace();
