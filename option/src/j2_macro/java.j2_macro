@@ -47,7 +47,7 @@ import javax.json.*;
     private final NoSQLHandle handle;
     {%- endif %}
     {%- endif %}
-    {%- if db_family == "oracle" && java_framework != "micronaut" %}
+    {%- if db_family == "oracle" and java_framework != "micronaut" %}
     static PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
     {%- endif %}
   
@@ -66,7 +66,7 @@ import javax.json.*;
     {%- elif java_framework == "tomcat" %}
     public DeptServlet() {
     {%- endif %}
-    {%- if db_family == "oracle" && java_framework != "micronaut" %}
+    {%- if db_family == "oracle" and java_framework != "micronaut" %}
         pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
         pds.setURL(System.getenv("JDBC_URL"));
         pds.setUser(System.getenv("DB_USER"));
