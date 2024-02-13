@@ -32,6 +32,12 @@ import javax.json.*;
       {%- endif %}
     </dependency>  
 {%- endif %}
+	{%- if db_family == "oracle" %}  
+    <dependency>
+      <groupId>com.oracle.database.jdbc</groupId>
+      <artifactId>ucp</artifactId>
+    </dependency>    
+    {%- endif %}   
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>javax.json</artifactId>
@@ -52,19 +58,19 @@ import javax.json.*;
     {%- endif %}
   
     {%- if deploy_type == "function" %}
-    public HelloFunction() {
+    public HelloFunction() throws Exception {
     {%- elif java_framework == "springboot" %}
     @Autowired
-    public DemoController(DbProperties properties) {
+    public DemoController(DbProperties properties) throws Exception {
     {%- elif java_framework == "helidon" %}
-    public DeptResource() {
+    public DeptResource() throws Exception {
         if( handle!= null ) {
             return;
         }        
     {%- elif java_framework == "micronaut" %}
-    public DeptController() {
+    public DeptController() throws Exception {
     {%- elif java_framework == "tomcat" %}
-    public DeptServlet() {
+    public DeptServlet() throws Exception {
     {%- endif %}
     {%- if db_family == "oracle" and java_framework != "micronaut" %}
         pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
