@@ -87,6 +87,11 @@ import javax.json.*;
     }
 {%- endmacro -%}
 
+{% macro dept() -%}
+        {{ dept_no_return() }}
+        return rows; 
+{%- endmacro -%}
+
 {% macro dept_string() -%}
         String json = "-";
         try {
@@ -102,7 +107,6 @@ import javax.json.*;
             e.printStackTrace();
         }     
 {%- endmacro -%}
-
 
 {% macro dept_no_return() -%}
         List<Dept> rows = new ArrayList<Dept>();
