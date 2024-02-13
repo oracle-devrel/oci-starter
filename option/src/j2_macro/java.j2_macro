@@ -1,7 +1,7 @@
 {% macro import() -%}    
 import java.io.*;
 import java.util.*;
-{%- if db_type == "oracle" and java_framework != "micronaut" %}
+{%- if db_family == "oracle" and java_framework != "micronaut" %}
 import oracle.ucp.jdbc.PoolDataSourceFactory;
 import oracle.ucp.jdbc.PoolDataSource;
 {%- elif db_family == "nosql" %}
@@ -85,13 +85,6 @@ import javax.json.*;
         handle = NoSQLHandleFactory.createNoSQLHandle(config);
     {%- endif %}
     }
-{%- endmacro -%}
-
-{% macro dept() -%}
-   {%- if db_family != "sql" %}
-        {{ dept_no_return() }}
-        return rows; 
-   {%- endif %}
 {%- endmacro -%}
 
 {% macro dept_string() -%}
