@@ -32,12 +32,12 @@ import javax.json.*;
       {%- endif %}
     </dependency>  
 {%- endif %}
-	{%- if db_family == "oracle" %}  
+{%- if db_family == "oracle" %}  
     <dependency>
       <groupId>com.oracle.database.jdbc</groupId>
       <artifactId>ucp</artifactId>
     </dependency>    
-    {%- endif %}   
+{%- endif %}   
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>javax.json</artifactId>
