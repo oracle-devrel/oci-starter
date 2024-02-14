@@ -65,11 +65,13 @@ import javax.json.*;
     {%- elif java_framework == "springboot" %}
     @Autowired
     public DemoController(DbProperties properties) throws Exception {
-    {%- elif java_framework == "helidon" and db_family == "nosql" %}
+    {%- elif java_framework == "helidon" %}
     public DeptResource() throws Exception {
+        {%- if db_family == "nosql" %}
         if( handle!= null ) {
             return;
-        }        
+        }     
+        {%- endif %}
     {%- elif java_framework == "micronaut" %}
     public DeptController() throws Exception {
     {%- elif java_framework == "tomcat" %}
