@@ -31,6 +31,12 @@ import javax.json.*;
       <version>{{ pomVersion }}</version>
       {%- endif %}
     </dependency>  
+    {%- if java_framework == "springboot" %}
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>    
+    {%- endif %}
 {%- endif %}
 {%- if db_family == "oracle" %}  
     <dependency>
