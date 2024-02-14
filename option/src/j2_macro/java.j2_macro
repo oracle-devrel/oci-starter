@@ -65,7 +65,7 @@ import javax.json.*;
     {%- elif java_framework == "springboot" %}
     @Autowired
     public DemoController(DbProperties properties) throws Exception {
-    {%- elif java_framework == "helidon" %}
+    {%- elif java_framework == "helidon" and db_family == "nosql" %}
     public DeptResource() throws Exception {
         if( handle!= null ) {
             return;
