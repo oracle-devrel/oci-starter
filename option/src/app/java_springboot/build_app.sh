@@ -12,6 +12,8 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $BIN_DIR/build_common.sh
 java_build_common
 
+cp application.properties.tmpl src/main/resources/application.properties
+replace_db_user_password_in_file src/main/resources/application.properties
 if is_deploy_compute; then
 
   if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then

@@ -767,17 +767,24 @@ def create_output_dir():
 
         if params['db_type'] == "autonomous" or params['db_type'] == "database" or params['db_type'] == "pluggable" or params['db_type'] == "db_free":
             db_family = "oracle"
+            db_family_type = "sql"
         elif params['db_type'] == "mysql":
             db_family = "mysql"
+            db_family_type = "sql"
         elif params['db_type'] == "psql":
             db_family = "psql"
+            db_family_type = "sql"
         elif params['db_type'] == "opensearch":
             db_family = "opensearch"
+            db_family_type = "other"
         elif params['db_type'] == "nosql":
             db_family = "nosql"
+            db_family_type = "other"
         elif params['db_type'] == "none":
             db_family = "none"
+            db_family_type = "other"
         params['db_family'] = db_family    
+        params['db_family_type'] = db_family_type
 
         # Function Common
         if params.get('deploy_type') == "function":
@@ -793,10 +800,16 @@ def create_output_dir():
             output_copy_tree("option/src/app/"+app, "src/app")
 
         # Overwrite the generic version (ex for mysql)
-        app_dir = app+"_"+db_family
-        print("app_dir="+app_dir)
-        if os.path.exists("option/src/app/"+app_dir):
-            output_copy_tree("option/src/app/"+app_dir, "src/app")
+        family_dir = app+"_"+db_family
+        print("family_dir="+family_dir)
+        if os.path.exists("option/src/app/"+family_dir):
+            output_copy_tree("option/src/app/"+family_dir, "src/app")
+
+        # Overwrite the family type version (ex for sql)
+        family_type_dir = app+"_"+db_family_type
+        print("family_type_dir="+family_type_dir)
+        if os.path.exists("option/src/app/"+family_type_dir):
+            output_copy_tree("option/src/app/"+family_type_dir, "src/app")
 
         if params['language'] == "java":
             # FROM container-registry.oracle.com/graalvm/jdk:21
@@ -1016,7 +1029,6 @@ def create_group_common_dir():
 
 jinja2_db_params = {
     "oracle": { 
-        "db_family_type": "sql",
         "pomGroupId": "com.oracle.database.jdbc",
         "pomArtifactId": "ojdbc8",
         "pomVersion": "21.11.0.0",
@@ -1025,7 +1037,6 @@ jinja2_db_params = {
 
     },
     "mysql": { 
-        "db_family_type": "sql",
         "pomGroupId": "mysql",
         "pomArtifactId": "mysql-connector-java",
         "pomVersion": "8.0.31",
@@ -1033,7 +1044,6 @@ jinja2_db_params = {
         "dbName": "MySQL"
     },
     "psql": { 
-        "db_family_type": "sql",
         "pomGroupId": "org.postgresql",
         "pomArtifactId": "postgresql",
         "pomVersion": "42.7.0",
@@ -1041,7 +1051,6 @@ jinja2_db_params = {
         "dbName": "PostgreSQL"
     },
     "opensearch": { 
-        "db_family_type": "none",
         "pomGroupId": "org.opensearch.driver",
         "pomArtifactId": "opensearch-sql-jdbc",
         "pomVersion": "1.4.0.1",
@@ -1049,11 +1058,9 @@ jinja2_db_params = {
         "dbName": "OpenSearch"
     },
     "nosql": {
-        "db_family_type": "none",
         "dbName": "NoSQL"
     },
     "none": {
-        "db_family_type": "none",
         "dbName": "No Database"
     }
 }
