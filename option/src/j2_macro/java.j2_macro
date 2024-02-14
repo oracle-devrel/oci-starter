@@ -70,7 +70,7 @@ import javax.json.*;
     public HelloFunction() throws Exception {
     {%- elif java_framework == "springboot" %}
     @Autowired
-    public DemoController(DbProperties properties) throws Exception {
+    public DemoController() throws Exception {
     {%- elif java_framework == "helidon" %}
     public DeptResource() throws Exception {
         {%- if db_family == "nosql" %}
