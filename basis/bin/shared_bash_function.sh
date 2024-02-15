@@ -146,7 +146,7 @@ set_if_not_null () {
 }
 
 get_attribute_from_tfstate () {
-  RESULT=`jq -r '.resources[] | select(.name=="'$2'") | .instances[0].attributes.'$3'' $STATE_FILE`
+  RESULT=`jq -r '[.resources[] | select(.name=="'$2'") | .instances[0].attributes.'$3'][0]' $STATE_FILE`
   set_if_not_null $1 $RESULT
 }
 
