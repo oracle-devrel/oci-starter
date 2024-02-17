@@ -1,5 +1,8 @@
 #!/bin/bash
 export PROJECT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+export TARGET_DIR=$PROJECT_DIR/target
+mkdir -p $TARGET_DIR
+cd $PROJECT_DIR
 
 export ARG1=$1
 export ARG2=$2
@@ -41,9 +44,10 @@ if [ -z $ARG1 ] || [ "$ARG1" == "help" ]; then
 fi
 
 if [ "$ARG1" == "build" ]; then
-  ./build.sh
+  # Show the log and save it in target/build.log
+  bin/build_all.sh $@ 2>&1 | tee $TARGET_DIR/build.log
 elif [ "$ARG1" == "destroy" ]; then
-  ./destroy.sh
+  bin/destroy_all.sh $@ 2>&1 | tee $TARGET_DIR/destroy.log
 elif [ "$ARG1" == "ssh" ]; then
   if [ "$ARG2" == "compute" ]; then
     bin/ssh_compute.sh
@@ -79,7 +83,11 @@ elif [ "$ARG1" == "deploy" ]; then
     bin/deploy_oke.sh
   else 
     echo "Unknow command: $ARG1 $ARG2"
+    exit 1
   fi    
 else 
   echo "Unknow command: $MODE"
+  exit 1
 fi
+# Return the exit code 
+exit ${PIPESTATUS[0]}
