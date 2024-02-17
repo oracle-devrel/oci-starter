@@ -4,7 +4,7 @@ cd $SCRIPT_DIR
 
 cd group_common
 . bin/shared_bash_function.sh
-./build.sh
+./oci-starter.sh build
 exit_on_error
 cd $SCRIPT_DIR
 
@@ -13,7 +13,7 @@ for d in `ls -d */ | sort -g`; do
       echo "-- BUILD_ALL - $d ---------------------------------"
 
       cd $d
-      ./build.sh
+      ./oci-starter.sh build
       exit_on_error
       cd $SCRIPT_DIR
     fi

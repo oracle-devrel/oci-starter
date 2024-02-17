@@ -428,16 +428,16 @@ Check LICENSE file (Apache 2.0)
 - destroy_group.sh : Destroy other directories, then the Common Resources
 
 - group_common
-    - build.sh     : Create the Common Resources using Terraform
-    - destroy.sh   : Destroy the objects created by Terraform
-    - env.sh       : Contains the settings of the project
+    - oci-starter.sh build   : Create the Common Resources using Terraform
+    - oci-starter.sh destroy : Destroy the objects created by Terraform
+    - env.sh                 : Contains the settings of the project
 
 ### Directories
 - group_common/src : Sources files
     - terraform    : Terraform scripts (Command: plan.sh / apply.sh)
 
 ### After Build
-- group_common_env.sh : File created during the build.sh and imported in each application
+- group_common_env.sh : File created during the build and imported in each application
 - app1                : Directory with an application using "group_common_env.sh" 
 - app2                : ...
 ...
@@ -448,9 +448,9 @@ Check LICENSE file (Apache 2.0)
 ### Usage 
 
 ### Commands
-- build.sh      : Build the whole program: Run Terraform, Configure the DB, Build the App, Build the UI
-- destroy.sh    : Destroy the objects created by Terraform
-- env.sh        : Contains the settings of your project
+- oci-starter.sh build   : Build the whole program: Run Terraform, Configure the DB, Build the App, Build the UI
+- oci-starter.sh destroy : Destroy the objects created by Terraform
+- env.sh                 : Contains the settings of your project
 
 ### Directories
 - src           : Sources files
@@ -487,7 +487,7 @@ Check LICENSE file (Apache 2.0)
         contents.append("  ./build_group.sh")       
     else:
         contents.append(f"  cd {params['prefix']}")
-        contents.append("  ./build.sh")
+        contents.append("  ./oci-starter.sh build")
     return contents
 
 def is_param_default_value(name):

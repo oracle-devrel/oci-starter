@@ -65,7 +65,7 @@ build_test () {
   cd $TEST_HOME
   cd $TEST_DIR
   pwd
-  ./build.sh > build_$BUILD_ID.log 2>&1
+  ./oci-starter.sh build > build_$BUILD_ID.log 2>&1
 
   CSV_NAME=$NAME
   CSV_DIR=$TEST_DIR
@@ -121,12 +121,12 @@ build_test_destroy () {
   if [ -f $TEST_HOME/stop_token ]; then
     echo "-------------------------------------------------------"
     echo "stop_token file dectected"
-    echo "Exiting before destroy.sh"
+    echo "Exiting before destroy_all.sh"
     echo "Last directory: $TEST_DIR"
     rm $TEST_HOME/stop_token
     exit
   fi  
-  ./destroy.sh --auto-approve > destroy.log 2>&1  
+  ./oci-starter.sh destroy --auto-approve > destroy.log 2>&1  
   echo "destroy_secs=$SECONDS" >> ${TEST_DIR}_time.txt
   CSV_DESTROY_SECOND=$SECONDS
   cat ${TEST_DIR}_time.txt
@@ -268,7 +268,7 @@ pre_test_suite() {
   cd $TEST_HOME/group_common
   echo "# Test Suite use 2 nodes to avoid error: Too Many Pods (110 pods/node K8s limit)" >> env.sh
   echo "export TF_VAR_node_pool_size=2" >> env.sh
-  ./build.sh
+  ./oci-starter.sh build
   exit_on_error
   date
   echo "CSV_DATE,OPTION_DEPLOY,OPTION_LANG,OPTION_JAVA_FRAMEWORK,OPTION_JAVA_VM,OPTION_DB,OPTION_DB_INSTALL,OPTION_UI,OPTION_SHAPE,CSV_NAME,CSV_HTML_OK,CSV_JSON_OK,CSV_BUILD_SECOND,CSV_DESTROY_SECOND,CSV_RUN100_OK,CSV_RUN100_SECOND" > $TEST_HOME/result.csv 
@@ -284,6 +284,6 @@ post_test_suite() {
   date
 
   cd $TEST_HOME/group_common
-  ./destroy.sh --auto-approve
+  ./oci-starter.sh destroy --auto-approve
 }
 

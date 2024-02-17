@@ -118,6 +118,7 @@ resource "oci_objectstorage_bucket" "starter_bucket" {
   namespace      = var.namespace
   name           = "${var.prefix}-public-bucket"
   access_type    = "ObjectReadWithoutList"
+  object_events_enabled = true
 
   freeform_tags = local.freeform_tags
 }
