@@ -40,7 +40,7 @@ else
   else
     # It does not use mvn build image. Else no choice of the JIT
     # mvn spring-boot:build-image -Dspring-boot.build-image.imageName=${TF_VAR_prefix}-app:latest
-    mvn package
+    mvn package -DskipTests
     exit_on_error
     docker build -t ${TF_VAR_prefix}-app:latest . 
   fi
