@@ -146,7 +146,7 @@ import javax.json.*;
 {%- endmacro -%}
 
 {% macro sql() -%} 
-{%- if java_framework == "springboot" %}``
+{%- if java_framework == "springboot" %}
         rows = repository.findAll();
 {%- else %}
         try {           
