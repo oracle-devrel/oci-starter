@@ -149,8 +149,7 @@ import javax.json.*;
 {%- if java_framework == "springboot" %}``
         rows = repository.findAll();
 {%- else %}
-        try {
-            rows = repository.findAll();            
+        try {           
 {%- if db_family == "oracle" %}
             Connection conn = null;
             Statement stmt = null;
