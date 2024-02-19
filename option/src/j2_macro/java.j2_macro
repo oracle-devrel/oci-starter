@@ -79,7 +79,7 @@ import javax.json.*;
     public HelloFunction() throws Exception {
     {%- elif java_framework == "springboot" %}
     @Autowired
-    {%- if db_family_type in [ "sql", "nosql" ] %}  
+    {%- if db_family_type == "sql" or db_family == "nosql" ] %}  
     private final DemoRepository repository;
 
     DemoController(DemoRepository repository) {

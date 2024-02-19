@@ -1,17 +1,10 @@
 package com.example.demo;
 
-import java.util.Objects;
+import com.oracle.nosql.spring.data.core.mapping.NosqlId;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-@Entity
-@Table(name = "DEPT")
 public class Dept {
 
-    @Id
+    @NosqlId
     private int deptno;
     private String dname;
     private String loc;
