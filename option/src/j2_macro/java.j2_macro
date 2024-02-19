@@ -90,7 +90,7 @@ import javax.json.*;
     {%- elif java_framework == "tomcat" %}
     public DeptServlet() throws Exception {
     {%- endif %}
-    {%- elif db_family == "oracle" and java_framework in ["tomcat", "helidon"] %}
+    {%- if db_family == "oracle" and java_framework in ["tomcat", "helidon"] %}
         pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
         pds.setURL(System.getenv("JDBC_URL"));
         pds.setUser(System.getenv("DB_USER"));
