@@ -23,6 +23,13 @@ import javax.json.*;
       <artifactId>nosqldriver</artifactId>
       <version>5.4.14</version>
     </dependency>
+    {%- if java_framework == "springboot" %}    
+    <dependency>
+      <groupId>com.oracle.nosql.sdk</groupId>
+      <artifactId>spring-data-oracle-nosql</artifactId>
+      <version>2.0.0</version>
+    </dependency>    
+    {%- endif %}
 {%- elif db_family_type == "sql" %}  
     <dependency>
       <groupId>{{ pomGroupId }}</groupId>
@@ -57,12 +64,12 @@ import javax.json.*;
 {% macro constructor() -%}
     {%- if java_framework != "springboot" %}
     public record Dept(int deptno, String dname, String loc) {};
-    {%- endif %}
     {%- if db_family == "nosql" %}
     {%- if java_framework == "helidon" %}
     static NoSQLHandle handle;
     {%- else %}
     private final NoSQLHandle handle;
+    {%- endif %}
     {%- endif %}
     {%- endif %}
     {%- if db_family == "oracle" and java_framework in ["tomcat", "helidon"] %}
@@ -72,7 +79,7 @@ import javax.json.*;
     public HelloFunction() throws Exception {
     {%- elif java_framework == "springboot" %}
     @Autowired
-    {%- if db_family_type == "sql" %}  
+    {%- if db_family_type in [ "sql", "nosql" ] %}  
     private final DemoRepository repository;
 
     DemoController(DemoRepository repository) {
@@ -100,7 +107,14 @@ import javax.json.*;
         pds.setInitialPoolSize(3);
         pds.setMinPoolSize(3);
         pds.setMaxPoolSize(10);    
-    {%- elif db_family == "nosql" %}
+    {%- elif db_family == "nosql" and java_framework != "springboot" %}
+        {{ nosql_connection() }}
+        handle = NoSQLHandleFactory.createNoSQLHandle(config);
+    {%- endif %}
+    }
+{%- endmacro -%}
+
+{% macro nosql_connection() -%}
         {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
         SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
         {%- else %}
@@ -108,10 +122,8 @@ import javax.json.*;
         {%- endif %}        
         NoSQLHandleConfig config = new NoSQLHandleConfig( System.getenv("TF_VAR_nosql_endpoint"), authProvider);
         config.setDefaultCompartment( System.getenv("TF_VAR_compartment_ocid") );
-        handle = NoSQLHandleFactory.createNoSQLHandle(config);
-    {%- endif %}
-    }
 {%- endmacro -%}
+    
 
 {% macro dept() -%}
         {{ dept_no_return() }}
@@ -143,7 +155,11 @@ import javax.json.*;
         {%- elif db_family == "opensearch" %}
         {{ opensearch() }}
         {%- elif db_family == "nosql" %}
+        {%- if java_framework == "springboot" %}
+        rows = repository.findAll();
+        {%- else %} 
         {{ nosql() }}
+        {%- endif %}
         {%- endif %}
 {%- endmacro -%}
 
