@@ -70,7 +70,14 @@ import javax.json.*;
     public HelloFunction() throws Exception {
     {%- elif java_framework == "springboot" %}
     @Autowired
+    {%- if db_family_type == "sql" %}  
+    private final DemoRepository repository;
+
+    DemoController(DemoRepository repository) {
+        this.repository = repository;
+    {%- else %}
     public DemoController() throws Exception {
+    {%- endif %}
     {%- elif java_framework == "helidon" %}
     public DeptResource() throws Exception {
         {%- if db_family == "nosql" %}
@@ -83,7 +90,7 @@ import javax.json.*;
     {%- elif java_framework == "tomcat" %}
     public DeptServlet() throws Exception {
     {%- endif %}
-    {%- if db_family == "oracle" and java_framework != "micronaut" %}
+    {%- elif db_family == "oracle" and java_framework in ["tomcat", "helidon"] %}
         pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
         pds.setURL(System.getenv("JDBC_URL"));
         pds.setUser(System.getenv("DB_USER"));
@@ -139,7 +146,11 @@ import javax.json.*;
 {%- endmacro -%}
 
 {% macro sql() -%} 
+{%- if java_framework == "springboot" %}``
+        rows = repository.findAll();
+{%- else %}
         try {
+            rows = repository.findAll();            
 {%- if db_family == "oracle" %}
             Connection conn = null;
             Statement stmt = null;
@@ -174,6 +185,7 @@ import javax.json.*;
             System.err.println(e.getMessage());
             e.printStackTrace();
         }
+{%- endif %}
 {%- endmacro -%}  
 
 {% macro nodb() -%}    
