@@ -181,7 +181,7 @@ def db_rules():
 
 
 def language_rules():
-    if params.get('language') != 'java':
+    if params.get('language') != 'java' or params.get('deploy_type') == 'function':
         params.pop('java_framework')
         params.pop('java_vm')
         params.pop('java_version')

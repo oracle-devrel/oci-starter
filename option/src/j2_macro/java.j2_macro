@@ -55,6 +55,9 @@ import javax.json.*;
 {%- endmacro -%}  
 
 {% macro constructor() -%}
+    {%- if java_framework != "springboot" %}
+    public record Dept(int deptno, String dname, String loc) {};
+    {%- endif %}
     {%- if db_family == "nosql" %}
     {%- if java_framework == "helidon" %}
     static NoSQLHandle handle;
@@ -62,10 +65,9 @@ import javax.json.*;
     private final NoSQLHandle handle;
     {%- endif %}
     {%- endif %}
-    {%- if db_family == "oracle" and java_framework != "micronaut" %}
+    {%- if db_family == "oracle" and java_framework in ["tomcat", "helidon"] %}
     static PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
     {%- endif %}
-  
     {%- if deploy_type == "function" %}
     public HelloFunction() throws Exception {
     {%- elif java_framework == "springboot" %}
