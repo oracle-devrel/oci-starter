@@ -95,6 +95,7 @@ import javax.json.*;
         }     
         {%- endif %}
     {%- elif java_framework == "micronaut" %}
+    
     public DeptController() throws Exception {
     {%- elif java_framework == "tomcat" %}
     public DeptServlet() throws Exception {
@@ -156,7 +157,8 @@ import javax.json.*;
         {{ opensearch() }}
         {%- elif db_family == "nosql" %}
         {%- if java_framework == "springboot" %}
-        rows = repository.findAll();
+        Iterable iterable = repository.findAll();
+        iterable.forEach(rows::add);
         {%- else %} 
         {{ nosql() }}
         {%- endif %}
