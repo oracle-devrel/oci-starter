@@ -95,7 +95,6 @@ import javax.json.*;
         }     
         {%- endif %}
     {%- elif java_framework == "micronaut" %}
-    
     public DeptController() throws Exception {
     {%- elif java_framework == "tomcat" %}
     public DeptServlet() throws Exception {
