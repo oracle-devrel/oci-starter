@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import com.oracle.nosql.spring.data.core.mapping.NosqlId;
+import com.oracle.nosql.spring.data.core.mapping.*;
 
 @NosqlTable(tableName="DEPT_SPRING")
 public class Dept {
