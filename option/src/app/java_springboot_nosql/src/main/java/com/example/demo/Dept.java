@@ -2,7 +2,7 @@ package com.example.demo;
 
 import com.oracle.nosql.spring.data.core.mapping.*;
 
-@NosqlTable(tableName="DEPT_SPRING")
+@NosqlTable(storageGB = 1, writeUnits = 1, readUnits = 10, tableName="DEPT_SPRING")
 public class Dept {
     @NosqlId
 
