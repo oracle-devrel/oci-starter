@@ -2,9 +2,10 @@ package com.example.demo;
 
 import com.oracle.nosql.spring.data.core.mapping.NosqlId;
 
+@NosqlTable(tableName="DEPT_SPRING")
 public class Dept {
-
     @NosqlId
+
     private int deptno;
     private String dname;
     private String loc;
