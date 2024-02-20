@@ -79,7 +79,7 @@ import javax.json.*;
     public HelloFunction() throws Exception {
     {%- elif java_framework == "springboot" %}
     @Autowired
-    {%- if db_family_type == "sql" or db_family == "nosql" %}  
+    {%- if db_family_type == "sql" %}  
     private final DemoRepository repository;
 
     DemoController(DemoRepository repository) {
@@ -155,12 +155,7 @@ import javax.json.*;
         {%- elif db_family == "opensearch" %}
         {{ opensearch() }}
         {%- elif db_family == "nosql" %}
-        {%- if java_framework == "springboot" %}
-        Iterable iterable = repository.findAll();
-        iterable.forEach(rows::add);
-        {%- else %} 
         {{ nosql() }}
-        {%- endif %}
         {%- endif %}
 {%- endmacro -%}
 
