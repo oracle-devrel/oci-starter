@@ -45,9 +45,9 @@ fi
 
 if [ "$ARG1" == "build" ]; then
   # Show the log and save it in target/build.log
-  bin/build_all.sh $@ 2>&1 | tee $TARGET_DIR/build.log
+  bin/build_all.sh ${@:2} 2>&1 | tee $TARGET_DIR/build.log
 elif [ "$ARG1" == "destroy" ]; then
-  bin/destroy_all.sh $@ 2>&1 | tee $TARGET_DIR/destroy.log
+  bin/destroy_all.sh ${@:2} 2>&1 | tee $TARGET_DIR/destroy.log
 elif [ "$ARG1" == "ssh" ]; then
   if [ "$ARG2" == "compute" ]; then
     bin/ssh_compute.sh
@@ -86,7 +86,7 @@ elif [ "$ARG1" == "deploy" ]; then
     exit 1
   fi    
 else 
-  echo "Unknow command: $MODE"
+  echo "Unknow command: $ARG1"
   exit 1
 fi
 # Return the exit code 
