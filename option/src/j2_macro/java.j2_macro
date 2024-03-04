@@ -62,14 +62,11 @@ import javax.json.*;
 {%- endmacro -%}  
 
 {% macro constructor() -%}
-    {%- if java_framework != "springboot" %}
-    public record Dept(int deptno, String dname, String loc) {};
     {%- if db_family == "nosql" %}
     {%- if java_framework == "helidon" %}
     static NoSQLHandle handle;
     {%- else %}
     private final NoSQLHandle handle;
-    {%- endif %}
     {%- endif %}
     {%- endif %}
     {%- if db_family == "oracle" and java_framework in ["tomcat", "helidon"] %}
