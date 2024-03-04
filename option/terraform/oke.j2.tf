@@ -11,7 +11,11 @@ locals {
 # VARIABLES
 
 variable "oke_shape" {
-  default = "VM.Standard.E3.Flex"
+  {%- if shape == "ampere" %}
+  default = "VM.Standard.A1.Flex"
+  {%- else %}
+  default = "VM.Standard.AMD.Generic"
+  {%- endif %}
 }
 
 variable "node_pool_size" {
