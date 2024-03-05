@@ -3,7 +3,7 @@ FROM oraclelinux:8
 RUN  dnf module enable go-toolset && \
      dnf module install -y go-toolset && \
 {%- if db_family == "oracle" %}
-  {%- if shape == "arm" %}
+  {%- if shape == "ampere" %}
      dnf install -y oracle-release-el8 && \
      dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel && \
   {%- else %}    

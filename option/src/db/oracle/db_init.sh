@@ -3,7 +3,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
 # Install SQL*Plus
-{%- if shape == "arm" %}
+{%- if shape == "ampere" %}
 sudo dnf install -y oracle-release-el8 
 sudo dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-sqlplus
 {%- else %}    

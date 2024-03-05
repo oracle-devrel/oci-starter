@@ -2,7 +2,7 @@ FROM oraclelinux:8
 
 RUN  dnf install -y nodejs python3 && \
 {%- if db_family == "oracle" %}
-  {%- if shape == "arm" %}
+  {%- if shape == "ampere" %}
      dnf install -y oracle-release-el8 && \
      dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel && \
   {%- else %}    
