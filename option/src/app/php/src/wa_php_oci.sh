@@ -7,7 +7,7 @@
 # dnf install -y php-mysqlnd 
 # dnf install -y httpd
 
-if [[ `arch` == aarch64* ]]; then
+if [[ `arch` == "aarch64" ]]; then
     dnf install -y oracle-release-el8
     dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel
 else
@@ -21,7 +21,7 @@ dnf module enable -y php:remi-7.4 -y
 dnf install -y php php-cli php-common php-fpm php-pear gcc curl-devel php-devel zlib-devel pcre-devel php-pecl-http php-mysqlnd systemtap-sdt-devel --allowerasing
 export PHP_DTRACE=yes
 setenforce 0
-if [[ `arch` == aarch64* ]]; then
+if [[ `arch` == "aarch64" ]]; then
     echo "instantclient,/usr/lib/oracle/19.19/client64/lib" | pecl install oci8-2.2.0.tgz
 else
     echo "instantclient,/usr/lib/oracle/21/client64/lib" | pecl install oci8-2.2.0.tgz

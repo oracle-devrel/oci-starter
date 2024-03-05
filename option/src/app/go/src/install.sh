@@ -4,7 +4,7 @@ cd $SCRIPT_DIR
 
 # ORACLE Instant Client 
 if [[ "$JDBC_URL" == *"jdbc:oracle"* ]]; then
-    if [[ `arch` == aarch64* ]]; then
+    if [[ `arch` == "aarch64" ]]; then
         sudo dnf install -y oracle-release-el8
         sudo dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel
     else
