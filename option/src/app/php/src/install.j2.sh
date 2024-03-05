@@ -13,7 +13,6 @@ cd $SCRIPT_DIR
 # sudo dnf install -y php-mysqlnd 
 # sudo dnf install -y httpd
 
-sudo dnf install -y oraclelinux-developer-release-el8 oracle-instantclient-release-el8
 chmod +x wa_php_oci.sh
 sudo ./wa_php_oci.sh
 
