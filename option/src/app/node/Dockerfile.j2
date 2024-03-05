@@ -1,7 +1,6 @@
 FROM oraclelinux:8
 
-RUN  dnf module enable go-toolset && \
-     dnf module install -y go-toolset && \
+RUN  dnf install -y nodejs python3 && \
 {%- if db_family == "oracle" %}
   {%- if shape == "arm" %}
      dnf install -y oracle-release-el8 && \
@@ -15,6 +14,5 @@ RUN  dnf module enable go-toolset && \
 
 WORKDIR /app
 COPY src/* /app/
-RUN go get .
-RUN go build .
-CMD ./app
+RUN npm install
+CMD exec node rest.js
