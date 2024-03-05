@@ -1,7 +1,6 @@
 FROM oraclelinux:7-slim
 
 RUN  yum -y install oracle-release-el7 oracle-php-release-el7 && \
-     yum -y install oracle-instantclient-release-el7 && \
      yum-config-manager --disable ol7_developer_EPEL && \
      yum install -y php php-json && \
      {%- if db_family == "oracle" %}

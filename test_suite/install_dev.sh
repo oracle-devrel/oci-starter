@@ -43,9 +43,15 @@ sudo dnf -y install terraform
 sudo dnf install -y jq
 
 # Kubectl
+# XXX Got forbidden and had to download manually ?
 cd $HOME/bin
 curl -LO https://dl.k8s.io/release/v1.29.2/bin/linux/arm64/kubectl
 chmod +x kubectl
+
+# Helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
 
 # tmux
 sudo dnf install -y tmux
