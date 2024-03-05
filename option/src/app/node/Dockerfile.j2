@@ -1,6 +1,7 @@
 FROM oraclelinux:8
 
-RUN  dnf install -y nodejs python3 && \
+RUN dnf module enable -y nodejs:18 && \
+    dnf install -y nodejs python3 && \
 {%- if db_family == "oracle" %}
   {%- if shape == "ampere" %}
      dnf install -y oracle-release-el8 && \

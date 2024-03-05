@@ -59,3 +59,8 @@ curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
 
 # tmux
 sudo dnf install -y tmux
+
+# ssh
+# add in /etc/ssh/ssh_config
+# ClientAliveInterval 120
+# ClientAliveCountMax 3
