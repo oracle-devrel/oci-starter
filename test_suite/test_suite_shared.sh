@@ -262,7 +262,7 @@ pre_test_suite() {
   git clone https://github.com/mgueury/oci-starter
 
   SHAPE_GROUP="amd"
-  if [[ `arch` == "arm64" ]]; then
+  if [[ `arch` == "aarch64" ]]; then
     SHAPE_GROUP="ampere"
   fi
   cd $TEST_HOME/oci-starter
