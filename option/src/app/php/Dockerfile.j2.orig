@@ -19,8 +19,3 @@ COPY src/php.ini.append.docker /app
 RUN cat /app/php.ini.append.docker >> /etc/php.ini
 COPY src/app.conf /etc/httpd/conf.d/
 ENTRYPOINT ["httpd", "-D", "FOREGROUND"]
-
-
-yum install -y oracle-instantclient19.10-basic oracle-instantclient19.10-sqlplus
-oracle-instantclient19.10-basic
-oracle-instantclient19.10
