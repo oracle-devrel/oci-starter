@@ -5,15 +5,17 @@ cd $SCRIPT_DIR
 # Install last version of PHP
 # https://yum.oracle.com/oracle-linux-php.html
 
-sudo dnf install -y oraclelinux-developer-release-el8 oracle-instantclient-release-el8
-chmod +x wa_php_oci.sh
-sudo ./wa_php_oci.sh
+# XXX This should be the right way. But it does not work...
 # sudo dnf install -y @php:7.4
 # sudo dnf install -y oraclelinux-developer-release-el8 oracle-instantclient-release-el8
 # sudo dnf module enable php:7.4 php-oci8
 # sudo dnf install -y php-oci8-21c php-mysqlnd 
 # sudo dnf install -y php-mysqlnd 
 # sudo dnf install -y httpd
+
+sudo dnf install -y oraclelinux-developer-release-el8 oracle-instantclient-release-el8
+chmod +x wa_php_oci.sh
+sudo ./wa_php_oci.sh
 
 {%- if db_family == "psql" %}
 sudo yum install -y php-pgsql
@@ -32,9 +34,7 @@ sudo cp app.conf /etc/httpd/conf.d/.
 
 # Configure the Apache Listener on 8080
 sudo sed -i "s/Listen 80$/Listen 8080/" /etc/httpd/conf/httpd.conf
-sudo systemctl enable httpd
 sudo systemctl restart httpd
-sudo systemctl enable php-fpm
 sudo systemctl restart php-fpm
 
 # XXXX

@@ -30,7 +30,7 @@ echo >> /etc/php.ini
 echo extension=oci8.so >> /etc/php.ini
 echo extension=oci8 > /etc/php.d/20-oci8.ini
 
-systemctl restart php-fpm
-systemctl restart httpd
+# Needed for docker to start the service at boot time
+systemctl enable httpd
+systemctl enable php-fpm
 
-sudo dnf install oracle-release-el8

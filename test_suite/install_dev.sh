@@ -47,6 +47,7 @@ sudo dnf install -y jq
 cd $HOME/bin
 curl -LO https://dl.k8s.io/release/v1.29.2/bin/linux/arm64/kubectl
 chmod +x kubectl
+echo "source <(./kubectl completion bash)" >> ~/.bashrc
 
 # Helm
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3

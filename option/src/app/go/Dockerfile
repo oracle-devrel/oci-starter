@@ -1,8 +1,17 @@
-FROM oraclelinux:7-slim
+FROM oraclelinux:8
 
-RUN  yum -y install oracle-release-el7 oracle-golang-release-el7 && \
-     yum-config-manager --disable ol7_developer_EPEL && \
-     yum -y install oracle-instantclient-basic oracle-instantclient-sqlplus gcc golang && \
+RUN  dnf -y install oracle-release-el8 && \
+{%- if db_family == "oracle" %}
+  {%- if shape == "arm" %}
+     dnf install -y oracle-release-el8
+     dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel     
+  {%- else %}    
+     dnf install -y oracle-instantclient-release-el8  
+     dnf install -y oracle-instantclient-basic oracle-instantclient-sqlplus && \ 
+  {%- endif %}    
+{%- endif %}    
+     dnf module enable go-toolset:ol8addon && \
+     dnf module install -y go-toolset && \
      rm -rf /var/cache/yum
 
 WORKDIR /app
