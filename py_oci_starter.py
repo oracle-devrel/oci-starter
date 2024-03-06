@@ -113,7 +113,7 @@ allowed_values = {
     '-license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
-    '-shape': {'amd','freetier_amd','ampere'},
+    '-shape': {'amd','freetier_amd','ampere','arm'},
     '-db_install': {'default', 'shared_compute', 'kubernetes'},
     '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'}
 }
@@ -259,6 +259,8 @@ def group_common_rules():
 
 def shape_rules():
     if 'shape' in params:
+        if params['instance_shape']=='arm':
+            params['shape'] = 'ampere' 
         if params.get('shape')=='freetier_amd':
             params['instance_shape'] = 'VM.Standard.E2.1.Micro'
             params['instance_shape_config_memory_in_gbs'] = 1

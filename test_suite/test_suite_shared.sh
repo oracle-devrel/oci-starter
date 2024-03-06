@@ -268,10 +268,12 @@ pre_test_suite() {
 
   SHAPE_GROUP="amd"
   if [[ `arch` == "aarch64" ]]; then
-    SHAPE_GROUP="ampere"
+    SHAPE_GROUP="arm"
   fi
+  GROUP_NAME="ts${SHAPE_GROUP}"
+  
   cd $TEST_HOME/oci-starter
-  ./oci_starter.sh -group_name tsall -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN -shape $SHAPE_GROUP
+  ./oci_starter.sh -group_name $GROUP_NAME -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN -shape $SHAPE_GROUP
   exit_on_error
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
