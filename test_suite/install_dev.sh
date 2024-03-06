@@ -3,6 +3,13 @@
 # - Copy .oci files
 # - Create .oci_starter_profile
 # - Create $HOME/bin/env_oci_starter_testsuite.sh 
+# - Copy data/tls/dns6.xxxx
+
+# SSH
+# add in /etc/ssh/sshd_config
+# ClientAliveInterval 120
+# ClientAliveCountMax 3
+
 mkdir -p $HOME/data/github/mgueury.skynet.be/test_suite
 mkdir .oci
 
@@ -32,6 +39,10 @@ sudo dnf install -y graalvm22-ee-17-jdk
 sudo dnf install -y graalvm-21-jdk
 sudo update-alternatives --set java /usr/lib64/graalvm/graalvm22-ee-java17/bin/java
 
+# Node (JET/Angular/ReactJS)
+sudo dnf module enable -y nodejs:18
+sudo dnf install -y nodejs
+
 # Maven
 sudo dnf install -y maven
 
@@ -59,8 +70,3 @@ curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
 
 # tmux
 sudo dnf install -y tmux
-
-# ssh
-# add in /etc/ssh/ssh_config
-# ClientAliveInterval 120
-# ClientAliveCountMax 3

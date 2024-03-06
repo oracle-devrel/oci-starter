@@ -233,7 +233,7 @@ data "oci_core_subnet" "starter_private_subnet" {
   subnet_id = oci_core_subnet.starter_private_subnet.id
 }
 
-{%- if shape == "freetier_amd" or shape == "ampere" %}
+{%- if shape == "freetier_amd" or (deploy== "compute" and shape == "ampere") %}
 resource "oci_core_route_table" "starter_route_private" {
   compartment_id = local.lz_network_cmp_ocid
   vcn_id         = oci_core_vcn.starter_vcn.id
