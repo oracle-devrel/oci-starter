@@ -23,4 +23,3 @@ build_function $DB_URL
 {%- endif %}
 exit_on_error
 
-
