@@ -118,12 +118,12 @@ build_test_destroy () {
     BUILD_ID=2
     build_test
   fi  
-  if [ -f $TEST_HOME/stop_token ]; then
+  if [ -f $TEST_HOME/stop_after_build ]; then
     echo "-------------------------------------------------------"
-    echo "stop_token file dectected"
+    echo "stop_after_build file dectected"
     echo "Exiting before destroy_all.sh"
     echo "Last directory: $TEST_DIR"
-    rm $TEST_HOME/stop_token
+    rm $TEST_HOME/stop_after_build
     exit
   fi  
   ./oci-starter.sh destroy --auto-approve > destroy.log 2>&1  
