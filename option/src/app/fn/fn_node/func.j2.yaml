@@ -1,7 +1,8 @@
+# See https://hub.docker.com/r/fnproject/node/tags
 schema_version: 20180708
 name: fn-node-{{ db_family }}
 version: 0.0.1
 runtime: node
-build_image: fnproject/node:14-dev
-run_image: fnproject/node:14
+build_image: fnproject/node:18-dev
+run_image: fnproject/node:18
 entrypoint: node func.js

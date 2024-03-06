@@ -1,3 +1,5 @@
+# See https://hub.docker.com/r/fnproject/fn-java-fdk/tags
+#     https://hub.docker.com/r/fnproject/fn-java-fdk-build/tags
 schema_version: 20180708
 name: fn-java
 version: 0.0.1
