@@ -9,6 +9,7 @@ import sys
 import os
 import shutil
 import json
+import stat
 from datetime import datetime
 from distutils.dir_util import copy_tree
 from jinja2 import Environment, FileSystemLoader
@@ -1086,6 +1087,10 @@ def jinja2_replace_template():
                     with open(output_file_path, mode="w", encoding="utf-8") as output_file:
                         output_file.write(content)
                         print(f"J2 - Wrote {output_file_path}")
+                    # Give executable to .sh files
+                    if filename.endswith('.sh'):
+                        st = os.stat(output_file_path)
+                        os.chmod('somefile', st.st_mode | stat.S_IEXEC)        
                 os.remove(os.path.join(subdir, filename))                
             if filename.endswith('_refresh.sh'):      
                 os.remove(os.path.join(subdir, filename))   
