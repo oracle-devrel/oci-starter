@@ -70,3 +70,11 @@ curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
 
 # tmux
 sudo dnf install -y tmux
+
+# VIM
+cat >> $HOME/.vimrc <<'EOT' 
+set tabstop=2
+set expandtab
+set shiftwidth=2
+set paste
+EOT

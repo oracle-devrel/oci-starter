@@ -31,7 +31,6 @@ using Oracle.NoSQL.SDK;
         public string deptno { get; set; }
         public string dname { get; set; }
         public string loc { get; set; }
-
     }    
     public class Hit
     {
