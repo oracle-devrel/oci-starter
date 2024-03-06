@@ -1090,7 +1090,7 @@ def jinja2_replace_template():
                     # Give executable to .sh files
                     if filename.endswith('.sh'):
                         st = os.stat(output_file_path)
-                        os.chmod('somefile', st.st_mode | stat.S_IEXEC)        
+                        os.chmod(output_file_path, st.st_mode | stat.S_IEXEC)        
                 os.remove(os.path.join(subdir, filename))                
             if filename.endswith('_refresh.sh'):      
                 os.remove(os.path.join(subdir, filename))   
