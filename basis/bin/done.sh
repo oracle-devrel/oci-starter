@@ -57,6 +57,12 @@ if [ ! -z "$UI_URL" ]; then
       # Get the compute logs
       scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:/home/opc/*.log target/.
       scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:/home/opc/app/*.log target/.
+      if [ "$TF_VAR_language" == "java" ]; then
+        if [ "$TF_VAR_java_framework" == "tomcat" ]; then
+            ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP "sudo cp -r /opt/tomcat/logs /tmp/tomcat_logs; sudo chown -R opc /tmp/tomcat_logs"
+            scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:/tmp/tomcat_logs target/.
+        fi
+      fi
     fi 
   fi
   if [ "$TF_VAR_ui_type" != "api" ]; then

@@ -13,7 +13,7 @@ fi
 echo "OKE DESTROY"
 
 if [ "$1" != "--auto-approve" ]; then
-  error_exit "Please call this script via destroy.sh"
+  error_exit "Please call this script via ./starter.sh destroy"
 fi
 
 if [ ! -f $KUBECONFIG ]; then
@@ -36,3 +36,5 @@ kubectl delete ingress,services --all
 helm uninstall ingress-nginx --namespace ingress-nginx
 # kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.4.0/deploy/static/provider/cloud/deploy.yaml
 
+# Rename kubeconfig. Avoid to reuse if a new OKE is created for the same directory.
+mv kubeconfig_starter kubeconfig_starter.destroyed

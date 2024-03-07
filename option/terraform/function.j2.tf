@@ -16,6 +16,9 @@ resource "oci_functions_application" "starter_fn_application" {
   compartment_id = local.lz_appdev_cmp_ocid
   display_name   = "${var.prefix}-fn-application"
   subnet_ids     = [data.oci_core_subnet.starter_private_subnet.id]
+  {%- if shape == "ampere" %}
+  shape          = "GENERIC_ARM"   
+  {%- endif %}
 
   image_policy_config {
     #Required
@@ -118,6 +121,7 @@ resource "oci_objectstorage_bucket" "starter_bucket" {
   namespace      = var.namespace
   name           = "${var.prefix}-public-bucket"
   access_type    = "ObjectReadWithoutList"
+  object_events_enabled = true
 
   freeform_tags = local.freeform_tags
 }

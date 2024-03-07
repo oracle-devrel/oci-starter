@@ -1,6 +1,7 @@
 #!/bin/bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-. $SCRIPT_DIR/../../env.sh -no-auto
+# FN uses more variable like TF_VAR_ocir that are not available with ./env.sh -no-auto
+. $SCRIPT_DIR/../../env.sh 
 . $BIN_DIR/build_common.sh
 
 # fn -v deploy --app ${TF_VAR_prefix}-fn-application
@@ -13,5 +14,12 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # Deploy with terraform
 # Then Work-around: terraforms is not able to create a APIGW with dynamic multiple backends
+{%- if language == "java" %}
+build_function $JDBC_URL
+{%- elif language == "ords" %}
+# ORDS: OCI Function is not used. Nothing to do
+{%- else %}
 build_function $DB_URL
+{%- endif %}
 exit_on_error
+

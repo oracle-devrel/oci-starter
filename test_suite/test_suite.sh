@@ -139,7 +139,11 @@ loop_compute_other() {
   OPTION_DB_INSTALL=shared_compute
   OPTION_UI=html
   OPTION_DB=db_free
-  build_option  
+  if [[ `arch` == "aarch64" ]]; then
+    echo "SKIP: db_free not available on ARM yet"
+  else
+    build_option  
+  fi
   OPTION_DB=mysql
   build_option   
 

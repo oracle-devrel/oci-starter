@@ -13,7 +13,7 @@ Go to: [www.ocistarter.com](https://www.ocistarter.com/)
 ```
 unzip starter.zip
 cd starter
-./build.sh
+./starter.sh build
 Then click on the UI_URL at then end of the build
 ```
 
@@ -27,14 +27,14 @@ git clone https://github.com/MarcGueury/oci-starter
 cd oci-starter
 ./oci_starter.sh -prefix test -language java -deploy compute -db_password LiveLab__12345 
 cd output
-./build.sh
+./starter.sh build
 Then click on the UI_URL at then end of the build
 ```
 
 To destroy:
 ```
 cd output
-./destroy.sh
+./starter.sh destroy
 > Do you really want to destroy all resources? yes
 ```
 

@@ -1,0 +1,22 @@
+FROM oraclelinux:8
+WORKDIR /function
+RUN groupadd --gid 1000 fn && adduser --uid 1000 --gid fn fn
+
+RUN  dnf module enable go-toolset && \
+     dnf module install -y go-toolset && \
+{%- if db_family == "oracle" %}
+  {%- if shape == "ampere" %}
+     dnf install -y oracle-release-el8 && \
+     dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel && \
+  {%- else %}    
+     dnf install -y oracle-instantclient-release-el8 && \
+     dnf install -y oracle-instantclient-basic oracle-instantclient-sqlplus && \ 
+  {%- endif %}    
+{%- endif %}  
+     rm -rf /var/cache/dnf
+   
+# Install the program
+ADD . /function/
+RUN go get .
+RUN go build .
+CMD ./func

@@ -1,5 +1,5 @@
 # DB23c Free in OCI Compute
-{%- if db_install == "shared_compute" %}
+{%- if db_install == "shared_compute" and shape != "ampere" %}
 locals {
   db_free_ip = oci_core_instance.starter_instance.private_ip
 }

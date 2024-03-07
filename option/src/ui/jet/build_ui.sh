@@ -21,6 +21,7 @@ else
   npm install
 fi    
 node_modules/grunt-cli/bin/grunt vb-process-local
+exit_on_error
 cd ..
 
 mkdir -p ui

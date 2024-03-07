@@ -1,0 +1,20 @@
+spring.datasource.url=##JDBC_URL##
+spring.datasource.username=##DB_USER##
+spring.datasource.password=##DB_PASSWORD##
+
+# Enable JPA / Hibernate debugging
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+
+{%- if db_family == "oracle" %}
+# Properties for UCP - Universal Connection Pool (UCP). Spring Boot 2.4.0 or above is required
+spring.datasource.type=oracle.ucp.jdbc.PoolDataSource
+spring.datasource.oracleucp.connection-pool-name=connectionPoolName
+spring.datasource.oracleucp.initial-pool-size=3
+spring.datasource.oracleucp.min-pool-size=3
+spring.datasource.oracleucp.max-pool-size=10
+spring.datasource.oracleucp.connection-factory-class-name=oracle.jdbc.pool.OracleDataSource
+spring.jpa.database-platform=org.hibernate.dialect.OracleDialect
+{%- endif %}

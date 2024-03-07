@@ -9,6 +9,7 @@ import sys
 import os
 import shutil
 import json
+import stat
 from datetime import datetime
 from distutils.dir_util import copy_tree
 from jinja2 import Environment, FileSystemLoader
@@ -112,7 +113,7 @@ allowed_values = {
     '-license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
-    '-shape': {'amd','freetier_amd','ampere'},
+    '-shape': {'amd','freetier_amd','ampere','arm'},
     '-db_install': {'default', 'shared_compute', 'kubernetes'},
     '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'}
 }
@@ -181,7 +182,7 @@ def db_rules():
 
 
 def language_rules():
-    if params.get('language') != 'java':
+    if params.get('language') != 'java' or params.get('deploy_type') == 'function':
         params.pop('java_framework')
         params.pop('java_vm')
         params.pop('java_version')
@@ -258,6 +259,8 @@ def group_common_rules():
 
 def shape_rules():
     if 'shape' in params:
+        if params['shape']=='arm':
+            params['shape'] = 'ampere' 
         if params.get('shape')=='freetier_amd':
             params['instance_shape'] = 'VM.Standard.E2.1.Micro'
             params['instance_shape_config_memory_in_gbs'] = 1
@@ -322,7 +325,7 @@ def help():
     message = f'''
 Usage: {script_name()} [OPTIONS]
 
-oci-starter.sh
+starter.sh
    -apigw_ocid (optional)
    -atp_ocid (optional)
    -auth_token (optional)
@@ -428,16 +431,16 @@ Check LICENSE file (Apache 2.0)
 - destroy_group.sh : Destroy other directories, then the Common Resources
 
 - group_common
-    - build.sh     : Create the Common Resources using Terraform
-    - destroy.sh   : Destroy the objects created by Terraform
-    - env.sh       : Contains the settings of the project
+    - starter.sh build   : Create the Common Resources using Terraform
+    - starter.sh destroy : Destroy the objects created by Terraform
+    - env.sh                 : Contains the settings of the project
 
 ### Directories
 - group_common/src : Sources files
     - terraform    : Terraform scripts (Command: plan.sh / apply.sh)
 
 ### After Build
-- group_common_env.sh : File created during the build.sh and imported in each application
+- group_common_env.sh : File created during the build and imported in each application
 - app1                : Directory with an application using "group_common_env.sh" 
 - app2                : ...
 ...
@@ -448,9 +451,9 @@ Check LICENSE file (Apache 2.0)
 ### Usage 
 
 ### Commands
-- build.sh      : Build the whole program: Run Terraform, Configure the DB, Build the App, Build the UI
-- destroy.sh    : Destroy the objects created by Terraform
-- env.sh        : Contains the settings of your project
+- starter.sh build   : Build the whole program: Run Terraform, Configure the DB, Build the App, Build the UI
+- starter.sh destroy : Destroy the objects created by Terraform
+- env.sh                 : Contains the settings of your project
 
 ### Directories
 - src           : Sources files
@@ -487,7 +490,7 @@ Check LICENSE file (Apache 2.0)
         contents.append("  ./build_group.sh")       
     else:
         contents.append(f"  cd {params['prefix']}")
-        contents.append("  ./build.sh")
+        contents.append("  ./starter.sh build")
     return contents
 
 def is_param_default_value(name):
@@ -767,17 +770,24 @@ def create_output_dir():
 
         if params['db_type'] == "autonomous" or params['db_type'] == "database" or params['db_type'] == "pluggable" or params['db_type'] == "db_free":
             db_family = "oracle"
+            db_family_type = "sql"
         elif params['db_type'] == "mysql":
             db_family = "mysql"
+            db_family_type = "sql"
         elif params['db_type'] == "psql":
             db_family = "psql"
+            db_family_type = "sql"
         elif params['db_type'] == "opensearch":
             db_family = "opensearch"
+            db_family_type = "other"
         elif params['db_type'] == "nosql":
             db_family = "nosql"
+            db_family_type = "other"
         elif params['db_type'] == "none":
             db_family = "none"
+            db_family_type = "other"
         params['db_family'] = db_family    
+        params['db_family_type'] = db_family_type
 
         # Function Common
         if params.get('deploy_type') == "function":
@@ -793,10 +803,16 @@ def create_output_dir():
             output_copy_tree("option/src/app/"+app, "src/app")
 
         # Overwrite the generic version (ex for mysql)
-        app_dir = app+"_"+db_family
-        print("app_dir="+app_dir)
-        if os.path.exists("option/src/app/"+app_dir):
-            output_copy_tree("option/src/app/"+app_dir, "src/app")
+        family_dir = app+"_"+db_family
+        print("family_dir="+family_dir)
+        if os.path.exists("option/src/app/"+family_dir):
+            output_copy_tree("option/src/app/"+family_dir, "src/app")
+
+        # Overwrite the family type version (ex for sql)
+        family_type_dir = app+"_"+db_family_type
+        print("family_type_dir="+family_type_dir)
+        if os.path.exists("option/src/app/"+family_type_dir):
+            output_copy_tree("option/src/app/"+family_type_dir, "src/app")
 
         if params['language'] == "java":
             # FROM container-registry.oracle.com/graalvm/jdk:21
@@ -1016,7 +1032,6 @@ def create_group_common_dir():
 
 jinja2_db_params = {
     "oracle": { 
-        "db_family_type": "sql",
         "pomGroupId": "com.oracle.database.jdbc",
         "pomArtifactId": "ojdbc8",
         "pomVersion": "21.11.0.0",
@@ -1025,7 +1040,6 @@ jinja2_db_params = {
 
     },
     "mysql": { 
-        "db_family_type": "sql",
         "pomGroupId": "mysql",
         "pomArtifactId": "mysql-connector-java",
         "pomVersion": "8.0.31",
@@ -1033,7 +1047,6 @@ jinja2_db_params = {
         "dbName": "MySQL"
     },
     "psql": { 
-        "db_family_type": "sql",
         "pomGroupId": "org.postgresql",
         "pomArtifactId": "postgresql",
         "pomVersion": "42.7.0",
@@ -1041,7 +1054,6 @@ jinja2_db_params = {
         "dbName": "PostgreSQL"
     },
     "opensearch": { 
-        "db_family_type": "none",
         "pomGroupId": "org.opensearch.driver",
         "pomArtifactId": "opensearch-sql-jdbc",
         "pomVersion": "1.4.0.1",
@@ -1049,11 +1061,9 @@ jinja2_db_params = {
         "dbName": "OpenSearch"
     },
     "nosql": {
-        "db_family_type": "none",
         "dbName": "NoSQL"
     },
     "none": {
-        "db_family_type": "none",
         "dbName": "No Database"
     }
 }
@@ -1079,6 +1089,10 @@ def jinja2_replace_template():
                     with open(output_file_path, mode="w", encoding="utf-8") as output_file:
                         output_file.write(content)
                         print(f"J2 - Wrote {output_file_path}")
+                    # Give executable to .sh files
+                    if filename.endswith('.sh'):
+                        st = os.stat(output_file_path)
+                        os.chmod(output_file_path, st.st_mode | stat.S_IEXEC)        
                 os.remove(os.path.join(subdir, filename))                
             if filename.endswith('_refresh.sh'):      
                 os.remove(os.path.join(subdir, filename))   
@@ -1120,7 +1134,7 @@ if mode == CLI:
 
 if mode == ABORT:
     print(help())
-    exit()
+    exit(1)
 
 print(f'Mode: {mode}')
 print(f'params: {params}')

@@ -38,9 +38,9 @@ resource "oci_opensearch_opensearch_cluster" "starter_opensearch" {
   opendashboard_node_count           = 1
   opendashboard_node_host_memory_gb  = 16
   opendashboard_node_host_ocpu_count = 1
-  software_version                   = "2.8.0"
+  software_version                   = "2.11.0"
   subnet_compartment_id              = local.lz_network_cmp_ocid
-  subnet_id                          = data.oci_core_subnet.starter_public_subnet.id
+  subnet_id                          = data.oci_core_subnet.starter_private_subnet.id
   vcn_compartment_id                 = local.lz_network_cmp_ocid
   vcn_id                             = oci_core_vcn.starter_vcn.id
 

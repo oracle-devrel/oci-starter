@@ -101,6 +101,7 @@ replace_db_user_password_in_file() {
   CONFIG_FILE=$1
   sed -i "s/##DB_USER##/$TF_VAR_db_user/" $CONFIG_FILE
   sed -i "s/##DB_PASSWORD##/$TF_VAR_db_password/" $CONFIG_FILE
+  sed -i "s%##JDBC_URL##%$JDBC_URL%" $CONFIG_FILE
 }  
 
 error_exit() {
@@ -145,7 +146,7 @@ set_if_not_null () {
 }
 
 get_attribute_from_tfstate () {
-  RESULT=`jq -r '.resources[] | select(.name=="'$2'") | .instances[0].attributes.'$3'' $STATE_FILE`
+  RESULT=`jq -r '[.resources[] | select(.name=="'$2'") | .instances[0].attributes.'$3'][0]' $STATE_FILE`
   set_if_not_null $1 $RESULT
 }
 
@@ -346,7 +347,7 @@ livelabs_green_button() {
       sed -i "s&TF_VAR_public_subnet_ocid=\"__TO_FILL__\"&TF_VAR_public_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
       sed -i "s&TF_VAR_private_subnet_ocid=\"__TO_FILL__\"&TF_VAR_private_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
       echo "TF_VAR_subnet_ocid stored in env.sh"
-      # Set the real variables such that the first ./build.sh works too.
+      # Set the real variables such that the first "build" works too.
       export TF_VAR_public_subnet_ocid=$TF_VAR_subnet_ocid
       export TF_VAR_private_subnet_ocid=$TF_VAR_subnet_ocid
     fi  

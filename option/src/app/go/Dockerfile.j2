@@ -1,0 +1,20 @@
+FROM oraclelinux:8
+
+RUN  dnf module enable go-toolset && \
+     dnf module install -y go-toolset && \
+{%- if db_family == "oracle" %}
+  {%- if shape == "ampere" %}
+     dnf install -y oracle-release-el8 && \
+     dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel && \
+  {%- else %}    
+     dnf install -y oracle-instantclient-release-el8 && \
+     dnf install -y oracle-instantclient-basic oracle-instantclient-sqlplus && \ 
+  {%- endif %}    
+{%- endif %}    
+     rm -rf /var/cache/dnf
+
+WORKDIR /app
+COPY src/* /app/
+RUN go get .
+RUN go build .
+CMD ./app

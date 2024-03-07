@@ -31,7 +31,6 @@ using Oracle.NoSQL.SDK;
         public string deptno { get; set; }
         public string dname { get; set; }
         public string loc { get; set; }
-
     }    
     public class Hit
     {
@@ -46,6 +45,17 @@ using Oracle.NoSQL.SDK;
         public Hits hits { get; set; }
     }    
     private static HttpClient client = new HttpClient();
+{%- endif %}        
+{%- if db_family == "nosql" %}
+    private static NoSQLClient client = new NoSQLClient( new NoSQLConfig{
+                Endpoint=Environment.GetEnvironmentVariable("TF_VAR_nosql_endpoint"),
+                Compartment=Environment.GetEnvironmentVariable("TF_VAR_compartment_ocid"),
+                {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+                AuthorizationProvider=IAMAuthorizationProvider.CreateWithInstancePrincipal()
+                {%- else %}
+                AuthorizationProvider=IAMAuthorizationProvider.CreateWithResourcePrincipal()
+                {%- endif %}                
+            });
 {%- endif %}        
 {%- endmacro -%}
 
@@ -86,6 +96,7 @@ using Oracle.NoSQL.SDK;
         }
     {%- elif db_family == "nosql" %}
         List<Dept> a = new List<Dept>();
+        /* 
         var client = new NoSQLClient( new NoSQLConfig{
                 Endpoint=Environment.GetEnvironmentVariable("TF_VAR_nosql_endpoint"),
                 Compartment=Environment.GetEnvironmentVariable("TF_VAR_compartment_ocid"),
@@ -95,6 +106,7 @@ using Oracle.NoSQL.SDK;
                 AuthorizationProvider=IAMAuthorizationProvider.CreateWithResourcePrincipal()
                 {%- endif %}                
             });
+        */
         try {
             var options = new QueryOptions();
             do {

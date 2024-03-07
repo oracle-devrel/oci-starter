@@ -1,8 +1,10 @@
-
 {% macro import() -%}    
 import java.io.*;
 import java.util.*;
-{%- if db_family == "nosql" %}
+{%- if db_family == "oracle" and java_framework != "micronaut" %}
+import oracle.ucp.jdbc.PoolDataSourceFactory;
+import oracle.ucp.jdbc.PoolDataSource;
+{%- elif db_family == "nosql" %}
 import oracle.nosql.driver.*;
 import oracle.nosql.driver.iam.*;
 import oracle.nosql.driver.ops.*;
@@ -21,6 +23,13 @@ import javax.json.*;
       <artifactId>nosqldriver</artifactId>
       <version>5.4.14</version>
     </dependency>
+    {%- if java_framework == "springboot" %}    
+    <dependency>
+      <groupId>com.oracle.nosql.sdk</groupId>
+      <artifactId>spring-data-oracle-nosql</artifactId>
+      <version>2.0.0</version>
+    </dependency>    
+    {%- endif %}
 {%- elif db_family_type == "sql" %}  
     <dependency>
       <groupId>{{ pomGroupId }}</groupId>
@@ -29,7 +38,22 @@ import javax.json.*;
       <version>{{ pomVersion }}</version>
       {%- endif %}
     </dependency>  
+    {%- if java_framework == "springboot" %}
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>    
+    {%- endif %}
 {%- endif %}
+{%- if db_family == "oracle" %}  
+    <dependency>
+      <groupId>com.oracle.database.jdbc</groupId>
+      <artifactId>ucp</artifactId>
+      {%- if java_framework != "springboot" or deploy_type == "function" %}
+      <version>{{ pomVersion }}</version>
+      {%- endif %}
+    </dependency>    
+{%- endif %}   
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>javax.json</artifactId>
@@ -37,11 +61,70 @@ import javax.json.*;
     </dependency>   
 {%- endmacro -%}  
 
+{% macro constructor() -%}
+    {%- if db_family == "nosql" %}
+    {%- if java_framework == "helidon" %}
+    static NoSQLHandle handle;
+    {%- else %}
+    private final NoSQLHandle handle;
+    {%- endif %}
+    {%- endif %}
+    {%- if db_family == "oracle" and java_framework not in ["springboot", "micronaut"] %}
+    static PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
+    {%- endif %}
+    {%- if deploy_type == "function" %}
+    public HelloFunction() throws Exception {
+    {%- elif java_framework == "springboot" %}
+    @Autowired
+    {%- if db_family_type == "sql" %}  
+    private final DemoRepository repository;
+
+    DemoController(DemoRepository repository) {
+        this.repository = repository;
+    {%- else %}
+    public DemoController() throws Exception {
+    {%- endif %}
+    {%- elif java_framework == "helidon" %}
+    public DeptResource() throws Exception {
+        {%- if db_family == "nosql" %}
+        if( handle!= null ) {
+            return;
+        }     
+        {%- endif %}
+    {%- elif java_framework == "micronaut" %}
+    public DeptController() throws Exception {
+    {%- elif java_framework == "tomcat" %}
+    public DeptServlet() throws Exception {
+    {%- endif %}
+    {%- if db_family == "oracle" and java_framework not in ["springboot", "micronaut"] %}
+        pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
+        pds.setURL(System.getenv("JDBC_URL"));
+        pds.setUser(System.getenv("DB_USER"));
+        pds.setPassword(System.getenv("DB_PASSWORD"));
+        pds.setInitialPoolSize(3);
+        pds.setMinPoolSize(3);
+        pds.setMaxPoolSize(10);    
+    {%- elif db_family == "nosql" and java_framework != "springboot" %}
+        {{ nosql_connection() }}
+        handle = NoSQLHandleFactory.createNoSQLHandle(config);
+    {%- endif %}
+    }
+{%- endmacro -%}
+
+{% macro nosql_connection() -%}
+        {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+        SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
+        {%- else %}
+        SignatureProvider authProvider = SignatureProvider.createWithResourcePrincipal();
+        {%- endif %}        
+        NoSQLHandleConfig config = new NoSQLHandleConfig( System.getenv("TF_VAR_nosql_endpoint"), authProvider);
+        config.setDefaultCompartment( System.getenv("TF_VAR_compartment_ocid") );
+{%- endmacro -%}
+    
+
 {% macro dept() -%}
-   {%- if db_family != "sql" %}
         {{ dept_no_return() }}
         return rows; 
-   {%- endif %}
 {%- endmacro -%}
 
 {% macro dept_string() -%}
@@ -50,7 +133,7 @@ import javax.json.*;
             {%- if db_family_type == "sql" %}        
             Class.forName("{{ jdbcDriverClassName }}");    
             {%- endif %}        
-            {{ dept_no_return() }}
+            {{ dept_no_return() | indent(4) }}
             // Jackson 
             ObjectMapper objectMapper = new ObjectMapper();
             json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rows);
@@ -59,7 +142,6 @@ import javax.json.*;
             e.printStackTrace();
         }     
 {%- endmacro -%}
-
 
 {% macro dept_no_return() -%}
         List<Dept> rows = new ArrayList<Dept>();
@@ -75,7 +157,30 @@ import javax.json.*;
 {%- endmacro -%}
 
 {% macro sql() -%} 
-        try {
+{%- if java_framework == "springboot" %}
+        rows = repository.findAll();
+{%- else %}
+        try {           
+{%- if db_family == "oracle" %}
+            Connection conn = null;
+            Statement stmt = null;
+            ResultSet rset = null;
+            try {
+                conn = pds.getConnection();
+                stmt = conn.createStatement();
+                rset = stmt.executeQuery("SELECT deptno, dname, loc FROM dept");
+                while (rset.next()) {
+                    rows.add(new Dept(rset.getInt(1), rset.getString(2), rset.getString(3)));
+                }
+            } finally {
+                if (rset != null)
+                    rset.close();
+                if (stmt != null)
+                    stmt.close();
+                if (conn != null)
+                    conn.close();
+            }
+{%- else %}
             Connection conn = DriverManager.getConnection( System.getenv("JDBC_URL") , System.getenv("DB_USER"), System.getenv("DB_PASSWORD"));
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT deptno, dname, loc FROM dept");
@@ -85,10 +190,12 @@ import javax.json.*;
             rs.close();
             stmt.close();
             conn.close();
+{%- endif %}
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             e.printStackTrace();
         }
+{%- endif %}
 {%- endmacro -%}  
 
 {% macro nodb() -%}    
@@ -117,23 +224,12 @@ import javax.json.*;
 {%- endmacro -%}   
 
 {% macro nosql() -%}    
-        System.out.println( "TF_VAR_compartment_ocid=" + System.getenv("TF_VAR_compartment_ocid") );
-        System.out.println( "TF_VAR_nosql_endpoint=" + System.getenv("TF_VAR_nosql_endpoint") );
-        {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
-        SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
-        {%- else %}
-        SignatureProvider authProvider = SignatureProvider.createWithResourcePrincipal();
-        {%- endif %}
-        NoSQLHandleConfig config = new NoSQLHandleConfig( System.getenv("TF_VAR_nosql_endpoint"), authProvider); 
-        config.setDefaultCompartment( System.getenv("TF_VAR_compartment_ocid") );
-        NoSQLHandle handle = NoSQLHandleFactory.createNoSQLHandle(config); 
-
         QueryRequest queryRequest = new QueryRequest().setStatement("SELECT deptno, dname, loc FROM dept");
         QueryResult queryResult = handle.query(queryRequest);
         do {
-          List<MapValue> results = queryResult.getResults();
-          for (MapValue row : results) {
-            rows.add( new Dept( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
-          }
+            List<MapValue> results = queryResult.getResults();
+            for (MapValue row : results) {
+                rows.add( new Dept( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
+            }
         } while (!queryRequest.isDone());
 {%- endmacro -%}   

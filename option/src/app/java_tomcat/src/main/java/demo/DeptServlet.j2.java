@@ -16,16 +16,8 @@ import java.io.IOException;
  * Servlet implementation class DeptServlet
  */
 public class DeptServlet extends HttpServlet {
-    /**
-    * @see HttpServlet#HttpServlet()
-    */
-    public DeptServlet() {
-    }
+    {{ m.constructor() }}
 
-    /**
-    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-    *      response)
-    */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         {{ m.dept_string() }}
         response.getWriter().append( json );

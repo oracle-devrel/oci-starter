@@ -19,8 +19,7 @@ class DeptController {
     @Inject
     DeptRepository deptRepository;
     {%- endif %}	
-    DeptController() { 
-    }
+    {{ m.constructor() }}
 
     @Get(uri = "dept") 
     @Produces(MediaType.APPLICATION_JSON)

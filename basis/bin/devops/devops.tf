@@ -191,8 +191,8 @@ resource "oci_devops_build_pipeline_stage" "starter_devops_build_function" {
     }
   }
   build_spec_file                    = "build_devops.yaml"
-  description                        = "Build using build.sh"
-  display_name                       = "Build using build.sh"
+  description                        = "Build using build_all.sh"
+  display_name                       = "Build using build_all.sh"
   image                              = "OL7_X86_64_STANDARD_10"
   stage_execution_timeout_in_seconds = "36000"
   wait_criteria {

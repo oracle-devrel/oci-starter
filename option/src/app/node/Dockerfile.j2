@@ -1,0 +1,19 @@
+FROM oraclelinux:8
+
+RUN dnf module enable -y nodejs:18 && \
+    dnf install -y nodejs python3 && \
+{%- if db_family == "oracle" %}
+  {%- if shape == "ampere" %}
+     dnf install -y oracle-release-el8 && \
+     dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel && \
+  {%- else %}    
+     dnf install -y oracle-instantclient-release-el8 && \
+     dnf install -y oracle-instantclient-basic oracle-instantclient-sqlplus && \ 
+  {%- endif %}    
+{%- endif %}    
+     rm -rf /var/cache/dnf
+
+WORKDIR /app
+COPY src/* /app/
+RUN npm install
+CMD exec node rest.js
