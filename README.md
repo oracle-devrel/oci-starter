@@ -13,7 +13,7 @@ Go to: [www.ocistarter.com](https://www.ocistarter.com/)
 ```
 unzip starter.zip
 cd starter
-./oci-starter build
+./starter.sh build
 Then click on the UI_URL at then end of the build
 ```
 
@@ -27,7 +27,7 @@ git clone https://github.com/MarcGueury/oci-starter
 cd oci-starter
 ./oci_starter.sh -prefix test -language java -deploy compute -db_password LiveLab__12345 
 cd output
-./oci-starter build
+./starter.sh build
 Then click on the UI_URL at then end of the build
 ```
 
