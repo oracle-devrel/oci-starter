@@ -25,9 +25,9 @@ if [ "$MISMATCH_PLATFORM" != "" ]; then
     echo "- Choose 'Architecture"
     echo "  - Choose $DESIRED_PLATFORM"
     echo "  - Click 'Confirm'"
-    echo
+    echo "- Restart the build"
   fi
-  echo "Exiting. Please use the right type of CPU Architecture. And restart."
+  echo "Exiting. Please use the right CPU Architecture."
   exit 1
 fi
 
