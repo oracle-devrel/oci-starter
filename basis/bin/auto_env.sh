@@ -1,5 +1,36 @@
 #!/bin/bash
 
+# Check the SHAPE
+unset MISMATCH_PLATFORM
+if [ "$TF_VAR_shape" == "ampere" ] && [ `arch` != "aarch64" ]; then
+  if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
+    MISMATCH_PLATFORM="ERROR: ARM (Ampere) build using Containers (Kubernetes / Cointainer Instance / Function) needs to run on ARM processor"
+    DESIRED_PLATFORM="ARM (aarch64)"
+  fi   
+elif [ `arch` != "x86_64"]; then
+  if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
+    MISMATCH_PLATFORM="ERROR: X86_64 (AMD/Intel) build using Containers (Kubernetes / Cointainer Instance / Function) needs to run on X86 (AMD/Intel) processor"
+    DESIRED_PLATFORM="X86_64"
+  fi   
+fi 
+
+if [ "$MISMATCH_PLATFORM" != "" ]; then
+  echo $MISMATCH_PLATFORM
+  echo
+  if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
+    echo "Cloud Shell is not running in the correct Architecture. Please change it in the menu above."
+    echo
+    echo "Action:"
+    echo "- Click the menu 'Actions' on top of Cloud Shell"
+    echo "- Choose 'Architecture"
+    echo "  - Choose $DESIRED_PLATFORM"
+    echo "  - Click 'Confirm'"
+    echo
+  fi
+  echo "Exiting. Please use the right type of CPU Architecture. And restart."
+  exit
+fi
+
 # Enable BASH history for Stack Trace.
 # - Do not store in HISTFILE 
 # - Do not use it when env.sh is called from bash directly.
