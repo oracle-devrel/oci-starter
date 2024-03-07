@@ -9,37 +9,37 @@ export ARG2=$2
 export ARG3=$3
 
 if [ -z $ARG1 ] || [ "$ARG1" == "help" ]; then
-  echo "Command requires an argument:"
+  echo "Help:"
   echo 
-  echo "--- BUILD --------------------------------"
-  echo "./starter.sh build"
-  echo "./starter.sh build app"
-  echo "./starter.sh build ui"
-  echo 
-  echo "--- DESTROY ------------------------------"
-  echo "./starter.sh destroy"
-  echo 
-  echo "--- SSH ----------------------------------"
-  echo "./starter.sh ssh compute"
-  echo "./starter.sh ssh bastion"
-  echo "./starter.sh ssh db_node"
-  echo 
-  echo "--- TERRAFORM ----------------------------"
-  echo "./starter.sh terraform plan"
-  echo "./starter.sh terraform apply"
-  echo "./starter.sh terraform destroy"
-  echo 
-  echo "--- GENERATE -----------------------------"
-  echo "./starter.sh generate auth_token"
-  echo 
-  echo "--- DEPLOY -------------------------------"
-  echo "./starter.sh deploy bastion"
-  echo "./starter.sh deploy compute"
-  echo "./starter.sh deploy oke"
-  echo 
-  echo "--- KUBECTL ------------------------------"
-  echo ". ./env.sh"
-  echo "kubectl get pods"
+  echo "--- BUILD -------------------------------------------------------------------------"
+  echo "./starter.sh build                    - Build all"
+  echo "./starter.sh build app                - Build the application"
+  echo "./starter.sh build ui                 - Build the user interface"
+  echo
+  echo "--- DESTROY -----------------------------------------------------------------------"
+  echo "./starter.sh destroy                  - Destroy all"
+  echo
+  echo "--- SSH ---------------------------------------------------------------------------"
+  echo "./starter.sh ssh compute              - SSH to compute (Compute mode)"
+  echo "./starter.sh ssh bastion              - SSH to bastion"
+  echo "./starter.sh ssh db_node              - SSH to DB_NODE (OCI Oracle Base DB)"
+  echo
+  echo "--- TERRAFORM (or RESOURCE MANAGER ) ----------------------------------------------"
+  echo "./starter.sh terraform plan           - Plan"
+  echo "./starter.sh terraform apply          - Apply"    
+  echo "./starter.sh terraform destroy        - Destroy"
+  echo
+  echo "--- GENERATE ----------------------------------------------------------------------"
+  echo "./starter.sh generate auth_token      - Create OCI Auth Token (ex: docker login)"
+  echo
+  echo "--- DEPLOY ------------------------------------------------------------------------"
+  echo "./starter.sh deploy bastion           - Deploy the bastion only (+create DB tables)"
+  echo "./starter.sh deploy compute           - Deploy APP and UI on Compute (Compute mode)"
+  echo "./starter.sh deploy oke               - Deploy APP and UI on OKE     (OKE mode)"
+  echo
+  echo "--- KUBECTL -----------------------------------------------------------------------"
+  echo ". ./env.sh                            - Set kubeconfig to connect to Kubernetes"
+  echo "kubectl get pods                      - Example of a command to check the PODs"
   exit
 fi
 
