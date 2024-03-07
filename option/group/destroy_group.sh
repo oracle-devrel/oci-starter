@@ -22,10 +22,10 @@ for d in */ ; do
     if [ "$d" != "group_common/" ]; then
       echo "-- DESTROY_GROUP - $d ---------------------------------"
       cd $d
-      ./oci-starter.sh destroy --auto-approve
+      ./starter.sh destroy --auto-approve
       cd $SCRIPT_DIR
     fi
 done
 
 cd group_common
-./oci-starter.sh destroy --auto-approve
+./starter.sh destroy --auto-approve

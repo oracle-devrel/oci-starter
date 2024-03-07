@@ -325,7 +325,7 @@ def help():
     message = f'''
 Usage: {script_name()} [OPTIONS]
 
-oci-starter.sh
+starter.sh
    -apigw_ocid (optional)
    -atp_ocid (optional)
    -auth_token (optional)
@@ -431,8 +431,8 @@ Check LICENSE file (Apache 2.0)
 - destroy_group.sh : Destroy other directories, then the Common Resources
 
 - group_common
-    - oci-starter.sh build   : Create the Common Resources using Terraform
-    - oci-starter.sh destroy : Destroy the objects created by Terraform
+    - starter.sh build   : Create the Common Resources using Terraform
+    - starter.sh destroy : Destroy the objects created by Terraform
     - env.sh                 : Contains the settings of the project
 
 ### Directories
@@ -451,8 +451,8 @@ Check LICENSE file (Apache 2.0)
 ### Usage 
 
 ### Commands
-- oci-starter.sh build   : Build the whole program: Run Terraform, Configure the DB, Build the App, Build the UI
-- oci-starter.sh destroy : Destroy the objects created by Terraform
+- starter.sh build   : Build the whole program: Run Terraform, Configure the DB, Build the App, Build the UI
+- starter.sh destroy : Destroy the objects created by Terraform
 - env.sh                 : Contains the settings of your project
 
 ### Directories
@@ -490,7 +490,7 @@ Check LICENSE file (Apache 2.0)
         contents.append("  ./build_group.sh")       
     else:
         contents.append(f"  cd {params['prefix']}")
-        contents.append("  ./oci-starter.sh build")
+        contents.append("  ./starter.sh build")
     return contents
 
 def is_param_default_value(name):

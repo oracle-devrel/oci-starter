@@ -13,7 +13,7 @@ fi
 echo "OKE DESTROY"
 
 if [ "$1" != "--auto-approve" ]; then
-  error_exit "Please call this script via ./oci-starter.sh destroy"
+  error_exit "Please call this script via ./starter.sh destroy"
 fi
 
 if [ ! -f $KUBECONFIG ]; then

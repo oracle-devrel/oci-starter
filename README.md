@@ -34,7 +34,7 @@ Then click on the UI_URL at then end of the build
 To destroy:
 ```
 cd output
-./oci-starter.sh destroy
+./starter.sh destroy
 > Do you really want to destroy all resources? yes
 ```
 

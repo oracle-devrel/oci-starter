@@ -65,7 +65,7 @@ build_test () {
   cd $TEST_HOME
   cd $TEST_DIR
   pwd
-  ./oci-starter.sh build > build_$BUILD_ID.log 2>&1
+  ./starter.sh build > build_$BUILD_ID.log 2>&1
 
   CSV_NAME=$NAME
   CSV_DIR=$TEST_DIR
@@ -115,7 +115,7 @@ build_test_destroy () {
   # Prevent to have undeleted resource when rerunning the test_suite
   if [ -d $TEST_DIR/target ]; then
      cd $TEST_DIR
-      ./oci-starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
+      ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
   fi
   BUILD_ID=1
   build_test
@@ -131,7 +131,7 @@ build_test_destroy () {
     rm $TEST_HOME/stop_after_build
     exit
   fi  
-  ./oci-starter.sh destroy --auto-approve > destroy.log 2>&1  
+  ./starter.sh destroy --auto-approve > destroy.log 2>&1  
   echo "destroy_secs=$SECONDS" >> ${TEST_DIR}_time.txt
   CSV_DESTROY_SECOND=$SECONDS
   cat ${TEST_DIR}_time.txt
@@ -271,7 +271,7 @@ pre_test_suite() {
     SHAPE_GROUP="arm"
   fi
   GROUP_NAME="ts${SHAPE_GROUP}"
-  
+
   cd $TEST_HOME/oci-starter
   ./oci_starter.sh -group_name $GROUP_NAME -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN -shape $SHAPE_GROUP
   exit_on_error
@@ -279,7 +279,7 @@ pre_test_suite() {
   cd $TEST_HOME/group_common
   echo "# Test Suite use 2 nodes to avoid error: Too Many Pods (110 pods/node K8s limit)" >> env.sh
   echo "export TF_VAR_node_pool_size=2" >> env.sh
-  ./oci-starter.sh build
+  ./starter.sh build
   exit_on_error
   date
   echo "CSV_DATE,OPTION_DEPLOY,OPTION_LANG,OPTION_JAVA_FRAMEWORK,OPTION_JAVA_VM,OPTION_DB,OPTION_DB_INSTALL,OPTION_UI,OPTION_SHAPE,CSV_NAME,CSV_HTML_OK,CSV_JSON_OK,CSV_BUILD_SECOND,CSV_DESTROY_SECOND,CSV_RUN100_OK,CSV_RUN100_SECOND" > $TEST_HOME/result.csv 
@@ -295,6 +295,6 @@ post_test_suite() {
   date
 
   cd $TEST_HOME/group_common
-  ./oci-starter.sh destroy --auto-approve
+  ./starter.sh destroy --auto-approve
 }
 
