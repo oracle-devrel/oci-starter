@@ -28,7 +28,7 @@ if [ "$MISMATCH_PLATFORM" != "" ]; then
     echo
   fi
   echo "Exiting. Please use the right type of CPU Architecture. And restart."
-  exit
+  exit 1
 fi
 
 # Enable BASH history for Stack Trace.
