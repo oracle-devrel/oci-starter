@@ -26,14 +26,14 @@ if [ -z $ARG1 ] || [ "$ARG1" == "help" ]; then
   echo
   echo "--- TERRAFORM (or RESOURCE MANAGER ) ----------------------------------------------"
   echo "./starter.sh terraform plan           - Plan"
-  echo "./starter.sh terraform apply          - Apply"    
+  echo "./starter.sh terraform apply          - Apply"
   echo "./starter.sh terraform destroy        - Destroy"
   echo
   echo "--- GENERATE ----------------------------------------------------------------------"
   echo "./starter.sh generate auth_token      - Create OCI Auth Token (ex: docker login)"
   echo
   echo "--- DEPLOY ------------------------------------------------------------------------"
-  echo "./starter.sh deploy bastion           - Deploy the bastion only (+create DB tables)"
+  echo "./starter.sh deploy bastion           - Deploy the bastion (+create DB tables)"
   echo "./starter.sh deploy compute           - Deploy APP and UI on Compute (Compute mode)"
   echo "./starter.sh deploy oke               - Deploy APP and UI on OKE     (OKE mode)"
   echo
