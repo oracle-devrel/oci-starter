@@ -7,7 +7,7 @@ if [ "$TF_VAR_shape" == "ampere" ] && [ `arch` != "aarch64" ]; then
     MISMATCH_PLATFORM="ERROR: ARM (Ampere) build using Containers (Kubernetes / Cointainer Instance / Function) needs to run on ARM processor"
     DESIRED_PLATFORM="ARM (aarch64)"
   fi   
-elif [ `arch` != "x86_64"]; then
+elif [ `arch` != "x86_64" ]; then
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
     MISMATCH_PLATFORM="ERROR: X86_64 (AMD/Intel) build using Containers (Kubernetes / Cointainer Instance / Function) needs to run on X86 (AMD/Intel) processor"
     DESIRED_PLATFORM="X86_64"
