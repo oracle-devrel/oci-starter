@@ -224,12 +224,10 @@ import javax.json.*;
 {%- endmacro -%}   
 
 {% macro nosql() -%}    
+        // See https://github.com/oracle/nosql-examples/blob/master/examples-nosql-java-sdk/sqlexamples/QueryData.java
         QueryRequest queryRequest = new QueryRequest().setStatement("SELECT deptno, dname, loc FROM dept");
-        QueryResult queryResult = handle.query(queryRequest);
-        do {
-            List<MapValue> results = queryResult.getResults();
-            for (MapValue row : results) {
-                rows.add( new Dept( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
-            }
-        } while (!queryRequest.isDone());
+        QueryIterableResult results = handle.queryIterable(queryRequest);
+        for (MapValue row : results) {
+           rows.add( new Dept( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
+        }        
 {%- endmacro -%}   
