@@ -38,7 +38,7 @@ if [ -z $ARG1 ] || [ "$ARG1" == "help" ]; then
   echo "./starter.sh deploy oke               - Deploy APP and UI on OKE     (OKE mode)"
   echo
   echo "--- KUBECTL -----------------------------------------------------------------------"
-  echo ". ./env.sh                            - Set kubeconfig to connect to Kubernetes"
+  echo "./starter.sh env                      - Set kubeconfig to connect to Kubernetes"
   echo "kubectl get pods                      - Example of a command to check the PODs"
   exit
 fi
@@ -85,6 +85,9 @@ elif [ "$ARG1" == "deploy" ]; then
     echo "Unknow command: $ARG1 $ARG2"
     exit 1
   fi    
+elif [ "$ARG1" == "env" ]; then
+  export PS1="[\u@\h \W]\e[103m\$\e(B\e[m "
+  bash --rcfile ./env.sh
 else 
   echo "Unknow command: $ARG1"
   exit 1
