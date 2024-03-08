@@ -224,6 +224,7 @@ import javax.json.*;
 {%- endmacro -%}   
 
 {% macro nosql() -%}    
+        // See https://github.com/oracle/nosql-examples/blob/master/examples-nosql-java-sdk/sqlexamples/QueryData.java
         QueryRequest queryRequest = new QueryRequest().setStatement("SELECT deptno, dname, loc FROM dept");
         QueryIterableResult results = handle.queryIterable(queryRequest);
         for (MapValue res : results) {
