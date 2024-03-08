@@ -2,11 +2,13 @@
 
 # Check the SHAPE
 unset MISMATCH_PLATFORM
-if [ "$TF_VAR_shape" == "ampere" ] && [ `arch` != "aarch64" ]; then
-  if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
-    MISMATCH_PLATFORM="ERROR: ARM (Ampere) build using Containers (Kubernetes / Cointainer Instance / Function) needs to run on ARM processor"
-    DESIRED_PLATFORM="ARM (aarch64)"
-  fi   
+if [ "$TF_VAR_instance_shape" == "VM.Standard.A1.Flex" ]; then
+  if [ `arch` != "aarch64" ]; then
+    if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
+        MISMATCH_PLATFORM="ERROR: ARM (Ampere) build using Containers (Kubernetes / Cointainer Instance / Function) needs to run on ARM processor"
+        DESIRED_PLATFORM="ARM (aarch64)"
+    fi   
+  fi
 elif [ `arch` != "x86_64" ]; then
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
     MISMATCH_PLATFORM="ERROR: X86_64 (AMD/Intel) build using Containers (Kubernetes / Cointainer Instance / Function) needs to run on X86 (AMD/Intel) processor"
