@@ -227,7 +227,7 @@ import javax.json.*;
         // See https://github.com/oracle/nosql-examples/blob/master/examples-nosql-java-sdk/sqlexamples/QueryData.java
         QueryRequest queryRequest = new QueryRequest().setStatement("SELECT deptno, dname, loc FROM dept");
         QueryIterableResult results = handle.queryIterable(queryRequest);
-        for (MapValue res : results) {
+        for (MapValue row : results) {
            rows.add( new Dept( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
         }        
 {%- endmacro -%}   
