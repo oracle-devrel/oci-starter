@@ -22,3 +22,18 @@ javax.sql.DataSource.ds1.dataSource.user=##DB_USER##
 javax.sql.DataSource.ds1.dataSource.password=##DB_PASSWORD##
 {%- endif %}
 
+{%- if db_family == "nosql" %}
+# Oracle NoSQL Connection
+jnosql.keyvalue.database=dept
+jnosql.document.database=dept
+jnosql.oracle.nosql.table.read.limit=10
+jnosql.oracle.nosql.table.write.limit=10
+jnosql.oracle.nosql.table.storage.gb=1
+jnosql.oracle.nosql.host=${TF_VAR_nosql_endpoint}
+jnosql.oracle.nosql.compartment=${TF_VAR_compartment_ocid}
+{%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+jnosql.oracle.nosql.deployment=CLOUD_INSTANCE_PRINCIPAL
+{%- else %}
+jnosql.oracle.nosql.deployment=CLOUD_RESOURCE_PRINCIPAL
+{%- endif %}  
+{%- endif %}

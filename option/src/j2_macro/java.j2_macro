@@ -225,11 +225,8 @@ import javax.json.*;
 
 {% macro nosql() -%}    
         QueryRequest queryRequest = new QueryRequest().setStatement("SELECT deptno, dname, loc FROM dept");
-        QueryResult queryResult = handle.query(queryRequest);
-        do {
-            List<MapValue> results = queryResult.getResults();
-            for (MapValue row : results) {
-                rows.add( new Dept( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
-            }
-        } while (!queryRequest.isDone());
+        QueryIterableResult results = handle.queryIterable(queryRequest);
+        for (MapValue res : results) {
+           rows.add( new Dept( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
+        }        
 {%- endmacro -%}   
