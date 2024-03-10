@@ -510,6 +510,13 @@ certificate_dir_before_terraform() {
       echo "ERROR: compute: certificate_dir_before_terraform: missing variables TF_VAR_certificate_dir"
       exit 1
     fi
+  elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
+    if [ "$TF_VAR_tls" == "new_http_01" ]; then
+      echo "New Certificate will be created after the deployment."      
+    else 
+      echo "ERROR: kubernetes: certificate_dir_before_terraform: missing variables TF_VAR_certificate_dir"
+      exit 1
+    fi    
   elif [ "$TF_VAR_certificate_ocid" == "" ] && [ "$TF_VAR_certificate_dir" != "" ] ;  then
     certificate_create
   elif [ "$TF_VAR_certificate_ocid" != "" ]; then

@@ -7,7 +7,7 @@ if [ "$TF_VAR_instance_shape" == "VM.Standard.A1.Flex" ]; then
     if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
         MISMATCH_PLATFORM="ERROR: ARM (Ampere) build using Containers (Kubernetes / Cointainer Instance / Function) needs to run on ARM processor"
         DESIRED_PLATFORM="ARM (aarch64)"
-    fi   
+    fi      
   fi
 elif [ `arch` != "x86_64" ]; then
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
@@ -60,6 +60,9 @@ fi
 if [ "$1" == "-no-auto" ]; then
   return
 fi 
+
+# Change the prompt
+export PS1="[\e[0;3m\${TF_VAR_prefix}\e(B\e[m \u@\h \W]$ "
 
 # Silent mode (default is not silent)
 if [ "$1" == "-silent" ]; then
