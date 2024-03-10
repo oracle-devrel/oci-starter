@@ -164,6 +164,8 @@ build_option() {
     NAME=${NAME}-rm
   fi  
   NAME=${NAME/_/-}
+  NAME=${NAME/_/-}
+  NAME=${NAME/_/-}
   start_test $NAME
   if [ "$TEST_ERROR_ONLY" != "" ]; then
     if grep -q "$TEST_DIR" $TEST_HOME/error_rerun.sh; then
@@ -207,7 +209,7 @@ build_option() {
        -fnapp_ocid $TF_VAR_fnapp_ocid > ${TEST_DIR}.log 2>&1 
   else
     ./oci_starter.sh \
-       -prefix tsone \
+       -prefix $NAME \
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
        -language $OPTION_LANG \
