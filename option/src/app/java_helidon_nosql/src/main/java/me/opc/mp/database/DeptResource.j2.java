@@ -6,7 +6,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.inject.*;
 import jakarta.annotation.*;
-import jakarta.enterprise.*;
 {{ m.import() }}
 
 /**

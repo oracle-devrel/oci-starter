@@ -5,9 +5,6 @@ server.host=0.0.0.0
 # Change the following to true to enable the optional MicroProfile Metrics REST.request metrics
 metrics.rest-request.enabled=false
 
-# Application properties. This is the default greeting
-app.greeting=Hello
-
 # Datasource properties
 {%- if db_family != "none" %}
 {%- if db_family == "oracle" %}
@@ -17,15 +14,11 @@ javax.sql.DataSource.ds1.dataSourceClassName=com.mysql.cj.jdbc.MysqlDataSource
 {%- elif db_family == "psql" %}
 javax.sql.DataSource.ds1.dataSourceClassName=org.postgresql.ds.PGSimpleDataSource
 {%- endif %}
-javax.sql.DataSource.ds1.dataSource.url=##JDBC_URL##
-javax.sql.DataSource.ds1.dataSource.user=##DB_USER##
-javax.sql.DataSource.ds1.dataSource.password=##DB_PASSWORD##
-{%- endif %}
 
 {%- if db_family == "nosql" %}
 # Oracle NoSQL Connection
-jnosql.keyvalue.database=dept
-jnosql.document.database=dept
+jnosql.keyvalue.database=deptjee
+jnosql.document.database=deptjee
 jnosql.oracle.nosql.table.read.limit=10
 jnosql.oracle.nosql.table.write.limit=10
 jnosql.oracle.nosql.table.storage.gb=1
@@ -35,5 +28,11 @@ jnosql.oracle.nosql.compartment=${TF_VAR_compartment_ocid}
 jnosql.oracle.nosql.deployment=CLOUD_INSTANCE_PRINCIPAL
 {%- else %}
 jnosql.oracle.nosql.deployment=CLOUD_RESOURCE_PRINCIPAL
-{%- endif %}  
 {%- endif %}
+{%- else %}  
+javax.sql.DataSource.ds1.dataSource.url=##JDBC_URL##
+javax.sql.DataSource.ds1.dataSource.user=##DB_USER##
+javax.sql.DataSource.ds1.dataSource.password=##DB_PASSWORD##
+{%- endif %}
+{%- endif %}
+
