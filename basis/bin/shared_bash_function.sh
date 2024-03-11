@@ -522,7 +522,7 @@ certificate_dir_before_terraform() {
   elif [ "$TF_VAR_certificate_ocid" != "" ]; then
     certificate_validity
   else 
-    error_exit "certificate_dir_before_terraform: missin:g variables TF_VAR_certificate_ocid or TF_VAR_certificate_dir"
+    error_exit "certificate_dir_before_terraform: missing variables TF_VAR_certificate_ocid or TF_VAR_certificate_dir"
   fi  
 }
 

@@ -40,7 +40,7 @@ public class RacController {
   }
 
   @Autowired
-  public RacController(DbProperties aProperties) throws SQLException {
+  public RacController() throws SQLException {
     resetConnectionPool("jtac");
   }
 

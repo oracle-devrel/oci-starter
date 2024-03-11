@@ -1,3 +1,5 @@
+# https://blogs.oracle.com/nosql/post/getting-started-accessing-oracle-nosql-database-using-jakarta-nosql
+# 
 {% import "java.j2_macro" as m with context %}
 package me.opc.mp.database;
 

@@ -120,16 +120,11 @@ function createClient() {
 {%- endmacro -%}
 
 {% macro nosql() -%}
+    // See https://oracle.github.io/nosql-node-sdk/pages/tables.html
     let rows = [];
-    const opt = {};
-    do {
-        const result = await client.query('SELECT deptno, dname, loc FROM dept', opt);
+    for await(let result of client.queryIterable('SELECT deptno, dname, loc FROM dept')) {
         for(let row of result.rows) {
             rows.push( row );
-        }
-        opt.continuationKey = result.continuationKey;
-    } while(opt.continuationKey);
-
+        }    
+    }
 {%- endmacro -%}
-
-
