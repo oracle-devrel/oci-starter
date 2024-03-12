@@ -20,7 +20,11 @@ namespace Function { class Starter {
 
     {{ m.class_def() }} 
 
+    {%- if db_family == "nosql" %}    
+    public async Task<string> dept()
+    {%- else %}    
     public string dept()
+    {%- endif %}   
     {
         {{ m.dept() }} 
         return JsonSerializer.Serialize(a);
