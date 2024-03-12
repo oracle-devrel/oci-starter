@@ -42,8 +42,6 @@ resource oci_container_instances_container_instance starter_container_instance {
   graceful_shutdown_timeout_in_seconds = "0"
   {%- if shape == "ampere" %}
   shape                                = "CI.Standard.A1.Flex"
-  {%- else %}
-  shape                                = "CI.Standard.E3.Flex"
   {%- endif %}  
   shape_config {
     memory_in_gbs = "4"
