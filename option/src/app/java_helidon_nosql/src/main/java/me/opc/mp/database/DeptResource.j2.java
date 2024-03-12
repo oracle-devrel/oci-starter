@@ -20,7 +20,7 @@ public class DeptResource {
     private void init() {
         try {
             System.out.println("Insert row " + repository.save(new Dept(10, "ACCOUNTING", "BRUSSELS")));
-            System.out.println("Insert row " + repository.save(new Dept(20, "RESEARCH", "SPRING NOSQL")));
+            System.out.println("Insert row " + repository.save(new Dept(20, "RESEARCH", "JAKARTA NOSQL")));
             System.out.println("Insert row " + repository.save(new Dept(30, "SALES", "ROME")));
             System.out.println("Insert row " + repository.save(new Dept(40, "OPERATIONS", "MADRID")));
         } catch (Exception e ) {

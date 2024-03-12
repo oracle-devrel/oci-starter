@@ -1,9 +1,0 @@
-# Oracle NoSQL Configuration
-jnosql:
-  keyvalue:
-    database: beers
-  document:
-    database: beers
-  oracle:
-    nosql:
-      host: http://localhost:8080
