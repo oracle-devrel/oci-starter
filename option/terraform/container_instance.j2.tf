@@ -43,7 +43,7 @@ resource oci_container_instances_container_instance starter_container_instance {
   {%- if shape == "ampere" %}
   shape                                = "CI.Standard.A1.Flex"
   {%- else %}
-  shape                                = "CI.Standard.E3.Flex"
+  shape                                = "CI.Standard.E4.Flex"
   {%- endif %}  
   shape_config {
     memory_in_gbs = "4"
