@@ -56,9 +56,9 @@ resource_manager_create_or_update() {
   VAR_FILE_PATH=$TARGET_DIR/resource_manager_variables.json
   if [ -f $TARGET_DIR/resource_manager_stackid ]; then
      echo "Stack exists already ( file target/resource_manager_stackid found )"
-     BACKUP_POSTFIX=`date '+%Y%m%d-%H%M%S'`
-     mv $ZIP_FILE_PATH $ZIP_FILE_PATH.$BACKUP_POSTFIX
-     mv $VAR_FILE_PATH $VAR_FILE_PATH.$BACKUP_POSTFIX
+     DATE_POSTFIX=`date '+%Y%m%d-%H%M%S'`
+     mv $ZIP_FILE_PATH $ZIP_FILE_PATH.$DATE_POSTFIX
+     mv $VAR_FILE_PATH $VAR_FILE_PATH.$DATE_POSTFIX
   fi    
 
   if [ -f $ZIP_FILE_PATH ]; then
@@ -77,9 +77,9 @@ resource_manager_create_or_update() {
   cat $TARGET_DIR/tf_var.sh | sed "s/export TF_VAR_/\"/g" | sed "s/=\"/\": \"/g" | sed ':a;N;$!ba;s/\"\n/\", /g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/$/}/'>> $VAR_FILE_PATH
 
   if [ -f $TARGET_DIR/resource_manager_stackid ]; then
-    if cmp -s $ZIP_FILE_PATH $ZIP_FILE_PATH.$BACKUP_POSTFIX; then
+    if cmp -s $ZIP_FILE_PATH $ZIP_FILE_PATH.$DATE_POSTFIX; then
       rs_echo "Zip files are identical"
-      if cmp -s $VAR_FILE_PATH $VAR_FILE_PATH.$BACKUP_POSTFIX; then
+      if cmp -s $VAR_FILE_PATH $VAR_FILE_PATH.$DATE_POSTFIX; then
         rs_echo "Var files are identical"
         exit
       else 

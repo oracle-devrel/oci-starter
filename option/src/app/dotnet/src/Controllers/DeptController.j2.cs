@@ -19,7 +19,11 @@ public class DeptController : ControllerBase
     }
 
     [Route("dept")]
+    {%- if db_family == "nosql" %}    
+    public async Task<IEnumerable<Dept>> Get()
+    {%- else %}    
     public IEnumerable<Dept> Get()
+    {%- endif %}    
     {
         {{ m.dept() }}
         return a.ToArray();

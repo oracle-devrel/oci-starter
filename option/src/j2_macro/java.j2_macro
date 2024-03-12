@@ -28,6 +28,20 @@ import javax.json.*;
       <groupId>com.oracle.nosql.sdk</groupId>
       <artifactId>spring-data-oracle-nosql</artifactId>
       <version>2.0.0</version>
+    </dependency>   
+    {%- elif java_framework == "helidon" %}    
+    <dependency>
+      <groupId>io.helidon.microprofile.openapi</groupId>
+      <artifactId>helidon-microprofile-openapi</artifactId>
+    </dependency>     
+    <dependency>
+      <groupId>jakarta.json.bind</groupId>
+      <artifactId>jakarta.json.bind-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jnosql.databases</groupId>
+      <artifactId>jnosql-oracle-nosql</artifactId>
+      <version>1.1.0</version>
     </dependency>    
     {%- endif %}
 {%- elif db_family_type == "sql" %}  

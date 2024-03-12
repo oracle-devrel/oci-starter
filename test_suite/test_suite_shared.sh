@@ -15,6 +15,7 @@ OPTION_SHAPE=amd
 OPTION_INFRA_AS_CODE=terraform_local
 OPTION_JAVA_FRAMEWORK=springboot
 OPTION_JAVA_VM=jdk
+OPTION_TSONE_ID=0
 
 # No color for terraforms logs
 export nocolorarg=1
@@ -164,6 +165,8 @@ build_option() {
     NAME=${NAME}-rm
   fi  
   NAME=${NAME/_/-}
+  NAME=${NAME/_/-}
+  NAME=${NAME/_/-}
   start_test $NAME
   if [ "$TEST_ERROR_ONLY" != "" ]; then
     if grep -q "$TEST_DIR" $TEST_HOME/error_rerun.sh; then
@@ -206,8 +209,10 @@ build_option() {
        -bastion_ocid $TF_VAR_bastion_ocid \
        -fnapp_ocid $TF_VAR_fnapp_ocid > ${TEST_DIR}.log 2>&1 
   else
+    # Unique name to allow more generations of TLS certificates. The prefix is used as hostname for TLS http_01.
+    OPTION_TSONE_ID=$((OPTION_TSONEID+1))
     ./oci_starter.sh \
-       -prefix tsone \
+       -prefix tsone${OPTION_TSONE_ID} \
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
        -language $OPTION_LANG \

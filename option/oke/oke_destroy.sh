@@ -37,4 +37,5 @@ helm uninstall ingress-nginx --namespace ingress-nginx
 # kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.4.0/deploy/static/provider/cloud/deploy.yaml
 
 # Rename kubeconfig. Avoid to reuse if a new OKE is created for the same directory.
-mv kubeconfig_starter kubeconfig_starter.destroyed
+DATE_POSTFIX=`date '+%Y%m%d-%H%M%S'`
+mv $KUBECONFIG $KUBECONFIG.${DATE_POSTFIX}

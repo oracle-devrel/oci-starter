@@ -5,11 +5,7 @@ import jakarta.nosql.*;
 
 @Entity
 @JsonbVisibility(FieldAccessStrategy.class)
-public class Dept {
-    @Id
-    private int deptno;
-    @Column
-    private String dname;
-    @Column
-    private String loc;
+public record Dept (@Id int deptno,
+                    @Column String dname,
+                    @Column String loc) {
 }

@@ -273,7 +273,7 @@ get_ui_url() {
   elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
     export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
     export UI_URL=http://${TF_VAR_ingress_ip}/${TF_VAR_prefix}
-    if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
+    if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_dns_name" != "" ]; then
       export UI_HTTP=$UI_URL
       export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     fi
@@ -510,6 +510,13 @@ certificate_dir_before_terraform() {
       echo "ERROR: compute: certificate_dir_before_terraform: missing variables TF_VAR_certificate_dir"
       exit 1
     fi
+  elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
+    if [ "$TF_VAR_tls" == "new_http_01" ]; then
+      echo "New Certificate will be created after the deployment."      
+    else 
+      echo "ERROR: kubernetes: certificate_dir_before_terraform: missing variables TF_VAR_certificate_dir"
+      exit 1
+    fi    
   elif [ "$TF_VAR_certificate_ocid" == "" ] && [ "$TF_VAR_certificate_dir" != "" ] ;  then
     certificate_create
   elif [ "$TF_VAR_certificate_ocid" != "" ]; then
