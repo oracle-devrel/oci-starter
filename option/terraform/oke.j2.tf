@@ -68,7 +68,7 @@ locals {
 
 resource "oci_core_security_list" "starter_seclist_lb" {
   compartment_id = local.lz_network_cmp_ocid
-  vcn_id         = oci_core_vcn.starter_vcn.id
+  vcn_id         = data.oci_core_vcn.starter_vcn.id
   display_name   = "${var.prefix}-seclist-lb"
 
   ingress_security_rules {
@@ -100,7 +100,7 @@ resource "oci_core_security_list" "starter_seclist_lb" {
 
 resource "oci_core_security_list" "starter_seclist_node" {
   compartment_id = local.lz_network_cmp_ocid
-  vcn_id         = oci_core_vcn.starter_vcn.id
+  vcn_id         = data.oci_core_vcn.starter_vcn.id
   display_name   = "${var.prefix}-seclist-node"
 
   egress_security_rules {
@@ -217,7 +217,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
 
 resource oci_core_security_list starter_seclist_api {
   compartment_id = local.lz_network_cmp_ocid
-  vcn_id         = oci_core_vcn.starter_vcn.id
+  vcn_id         = data.oci_core_vcn.starter_vcn.id
   display_name   = "${var.prefix}-seclist-node"
 
   egress_security_rules {
@@ -295,12 +295,12 @@ resource "oci_core_subnet" "starter_nodepool_subnet" {
   availability_domain = data.oci_identity_availability_domain.ad1.name
   cidr_block          = "10.0.10.0/24"
   compartment_id      = local.lz_network_cmp_ocid
-  vcn_id              = oci_core_vcn.starter_vcn.id
+  vcn_id              = data.oci_core_vcn.starter_vcn.id
 
   # Provider code tries to maintain compatibility with old versions.
-  security_list_ids = [oci_core_security_list.starter_seclist_node.id,oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
+  security_list_ids = [oci_core_security_list.starter_seclist_node.id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
   display_name      = "${var.prefix}-oke-nodepool-subnet"
-  route_table_id    = oci_core_vcn.starter_vcn.default_route_table_id
+  route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
   freeform_tags = local.freeform_tags
 }
@@ -309,12 +309,12 @@ resource "oci_core_subnet" "starter_lb_subnet" {
   #Required
   cidr_block          = "10.0.20.0/24"
   compartment_id      = local.lz_network_cmp_ocid
-  vcn_id              = oci_core_vcn.starter_vcn.id
+  vcn_id              = data.oci_core_vcn.starter_vcn.id
 
   # Provider code tries to maintain compatibility with old versions.
-  security_list_ids = [oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
+  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
   display_name      = "${var.prefix}-oke-lb-subnet"
-  route_table_id    = oci_core_vcn.starter_vcn.default_route_table_id
+  route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
 
   freeform_tags     = local.freeform_tags
@@ -324,12 +324,12 @@ resource "oci_core_subnet" "starter_api_subnet" {
   #Required
   cidr_block          = "10.0.30.0/24"
   compartment_id      = local.lz_network_cmp_ocid
-  vcn_id              = oci_core_vcn.starter_vcn.id
+  vcn_id              = data.oci_core_vcn.starter_vcn.id
 
   # Provider code tries to maintain compatibility with old versions.
-  security_list_ids = [oci_core_security_list.starter_seclist_api.id,oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
+  security_list_ids = [oci_core_security_list.starter_seclist_api.id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
   display_name      = "${var.prefix}-oke-api-subnet"
-  route_table_id    = oci_core_vcn.starter_vcn.default_route_table_id
+  route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
 
   freeform_tags     = local.freeform_tags
@@ -340,12 +340,12 @@ resource "oci_core_subnet" "starter_pod_subnet" {
   #Required
   cidr_block          = "10.0.40.0/24"
   compartment_id      = local.lz_network_cmp_ocid
-  vcn_id              = oci_core_vcn.starter_vcn.id
+  vcn_id              = data.oci_core_vcn.starter_vcn.id
 
   # Provider code tries to maintain compatibility with old versions.
-  security_list_ids = [oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
+  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
   display_name      = "${var.prefix}-oke-pod-subnet"
-  route_table_id    = oci_core_vcn.starter_vcn.default_route_table_id
+  route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
   freeform_tags     = local.freeform_tags
 }
 */
@@ -358,7 +358,7 @@ resource "oci_containerengine_cluster" "starter_oke" {
   compartment_id     = local.lz_appdev_cmp_ocid
   kubernetes_version = data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions[length(data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions)-1]
   name               = "${var.prefix}-oke"
-  vcn_id             = oci_core_vcn.starter_vcn.id
+  vcn_id             = data.oci_core_vcn.starter_vcn.id
   type               = "ENHANCED_CLUSTER"
 
   #Optional
