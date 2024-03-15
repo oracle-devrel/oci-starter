@@ -19,11 +19,18 @@ variable "oke_shape" {
 }
 
 variable "node_pool_size" {
-    default = 1
+  default = 1
 }
 
 variable "cluster_options_persistent_volume_config_defined_tags_value" {
   default = "value"
+}
+
+# CIDR
+locals {
+  oke_cidr_nodepool     = "10.0.10.0/24"
+  oke_cidr_loadbalancer = "10.0.20.0/24"
+  oke_cidr_api          = "10.0.30.0/24"
 }
 
 #----------------------------------------------------------------------------
@@ -105,14 +112,14 @@ resource "oci_core_security_list" "starter_seclist_node" {
 
   egress_security_rules {
     description      = "Allow pods on one worker node to communicate with pods on other worker nodes"
-    destination      = "10.0.10.0/24"
+    destination      = local.oke_cidr_nodepool
     destination_type = "CIDR_BLOCK"
     protocol  = "all"
     stateless = "false"
   }
   egress_security_rules {
     description      = "Access to Kubernetes API Endpoint"
-    destination      = "10.0.30.0/24"
+    destination      = local.oke_cidr_api
     destination_type = "CIDR_BLOCK"
     protocol  = "6"
     stateless = "false"
@@ -123,7 +130,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
   }
   egress_security_rules {
     description      = "Kubernetes worker to control plane communication"
-    destination      = "10.0.30.0/24"
+    destination      = local.oke_cidr_api
     destination_type = "CIDR_BLOCK"
     protocol  = "6"
     stateless = "false"
@@ -134,7 +141,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
   }
   egress_security_rules {
     description      = "Path discovery"
-    destination      = "10.0.30.0/24"
+    destination      = local.oke_cidr_api
     destination_type = "CIDR_BLOCK"
     icmp_options {
       code = "4"
@@ -176,7 +183,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
   ingress_security_rules {
     description = "Allow pods on one worker node to communicate with pods on other worker nodes"
     protocol    = "all"
-    source      = "10.0.10.0/24"
+    source      = local.oke_cidr_nodepool
     source_type = "CIDR_BLOCK"
     stateless   = "false"
   }
@@ -187,14 +194,14 @@ resource "oci_core_security_list" "starter_seclist_node" {
       type = "3"
     }
     protocol    = "1"
-    source      = "10.0.30.0/24"
+    source      = local.oke_cidr_api
     source_type = "CIDR_BLOCK"
     stateless   = "false"
   }
   ingress_security_rules {
     description = "TCP access from Kubernetes Control Plane"
     protocol    = "6"
-    source      = "10.0.30.0/24"
+    source      = local.oke_cidr_api
     source_type = "CIDR_BLOCK"
     stateless   = "false"
   }
@@ -233,14 +240,14 @@ resource oci_core_security_list starter_seclist_api {
   }
   egress_security_rules {
     description      = "All traffic to worker nodes"
-    destination      = "10.0.10.0/24"
+    destination      = local.oke_cidr_nodepool
     destination_type = "CIDR_BLOCK"
     protocol  = "6"
     stateless = "false"
   }
   egress_security_rules {
     description      = "Path discovery"
-    destination      = "10.0.10.0/24"
+    destination      = local.oke_cidr_nodepool
     destination_type = "CIDR_BLOCK"
     icmp_options {
       code = "4"
@@ -264,7 +271,7 @@ resource oci_core_security_list starter_seclist_api {
   ingress_security_rules {
     description = "Kubernetes worker to control plane communication"
     protocol    = "6"
-    source      = "10.0.10.0/24"
+    source      = local.oke_cidr_nodepool
     source_type = "CIDR_BLOCK"
     stateless   = "false"
     tcp_options {
@@ -279,7 +286,7 @@ resource oci_core_security_list starter_seclist_api {
       type = "3"
     }
     protocol    = "1"
-    source      = "10.0.10.0/24"
+    source      = local.oke_cidr_nodepool
     source_type = "CIDR_BLOCK"
     stateless   = "false"
   }
@@ -293,7 +300,7 @@ resource oci_core_security_list starter_seclist_api {
 resource "oci_core_subnet" "starter_nodepool_subnet" {
   #Required
   availability_domain = data.oci_identity_availability_domain.ad1.name
-  cidr_block          = "10.0.10.0/24"
+  cidr_block          = local.oke_cidr_nodepool
   compartment_id      = local.lz_network_cmp_ocid
   vcn_id              = data.oci_core_vcn.starter_vcn.id
 
@@ -307,7 +314,7 @@ resource "oci_core_subnet" "starter_nodepool_subnet" {
 
 resource "oci_core_subnet" "starter_lb_subnet" {
   #Required
-  cidr_block          = "10.0.20.0/24"
+  cidr_block          = local.oke_cidr_loadbalancer
   compartment_id      = local.lz_network_cmp_ocid
   vcn_id              = data.oci_core_vcn.starter_vcn.id
 
@@ -322,7 +329,7 @@ resource "oci_core_subnet" "starter_lb_subnet" {
 
 resource "oci_core_subnet" "starter_api_subnet" {
   #Required
-  cidr_block          = "10.0.30.0/24"
+  cidr_block          = local.oke_cidr_api
   compartment_id      = local.lz_network_cmp_ocid
   vcn_id              = data.oci_core_vcn.starter_vcn.id
 

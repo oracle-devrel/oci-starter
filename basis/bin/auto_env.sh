@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Autocompletion in bash
+_starter_completions()
+{
+  COMPREPLY=($(compgen -W "build ssh terraform destroy generate deploy env help" "${COMP_WORDS[1]}"))
+}
+complete -F _starter_completions ./starter.sh
+
 # Check the SHAPE
 unset MISMATCH_PLATFORM
 if [ "$TF_VAR_instance_shape" == "VM.Standard.A1.Flex" ]; then
