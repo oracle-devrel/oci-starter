@@ -31,6 +31,8 @@ locals {
   oke_cidr_nodepool     = "10.0.10.0/24"
   oke_cidr_loadbalancer = "10.0.20.0/24"
   oke_cidr_api          = "10.0.30.0/24"
+  oke_cidr_pods         = "10.1.0.0/16"
+  oke_cidr_services     = "10.2.0.0/16"
 }
 
 #----------------------------------------------------------------------------
@@ -305,7 +307,8 @@ resource "oci_core_subnet" "starter_nodepool_subnet" {
   vcn_id              = data.oci_core_vcn.starter_vcn.id
 
   # Provider code tries to maintain compatibility with old versions.
-  security_list_ids = [oci_core_security_list.starter_seclist_node.id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
+  # security_list_ids = [oci_core_security_list.starter_seclist_node.id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
+  security_list_ids = [oci_core_security_list.starter_seclist_node.id,data.oci_core_vcn.starter_vcn.default_security_list_id]
   display_name      = "${var.prefix}-oke-nodepool-subnet"
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
@@ -319,7 +322,8 @@ resource "oci_core_subnet" "starter_lb_subnet" {
   vcn_id              = data.oci_core_vcn.starter_vcn.id
 
   # Provider code tries to maintain compatibility with old versions.
-  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
+  # security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
+  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id]
   display_name      = "${var.prefix}-oke-lb-subnet"
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
@@ -334,7 +338,8 @@ resource "oci_core_subnet" "starter_api_subnet" {
   vcn_id              = data.oci_core_vcn.starter_vcn.id
 
   # Provider code tries to maintain compatibility with old versions.
-  security_list_ids = [oci_core_security_list.starter_seclist_api.id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
+  # security_list_ids = [oci_core_security_list.starter_seclist_api.id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
+  security_list_ids = [oci_core_security_list.starter_seclist_api.id,data.oci_core_vcn.starter_vcn.default_security_list_id]
   display_name      = "${var.prefix}-oke-api-subnet"
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
@@ -390,8 +395,8 @@ resource "oci_containerengine_cluster" "starter_oke" {
 
     kubernetes_network_config {
       #Optional
-      pods_cidr     = "10.1.0.0/16"
-      services_cidr = "10.2.0.0/16"
+      pods_cidr     = local.oke_cidr_pods
+      services_cidr = local.oke_cidr_services
     }
 
     # cluster_pod_network_options {
