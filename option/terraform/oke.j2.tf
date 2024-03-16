@@ -31,6 +31,8 @@ locals {
   oke_cidr_nodepool     = "10.0.10.0/24"
   oke_cidr_loadbalancer = "10.0.20.0/24"
   oke_cidr_api          = "10.0.30.0/24"
+  oke_cidr_pods         = "10.1.0.0/16"
+  oke_cidr_services     = "10.2.0.0/16"
 }
 
 #----------------------------------------------------------------------------
@@ -393,8 +395,8 @@ resource "oci_containerengine_cluster" "starter_oke" {
 
     kubernetes_network_config {
       #Optional
-      pods_cidr     = "10.1.0.0/16"
-      services_cidr = "10.2.0.0/16"
+      pods_cidr     = local.oke_cidr_pods
+      services_cidr = local.oke_cidr_services
     }
 
     # cluster_pod_network_options {
