@@ -451,16 +451,17 @@ Check LICENSE file (Apache 2.0)
 ### Usage 
 
 ### Commands
+- starter.sh help    : Show the list of commands
 - starter.sh build   : Build the whole program: Run Terraform, Configure the DB, Build the App, Build the UI
 - starter.sh destroy : Destroy the objects created by Terraform
-- env.sh                 : Contains the settings of your project
-
+- starter.sh env     : Set the env variables in BASH Shell
+                    
 ### Directories
 - src           : Sources files
-    - app       : Source of the Backend Application (Command: build_app.sh)
-    - ui        : Source of the User Interface (Command: build_ui.sh)
+    - app       : Source of the Backend Application 
+    - ui        : Source of the User Interface 
     - db        : SQL files of the database
-    - terraform : Terraform scripts (Command: plan.sh / apply.sh)'''
+    - terraform : Terraform scripts'''
                 ]
         if params['deploy_type'] in [ 'compute', 'instance_pool' ]:
             contents.append(
