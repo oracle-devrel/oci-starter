@@ -1,17 +1,16 @@
-package helidon;
-
 {% import "java.j2_macro" as m with context %}
+package helidon;
 
 import jakarta.persistence.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+{{ m.import() }}
 
 /**
  * Dept Table 
  */
 @Path("/")
 public class DeptResource {
-
     {%- if db_family_type == "sql" %}
     @PersistenceContext(unitName = "pu1")
     private EntityManager entityManager;
