@@ -1,19 +1,8 @@
 
 package me.opc.mp.database;
 
-import jakarta.persistence.Access;
-import jakarta.persistence.AccessType;
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
-/**
- * A Dept Type entity.
- */
 @Entity(name = "Dept")
 @Table(name = "dept")
 @Access(AccessType.FIELD)

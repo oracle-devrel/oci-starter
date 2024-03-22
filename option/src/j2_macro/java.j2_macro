@@ -29,7 +29,7 @@ import javax.json.*;
       <artifactId>spring-data-oracle-nosql</artifactId>
       <version>2.0.0</version>
     </dependency>   
-    {%- elif java_framework == "helidon" %}    
+    {%- elif java_framework in ["helidon","helidon4"] %}    
     <dependency>
       <groupId>io.helidon.microprofile.openapi</groupId>
       <artifactId>helidon-microprofile-openapi</artifactId>
@@ -77,7 +77,7 @@ import javax.json.*;
 
 {% macro constructor() -%}
     {%- if db_family == "nosql" %}
-    {%- if java_framework == "helidon" %}
+    {%- if java_framework in ["helidon","helidon4"] %}
     static NoSQLHandle handle;
     {%- else %}
     private final NoSQLHandle handle;
@@ -98,7 +98,7 @@ import javax.json.*;
     {%- else %}
     public DemoController() throws Exception {
     {%- endif %}
-    {%- elif java_framework == "helidon" %}
+    {%- elif java_framework in ["helidon","helidon4"] %}
     public DeptResource() throws Exception {
         {%- if db_family == "nosql" %}
         if( handle!= null ) {
