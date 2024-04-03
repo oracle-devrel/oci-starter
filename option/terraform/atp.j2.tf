@@ -73,6 +73,7 @@ resource "oci_identity_dynamic_group" "starter-atp-dyngroup" {
 }
 
 resource "oci_identity_policy" "starter-policy" {
+  provider       = oci.home
   name           = "${var.prefix}-atp-policy"
   description    = "${var.prefix} atp policy"
   compartment_id = var.tenancy_ocid

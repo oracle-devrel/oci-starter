@@ -30,6 +30,7 @@ resource "oci_identity_dynamic_group" "starter_instance_dyngroup" {
 }
 
 resource "oci_identity_policy" "oke_tls_policy" {
+  provider       = oci.home    
   name           = "oke-tls-policy"
   description    = "oke-tls-policy"
   compartment_id = var.compartment_ocid

@@ -31,6 +31,7 @@ resource "oci_identity_dynamic_group" "starter_nosql_dyngroup" {
 }
 
 resource "oci_identity_policy" "starter_nosql_policy" {
+  provider       = oci.home    
   name           = "${var.prefix}-nosql-policy"
   description    = "${var.prefix}-nosql-policy"
   compartment_id = var.compartment_ocid

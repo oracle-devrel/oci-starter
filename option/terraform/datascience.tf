@@ -1,4 +1,5 @@
 resource "oci_identity_policy" "starter_datascience_policy" {
+  provider       = oci.home    
   name           = "${var.prefix}-datascience-policy"
   description    = "policy created for datascience"
   compartment_id = var.compartment_ocid

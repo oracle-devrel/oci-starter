@@ -45,6 +45,7 @@ resource "oci_identity_dynamic_group" "starter_jms_dyngroup" {
 
 # Policies
 resource "oci_identity_policy" "starter_jms_policy" {
+  provider       = oci.home
   compartment_id = var.tenancy_ocid
   description    = "${var.prefix}-jms-${data.oci_identity_compartment.compartment.name}"
   name           = "${var.prefix}-jms-${data.oci_identity_compartment.compartment.name}"
