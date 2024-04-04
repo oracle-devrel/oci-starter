@@ -23,6 +23,7 @@ resource "oci_nosql_table" "starter_nosql_table" {
 }
 
 resource "oci_identity_dynamic_group" "starter_nosql_dyngroup" {
+  provider       = oci.home  
   compartment_id = var.tenancy_ocid
   name           = "${var.prefix}-nosql-dyngroup"
   description    = "${var.prefix}-nosql-dyngroup"
