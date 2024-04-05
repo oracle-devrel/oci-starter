@@ -172,6 +172,7 @@ else
     auto_echo TF_VAR_namespace=$TF_VAR_namespace
     export TF_VAR_email=mail@domain.com
     auto_echo TF_VAR_email=$TF_VAR_email
+    # ex: OCIR region is using the key prefix: fra.ocir.io
     export TF_VAR_region_key=`oci iam region list --all --query "data[?name=='$TF_VAR_region']" | jq -r ".[0].key" | awk '{print tolower($0)}'`
     auto_echo TF_VAR_region_key=$TF_VAR_region_key
     export TF_VAR_ocir=${TF_VAR_region_key}.ocir.io
