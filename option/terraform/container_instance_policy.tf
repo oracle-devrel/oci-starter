@@ -1,4 +1,5 @@
 resource "oci_identity_dynamic_group" "starter_ci_dyngroup" {
+  provider       = oci.home    
   name           = "${var.prefix}-ci-dyngroup"
   description    = "Starter - All Container Instances"
   compartment_id = var.tenancy_ocid
@@ -7,6 +8,7 @@ resource "oci_identity_dynamic_group" "starter_ci_dyngroup" {
 }
 
 resource "oci_identity_policy" "starter-ci_policy" {
+  provider       = oci.home
   name           = "${var.prefix}-ci-policy"
   description    = "Container instance access to OCIR"
   compartment_id = var.tenancy_ocid

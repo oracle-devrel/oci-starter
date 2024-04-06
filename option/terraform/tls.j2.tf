@@ -22,14 +22,16 @@ locals {
 
 # This is needed for External DNS
 resource "oci_identity_dynamic_group" "starter_instance_dyngroup" {
+  provider       = oci.home
   compartment_id = var.tenancy_ocid
   name           = "${var.prefix}-instance-dyngroup"
   description    = "${var.prefix}-instance-dyngroup"
   matching_rule  = "instance.compartment.id = '${var.compartment_ocid}'"
-  freeform_tags = local.freeform_tags
+  freeform_tags  = local.freeform_tags
 }
 
 resource "oci_identity_policy" "oke_tls_policy" {
+  provider       = oci.home    
   name           = "oke-tls-policy"
   description    = "oke-tls-policy"
   compartment_id = var.compartment_ocid

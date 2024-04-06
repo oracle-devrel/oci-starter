@@ -36,6 +36,7 @@ resource "oci_identity_user_group_membership" "starter_jms_group_memb" {
 
 # Dynamic Group
 resource "oci_identity_dynamic_group" "starter_jms_dyngroup" {
+  provider       = oci.home  
   compartment_id = var.tenancy_ocid
   name           = local.jms_dyngroup
   description    = local.jms_dyngroup
@@ -45,6 +46,7 @@ resource "oci_identity_dynamic_group" "starter_jms_dyngroup" {
 
 # Policies
 resource "oci_identity_policy" "starter_jms_policy" {
+  provider       = oci.home
   compartment_id = var.tenancy_ocid
   description    = "${var.prefix}-jms-${data.oci_identity_compartment.compartment.name}"
   name           = "${var.prefix}-jms-${data.oci_identity_compartment.compartment.name}"

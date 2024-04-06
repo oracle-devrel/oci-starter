@@ -1,0 +1,42 @@
+# Datasource properties
+javax.sql.DataSource.ds1.dataSourceClassName=oracle.jdbc.pool.OracleDataSource
+javax.sql.DataSource.ds1.dataSource.url=##JDBC_URL##
+javax.sql.DataSource.ds1.dataSource.user=##DB_USER##
+javax.sql.DataSource.ds1.dataSource.password=##DB_PASSWORD##
+
+
+# Microprofile server properties
+server.port=8080
+server.host=0.0.0.0
+
+# Datasource properties
+{%- if db_family != "none" %}
+{%- if db_family == "oracle" %}
+javax.sql.DataSource.ds1.dataSourceClassName=oracle.jdbc.pool.OracleDataSource
+{%- elif db_family == "mysql" %}
+javax.sql.DataSource.ds1.dataSourceClassName=com.mysql.cj.jdbc.MysqlDataSource
+{%- elif db_family == "psql" %}
+javax.sql.DataSource.ds1.dataSourceClassName=org.postgresql.ds.PGSimpleDataSource
+{%- endif %}
+
+{%- if db_family == "nosql" %}
+# Oracle NoSQL Connection
+jnosql.keyvalue.database=deptjee
+jnosql.document.database=deptjee
+jnosql.oracle.nosql.table.read.limit=10
+jnosql.oracle.nosql.table.write.limit=10
+jnosql.oracle.nosql.table.storage.gb=1
+jnosql.oracle.nosql.host=${TF_VAR_nosql_endpoint}
+jnosql.oracle.nosql.compartment=${TF_VAR_compartment_ocid}
+{%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+jnosql.oracle.nosql.deployment=CLOUD_INSTANCE_PRINCIPAL
+{%- else %}
+jnosql.oracle.nosql.deployment=CLOUD_RESOURCE_PRINCIPAL
+{%- endif %}
+{%- else %}  
+javax.sql.DataSource.ds1.dataSource.url=##JDBC_URL##
+javax.sql.DataSource.ds1.dataSource.user=##DB_USER##
+javax.sql.DataSource.ds1.dataSource.password=##DB_PASSWORD##
+{%- endif %}
+{%- endif %}
+

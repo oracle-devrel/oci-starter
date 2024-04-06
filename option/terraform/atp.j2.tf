@@ -66,6 +66,7 @@ output "ords_url" {
 # This allow the ATP to use OCI PLSQL SDK to use/manage OCI resources
 
 resource "oci_identity_dynamic_group" "starter-atp-dyngroup" {
+  provider       = oci.home 
   name           = "${var.prefix}-atp-dyngroup"
   description    = "ATP Dyngroup"
   compartment_id = var.tenancy_ocid
@@ -73,6 +74,7 @@ resource "oci_identity_dynamic_group" "starter-atp-dyngroup" {
 }
 
 resource "oci_identity_policy" "starter-policy" {
+  provider       = oci.home
   name           = "${var.prefix}-atp-policy"
   description    = "${var.prefix} atp policy"
   compartment_id = var.tenancy_ocid

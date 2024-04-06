@@ -17,6 +17,26 @@ data "oci_identity_regions" "current_region" {
   }
 }
 
+data oci_identity_regions regions {
+}
+
+locals {
+  region_map = {
+    for r in data.oci_identity_regions.regions.regions :
+    r.key => r.name
+  } 
+  home_region = lookup(
+    local.region_map, 
+    data.oci_identity_tenancy.tenant_details.home_region_key
+  )
+}
+
+# Provider Home Region
+provider "oci" {
+  alias  = "home"
+  region = local.home_region
+}
+
 # Gets a list of supported images based on the shape, operating_system and operating_system_version provided
 data "oci_core_images" "node_pool_images" {
   compartment_id           = var.tenancy_ocid

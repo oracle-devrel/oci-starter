@@ -132,6 +132,7 @@ build_test_destroy () {
     rm $TEST_HOME/stop_after_build
     exit
   fi  
+  SECONDS=0
   ./starter.sh destroy --auto-approve > destroy.log 2>&1  
   echo "destroy_secs=$SECONDS" >> ${TEST_DIR}_time.txt
   CSV_DESTROY_SECOND=$SECONDS
