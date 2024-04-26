@@ -123,7 +123,16 @@ else
   # Availability Domain for FreeTier E2.1 Micro
   if [ "$TF_VAR_instance_shape" == "VM.Standard.E2.1.Micro" ]; then
      find_availabilty_domain_for_shape $TF_VAR_instance_shape
-  fi
+  elif [ "$TF_VAR_instance_shape" == "" ]; then
+     # Check that the Fungible shape VM.Standard.x86.Generic exists in the tenancy
+     oci compute shape list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[].shape' > $TARGET_DIR/shapes.list
+     if grep -q "VM.Standard.x86.Generic" $TARGET_DIR/shapes.list; then 
+       auto_echo "Fungible shape VM.Standard.x86.Generic found"; 
+     else 
+       export TF_VAR_instance_shape="VM.Standard.E4.Flex"
+       echo "Warning: fungible shape VM.Standard.x86.Generic not found. Using $TF_VAR_instance_shape"
+     fi
+  fi 
 
   # SSH keys
   if [ "$TF_VAR_ssh_private_path" == "" ] && [ -f $TARGET_DIR/ssh_key_starter ]; then 

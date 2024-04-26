@@ -29,7 +29,7 @@ if [ ! -f $KUBECONFIG ]; then
     kubectl apply -f $TARGET_DIR/ccm-letsencrypt-staging.yaml
 
     # external-dns-config.yaml
-    sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls//external-dns-config.yaml > $TARGET_DIR/external-dns-config.yaml
+    sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns-config.yaml > $TARGET_DIR/external-dns-config.yaml
     kubectl create secret generic external-dns-config --from-file=$TARGET_DIR/external-dns-config.yaml
 
     # external-dns.yaml
