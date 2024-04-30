@@ -132,7 +132,7 @@ else
        export TF_VAR_instance_shape="VM.Standard.E4.Flex"
        echo "Warning: fungible shape VM.Standard.x86.Generic not found. Using $TF_VAR_instance_shape"
      fi
-  fi 
+  fi
 
   # SSH keys
   if [ "$TF_VAR_ssh_private_path" == "" ] && [ -f $TARGET_DIR/ssh_key_starter ]; then 
