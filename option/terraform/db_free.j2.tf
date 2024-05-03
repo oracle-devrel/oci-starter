@@ -62,7 +62,7 @@ locals {
 {%- endif %}  
 
 locals {
-  db_url = format("%s:1521/FREEPDB1", local.db_free_ip)
+  db_url = format("%s:1521/MYATP_medium.adb.oraclecloud.com", local.db_free_ip)
   db_host = "todo"
   jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
 }
