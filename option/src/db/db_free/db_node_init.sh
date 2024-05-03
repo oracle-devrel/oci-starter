@@ -12,7 +12,7 @@ wget https://download.oracle.com/otn-pub/otn_software/db-free/oracle-database-fr
 dnf -y localinstall oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
 
 # echo DB_PASSWORD=$DB_PASSWORD
-(echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-23c configure
+(echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-23ai configure
 
 ls -al /usr/local/bin
 if [ "$TF_VAR_language" = "apex" ]; then
