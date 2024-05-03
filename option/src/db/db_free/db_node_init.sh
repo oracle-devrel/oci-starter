@@ -1,10 +1,15 @@
+# sudo dnf install -y podman
+# podman run -d -p 1521:1522 -p 1522:1522 -p 8443:8443 -p 27017:27017 -e WORKLOAD_TYPE='ATP' -e WALLET_PASSWORD=LiveLab_123 -e ADMIN_PASSWORD=LiveLab_123 --cap-add SYS_ADMIN --device /dev/fuse --name adb-free --volume adb_container_volume:/u01/data container-registry.oracle.com/database/adb-free:latest-23ai
+# alias adb-cli="podman exec adb-free adb-cli"
+
 # Doc: https://docs.oracle.com/en/database/oracle/oracle-database/23/xeinl/installing-oracle-database-free.html
 # Run as root
 dnf install -y oraclelinux-developer-release-el8
 dnf config-manager --set-enabled ol8_developer 
 sudo dnf install -y oracle-database-preinstall-23c
-wget https://download.oracle.com/otn-pub/otn_software/db-free/oracle-database-free-23c-1.0-1.el8.x86_64.rpm
-dnf -y localinstall oracle-database-free-23c-1.0-1.el8.x86_64.rpm
+wget https://download.oracle.com/otn-pub/otn_software/db-free/oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
+# wget https://download.oracle.com/otn-pub/otn_software/db-free/oracle-database-free-23c-1.0-1.el8.x86_64.rpm
+dnf -y localinstall oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
 
 # echo DB_PASSWORD=$DB_PASSWORD
 (echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-23c configure
