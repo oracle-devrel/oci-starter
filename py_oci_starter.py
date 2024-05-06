@@ -159,11 +159,11 @@ def db_rules():
     params['db_type'] = longhand(
         'db_type', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database', 'pdb': 'pluggable'})
 
-    if params.get('db_type') != 'autonomous':
+    if params.get('db_type') not in ['autonomous', 'db_free']:
         if params.get('language') == 'ords':
-            error(f'OCI starter supports ORDS only on ATP (Autonomous)')
+            error(f'ORDS not supported')
         if params.get('language') == 'apex':
-            error(f'OCI starter supports APEX only on ATP (Autonomous)')
+            error(f'APEX not supported')
     if params.get('db_type') == 'pluggable':
         if (params.get('db_ocid') is None and params.get('pdb_ocid') is None):
             error(f'Pluggable Database needs an existing DB_OCID or PDB_OCID')
