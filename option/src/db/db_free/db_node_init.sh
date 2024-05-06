@@ -6,7 +6,7 @@
 # Run as root
 dnf install -y oraclelinux-developer-release-el8
 dnf config-manager --set-enabled ol8_developer 
-sudo dnf install -y oracle-database-preinstall-23c
+sudo dnf install -y oracle-database-preinstall-23ai
 wget https://download.oracle.com/otn-pub/otn_software/db-free/oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
 # wget https://download.oracle.com/otn-pub/otn_software/db-free/oracle-database-free-23c-1.0-1.el8.x86_64.rpm
 dnf -y localinstall oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
