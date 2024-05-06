@@ -31,7 +31,9 @@ ${DB_PASSWORD}
 EOF
   # Does not work with 23ai
   # XXX
-  /usr/local/bin/ords --config /etc/ords/config install --admin-user SYS --proxy-user --db-hostname localhost --db-port 1521 --db-servicename FREE --log-folder /etc/ords/logs --feature-sdw true --feature-db-api true --feature-rest-enabled-sql true --password-stdin < password.txt
+  chown oracle /etc/ords/logs
+  chgrp oinstall /etc/ords/logs
+  su -sudo  oracle -c "/usr/local/bin/ords --config /etc/ords/config install --admin-user SYS --proxy-user --db-hostname localhost --db-port 1521 --db-servicename FREE --log-folder /etc/ords/logs --feature-sdw true --feature-db-api true --feature-rest-enabled-sql true --password-stdin < password.txt"
   /etc/init.d/ords start
   firewall-cmd --zone=public --add-port=8080/tcp --permanent
 else
@@ -42,7 +44,7 @@ fi
 firewall-cmd --zone=public --add-port=1521/tcp --permanent
 firewall-cmd --reload
 
-cat >> /home/opc/.bash_profile << EOF
+cat >> /home/oracle/.bash_profile << EOF
 
 # Setup Oracle Free environment
 export ORACLE_SID=FREE 
