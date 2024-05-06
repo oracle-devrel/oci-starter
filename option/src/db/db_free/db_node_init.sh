@@ -5,7 +5,7 @@
 # Doc: https://docs.oracle.com/en/database/oracle/oracle-database/23/xeinl/installing-oracle-database-free.html
 # Run as root
 FREEDB_RPM=oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
-if [ -f ${FREEDB_RPM} ]; then
+if [ -f ${FREEDB_RPM} ]; then
   echo "SKIPPING DB INSTALL - File ${FREEDB_RPM} already downloaded"
   exit
 fi 
