@@ -4,12 +4,18 @@
 
 # Doc: https://docs.oracle.com/en/database/oracle/oracle-database/23/xeinl/installing-oracle-database-free.html
 # Run as root
+FREEDB_RPM=oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
+if [ -f ${FREEDB_RPM} ]; then
+  echo "SKIPPING DB INSTALL - File ${FREEDB_RPM} already downloaded"
+  exit
+fi 
+
 dnf install -y oraclelinux-developer-release-el8
 dnf config-manager --set-enabled ol8_developer 
 sudo dnf install -y oracle-database-preinstall-23ai
-wget https://download.oracle.com/otn-pub/otn_software/db-free/oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
-# wget https://download.oracle.com/otn-pub/otn_software/db-free/oracle-database-free-23c-1.0-1.el8.x86_64.rpm
-dnf -y localinstall oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
+
+wget https://download.oracle.com/otn-pub/otn_software/db-free/${FREEDB_RPM} 
+dnf -y localinstall ${FREEDB_RPM} 
 
 # echo DB_PASSWORD=$DB_PASSWORD
 (echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-23ai configure
