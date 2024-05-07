@@ -29,13 +29,15 @@ if [ "$TF_VAR_language" = "apex" ]; then
 ${DB_PASSWORD}
 ${DB_PASSWORD}
 EOF
-  # Does not work with 23ai
-  # XXX
-  chown oracle /etc/ords/logs
-  chgrp oinstall /etc/ords/logs
-  su -sudo  oracle -c "/usr/local/bin/ords --config /etc/ords/config install --admin-user SYS --proxy-user --db-hostname localhost --db-port 1521 --db-servicename FREE --log-folder /etc/ords/logs --feature-sdw true --feature-db-api true --feature-rest-enabled-sql true --password-stdin < password.txt"
+  su - oracle -c "/usr/local/bin/ords --config /etc/ords/config install --admin-user SYS --proxy-user --db-hostname localhost --db-port 1521 --db-servicename FREE --log-folder /etc/ords/logs --feature-sdw true --feature-db-api true --feature-rest-enabled-sql true --password-stdin < password.txt"
   /etc/init.d/ords start
   firewall-cmd --zone=public --add-port=8080/tcp --permanent
+
+  # Install APEX
+  cd /tmp
+  su - oracle -c "wget https://download.oracle.com/otn_software/apex/apex_23.2_en.zip"
+  su - oracle -c "unzip apex_23.2_en.zip"
+  su - oracle -c "cd apex; sqlplus '/ as sysdba' @apexins.sql SYSAUX SYSAUX TEMP /i/"
 else
   echo "TF_VAR_language=$TF_VAR_language. APEX not installed."
 fi
