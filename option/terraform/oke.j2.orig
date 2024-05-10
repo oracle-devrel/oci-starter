@@ -399,9 +399,9 @@ resource "oci_containerengine_cluster" "starter_oke" {
       services_cidr = local.oke_cidr_services
     }
 
-    cluster_pod_network_options {
-      cni_type = "OCI_VCN_IP_NATIVE"
-    }
+    # cluster_pod_network_options {
+    #     cni_type = "OCI_VCN_IP_NATIVE"
+    # }
   }
 
   freeform_tags = local.freeform_tags
@@ -410,31 +410,41 @@ resource "oci_containerengine_cluster" "starter_oke" {
 #----------------------------------------------------------------------------
 # NODE POOL
 
-variable oke_virtual_node_shape {
-  value="Pod.Standard.E4.Flex"
-}
-
-resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
+resource "oci_containerengine_node_pool" "starter_node_pool" {
   #Required
   cluster_id         = oci_containerengine_cluster.starter_oke.id
   compartment_id     = local.lz_appdev_cmp_ocid
-  display_name       = "${var.prefix}-virtual-pool"
-  placement_configurations {
+  kubernetes_version = data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions[length(data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions)-1]
+  name               = "${var.prefix}-pool"
+  node_shape         = var.oke_shape
+  node_shape_config {
+    memory_in_gbs = "32"
+    ocpus = "1"
+  }
+
+  node_source_details {
     #Required
-    availability_domain = data.oci_identity_availability_domain.ad1.name
-    subnet_id           = oci_core_subnet.starter_nodepool_subnet.id
-    fault_domains = ["FAULT-DOMAIN-1"]
+    image_id    = local.image_id
+    source_type = "IMAGE"
   }
-  #Required
-  pod_configuration {
-    shape = var.oke_virtual_node_shape
-    subnet_id = oci_core_subnet.test_subnet.id
+
+  node_config_details {
+    #Required
+    placement_configs {
+      #Required
+      availability_domain = data.oci_identity_availability_domain.ad1.name
+      subnet_id           = oci_core_subnet.starter_nodepool_subnet.id
+      #optional
+      fault_domains = ["FAULT-DOMAIN-1", "FAULT-DOMAIN-3"]
+    }
+    size = var.node_pool_size
+
+    # node_pool_pod_network_option_details {
+    #   cni_type = "OCI_VCN_IP_NATIVE"
+    #   pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
+    # }
   }
-  #Required
-  size = var.node_pool_size
-  }
-  //use terraform depends_on to enforce cluster->virtual node pool DAG
-  depends_on = [oci_containerengine_cluster.starter_oke]
+  ssh_public_key      = var.ssh_public_key
 
   freeform_tags = local.freeform_tags
 }
