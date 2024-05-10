@@ -437,7 +437,7 @@ resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
 #----------------------------------------------------------------------------
 
 resource "oci_identity_policy" "starter-oke-policy" {
-  name           = "oke-policies-${random_id.tag.hex}"
+  name           = "starter-oke-policy"
   description    = "policy created for oke virtual nodes"
   compartment_id = var.compartment_ocid
 
