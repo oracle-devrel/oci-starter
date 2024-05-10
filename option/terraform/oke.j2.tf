@@ -435,6 +435,23 @@ resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
 }
 
 #----------------------------------------------------------------------------
+
+resource "oci_identity_policy" "starter-oke-policy" {
+  provider       = oci.home_region
+  name           = "oke-policies-${random_id.tag.hex}"
+  description    = "policy created for oke virtual nodes"
+  compartment_id = var.compartment_ocid
+
+  statements = [
+    "define tenancy ske as  ${var.tenancy_ocid}",
+    "define compartment ske_compartment as  ${var.compartment_ocid}",
+    "endorse any-user to associate compute-container-instances in compartment ske_compartment of tenancy ske with subnets in tenancy where ALL {request.principal.type='virtualnode',request.operation='CreateContainerInstance',request.principal.subnet=2.subnet.id}",
+    "endorse any-user to associate compute-container-instances in compartment ske_compartment of tenancy ske with vnics in tenancy where ALL {request.principal.type='virtualnode',request.operation='CreateContainerInstance',request.principal.subnet=2.subnet.id}",
+    "endorse any-user to associate compute-container-instances in compartment ske_compartment of tenancy ske with network-security-group in tenancy where ALL {request.principal.type='virtualnode',request.operation='CreateContainerInstance'}"
+  ]
+}
+
+#----------------------------------------------------------------------------
 # ADDONS 
 
 /*
@@ -485,3 +502,6 @@ locals {
 output "oke_ocid" {
   value = local.oke_ocid
 }
+
+
+
