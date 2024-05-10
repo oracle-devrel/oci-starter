@@ -423,7 +423,7 @@ resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
   #Required
   pod_configuration {
     shape = var.oke_virtual_node_shape
-    subnet_id = oci_core_subnet.test_subnet.id
+    subnet_id = oci_core_subnet.starter_nodepool_subnet.id
   }
   #Required
   size = var.node_pool_size
