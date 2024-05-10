@@ -379,6 +379,11 @@ resource "oci_containerengine_cluster" "starter_oke" {
     is_public_ip_enabled  = "true"
   }
 
+  cluster_pod_network_options {
+    # VNPs require cni_type as OCI_VCN_IP_NATIVE
+    cni_type = "OCI_VCN_IP_NATIVE"
+  }
+
   options {
     service_lb_subnet_ids = [oci_core_subnet.starter_lb_subnet.id]
     #Optional
@@ -391,16 +396,6 @@ resource "oci_containerengine_cluster" "starter_oke" {
     admission_controller_options {
       #Optional
       is_pod_security_policy_enabled = false
-    }
-
-    kubernetes_network_config {
-      #Optional
-      pods_cidr     = local.oke_cidr_pods
-      services_cidr = local.oke_cidr_services
-    }
-
-    cluster_pod_network_options {
-      cni_type = "OCI_VCN_IP_NATIVE"
     }
   }
 
@@ -433,7 +428,7 @@ resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
   #Required
   size = var.node_pool_size
 
-  # use terraform depends_on to enforce cluster->virtual node pool DAG
+  #Use terraform depends_on to enforce cluster->virtual node pool DAG
   depends_on = [oci_containerengine_cluster.starter_oke]
 
   freeform_tags = local.freeform_tags
@@ -470,10 +465,10 @@ resource oci_containerengine_addon starter_oke_addon_certmanager {
 
 output "node_pool" {
   value = {
-    id                 = oci_containerengine_node_pool.starter_node_pool.id
-    kubernetes_version = oci_containerengine_node_pool.starter_node_pool.kubernetes_version
-    name               = oci_containerengine_node_pool.starter_node_pool.name
-    subnet_ids         = oci_containerengine_node_pool.starter_node_pool.subnet_ids
+    id                 = oci_containerengine_node_pool.starter_virtual_node_pool.id
+    kubernetes_version = oci_containerengine_node_pool.starter_virtual_node_pool.kubernetes_version
+    name               = oci_containerengine_node_pool.starter_virtual_node_pool.name
+    subnet_ids         = oci_containerengine_node_pool.starter_virtual_node_pool.subnet_ids
   }
 }
 
