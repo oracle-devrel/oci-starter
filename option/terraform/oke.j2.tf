@@ -463,6 +463,7 @@ resource oci_containerengine_addon starter_oke_addon_certmanager {
 #----------------------------------------------------------------------------
 # OUTPUTS
 
+/*
 output "node_pool" {
   value = {
     id                 = oci_containerengine_node_pool.starter_virtual_node_pool.id
@@ -471,6 +472,7 @@ output "node_pool" {
     subnet_ids         = oci_containerengine_node_pool.starter_virtual_node_pool.subnet_ids
   }
 }
+*/
 
 #----------------------------------------------------------------------------
 # LOCALS
