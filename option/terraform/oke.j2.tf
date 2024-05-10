@@ -418,7 +418,7 @@ resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
     #Required
     availability_domain = data.oci_identity_availability_domain.ad1.name
     subnet_id           = oci_core_subnet.starter_nodepool_subnet.id
-    fault_domains = ["FAULT-DOMAIN-1"]
+    # fault_domains = ["FAULT-DOMAIN-1"]
   }
   #Required
   pod_configuration {
