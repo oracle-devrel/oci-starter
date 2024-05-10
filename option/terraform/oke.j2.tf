@@ -411,7 +411,7 @@ resource "oci_containerengine_cluster" "starter_oke" {
 # NODE POOL
 
 variable oke_virtual_node_shape {
-  value="Pod.Standard.E4.Flex"
+  default = "Pod.Standard.E4.Flex"
 }
 
 resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
