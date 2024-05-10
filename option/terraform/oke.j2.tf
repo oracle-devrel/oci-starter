@@ -432,8 +432,8 @@ resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
   }
   #Required
   size = var.node_pool_size
-  }
-  //use terraform depends_on to enforce cluster->virtual node pool DAG
+
+  # use terraform depends_on to enforce cluster->virtual node pool DAG
   depends_on = [oci_containerengine_cluster.starter_oke]
 
   freeform_tags = local.freeform_tags
