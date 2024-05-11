@@ -377,6 +377,42 @@ resource "oci_core_subnet" "starter_pod_subnet" {
 #----------------------------------------------------------------------------
 # CLUSTER
 
+
+resource "oci_containerengine_cluster" "generated_oci_containerengine_cluster" {
+	cluster_pod_network_options {
+		cni_type = "OCI_VCN_IP_NATIVE"
+	}
+	compartment_id = var.compartment_ocid
+	endpoint_config {
+		is_public_ip_enabled = "true"
+		subnet_id = "${oci_core_subnet.kubernetes_api_endpoint_subnet.id}"
+	}
+	freeform_tags = {
+		"OKEclusterName" = "${var.prefix}-oke"
+	}
+	kubernetes_version = var.kubernetes_version
+	name = "${var.prefix}-oke"
+	options {
+		admission_controller_options {
+			is_pod_security_policy_enabled = "false"
+		}
+		persistent_volume_config {
+			freeform_tags = {
+				"OKEclusterName" = "${var.prefix}-oke"
+			}
+		}
+		service_lb_config {
+			freeform_tags = {
+				"OKEclusterName" = "${var.prefix}-oke"
+			}
+		}
+		service_lb_subnet_ids = ["${oci_core_subnet.starter_api_subnet.id}"]
+	}
+	type = "ENHANCED_CLUSTER"
+	vcn_id = data.oci_core_vcn.starter_vcn.id
+}
+
+/*
 resource "oci_containerengine_cluster" "starter_oke" {
   #Required
   compartment_id     = var.compartment_ocid
@@ -398,46 +434,8 @@ resource "oci_containerengine_cluster" "starter_oke" {
     admission_controller_options {
       is_pod_security_policy_enabled = "false"
     }
-    service_lb_subnet_ids = [oci_core_subnet.starter_lb_subnet.id]
+    service_lb_subnet_ids = oci_core_subnet.starter_api_subnet.id
   }    
-  freeform_tags = local.freeform_tags
-}
-
-/*
-resource "oci_containerengine_cluster" "starter_oke" {
-  #Required
-  compartment_id     = local.lz_appdev_cmp_ocid
-  kubernetes_version = data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions[length(data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions)-1]
-  name               = "${var.prefix}-oke"
-  vcn_id             = data.oci_core_vcn.starter_vcn.id
-  type               = "ENHANCED_CLUSTER"
-
-  #Optional
-  endpoint_config {
-    subnet_id             = oci_core_subnet.starter_api_subnet.id
-    is_public_ip_enabled  = "true"
-  }
-
-  cluster_pod_network_options {
-    # VNPs require cni_type as OCI_VCN_IP_NATIVE
-    cni_type = "OCI_VCN_IP_NATIVE"
-  }
-
-  options {
-    service_lb_subnet_ids = [oci_core_subnet.starter_lb_subnet.id]
-    #Optional
-    add_ons {
-      #Optional
-      is_kubernetes_dashboard_enabled = "true"
-      is_tiller_enabled               = "true"
-    }
-
-    admission_controller_options {
-      #Optional
-      is_pod_security_policy_enabled = false
-    }
-  }
-
   freeform_tags = local.freeform_tags
 }
 */
