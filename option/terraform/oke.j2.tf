@@ -385,7 +385,7 @@ resource "oci_containerengine_cluster" "starter_oke" {
 	compartment_id = var.compartment_ocid
 	endpoint_config {
 		is_public_ip_enabled = "true"
-		subnet_id = "${oci_core_subnet.kubernetes_api_endpoint_subnet.id}"
+		subnet_id = "${oci_core_subnet.starter_api_subnet.id}"
 	}
 	freeform_tags = {
 		"OKEclusterName" = "${var.prefix}-oke"
