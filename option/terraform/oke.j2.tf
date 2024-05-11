@@ -378,7 +378,7 @@ resource "oci_containerengine_cluster" "starter_oke" {
     }
     endpoint_config {
         #Optional
-        is_public_ip_enabled = var.cluster_endpoint_config_is_public_ip_enabled
+        is_public_ip_enabled = "true"
         # nsg_ids              = ["${oci_core_network_security_group.network_security_group_rd.id}"]
         subnet_id              = oci_core_subnet.starter_api_subnet.id
     }
