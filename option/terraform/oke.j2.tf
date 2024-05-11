@@ -23,25 +23,17 @@ locals {
   oke_cidr_services     = "10.2.0.0/16"
 }
 
-
-resource "oci_core_vcn" "generated_oci_core_vcn" {
-	cidr_block = "10.0.0.0/16"
-	compartment_id = var.compartment_ocid
-	display_name = "oke-vcn-quick-starter-virtual-168cd3edc"
-	dns_label = "startervirtual"
-}
-
 resource "oci_core_internet_gateway" "generated_oci_core_internet_gateway" {
 	compartment_id = var.compartment_ocid
 	display_name = "oke-igw-quick-starter-virtual-168cd3edc"
 	enabled = "true"
-	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
+	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
 resource "oci_core_nat_gateway" "generated_oci_core_nat_gateway" {
 	compartment_id = var.compartment_ocid
 	display_name = "oke-ngw-quick-starter-virtual-168cd3edc"
-	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
+	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
 resource "oci_core_service_gateway" "generated_oci_core_service_gateway" {
@@ -50,7 +42,7 @@ resource "oci_core_service_gateway" "generated_oci_core_service_gateway" {
 	services {
 		service_id = "ocid1.service.oc1.eu-frankfurt-1.aaaaaaaa7ncsqkj6lkz36dehifizupyn6qjqsmtepsegs23yyntnsy7qrvea"
 	}
-	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
+	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
 resource "oci_core_route_table" "generated_oci_core_route_table" {
@@ -68,7 +60,7 @@ resource "oci_core_route_table" "generated_oci_core_route_table" {
 		destination_type = "SERVICE_CIDR_BLOCK"
 		network_entity_id = "${oci_core_service_gateway.generated_oci_core_service_gateway.id}"
 	}
-	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
+	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
 resource "oci_core_subnet" "service_lb_subnet" {
@@ -79,7 +71,7 @@ resource "oci_core_subnet" "service_lb_subnet" {
 	prohibit_public_ip_on_vnic = "false"
 	route_table_id = "${oci_core_default_route_table.generated_oci_core_default_route_table.id}"
 	security_list_ids = ["${oci_core_vcn.generated_oci_core_vcn.default_security_list_id}"]
-	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
+	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
 resource "oci_core_subnet" "node_subnet" {
@@ -90,7 +82,7 @@ resource "oci_core_subnet" "node_subnet" {
 	prohibit_public_ip_on_vnic = "true"
 	route_table_id = "${oci_core_route_table.generated_oci_core_route_table.id}"
 	security_list_ids = ["${oci_core_security_list.node_sec_list.id}"]
-	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
+	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
 resource "oci_core_subnet" "kubernetes_api_endpoint_subnet" {
@@ -101,7 +93,7 @@ resource "oci_core_subnet" "kubernetes_api_endpoint_subnet" {
 	prohibit_public_ip_on_vnic = "false"
 	route_table_id = "${oci_core_default_route_table.generated_oci_core_default_route_table.id}"
 	security_list_ids = ["${oci_core_security_list.kubernetes_api_endpoint_sec_list.id}"]
-	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
+	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
 resource "oci_core_default_route_table" "generated_oci_core_default_route_table" {
@@ -118,7 +110,7 @@ resource "oci_core_default_route_table" "generated_oci_core_default_route_table"
 resource "oci_core_security_list" "service_lb_sec_list" {
 	compartment_id = var.compartment_ocid
 	display_name = "oke-svclbseclist-quick-starter-virtual-168cd3edc"
-	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
+	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
 resource "oci_core_security_list" "node_sec_list" {
@@ -209,7 +201,7 @@ resource "oci_core_security_list" "node_sec_list" {
 		source = "0.0.0.0/0"
 		stateless = "false"
 	}
-	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
+	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
 resource "oci_core_security_list" "kubernetes_api_endpoint_sec_list" {
@@ -268,7 +260,7 @@ resource "oci_core_security_list" "kubernetes_api_endpoint_sec_list" {
 		source = local.oke_cidr_nodepool
 		stateless = "false"
 	}
-	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
+	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
 resource "oci_containerengine_cluster" "starter_oke" {
@@ -302,7 +294,7 @@ resource "oci_containerengine_cluster" "starter_oke" {
 		service_lb_subnet_ids = ["${oci_core_subnet.service_lb_subnet.id}"]
 	}
 	type = "ENHANCED_CLUSTER"
-	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
+	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
 resource "oci_containerengine_virtual_node_pool" "starter_node_pool" {
