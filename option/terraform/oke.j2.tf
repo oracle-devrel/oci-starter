@@ -106,6 +106,40 @@ resource "oci_core_security_list" "starter_seclist_lb" {
     }
   }
 
+  ingress_security_rules {
+    protocol  = "6" // tcp
+    source    = "0.0.0.0/0"
+    stateless = false
+
+    tcp_options {
+      min = 8080
+      max = 8080
+    }
+  }
+
+  egress_security_rules {
+    description      = "Allow TCP traffic from Load Balancers to node ports"
+    destination      = local.oke_cidr_nodepool
+    destination_type = "CIDR_BLOCK"
+    protocol  = "6"
+    stateless = "false"
+    tcp_options {
+      min = 30000
+      max = 32767
+    }
+  }
+  egress_security_rules {
+    description      = "Allow TCP traffic from Load Balancers to node ports"
+    destination      = local.oke_cidr_nodepool
+    destination_type = "CIDR_BLOCK"
+    protocol  = "6"
+    stateless = "false"
+    tcp_options {
+      min = 10256
+      max = 10256
+    }
+  }
+
   freeform_tags = local.freeform_tags
 }
 
@@ -222,6 +256,17 @@ resource "oci_core_security_list" "starter_seclist_node" {
       min = "22"
     }
   }
+  ingress_security_rules {
+    description = "Allow TCP traffic from Load Balancers to node ports"
+    protocol    = "6"
+    source      = local.oke_cidr_loadbalancer
+    source_type = "CIDR_BLOCK"
+    stateless   = "false"
+    tcp_options {
+      max = "30000"
+      min = "32767"
+    }
+  }
 
   freeform_tags = local.freeform_tags
 }
@@ -327,7 +372,7 @@ resource "oci_core_subnet" "starter_lb_subnet" {
 
   # Provider code tries to maintain compatibility with old versions.
   # security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
-  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id]
+  security_list_ids = [oci_core_security_list.starter_seclist_lb.id,data.oci_core_vcn.starter_vcn.default_security_list_id]
   display_name      = "${var.prefix}-oke-lb-subnet"
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
