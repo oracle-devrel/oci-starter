@@ -448,7 +448,7 @@ variable oke_virtual_node_shape {
 }
 
 resource "oci_containerengine_virtual_node_pool" "create_virtual_node_pool_details0" {
-	cluster_id = "${oci_containerengine_cluster.generated_oci_containerengine_cluster.id}"
+	cluster_id = "${oci_containerengine_cluster.starter_oke.id}"
 	compartment_id = var.compartment_ocid
 	display_name = "pool1"
 	initial_virtual_node_labels {
@@ -457,7 +457,7 @@ resource "oci_containerengine_virtual_node_pool" "create_virtual_node_pool_detai
 	}
 	placement_configurations {
 		availability_domain = "KSGd:EU-FRANKFURT-1-AD-1"
-		subnet_id = "${oci_core_subnet.node_subnet.id}"
+		subnet_id = "${oci_core_subnet.starter_nodepool_subnet.id}"
         fault_domain=["FAULT-DOMAIN-1"]
 	}
 	placement_configurations {
