@@ -467,7 +467,7 @@ resource "oci_containerengine_virtual_node_pool" "create_virtual_node_pool_detai
 	}
 	placement_configurations {
 		availability_domain = "KSGd:EU-FRANKFURT-1-AD-3"
-		subnet_id = "${ooci_core_subnet.starter_nodepool_subnet.id}"
+		subnet_id = "${oci_core_subnet.starter_nodepool_subnet.id}"
         fault_domain=["FAULT-DOMAIN-1"]
 	}
 	pod_configuration {
