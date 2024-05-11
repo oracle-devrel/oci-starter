@@ -331,6 +331,17 @@ resource oci_core_security_list starter_seclist_api {
     }
   }
   ingress_security_rules {
+    description = "External access to Kubernetes API endpoint"
+    protocol    = "6"
+    source      = local.oke_cidr_nodepool
+    source_type = "CIDR_BLOCK"
+    stateless   = "false"
+    tcp_options {
+      max = "6443"
+      min = "6443"
+    }
+  }  
+  ingress_security_rules {
     description = "Kubernetes worker to control plane communication"
     protocol    = "6"
     source      = local.oke_cidr_nodepool
