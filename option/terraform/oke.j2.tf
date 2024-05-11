@@ -312,7 +312,7 @@ resource "oci_core_subnet" "starter_nodepool_subnet" {
   cidr_block          = local.oke_cidr_nodepool
   compartment_id      = local.lz_network_cmp_ocid
   vcn_id              = data.oci_core_vcn.starter_vcn.id
-  dns_label           = "nodepool-subnet"
+  dns_label           = "nodepool"
   prohibit_public_ip_on_vnic = "true"
 
   # Provider code tries to maintain compatibility with old versions.
@@ -329,7 +329,7 @@ resource "oci_core_subnet" "starter_lb_subnet" {
   cidr_block          = local.oke_cidr_loadbalancer
   compartment_id      = local.lz_network_cmp_ocid
   vcn_id              = data.oci_core_vcn.starter_vcn.id
-  dns_label           = "lb-subnet"
+  dns_label           = "lb"
   prohibit_public_ip_on_vnic = "false"
 
   # Provider code tries to maintain compatibility with old versions.
@@ -346,7 +346,7 @@ resource "oci_core_subnet" "starter_api_subnet" {
   cidr_block          = local.oke_cidr_api
   compartment_id      = local.lz_network_cmp_ocid
   vcn_id              = data.oci_core_vcn.starter_vcn.id
-  dns_label           = "api-subnet"
+  dns_label           = "api"
   prohibit_public_ip_on_vnic = "false"
 
   # Provider code tries to maintain compatibility with old versions.
