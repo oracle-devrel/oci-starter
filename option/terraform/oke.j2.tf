@@ -436,6 +436,7 @@ resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
 
 #----------------------------------------------------------------------------
 
+/*
 resource "oci_identity_policy" "starter-oke-policy" {
   name           = "starter-oke-policy"
   description    = "policy created for oke virtual nodes"
@@ -449,6 +450,7 @@ resource "oci_identity_policy" "starter-oke-policy" {
     "endorse any-user to associate compute-container-instances in compartment ske_compartment of tenancy ske with network-security-group in tenancy where ALL {request.principal.type='virtualnode',request.operation='CreateContainerInstance'}"
   ]
 }
+*/
 
 #----------------------------------------------------------------------------
 # ADDONS 
