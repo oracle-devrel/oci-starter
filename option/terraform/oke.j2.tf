@@ -150,134 +150,91 @@ resource "oci_core_security_list" "starter_seclist_node" {
   vcn_id         = data.oci_core_vcn.starter_vcn.id
   display_name   = "${var.prefix}-seclist-node"
 
-  egress_security_rules {
-    description      = "Allow pods on one worker node to communicate with pods on other worker nodes"
-    destination      = local.oke_cidr_nodepool
-    destination_type = "CIDR_BLOCK"
-    protocol  = "all"
-    stateless = "false"
-  }
-  egress_security_rules {
-    description      = "Access to Kubernetes API Endpoint"
-    destination      = local.oke_cidr_api
-    destination_type = "CIDR_BLOCK"
-    protocol  = "6"
-    stateless = "false"
-    tcp_options {
-      max = "6443"
-      min = "6443"
-    }
-  }
-  egress_security_rules {
-    description      = "Kubernetes worker to control plane communication"
-    destination      = local.oke_cidr_api
-    destination_type = "CIDR_BLOCK"
-    protocol  = "6"
-    stateless = "false"
-    tcp_options {
-      max = "12250"
-      min = "12250"
-    }
-  }
-  egress_security_rules {
-    description      = "Path discovery"
-    destination      = local.oke_cidr_api
-    destination_type = "CIDR_BLOCK"
-    icmp_options {
-      code = "4"
-      type = "3"
-    }
-    protocol  = "1"
-    stateless = "false"
-  }
-  egress_security_rules {
-    description      = "Allow nodes to communicate with OKE to ensure correct start-up and continued functioning"
-    destination      = data.oci_core_services.all_services.services[0].cidr_block
-    destination_type = "SERVICE_CIDR_BLOCK"
-    protocol  = "6"
-    stateless = "false"
-    tcp_options {
-      max = "443"
-      min = "443"
-    }
-  }
-  egress_security_rules {
-    description      = "ICMP Access from Kubernetes Control Plane"
-    destination      = "0.0.0.0/0"
-    destination_type = "CIDR_BLOCK"
-    icmp_options {
-      code = "4"
-      type = "3"
-    }
-    protocol  = "1"
-    stateless = "false"
-  }
-  egress_security_rules {
-    description      = "Worker Nodes access to Internet"
-    destination      = "0.0.0.0/0"
-    destination_type = "CIDR_BLOCK"
-    protocol  = "all"
-    stateless = "false"
-  }
-
-  ingress_security_rules {
-    description = "Allow pods on one worker node to communicate with pods on other worker nodes"
-    protocol    = "all"
-    source      = local.oke_cidr_nodepool
-    source_type = "CIDR_BLOCK"
-    stateless   = "false"
-  }
-  ingress_security_rules {
-    description = "Path discovery"
-    icmp_options {
-      code = "4"
-      type = "3"
-    }
-    protocol    = "1"
-    source      = local.oke_cidr_api
-    source_type = "CIDR_BLOCK"
-    stateless   = "false"
-  }
-  ingress_security_rules {
-    description = "TCP access from Kubernetes Control Plane"
-    protocol    = "6"
-    source      = local.oke_cidr_api
-    source_type = "CIDR_BLOCK"
-    stateless   = "false"
-  }
-  ingress_security_rules {
-    description = "Inbound SSH traffic to worker nodes"
-    protocol    = "6"
-    source      = "0.0.0.0/0"
-    source_type = "CIDR_BLOCK"
-    stateless   = "false"
-    tcp_options {
-      min = "22"
-      max = "22"
-    }
-  }
-  ingress_security_rules {
-    description = "Allow TCP traffic from Load Balancers to node ports"
-    protocol    = "6"
-    source      = local.oke_cidr_loadbalancer
-    source_type = "CIDR_BLOCK"
-    stateless   = "false"
-    tcp_options {
-      min = "30000"
-      max = "32767"
-    }
-  }
-  ingress_security_rules {
-    description = "Allow TCP traffic from Load Balancers to pod's healthcheck port"
-    protocol    = "6"
-    source      = local.oke_cidr_loadbalancer
-    source_type = "CIDR_BLOCK"
-    stateless   = "false"
-    tcp_options {
-      min = "10256"
-      max = "10256"
-    }
-  }  
+ 	egress_security_rules {
+		description = "Allow pods on one worker node to communicate with pods on other worker nodes"
+		destination = local.oke_cidr_nodepool
+		destination_type = "CIDR_BLOCK"
+		protocol = "all"
+		stateless = "false"
+	}
+	egress_security_rules {
+		description = "Access to Kubernetes API Endpoint"
+		destination = local.oke_cidr_api
+		destination_type = "CIDR_BLOCK"
+		protocol = "6"
+		stateless = "false"
+	}
+	egress_security_rules {
+		description = "Kubernetes worker to control plane communication"
+		destination = local.oke_cidr_api
+		destination_type = "CIDR_BLOCK"
+		protocol = "6"
+		stateless = "false"
+	}
+	egress_security_rules {
+		description = "Path discovery"
+		destination = local.oke_cidr_api
+		destination_type = "CIDR_BLOCK"
+		icmp_options {
+			code = "4"
+			type = "3"
+		}
+		protocol = "1"
+		stateless = "false"
+	}
+	egress_security_rules {
+		description = "Allow nodes to communicate with OKE to ensure correct start-up and continued functioning"
+		destination = "all-fra-services-in-oracle-services-network"
+		destination_type = "SERVICE_CIDR_BLOCK"
+		protocol = "6"
+		stateless = "false"
+	}
+	egress_security_rules {
+		description = "ICMP Access from Kubernetes Control Plane"
+		destination = "0.0.0.0/0"
+		destination_type = "CIDR_BLOCK"
+		icmp_options {
+			code = "4"
+			type = "3"
+		}
+		protocol = "1"
+		stateless = "false"
+	}
+	egress_security_rules {
+		description = "Worker Nodes access to Internet"
+		destination = "0.0.0.0/0"
+		destination_type = "CIDR_BLOCK"
+		protocol = "all"
+		stateless = "false"
+	}
+	ingress_security_rules {
+		description = "Allow pods on one worker node to communicate with pods on other worker nodes"
+		protocol = "all"
+		source = local.oke_cidr_nodepool
+		stateless = "false"
+	}
+	ingress_security_rules {
+		description = "Path discovery"
+		icmp_options {
+			code = "4"
+			type = "3"
+		}
+		protocol = "1"
+		source = local.oke_cidr_api
+		stateless = "false"
+	}
+	ingress_security_rules {
+		description = "TCP access from Kubernetes Control Plane"
+		protocol = "6"
+		source = local.oke_cidr_api
+		stateless = "false"
+	}
+	ingress_security_rules {
+		description = "Inbound SSH traffic to worker nodes"
+		protocol = "6"
+		source = "0.0.0.0/0"
+		stateless = "false"
+	}
 
   freeform_tags = local.freeform_tags
 }
@@ -289,80 +246,59 @@ resource oci_core_security_list starter_seclist_api {
   vcn_id         = data.oci_core_vcn.starter_vcn.id
   display_name   = "${var.prefix}-seclist-node"
 
-  egress_security_rules {
-    description      = "Allow Kubernetes Control Plane to communicate with OKE"
-    destination      = data.oci_core_services.all_services.services[0].cidr_block
-    destination_type = "SERVICE_CIDR_BLOCK"
-    protocol  = "6"
-    stateless = "false"
-    tcp_options {
-      max = "443"
-      min = "443"
-    }
-  }
-  egress_security_rules {
-    description      = "All traffic to worker nodes"
-    destination      = local.oke_cidr_nodepool
-    destination_type = "CIDR_BLOCK"
-    protocol  = "6"
-    stateless = "false"
-  }
-  egress_security_rules {
-    description      = "Path discovery"
-    destination      = local.oke_cidr_nodepool
-    destination_type = "CIDR_BLOCK"
-    icmp_options {
-      code = "4"
-      type = "3"
-    }
-    protocol  = "1"
-    stateless = "false"
-  }
-
-  ingress_security_rules {
-    description = "External access to Kubernetes API endpoint"
-    protocol    = "6"
-    source      = "0.0.0.0/0"
-    source_type = "CIDR_BLOCK"
-    stateless   = "false"
-    tcp_options {
-      max = "6443"
-      min = "6443"
-    }
-  }
-  ingress_security_rules {
-    description = "External access to Kubernetes API endpoint"
-    protocol    = "6"
-    source      = local.oke_cidr_nodepool
-    source_type = "CIDR_BLOCK"
-    stateless   = "false"
-    tcp_options {
-      max = "6443"
-      min = "6443"
-    }
-  }  
-  ingress_security_rules {
-    description = "Kubernetes worker to control plane communication"
-    protocol    = "6"
-    source      = local.oke_cidr_nodepool
-    source_type = "CIDR_BLOCK"
-    stateless   = "false"
-    tcp_options {
-      max = "12250"
-      min = "12250"
-    }
-  }
-  ingress_security_rules {
-    description = "Path discovery"
-    icmp_options {
-      code = "4"
-      type = "3"
-    }
-    protocol    = "1"
-    source      = local.oke_cidr_nodepool
-    source_type = "CIDR_BLOCK"
-    stateless   = "false"
-  }
+	egress_security_rules {
+		description = "Allow Kubernetes Control Plane to communicate with OKE"
+		destination = "all-fra-services-in-oracle-services-network"
+		destination_type = "SERVICE_CIDR_BLOCK"
+		protocol = "6"
+		stateless = "false"
+	}
+	egress_security_rules {
+		description = "All traffic to worker nodes"
+		destination = local.oke_cidr_nodepool
+		destination_type = "CIDR_BLOCK"
+		protocol = "6"
+		stateless = "false"
+	}
+	egress_security_rules {
+		description = "Path discovery"
+		destination = local.oke_cidr_nodepool
+		destination_type = "CIDR_BLOCK"
+		icmp_options {
+			code = "4"
+			type = "3"
+		}
+		protocol = "1"
+		stateless = "false"
+	}
+	ingress_security_rules {
+		description = "External access to Kubernetes API endpoint"
+		protocol = "6"
+		source = "0.0.0.0/0"
+		stateless = "false"
+	}
+	ingress_security_rules {
+		description = "Kubernetes worker to Kubernetes API endpoint communication"
+		protocol = "6"
+		source = local.oke_cidr_nodepool
+		stateless = "false"
+	}
+	ingress_security_rules {
+		description = "Kubernetes worker to control plane communication"
+		protocol = "6"
+		source = local.oke_cidr_nodepool
+		stateless = "false"
+	}
+	ingress_security_rules {
+		description = "Path discovery"
+		icmp_options {
+			code = "4"
+			type = "3"
+		}
+		protocol = "1"
+		source = local.oke_cidr_nodepool
+		stateless = "false"
+	}
 
   freeform_tags = local.freeform_tags
 }
@@ -376,6 +312,8 @@ resource "oci_core_subnet" "starter_nodepool_subnet" {
   cidr_block          = local.oke_cidr_nodepool
   compartment_id      = local.lz_network_cmp_ocid
   vcn_id              = data.oci_core_vcn.starter_vcn.id
+  dns_label           = "nodepool-subnet"
+  prohibit_public_ip_on_vnic = "true"
 
   # Provider code tries to maintain compatibility with old versions.
   # security_list_ids = [oci_core_security_list.starter_seclist_node.id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
@@ -391,6 +329,8 @@ resource "oci_core_subnet" "starter_lb_subnet" {
   cidr_block          = local.oke_cidr_loadbalancer
   compartment_id      = local.lz_network_cmp_ocid
   vcn_id              = data.oci_core_vcn.starter_vcn.id
+  dns_label           = "lb-subnet"
+  prohibit_public_ip_on_vnic = "false"
 
   # Provider code tries to maintain compatibility with old versions.
   # security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
@@ -406,16 +346,18 @@ resource "oci_core_subnet" "starter_api_subnet" {
   cidr_block          = local.oke_cidr_api
   compartment_id      = local.lz_network_cmp_ocid
   vcn_id              = data.oci_core_vcn.starter_vcn.id
+  dns_label           = "api-subnet"
+  prohibit_public_ip_on_vnic = "false"
 
   # Provider code tries to maintain compatibility with old versions.
   # security_list_ids = [oci_core_security_list.starter_seclist_api.id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
   security_list_ids = [oci_core_security_list.starter_seclist_api.id,data.oci_core_vcn.starter_vcn.default_security_list_id]
   display_name      = "${var.prefix}-oke-api-subnet"
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
-
-
   freeform_tags     = local.freeform_tags
 }
+
+# 	security_list_ids = ["${oci_core_security_list.kubernetes_api_endpoint_sec_list.id}"]
 
 /*
 resource "oci_core_subnet" "starter_pod_subnet" {
