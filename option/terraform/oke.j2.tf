@@ -26,6 +26,10 @@ variable "cluster_options_persistent_volume_config_defined_tags_value" {
   default = "value"
 }
 
+variable "kubernetes_version" {
+  default = "v1.29.1"
+}
+
 # CIDR
 locals {
   oke_cidr_nodepool     = "10.0.10.0/24"
@@ -368,7 +372,7 @@ resource "oci_core_subnet" "starter_pod_subnet" {
 resource "oci_containerengine_cluster" "starter_oke" {
   #Required
   compartment_id     = var.compartment_ocid
-  # kubernetes_version = var.kubernetes_version
+  kubernetes_version = var.kubernetes_version
   name               = "${var.prefix}-oke"
   vcn_id             = data.oci_core_vcn.starter_vcn.id
   type               = "ENHANCED_CLUSTER"
