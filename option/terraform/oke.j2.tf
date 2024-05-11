@@ -267,6 +267,17 @@ resource "oci_core_security_list" "starter_seclist_node" {
       max = "32767"
     }
   }
+  ingress_security_rules {
+    description = "Allow TCP traffic from Load Balancers to pod's healthcheck port"
+    protocol    = "6"
+    source      = local.oke_cidr_loadbalancer
+    source_type = "CIDR_BLOCK"
+    stateless   = "false"
+    tcp_options {
+      min = "10256"
+      max = "10256"
+    }
+  }  
 
   freeform_tags = local.freeform_tags
 }
@@ -350,7 +361,7 @@ resource oci_core_security_list starter_seclist_api {
 
 resource "oci_core_subnet" "starter_nodepool_subnet" {
   #Required
-  availability_domain = data.oci_identity_availability_domain.ad1.name
+  # availability_domain = data.oci_identity_availability_domain.ad1.name
   cidr_block          = local.oke_cidr_nodepool
   compartment_id      = local.lz_network_cmp_ocid
   vcn_id              = data.oci_core_vcn.starter_vcn.id
@@ -375,7 +386,6 @@ resource "oci_core_subnet" "starter_lb_subnet" {
   security_list_ids = [oci_core_security_list.starter_seclist_lb.id,data.oci_core_vcn.starter_vcn.default_security_list_id]
   display_name      = "${var.prefix}-oke-lb-subnet"
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
-
 
   freeform_tags     = local.freeform_tags
 }
