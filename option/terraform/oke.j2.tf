@@ -1,4 +1,19 @@
-provider "oci" {}
+{%- if oke_ocid is defined %}
+variable "oke_ocid" {}
+
+locals {
+  oke_ocid = var.oke_ocid
+}
+
+{%- else %}  
+
+variable "oke_shape" {
+  {%- if shape == "ampere" %}
+  default = "Pod.Standard.A1.Flex"
+  {%- else %}
+  default = "Pod.Standard.E4.Flex"
+  {%- endif %}
+}
 
 locals {
   oke_cidr_nodepool     = "10.0.10.0/24"
@@ -314,8 +329,17 @@ resource "oci_containerengine_virtual_node_pool" "create_virtual_node_pool_detai
         fault_domain=["FAULT-DOMAIN-1"]
 	}
 	pod_configuration {
-		shape = "Pod.Standard.E4.Flex"
+		shape = var.oke_shape
 		subnet_id = "${oci_core_subnet.node_subnet.id}"
 	}
 	size = "1"
+}
+
+locals {
+  oke_ocid = oci_containerengine_cluster.starter_oke.id
+}
+{%- endif %}  
+
+output "oke_ocid" {
+  value = local.oke_ocid
 }
