@@ -517,13 +517,11 @@ resource "oci_core_security_list" "test_security_list" {
 }
 
 
-
-/*
-resource "oci_identity_policy" "starter-oke-policy" {
-  name           = "starter-oke-policy"
-  description    = "policy created for oke virtual nodes"
-  compartment_id = var.compartment_ocid
-
+resource "oci_identity_policy" "starter_nosql_policy" {
+  provider       = oci.home    
+  name           = "${var.prefix}-oke-policy"
+  description    = "${var.prefix}-oke-policy"
+  compartment_id = var.tenancy_ocid
   statements = [
     "define tenancy ske as  ${var.tenancy_ocid}",
     "define compartment ske_compartment as  ${var.compartment_ocid}",
@@ -531,8 +529,8 @@ resource "oci_identity_policy" "starter-oke-policy" {
     "endorse any-user to associate compute-container-instances in compartment ske_compartment of tenancy ske with vnics in tenancy where ALL {request.principal.type='virtualnode',request.operation='CreateContainerInstance',request.principal.subnet=2.subnet.id}",
     "endorse any-user to associate compute-container-instances in compartment ske_compartment of tenancy ske with network-security-group in tenancy where ALL {request.principal.type='virtualnode',request.operation='CreateContainerInstance'}"
   ]
+  freeform_tags = local.freeform_tags
 }
-*/
 
 #----------------------------------------------------------------------------
 # ADDONS 
