@@ -447,94 +447,41 @@ variable oke_virtual_node_shape {
   default = "Pod.Standard.E4.Flex"
 }
 
-resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
-  #Required
-  cluster_id         = oci_containerengine_cluster.starter_oke.id
-  compartment_id     = local.lz_appdev_cmp_ocid
-  display_name       = "${var.prefix}-virtual-pool"
-  placement_configurations {
-    #Required
-    availability_domain = data.oci_identity_availability_domain.ad1.name
-    subnet_id           = oci_core_subnet.starter_nodepool_subnet.id
-    fault_domain        = ["FAULT-DOMAIN-1"]
-  }
-  #Required
-  pod_configuration {
-    shape = var.oke_virtual_node_shape
-    subnet_id = oci_core_subnet.starter_nodepool_subnet.id
-  }
-  #Required
-  size = var.node_pool_size
-
-  #Use terraform depends_on to enforce cluster->virtual node pool DAG
-  depends_on = [oci_containerengine_cluster.starter_oke]
-
-  freeform_tags = local.freeform_tags
+resource "oci_containerengine_virtual_node_pool" "create_virtual_node_pool_details0" {
+	cluster_id = "${oci_containerengine_cluster.generated_oci_containerengine_cluster.id}"
+	compartment_id = var.compartment_ocid
+	display_name = "pool1"
+	initial_virtual_node_labels {
+		key = "name"
+		value = "starter-virtual"
+	}
+	placement_configurations {
+		availability_domain = "KSGd:EU-FRANKFURT-1-AD-1"
+		subnet_id = "${oci_core_subnet.node_subnet.id}"
+        fault_domain=["FAULT-DOMAIN-1"]
+	}
+	placement_configurations {
+		availability_domain = "KSGd:EU-FRANKFURT-1-AD-2"
+		subnet_id = "${oci_core_subnet.starter_nodepool_subnet.id}"
+        fault_domain=["FAULT-DOMAIN-1"]
+	}
+	placement_configurations {
+		availability_domain = "KSGd:EU-FRANKFURT-1-AD-3"
+		subnet_id = "${ooci_core_subnet.starter_nodepool_subnet.id}"
+        fault_domain=["FAULT-DOMAIN-1"]
+	}
+	pod_configuration {
+		shape = "Pod.Standard.E4.Flex"
+		subnet_id = "${oci_core_subnet.starter_nodepool_subnet.id}"
+	}
+	size = "1"
 }
 
 #----------------------------------------------------------------------------
 
-resource "oci_core_security_list" "test_security_list" {
-  compartment_id = var.compartment_ocid
-  vcn_id         = data.oci_core_vcn.starter_vcn.id
-  display_name   = "Default Security List for virtual node pool"
-  egress_security_rules {
-    destination      = "0.0.0.0/0"
-    destination_type = "CIDR_BLOCK"
-    protocol         = "all"
-    stateless        = false
-    description      = "Allowing egress to all via all protocols."
-  }
-  ingress_security_rules {
-    source           = "10.0.0.0/16"
-    source_type      = "CIDR_BLOCK"
-    protocol         = "all"
-    stateless        = false
-  }
-  ingress_security_rules {
-    protocol    = 6 # local.TCP
-    source      = "0.0.0.0/0"
-    source_type = "CIDR_BLOCK"
-    stateless   = false
-    description = "Allowing ingress to all via TCP"
-    # Optional
-    tcp_options {
-      max = "6443"
-      min = "6443"
-      source_port_range {
-        max = "1521"
-        min = "1521"
-      }
-    }
-  }
-  ingress_security_rules {
-    # Optional
-    icmp_options {
-      code = "4"
-      type = "3"
-    }
-    protocol    = 1 # local.ICMP
-    source      = "0.0.0.0/0"
-    source_type = "CIDR_BLOCK"
-    stateless   = false
-    description = "Allowing ingress to all via ICMP"
-  }
-  ingress_security_rules {
-    # Optional
-    icmp_options {
-      code = "-1"
-      type = "3"
-    }
-    protocol    = 1 # local.ICMP
-    source      = "10.0.0.0/16"
-    source_type = "CIDR_BLOCK"
-    stateless   = false
-  }
-  #manage_default_resource_id = oci_core_vcn.test_vcn.default_security_list_id
-}
 
 
-resource "oci_identity_policy" "starter_nosql_policy" {
+resource "oci_identity_policy" "starter_oke_policy" {
   provider       = oci.home    
   name           = "${var.prefix}-oke-policy"
   description    = "${var.prefix}-oke-policy"
@@ -559,7 +506,6 @@ resource oci_containerengine_addon starter_oke_addon_dboperator {
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
   remove_addon_resources_on_delete = "true"
 }
-*/
 
 # WebLogic Operator
 resource oci_containerengine_addon starter_oke_addon_wlsoperator {
@@ -574,6 +520,7 @@ resource oci_containerengine_addon starter_oke_addon_certmanager {
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
   remove_addon_resources_on_delete = "true"
 }
+*/
 
 #----------------------------------------------------------------------------
 # OUTPUTS
