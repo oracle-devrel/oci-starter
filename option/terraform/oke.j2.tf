@@ -367,6 +367,26 @@ resource "oci_core_subnet" "starter_pod_subnet" {
 
 resource "oci_containerengine_cluster" "starter_oke" {
   #Required
+  compartment_id     = var.compartment_ocid
+  # kubernetes_version = var.kubernetes_version
+  name               = "${var.prefix}-oke"
+  vcn_id             = data.oci_core_vcn.starter_vcn.id
+  type               = "ENHANCED_CLUSTER"
+    cluster_pod_network_options {
+        # VNPs require cni_type as OCI_VCN_IP_NATIVE
+        cni_type = "OCI_VCN_IP_NATIVE"
+    }
+    endpoint_config {
+        #Optional
+        is_public_ip_enabled = var.cluster_endpoint_config_is_public_ip_enabled
+        # nsg_ids              = ["${oci_core_network_security_group.network_security_group_rd.id}"]
+        subnet_id              = oci_core_subnet.starter_api_subnet.id
+    }
+}
+
+/*
+resource "oci_containerengine_cluster" "starter_oke" {
+  #Required
   compartment_id     = local.lz_appdev_cmp_ocid
   kubernetes_version = data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions[length(data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions)-1]
   name               = "${var.prefix}-oke"
@@ -401,6 +421,7 @@ resource "oci_containerengine_cluster" "starter_oke" {
 
   freeform_tags = local.freeform_tags
 }
+*/
 
 #----------------------------------------------------------------------------
 # NODE POOL
@@ -435,6 +456,67 @@ resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
 }
 
 #----------------------------------------------------------------------------
+
+resource "oci_core_security_list" "test_security_list" {
+  compartment_id = var.compartment_ocid
+  vcn_id         = data.oci_core_vcn.starter_vcn.id
+  display_name   = "Default Security List for virtual node pool"
+  egress_security_rules {
+    destination      = "0.0.0.0/0"
+    destination_type = "CIDR_BLOCK"
+    protocol         = "all"
+    stateless        = false
+    description      = "Allowing egress to all via all protocols."
+  }
+  ingress_security_rules {
+    source           = "10.0.0.0/16"
+    source_type      = "CIDR_BLOCK"
+    protocol         = "all"
+    stateless        = false
+  }
+  ingress_security_rules {
+    protocol    = 6 # local.TCP
+    source      = "0.0.0.0/0"
+    source_type = "CIDR_BLOCK"
+    stateless   = false
+    description = "Allowing ingress to all via TCP"
+    # Optional
+    tcp_options {
+      max = "6443"
+      min = "6443"
+      source_port_range {
+        max = "1521"
+        min = "1521"
+      }
+    }
+  }
+  ingress_security_rules {
+    # Optional
+    icmp_options {
+      code = "4"
+      type = "3"
+    }
+    protocol    = 1 # local.ICMP
+    source      = "0.0.0.0/0"
+    source_type = "CIDR_BLOCK"
+    stateless   = false
+    description = "Allowing ingress to all via ICMP"
+  }
+  ingress_security_rules {
+    # Optional
+    icmp_options {
+      code = "-1"
+      type = "3"
+    }
+    protocol    = 1 # local.ICMP
+    source      = "10.0.0.0/16"
+    source_type = "CIDR_BLOCK"
+    stateless   = false
+  }
+  #manage_default_resource_id = oci_core_vcn.test_vcn.default_security_list_id
+}
+
+
 
 /*
 resource "oci_identity_policy" "starter-oke-policy" {
