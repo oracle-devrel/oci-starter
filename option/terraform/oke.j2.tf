@@ -378,7 +378,7 @@ resource "oci_core_subnet" "starter_pod_subnet" {
 # CLUSTER
 
 
-resource "oci_containerengine_cluster" "generated_oci_containerengine_cluster" {
+resource "oci_containerengine_cluster" "oci_containerengine_cluster" {
 	cluster_pod_network_options {
 		cni_type = "OCI_VCN_IP_NATIVE"
 	}
