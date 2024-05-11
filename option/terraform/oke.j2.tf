@@ -305,7 +305,7 @@ resource "oci_containerengine_cluster" "starter_oke" {
 	vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
 }
 
-resource "oci_containerengine_virtual_node_pool" "create_virtual_node_pool_details0" {
+resource "oci_containerengine_virtual_node_pool" "starter_node_pool" {
 	cluster_id = "${oci_containerengine_cluster.starter_oke.id}"
 	compartment_id = var.compartment_ocid
 	display_name = "pool1"
