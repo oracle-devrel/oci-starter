@@ -70,7 +70,7 @@ resource "oci_core_subnet" "service_lb_subnet" {
 	dns_label = "lbsube0f83562f"
 	prohibit_public_ip_on_vnic = "false"
 	route_table_id = "${oci_core_default_route_table.generated_oci_core_default_route_table.id}"
-	security_list_ids = ["${oci_core_vcn.generated_oci_core_vcn.default_security_list_id}"]
+	security_list_ids = ["${data.oci_core_vcn.starter_vcn.default_security_list_id}"]
 	vcn_id = "${data.oci_core_vcn.starter_vcn.id}"
 }
 
@@ -104,7 +104,7 @@ resource "oci_core_default_route_table" "generated_oci_core_default_route_table"
 		destination_type = "CIDR_BLOCK"
 		network_entity_id = "${oci_core_internet_gateway.generated_oci_core_internet_gateway.id}"
 	}
-	manage_default_resource_id = "${oci_core_vcn.generated_oci_core_vcn.default_route_table_id}"
+	manage_default_resource_id = "${data.oci_core_vcn.starter_vcn.default_route_table_id}"
 }
 
 resource "oci_core_security_list" "service_lb_sec_list" {
