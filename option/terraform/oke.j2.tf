@@ -12,9 +12,9 @@ locals {
 
 variable "oke_shape" {
   {%- if shape == "ampere" %}
-  default = "VM.Standard.A1.Flex"
+  default = "Pod.Standard.A1.Flex"
   {%- else %}
-  default = "VM.Standard.AMD.Generic"
+  default = "Pod.Standard.E4.Flex"
   {%- endif %}
 }
 
@@ -447,7 +447,7 @@ variable oke_virtual_node_shape {
   default = "Pod.Standard.E4.Flex"
 }
 
-resource "oci_containerengine_virtual_node_pool" "create_virtual_node_pool_details0" {
+resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
 	cluster_id = "${oci_containerengine_cluster.starter_oke.id}"
 	compartment_id = var.compartment_ocid
 	display_name = "pool1"
@@ -456,30 +456,19 @@ resource "oci_containerengine_virtual_node_pool" "create_virtual_node_pool_detai
 		value = "starter-virtual"
 	}
 	placement_configurations {
-		availability_domain = "KSGd:EU-FRANKFURT-1-AD-1"
-		subnet_id = "${oci_core_subnet.starter_nodepool_subnet.id}"
-        fault_domain=["FAULT-DOMAIN-1"]
-	}
-	placement_configurations {
-		availability_domain = "KSGd:EU-FRANKFURT-1-AD-2"
-		subnet_id = "${oci_core_subnet.starter_nodepool_subnet.id}"
-        fault_domain=["FAULT-DOMAIN-1"]
-	}
-	placement_configurations {
-		availability_domain = "KSGd:EU-FRANKFURT-1-AD-3"
+		availability_domain = data.oci_identity_availability_domain.ad1.name
 		subnet_id = "${oci_core_subnet.starter_nodepool_subnet.id}"
         fault_domain=["FAULT-DOMAIN-1"]
 	}
 	pod_configuration {
-		shape = "Pod.Standard.E4.Flex"
+		shape = var.oke_shape
 		subnet_id = "${oci_core_subnet.starter_nodepool_subnet.id}"
 	}
-	size = "1"
+	size = var.node_pool_size
 }
 
 #----------------------------------------------------------------------------
-
-
+# Policy for OKE Virtual NodePools
 
 resource "oci_identity_policy" "starter_oke_policy" {
   provider       = oci.home    
