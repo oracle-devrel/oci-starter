@@ -860,7 +860,7 @@ def create_output_dir():
                 cp_terraform_existing( "oke_ocid", "oke.j2.tf")
             else:
                 cp_terraform_existing( "oke_ocid", "oke_virtual_node.j2.tf")
-                output_move("src/terraform/oke_virtual_node.tf", "src/terraform/oke.tf")
+                output_move("src/terraform/oke_virtual_node.j2.tf", "src/terraform/oke.j2.tf")
             output_mkdir("src/oke")
             output_copy_tree("option/oke", "src/oke")
             output_move("src/oke/oke_deploy.sh", "bin/oke_deploy.sh")
