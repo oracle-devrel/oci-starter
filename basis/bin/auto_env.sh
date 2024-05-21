@@ -125,7 +125,7 @@ else
      find_availabilty_domain_for_shape $TF_VAR_instance_shape
   elif [ "$TF_VAR_instance_shape" == "" ]; then
      # Check that the Fungible shape VM.Standard.x86.Generic exists in the tenancy
-     oci compute shape list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[].shape' > $TARGET_DIR/shapes.list
+     oci compute shape list --compartment-id $TF_VAR_compartment_ocid --all | jq -r '.data[].shape' > $TARGET_DIR/shapes.list
      if grep -q "VM.Standard.x86.Generic" $TARGET_DIR/shapes.list; then
        auto_echo "Fungible shape VM.Standard.x86.Generic found"
      else
