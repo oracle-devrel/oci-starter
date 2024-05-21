@@ -77,7 +77,8 @@ default_options = {
     '-mode': CLI,
     '-infra_as_code': 'terraform_local',
     '-output_dir' : 'output',
-    '-db_password' : TO_FILL
+    '-db_password' : TO_FILL,
+    '-oke_type' : 'managed'
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
@@ -115,7 +116,8 @@ allowed_values = {
     '-mode': {CLI, GIT, ZIP},
     '-shape': {'amd','freetier_amd','ampere','arm'},
     '-db_install': {'default', 'shared_compute', 'kubernetes'},
-    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'}
+    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'},
+    '-oke_type': {'managed', 'virtual_node'}
 }
 
 def check_values():
@@ -854,7 +856,11 @@ def create_output_dir():
         cp_terraform("datascience.tf")
     elif params['language'] != "none":
         if params.get('deploy_type') == "kubernetes":
-            cp_terraform_existing( "oke_ocid", "oke.j2.tf")
+            if params.get('oke_type') == "managed":
+                cp_terraform_existing( "oke_ocid", "oke.j2.tf")
+            else:
+                cp_terraform_existing( "oke_ocid", "oke_virtual_node.j2.tf")
+                output_move("src/terraform/oke_virtual_node.tf", "src/terraform/oke.tf")
             output_mkdir("src/oke")
             output_copy_tree("option/oke", "src/oke")
             output_move("src/oke/oke_deploy.sh", "bin/oke_deploy.sh")
