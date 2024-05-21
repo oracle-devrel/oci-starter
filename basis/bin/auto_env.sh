@@ -69,7 +69,7 @@ if [ "$1" == "-no-auto" ]; then
 fi 
 
 # Change the prompt
-export PS1="\[\e[0;3m\${TF_VAR_prefix}\e[m \u@\h \W\]$ "
+export PS1='[\[\e[0;3m\]\u@\h:\W\[\e[0m\]]$ '
 
 # Silent mode (default is not silent)
 if [ "$1" == "-silent" ]; then
