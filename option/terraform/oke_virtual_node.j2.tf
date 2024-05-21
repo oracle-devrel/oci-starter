@@ -387,9 +387,6 @@ resource "oci_containerengine_cluster" "starter_oke" {
 		is_public_ip_enabled = "true"
 		subnet_id = "${oci_core_subnet.starter_api_subnet.id}"
 	}
-	freeform_tags = {
-		"OKEclusterName" = "${var.prefix}-oke"
-	}
 	kubernetes_version = var.kubernetes_version
 	name = "${var.prefix}-oke"
 	options {
