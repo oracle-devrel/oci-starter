@@ -1,11 +1,12 @@
 # sudo dnf install -y podman
 # podman run -d -p 1521:1521 -p 1522:1522 -p 8443:8443 -p 27017:27017 -e WORKLOAD_TYPE='ADW' -e WALLET_PASSWORD=${DB_PASSWORD} -e ADMIN_PASSWORD=${DB_PASSWORD} --cap-add SYS_ADMIN --device /dev/fuse --name adb-free --volume adb_container_volume:/u01/data container-registry.oracle.com/database/adb-free:latest-23ai
-alias adb-cli="podman exec adb-free adb-cli"
+# alias adb-cli="podman exec adb-free adb-cli"
 
-sudo yum update
+# sudo yum update -y
+# sudo yum update -y
+
 sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-sudo yum update
 sudo yum -y install docker-ce docker-ce-cli containerd.io
 sudo systemctl start docker
 sudo systemctl enable docker
@@ -22,7 +23,7 @@ firewall-cmd --zone=public --add-port=8443/tcp --permanent
 firewall-cmd --reload
 
 cat >> /home/opc/.bash_profile << EOF
-alias adb-cli="podman exec adb-free adb-cli"
+alias adb-cli="docker exec adb-free adb-cli"
 EOF
 
 # podman logs adb-free
