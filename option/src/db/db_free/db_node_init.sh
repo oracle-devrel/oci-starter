@@ -20,6 +20,15 @@ dnf -y localinstall ${FREEDB_RPM}
 # echo DB_PASSWORD=$DB_PASSWORD
 (echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-23ai configure
 
+cat >> /home/oracle/.bash_profile << EOF
+
+# Setup Oracle Free environment
+export ORACLE_SID=FREE 
+export ORAENV_ASK=NO 
+. /opt/oracle/product/23ai/dbhomeFree/bin/oraenv
+unset ORAENV_ASK
+EOF
+
 ls -al /usr/local/bin
 if [ "$TF_VAR_language" = "apex" ]; then
   # Install ORDS in silent mode
@@ -46,15 +55,6 @@ fi
 # Open the Firewall
 firewall-cmd --zone=public --add-port=1521/tcp --permanent
 firewall-cmd --reload
-
-cat >> /home/oracle/.bash_profile << EOF
-
-# Setup Oracle Free environment
-export ORACLE_SID=FREE 
-export ORAENV_ASK=NO 
-. /opt/oracle/product/23ai/dbhomeFree/bin/oraenv
-unset ORAENV_ASK
-EOF
 
 # -- Root container
 # sqlplus sys/$DB_PASSWORD@//localhost:1521/free as sysdba
