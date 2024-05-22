@@ -69,7 +69,7 @@ if [ "$1" == "-no-auto" ]; then
 fi 
 
 # Change the prompt
-export PS1="[\e[0;3m\${TF_VAR_prefix}\e(B\e[m \u@\h \W]$ "
+export PS1='[\[\e[0;3m\]\u@\h:\W\[\e[0m\]]$ '
 
 # Silent mode (default is not silent)
 if [ "$1" == "-silent" ]; then
@@ -123,6 +123,15 @@ else
   # Availability Domain for FreeTier E2.1 Micro
   if [ "$TF_VAR_instance_shape" == "VM.Standard.E2.1.Micro" ]; then
      find_availabilty_domain_for_shape $TF_VAR_instance_shape
+  elif [ "$TF_VAR_instance_shape" == "" ]; then
+     # Check that the Fungible shape VM.Standard.x86.Generic exists in the tenancy
+     oci compute shape list --compartment-id $TF_VAR_compartment_ocid --all | jq -r '.data[].shape' > $TARGET_DIR/shapes.list
+     if grep -q "VM.Standard.x86.Generic" $TARGET_DIR/shapes.list; then
+       auto_echo "Fungible shape VM.Standard.x86.Generic found"
+     else
+       export TF_VAR_instance_shape="VM.Standard.E4.Flex"
+       echo "Warning: fungible shape VM.Standard.x86.Generic not found. Using $TF_VAR_instance_shape"
+     fi
   fi
 
   # SSH keys

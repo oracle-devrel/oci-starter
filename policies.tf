@@ -26,6 +26,8 @@ resource "oci_identity_dynamic_group" "devopsgroup3" {
   matching_rule  = "ALL {resource.type = 'devopsbuildpipeline'}"
 }
 
+# Policy without Dynamic group
+# ALLOW ANY-USER to manage generative-ai-family in tenancy WHERE ALL {request.principal.type='opensearchcluster', request.resource.compartment.id='<cluster_compartment_id>'}
 
 resource "oci_identity_policy" "devopspolicy" {
   provider       = oci.home_region

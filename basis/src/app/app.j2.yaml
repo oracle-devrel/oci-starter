@@ -51,10 +51,10 @@ spec:
             secretKeyRef:
               name: {{ prefix }}-db-secret
               key: db_password
-        - name: POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
+#        - name: POD_IP
+#          valueFrom:
+#            fieldRef:
+#              fieldPath: status.podIP
 {%- if db_type == "nosql" %}
         - name: TF_VAR_compartment_ocid
           valueFrom:

@@ -487,8 +487,14 @@ certificate_dir_before_terraform() {
   if [ -d $PROJECT_DIR/src/tls/$TF_VAR_dns_name ]; then
     export TF_VAR_certificate_dir=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
     echo Using existing TF_VAR_certificate_dir=$TF_VAR_certificate_dir
-  elif [ "$TF_VAR_certificate_dir" != "" ] && [ -d $TF_VAR_certificate_dir ]; then
-    echo Using existing TF_VAR_certificate_dir=$TF_VAR_certificate_dir
+  elif [ "$TF_VAR_certificate_dir" != "" ]; then
+    # Check if the directory exists
+    if [ -d $TF_VAR_certificate_dir ]; then
+      echo Using existing TF_VAR_certificate_dir=$TF_VAR_certificate_dir
+    else
+      echo "ERROR: TF_VAR_certificate_dir directory does not exist ( $TF_VAR_certificate_dir )"
+      exit 1
+    fi
   elif [ "$TF_VAR_tls" == "new_dns_01" ]; then
     # Create a new certificate via DNS-01
     $BIN_DIR/tls_dns_create.sh 
@@ -513,7 +519,7 @@ certificate_dir_before_terraform() {
   elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
     if [ "$TF_VAR_tls" == "new_http_01" ]; then
       echo "New Certificate will be created after the deployment."      
-    else 
+    elif [ "$TF_VAR_certificate_dir" != "" ]; then
       echo "ERROR: kubernetes: certificate_dir_before_terraform: missing variables TF_VAR_certificate_dir"
       exit 1
     fi    

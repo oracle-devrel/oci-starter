@@ -36,11 +36,24 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
         <groupId>org.graalvm.buildtools</groupId>
         <artifactId>native-maven-plugin</artifactId>
       </plugin>
+      {%- if shape == "ampere" %}
+      <!-- WA: Build of Springboot for GraalVM-Native on ARM -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+            <image>
+                <builder>dashaun/builder:tiny</builder>
+            </image>
+        </configuration>
+      </plugin>
+      {%- else %}          
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+      {%- endif %}
     </plugins>
-  </build>
+</build>  
 
 </project>
