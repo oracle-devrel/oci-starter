@@ -6,4 +6,4 @@ export DB_PASSWORD
 
 # Install APEX and DBMS_CLOUD
 sudo su - root -c "export DB_PASSWORD=$DB_PASSWORD; $SCRIPT_DIR/root_install_apex.sh"
-sudo su - oracle -c "export DB_PASSWORD=$DB_PASSWORD; $SCRIPT_DIR/oracle_install_apex.sh"
+sudo su - oracle -c "export DB_PASSWORD=$DB_PASSWORD; export DB_URL=$DB_URL; $SCRIPT_DIR/oracle_install_apex.sh"

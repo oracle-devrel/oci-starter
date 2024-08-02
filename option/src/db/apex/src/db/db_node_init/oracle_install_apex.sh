@@ -8,7 +8,6 @@ if [ "$DB_PASSWORD" == "" ]; then
    exit
 fi
 
-
 cd /u01/app/oracle
 if [ -d apex ]; then
   echo "ERROR: apex directory detected"
@@ -31,14 +30,25 @@ EOF
 echo "--- Setting APEX image prefix"
 sqlplus / as sysdba <<EOF
 ALTER USER APEX_PUBLIC_USER ACCOUNT UNLOCK
+/
 ALTER USER APEX_PUBLIC_USER IDENTIFIED BY $DB_PASSWORD
+/
 begin 
     apex_instance_admin.set_parameter(
         p_parameter => 'IMAGE_PREFIX',
         p_value     => 'https://static.oracle.com/cdn/apex/24.1.0/' );
     commit;
 end;
+/
 EOF
+
+
+echo "--- Add PDB1 to tnsnames.ora"
+cat >> $ORACLE_HOME/network/admin/tnsnames.ora <<EOT
+
+PDB1  = $DB_URL
+
+EOT
 
 echo "--- Resetting APEX password"
 sqlplus system/$DB_PASSWORD@PDB1 <<EOF
@@ -49,8 +59,11 @@ $DB_PASSWORD
 EOF
 
 # Install DBMS_CLOUD
+cd $SCRIPT_DIR
+
 echo "--- Running dbms_cloud_install.sql"
-$ORACLE_HOME/perl/bin/perl $ORACLE_HOME/rdbms/admin/catcon.pl -u sys/$DB_PASSWORD --force_pdb_mode 'READ WRITE' -b dbms_cloud_install -d /home/oracle/dbc -l /home/oracle/dbc dbms_cloud_install.sql
+mkdir $HOME/dbc
+$ORACLE_HOME/perl/bin/perl $ORACLE_HOME/rdbms/admin/catcon.pl -u sys/$DB_PASSWORD --force_pdb_mode 'READ WRITE' -b dbms_cloud_install -d $HOME/dbc -l $HOME/dbc dbms_cloud_install.sql
 
 echo "--- Check"
 sqlplus / as sysdba <<EOF
