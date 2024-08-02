@@ -8,9 +8,10 @@ if [ "$DB_PASSWORD" == "" ]; then
    exit
 fi
 
-DIR=$SCRIPT_DIR/apex
-if [ -d $DIR ]; then
-  echo "ERROR: $DIR directory detected"
+
+cd /u01/app/oracle
+if [ -d apex ]; then
+  echo "ERROR: apex directory detected"
   exit
 fi
 
