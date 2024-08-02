@@ -161,7 +161,7 @@ def db_rules():
     params['db_type'] = longhand(
         'db_type', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database', 'pdb': 'pluggable'})
 
-    if params.get('db_type') not in ['autonomous', 'db_free']:
+    if params.get('db_type') not in ['autonomous', 'db_free', 'database']:
         if params.get('language') == 'ords':
             error(f'ORDS not supported')
         if params.get('language') == 'apex':
