@@ -51,19 +51,26 @@ PDB1  = $DB_URL
 EOT
 
 echo "--- Resetting APEX password"
+
+# WA to change the password (Issue because of the HIDE)
+cp apxchpwd.sql apxchpwd.sql.orig
+sed -i "s/ HIDE//" apxchpwd.sql
+
 sqlplus system/$DB_PASSWORD@PDB1 <<EOF
 @apxchpwd.sql
 admin
 spam@oracle.com
 $DB_PASSWORD
+exit
 EOF
 
 # Install DBMS_CLOUD
 cd $SCRIPT_DIR
+pwd
 
 echo "--- Running dbms_cloud_install.sql"
 mkdir $HOME/dbc
-$ORACLE_HOME/perl/bin/perl $ORACLE_HOME/rdbms/admin/catcon.pl -u sys/$DB_PASSWORD --force_pdb_mode 'READ WRITE' -b dbms_cloud_install -d $HOME/dbc -l $HOME/dbc dbms_cloud_install.sql
+$ORACLE_HOME/perl/bin/perl $ORACLE_HOME/rdbms/admin/catcon.pl -u sys/$DB_PASSWORD --force_pdb_mode 'READ WRITE' -b dbms_cloud_install -d $HOME/dbc -l $HOME/dbc $SCRIPT_DIR/dbms_cloud_install.sql
 
 echo "--- Check"
 sqlplus / as sysdba <<EOF
@@ -94,6 +101,8 @@ export WALLET_DIR=`pwd`
 sed  '/SQLNET.EXPIRE_TIME=10/a WALLET_LOCATION=(SOURCE=(METHOD=FILE)(METHOD_DATA=(DIRECTORY=/opt/oracle/dcs/commonstore/wallets/ssl)))' -i $ORACLE_HOME/network/admin/sqlnet.ora
 
 cd $SCRIPT_DIR
+pwd
+
 echo "--- Running dcs_aces.sql"
 sqlplus / as sysdba @dcs_aces.sql
 sqlplus / as sysdba @dcs_test.sql
