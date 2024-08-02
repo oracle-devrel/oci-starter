@@ -12,7 +12,7 @@ sudo dnf install -y java-17
 cat > import_application.sql << EOF 
 create user apex_app identified by "$DB_PASSWORD" default tablespace USERS quota unlimited on USERS temporary tablespace TEMP
 /
-grant resource to apex_app;
+grant connect, resource, unlimited tablespace to apex_app;
 /
 begin
     apex_instance_admin.add_workspace(

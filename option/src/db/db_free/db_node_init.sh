@@ -1,7 +1,7 @@
 setenforce 0
 sed -i 's/enforcing/disabled/g' /etc/sysconfig/selinux
 sudo dnf install -y podman
-podman run -dns 8.8.8.8 -d -p 1521:1521 -p 1522:1522 -p 8443:8443 -p 27017:27017 -e WORKLOAD_TYPE='ATP' -e WALLET_PASSWORD=${DB_PASSWORD} -e ADMIN_PASSWORD=${DB_PASSWORD} --cap-add SYS_ADMIN --device /dev/fuse --name adb-free --volume adb_container_volume:/u01/data container-registry.oracle.com/database/adb-free:latest-23ai
+podman run --dns 8.8.8.8 -d -p 1521:1521 -p 1522:1522 -p 8443:8443 -p 27017:27017 -e WORKLOAD_TYPE='ATP' -e WALLET_PASSWORD=${DB_PASSWORD} -e ADMIN_PASSWORD=${DB_PASSWORD} --cap-add SYS_ADMIN --device /dev/fuse --name adb-free --volume adb_container_volume:/u01/data container-registry.oracle.com/database/adb-free:latest-23ai
 alias adb-cli="podman exec adb-free adb-cli"
 
 # sudo yum update -y

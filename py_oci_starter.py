@@ -925,6 +925,8 @@ def create_output_dir():
             cp_terraform_existing("db_ocid", "dbsystem.j2.tf")
             if 'db_ocid' not in params:
                 output_replace_db_node_count()
+            if 'language' == "apex":
+                output_copy_tree("option/src/db/apex", ".")                
 
         if params.get('db_type') == "pluggable":
             cp_terraform_existing("pdb_ocid", "dbsystem_pluggable.j2.tf")

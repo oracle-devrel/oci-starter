@@ -42,8 +42,14 @@ fi
 if [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
   title "OKE Destroy"
   bin/oke_destroy.sh --auto-approve
-elif [ "$TF_VAR_deploy_type" == "function" ]; then
+fi
+
+export TF_OBJECT_STORAGE=`cat $STATE_FILE | jq -r ".resources[].instances[].attributes.bucket_id"`
+if [ "$TF_RESOURCE" == "null" ]; then
+  echo "No Object storage."
+else
   title "Delete Object Storage files"
+  # Could be improved....
   oci os object bulk-delete -bn ${TF_VAR_prefix}-public-bucket --force
 fi
 

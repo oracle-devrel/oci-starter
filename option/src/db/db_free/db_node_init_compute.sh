@@ -45,8 +45,9 @@ EOF
 
   # Install APEX
   cd /tmp
-  su - oracle -c "wget https://download.oracle.com/otn_software/apex/apex_23.2_en.zip"
-  su - oracle -c "unzip apex_23.2_en.zip"
+  export APEX_ZIP=apex_23.2_en.zip
+  su - oracle -c "wget https://download.oracle.com/otn_software/apex/$APEX_ZIP"
+  su - oracle -c "unzip $APEX_ZIP"
   su - oracle -c "cd apex; sqlplus '/ as sysdba' <<EOF
 @apexins.sql SYSAUX SYSAUX TEMP /i/
 exit
