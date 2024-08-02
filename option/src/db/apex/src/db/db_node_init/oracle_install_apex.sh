@@ -8,14 +8,13 @@ if [ "$DB_PASSWORD" == "" ]; then
    exit
 fi
 
-DIR=/u01/app/oracle/apex
+DIR=$SCRIPT_DIR/apex
 if [ -d $DIR ]; then
   echo "ERROR: $DIR directory detected"
   exit
 fi
 
 # Install APEX
-cd $DIR
 export APEX_ZIP=apex_24.1_en.zip
 
 echo "--- Downloading $APEX_ZIP"
@@ -80,6 +79,7 @@ export WALLET_DIR=`pwd`
 
 sed  '/SQLNET.EXPIRE_TIME=10/a WALLET_LOCATION=(SOURCE=(METHOD=FILE)(METHOD_DATA=(DIRECTORY=/opt/oracle/dcs/commonstore/wallets/ssl)))' -i $ORACLE_HOME/network/admin/sqlnet.ora
 
+cd $SCRIPT_DIR
 echo "--- Running dcs_aces.sql"
 sqlplus / as sysdba @dcs_aces.sql
 sqlplus / as sysdba @dcs_test.sql
