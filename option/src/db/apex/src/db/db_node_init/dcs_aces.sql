@@ -42,3 +42,5 @@ end;
 /
 
 @$ORACLE_HOME/rdbms/admin/sqlsessend.sql
+
+exit

@@ -56,3 +56,5 @@ END;
 
 set serveroutput off
 drop procedure &clouduser..GET_PAGE;
+
+exit
