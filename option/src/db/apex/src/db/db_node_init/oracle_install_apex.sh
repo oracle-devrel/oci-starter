@@ -80,30 +80,34 @@ exit
 EOF
 
 echo "--- Importing certificates in Wallet"
-mkdir $HOME/dbc_certs
-cd $HOME/dbc_certs
+export DB_CERT_DIR=$HOME/dbc_certs
+export WALLET_DIR=$HOME/wallet
+
+mkdir $DB_CERT_DIR
+cd $DB_CERT_DIR
 wget https://objectstorage.us-phoenix-1.oraclecloud.com/p/QsLX1mx9A-vnjjohcC7TIK6aTDFXVKr0Uogc2DAN-Rd7j6AagsmMaQ3D3Ti4a9yU/n/adwcdemo/b/CERTS/o/dbc_certs.tar
 tar xf dbc_certs.tar
 
-mkdir -p /opt/oracle/dcs/commonstore/wallets/ssl
-cd /opt/oracle/dcs/commonstore/wallets/ssl
+mkdir -p $WALLET_DIR
+cd $WALLET_DIR
 
 orapki wallet create -wallet . -pwd $DB_PASSWORD -auto_login
 #! /bin/bash
-for i in /home/oracle/dbc/dbc_cert/*cer 
+for i in $DB_CERT_DIR/*cer 
 do
 orapki wallet add -wallet . -trusted_cert -cert $i -pwd $DB_PASSWORD
 done
 orapki wallet display -wallet .
 cd $ORACLE_HOME/network/admin
-export WALLET_DIR=`pwd`
 
-sed  '/SQLNET.EXPIRE_TIME=10/a WALLET_LOCATION=(SOURCE=(METHOD=FILE)(METHOD_DATA=(DIRECTORY=/opt/oracle/dcs/commonstore/wallets/ssl)))' -i $ORACLE_HOME/network/admin/sqlnet.ora
+sed  '/SQLNET.EXPIRE_TIME=10/a WALLET_LOCATION=(SOURCE=(METHOD=FILE)(METHOD_DATA=(DIRECTORY=$WALLET_DIR)))' -i $ORACLE_HOME/network/admin/sqlnet.ora
 
 cd $SCRIPT_DIR
 pwd
 
 echo "--- Running dcs_aces.sql"
 sqlplus / as sysdba @dcs_aces.sql
+
+echo "--- Running dcs_test.sql"
 sqlplus / as sysdba @dcs_test.sql
 
