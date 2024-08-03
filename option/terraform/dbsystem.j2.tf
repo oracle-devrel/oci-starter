@@ -99,6 +99,11 @@ locals {
   jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
 }
 
+# APEX (installed manually)
+output "ords_url" {
+  value = format("http://%s:8080/ords", data.oci_core_vnic.starter_node_vnic.private_ip_address )
+}
+
 {%- endif %}  
 
 
