@@ -17,4 +17,11 @@ ${DB_PASSWORD}
 EOF
 su - oracle -c "/usr/local/bin/ords --config /etc/ords/config install --admin-user SYS --proxy-user --db-hostname localhost --db-port 1521 --db-servicename $DB_SERVICE_NAME --log-folder /etc/ords/logs --feature-sdw true --feature-db-api true --feature-rest-enabled-sql true --password-stdin < /tmp/password.txt"
 /etc/init.d/ords start
-firewall-cmd --zone=public --add-port=8080/tcp --permanent  
+
+# Open port 8080
+# https://docs.oracle.com/en-us/iaas/base-database/doc/open-ports-db-system.html
+iptables-save > /tmp/iptables.orig
+iptables -I INPUT 8 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT -m comment --comment "ORDS"
+service iptables status
+/sbin/service iptables save
+

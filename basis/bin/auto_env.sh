@@ -314,7 +314,7 @@ if [ -f $STATE_FILE ]; then
   get_output_from_tfstate "DB_URL" "db_url"
 
 
-  if [ "$TF_VAR_db_type" == "autonomous" ]; then
+  if [ "$TF_VAR_db_type" == "autonomous" ] || [ "$TF_VAR_db_type" == "database" ] ; then
     get_output_from_tfstate "ORDS_URL" "ords_url"
   fi
 
