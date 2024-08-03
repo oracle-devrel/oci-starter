@@ -6,7 +6,7 @@ define clouduser=C##CLOUD$SERVICE
 -- CUSTOMER SPECIFIC SETUP, NEEDS TO BE PROVIDED BY THE CUSTOMER
 -- - SSL Wallet directory and password
 define sslwalletdir=/home/oracle/wallet
-define sslwalletpwd=$DB_PASSWORD
+define sslwalletpwd=&1
 
 -- create and run this procedure as owner of the ACLs, which is the future owner
 -- of DBMS_CLOUD

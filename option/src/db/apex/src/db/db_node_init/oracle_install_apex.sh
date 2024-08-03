@@ -42,6 +42,12 @@ end;
 /
 EOF
 
+cd utilities
+sqlplus / as sysdba @reset_image_prefix.sql <<EOF
+
+EOF
+
+
 
 echo "--- Add PDB1 to tnsnames.ora"
 cat >> $ORACLE_HOME/network/admin/tnsnames.ora <<EOT
@@ -109,5 +115,5 @@ echo "--- Running dcs_aces.sql"
 sqlplus / as sysdba @dcs_aces.sql
 
 echo "--- Running dcs_test.sql"
-sqlplus / as sysdba @dcs_test.sql
+sqlplus / as sysdba @dcs_test.sql $DB_PASSWORD
 

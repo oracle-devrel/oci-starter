@@ -16,6 +16,7 @@ ${DB_PASSWORD}
 ${DB_PASSWORD}
 EOF
 su - oracle -c "/usr/local/bin/ords --config /etc/ords/config install --admin-user SYS --proxy-user --db-hostname localhost --db-port 1521 --db-servicename $DB_SERVICE_NAME --log-folder /etc/ords/logs --feature-sdw true --feature-db-api true --feature-rest-enabled-sql true --password-stdin < /tmp/password.txt"
+echo "SERVE_EXTRA_ARGS=--apex-images /u01/app/oracle/apex/images" >> /etc/ords.conf
 /etc/init.d/ords start
 
 # Open port 8080
