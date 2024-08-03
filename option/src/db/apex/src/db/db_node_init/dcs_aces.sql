@@ -7,7 +7,7 @@ define clouduser=C##CLOUD$SERVICE
 
 -- CUSTOMER SPECIFIC SETUP, NEEDS TO BE PROVIDED BY THE CUSTOMER
 -- - SSL Wallet directory
-define sslwalletdir=/opt/oracle/dcs/commonstore/wallets/ssl
+define sslwalletdir=/home/oracle/wallet
 
 -- Create New ACL / ACE s
 begin
