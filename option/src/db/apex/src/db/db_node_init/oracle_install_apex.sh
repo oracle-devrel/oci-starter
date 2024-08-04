@@ -15,8 +15,8 @@ if [ -d apex ]; then
 fi
 
 # Install APEX
-# export APEX_ZIP=apex_24.1_en.zip
-export APEX_ZIP=apex_latest.zip
+export APEX_ZIP=apex_24.1_en.zip
+# export APEX_ZIP=apex_latest.zip
 
 echo "--- Downloading $APEX_ZIP"
 wget https://download.oracle.com/otn_software/apex/$APEX_ZIP
