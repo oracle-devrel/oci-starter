@@ -15,39 +15,12 @@ if [ -d apex ]; then
 fi
 
 # Install APEX
-export APEX_ZIP=apex_24.1_en.zip
+# export APEX_ZIP=apex_24.1_en.zip
+export APEX_ZIP=apex_latest.zip
 
 echo "--- Downloading $APEX_ZIP"
 wget https://download.oracle.com/otn_software/apex/$APEX_ZIP
 unzip $APEX_ZIP
-
-echo "--- Running apexins.sql"
-cd apex; sqlplus '/ as sysdba' <<EOF
-@apexins.sql SYSAUX SYSAUX TEMP /i/
-exit
-EOF
-
-echo "--- Setting APEX image prefix"
-sqlplus / as sysdba <<EOF
-ALTER USER APEX_PUBLIC_USER ACCOUNT UNLOCK
-/
-ALTER USER APEX_PUBLIC_USER IDENTIFIED BY $DB_PASSWORD
-/
-begin 
-    apex_instance_admin.set_parameter(
-        p_parameter => 'IMAGE_PREFIX',
-        p_value     => 'https://static.oracle.com/cdn/apex/24.1.0/' );
-    commit;
-end;
-/
-EOF
-
-cd utilities
-sqlplus / as sysdba @reset_image_prefix.sql <<EOF
-
-EOF
-
-
 
 echo "--- Add PDB1 to tnsnames.ora"
 cat >> $ORACLE_HOME/network/admin/tnsnames.ora <<EOT
@@ -56,18 +29,38 @@ PDB1  = $DB_URL
 
 EOT
 
-echo "--- Resetting APEX password"
+echo "--- Running apexins.sql"
+cd apex; 
+sqlplus sys/$DB_PASSWORD@pdb1 as sysdba <<EOF
+@apexins.sql SYSAUX SYSAUX TEMP /i/
+exit
+EOF
 
+echo "--- Unlocking APEX_PUBLIC_USER"
+sqlplus sys/$DB_PASSWORD@pdb1 as sysdba <<EOF
+ALTER USER APEX_PUBLIC_USER ACCOUNT UNLOCK
+/
+ALTER USER APEX_PUBLIC_USER IDENTIFIED BY $DB_PASSWORD
+/
+EOF
+
+echo "--- Resetting APEX password"
 # WA to change the password (Issue because of the HIDE)
 cp apxchpwd.sql apxchpwd.sql.orig
 sed -i "s/ HIDE//" apxchpwd.sql
 
-sqlplus system/$DB_PASSWORD@PDB1 <<EOF
+sqlplus sys/$DB_PASSWORD@pdb1 as sysdba <<EOF
 @apxchpwd.sql
 admin
 spam@oracle.com
 $DB_PASSWORD
 exit
+EOF
+
+echo "--- Setting APEX image prefix"
+cd utilities
+sqlplus sys/$DB_PASSWORD@pdb1 as sysdba @reset_image_prefix.sql <<EOF
+
 EOF
 
 # Install DBMS_CLOUD
