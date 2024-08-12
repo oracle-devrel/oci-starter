@@ -113,26 +113,24 @@ if ! command -v jq &> /dev/null; then
   error_exit "Unix command jq not found. Please install it."
 fi
 
-#-- Check internet connection ---------------------------------------------
-wget -q --spider http://www.oracle.com
-
-if [ $? -eq 0 ]; then
-  echo "Connection - Online"
-else
-  echo "---------------------------------------------------------------------"
-  echo "WARNING - Are you sure that you have connection to Internet ? "
-  if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
-    echo "- For Cloud Shell, be sure that you have an connection to Internet."
-    echo "  Please change the Network connection to Public Network."
-    echo "  See: https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cloudshellintro_topic-Cloud_Shell_Networking.htm"
-  fi
-  echo "---------------------------------------------------------------------"
-fi
-
 #-- PRE terraform ----------------------------------------------------------
 if [ "$OCI_STARTER_VARIABLES_SET" == "$OCI_STARTER_CREATION_DATE" ]; then
   echo "Variables already set"
 else
+  #-- Check internet connection ---------------------------------------------
+  wget -q --spider http://www.oracle.com
+
+  if [ $? -neq 0 ]; then
+    echo "---------------------------------------------------------------------"
+    echo "WARNING - Are you sure that you have connection to Internet ? "
+    if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
+      echo "- For Cloud Shell, be sure that you have an connection to Internet."
+      echo "  Please change the Network connection to Public Network."
+      echo "  See: https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cloudshellintro_topic-Cloud_Shell_Networking.htm"
+    fi
+    echo "---------------------------------------------------------------------"
+  fi
+
   export OCI_STARTER_VARIABLES_SET=$OCI_STARTER_CREATION_DATE
   get_user_details
 
