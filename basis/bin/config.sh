@@ -25,7 +25,7 @@ accept_request() {
 read_ocid() {
   while [ "${!1}" == "__TO_FILL__" ]; do
     read -r -p "$2 (Format: $3.xxxxx):" response
-    if [ $response == $3* ]; then
+    if [[ $response == $3* ]]; then
       export $1=$response
       sed -i "s&$1=\"__TO_FILL__\"&$1=\"${!1}\"&" $PROJECT_DIR/env.sh              
       sed -i "s&# export $1=[.*]&export TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh
