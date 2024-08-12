@@ -25,18 +25,16 @@ accept_request() {
 read_ocid() {
   while [ "${!1}" == "__TO_FILL__" ]; do
     read -r -p "$2 (Format: $3.xxxxx):" response
-      case "$response" in
-          $3[.*])
-              export $1=$response
-              sed -i "s&$1=\"__TO_FILL__\"&$1=\"${!1}\"&" $PROJECT_DIR/env.sh              
-              sed -i "s&# export $1=[.*]&export TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh
-              echo "$1 stored in env.sh"            
-              echo            
-              ;;
-          *)
-              echo "Wrong format $response"
-              echo            
-    esac
+    if [ $response == $3* ]; then
+      export $1=$response
+      sed -i "s&$1=\"__TO_FILL__\"&$1=\"${!1}\"&" $PROJECT_DIR/env.sh              
+      sed -i "s&# export $1=[.*]&export TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh
+      echo "$1 stored in env.sh"            
+      echo            
+    else
+      echo "Wrong format $response"
+      echo            
+    fi
   done    
 }
 
