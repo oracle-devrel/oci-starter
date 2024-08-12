@@ -44,7 +44,7 @@ if [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
   bin/oke_destroy.sh --auto-approve
 fi
 
-export TF_OBJECT_STORAGE=`cat $STATE_FILE | jq -r '.resources[] | select(.name=="'${TF_VAR_prefix}'-public-bucket") | .instances[].attributes.bucket_id'
+export TF_OBJECT_STORAGE=`cat $STATE_FILE | jq -r '.resources[] | select(.name=="'${TF_VAR_prefix}'-public-bucket") | .instances[].attributes.bucket_id'`
 if [ "$TF_OBJECT_STORAGE" != "" ] && [ "$TF_OBJECT_STORAGE" != "null" ]; then
   title "Delete Object Storage files"
   # Could be improved....
