@@ -58,6 +58,3 @@ src/terraform/destroy.sh --auto-approve -no-color
 exit_on_error
 
 echo "Destroy time: ${SECONDS} secs"
-
-
-
