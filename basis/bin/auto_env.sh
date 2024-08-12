@@ -83,31 +83,8 @@ if [ -v REPOSITORY_NAME ]; then
   return
 fi 
 
-if [ "$TF_VAR_db_password" == "__TO_FILL__" ]; then
-  echo "Generating password for the database"
-  export TF_VAR_db_password=`python3 $BIN_DIR/gen_password.py`
-  sed -i "s&TF_VAR_db_password=\"__TO_FILL__\"&TF_VAR_db_password=\"$TF_VAR_db_password\"&" $PROJECT_DIR/env.sh
-  echo "Password stored in env.sh"
-  echo "> TF_VAR_db_password=$TF_VAR_db_password"
-fi
-
-# Livelabs Green Button (Autodetect compartment/vcn/subnet)
-livelabs_green_button
-
-# -- env.sh
-# Do not stop if __TO_FILL__ are not replaced if TF_VAR_group_name exist in env variable
-# XXX -> It would be safer to check also for TF_VAR_xxx containing __TO_FILL__ too
-
-if declare -p | grep -q "__TO_FILL__"; then
-  echo
-  echo "ERROR: missing environment variables"
-  echo
-  declare -p | grep __TO_FILL__
-  echo
-  echo "Edit the file env.sh. Some variables needs to be filled:" 
-  cat env.sh | grep __TO_FILL__
-  error_exit "Missing environment variables."
-fi  
+# CONFIG.SH
+. $SCRIPT_DIR/config.sh
 
 if ! command -v jq &> /dev/null; then
   error_exit "Unix command jq not found. Please install it."
