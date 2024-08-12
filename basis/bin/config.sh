@@ -2,7 +2,7 @@
 title "CONFIG.SH"
 
 accept_request() {
-    if [ "$ACCEPT_ALL" == "TRUE" ];
+    if [ "$ACCEPT_ALL" == "TRUE" ]; then
       return 0;
     fi
     echo "$REQUEST"
