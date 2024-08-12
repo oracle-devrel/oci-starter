@@ -119,14 +119,14 @@ wget -q --spider http://www.oracle.com
 if [ $? -eq 0 ]; then
   echo "Connection - Online"
 else
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "---------------------------------------------------------------------"
   echo "WARNING - Are you sure that you have connection to Internet ? "
   if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
     echo "- For Cloud Shell, be sure that you have an connection to Internet."
     echo "  Please change the Network connection to Public Network."
     echo "  See: https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cloudshellintro_topic-Cloud_Shell_Networking.htm"
   fi
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "---------------------------------------------------------------------"
 fi
 
 #-- PRE terraform ----------------------------------------------------------
