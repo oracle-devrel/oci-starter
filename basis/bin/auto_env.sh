@@ -84,7 +84,7 @@ if [ -v REPOSITORY_NAME ]; then
 fi 
 
 # CONFIG.SH
-. $SCRIPT_DIR/config.sh
+. $BIN_DIR/config.sh
 
 if ! command -v jq &> /dev/null; then
   error_exit "Unix command jq not found. Please install it."
