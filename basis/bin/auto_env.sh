@@ -120,7 +120,7 @@ else
   #-- Check internet connection ---------------------------------------------
   wget -q --spider http://www.oracle.com
 
-  if [ $? -neq 0 ]; then
+  if [ "$?" == "0" ]; then
     echo "---------------------------------------------------------------------"
     echo "WARNING - Are you sure that you have connection to Internet ? "
     if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
