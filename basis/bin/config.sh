@@ -24,7 +24,7 @@ accept_request() {
 
 read_ocid() {
   while [ "${!1}" == "__TO_FILL__" ]; do
-    read -r -p "$2 (Format: $3.xxxxx):" response
+    read -r -p "Enter your $2 OCID (Format: $3.xxxxx): " response
     if [[ $response == $3* ]]; then
       export $1=$response
       sed -i "s&$1=\"__TO_FILL__\"&$1=\"${!1}\"&" $PROJECT_DIR/env.sh              
@@ -62,17 +62,23 @@ fi
 # Livelabs Green Button (Autodetect compartment/vcn/subnet)
 livelabs_green_button
 
-read_ocid TF_VAR_compartment_ocid "Enter your compartment OCID" ocid1.compartment 
-read_ocid TF_VAR_vcn_ocid "Enter your Virtual Cloud Network (VCN) OCID" ocid1.vcn 
-read_ocid TF_VAR_public_subnet_ocid "Enter your Public Subnet OCID" ocid1.subnet
-read_ocid TF_VAR_private_subnet_ocid "Enter your Private Subnet OCID" ocid1.subnet
-read_ocid TF_VAR_oke_ocid "Enter your Kubernetes Cluster (OKE) OCID" ocid1.cluster
-read_ocid TF_VAR_atp_ocid "Enter your Autonomous Datababase OCID" ocid1.autonomousdatabase
-read_ocid TF_VAR_db_ocid "Enter your Base Database OCID" ocid1.dbsystem
-read_ocid TF_VAR_mysql_ocid "Enter your MySQL OCID" ocid1.mysqldbsystem
-read_ocid TF_VAR_vault_ocid "Enter your Vault OCID" ocid1.vault
-read_ocid TF_VAR_oic_ocid "Enter your Integration OCID" ocid1.integrationinstance
-
+read_ocid TF_VAR_compartment_ocid "Compartment" ocid1.compartment 
+read_ocid TF_VAR_vcn_ocid "Virtual Cloud Network (VCN)" ocid1.vcn 
+read_ocid TF_VAR_public_subnet_ocid "Public Subnet" ocid1.subnet
+read_ocid TF_VAR_private_subnet_ocid "Private Subnet" ocid1.subnet
+read_ocid TF_VAR_oke_ocid "Kubernetes Cluster (OKE)" ocid1.cluster
+read_ocid TF_VAR_atp_ocid "Autonomous Datababase" ocid1.autonomousdatabase
+read_ocid TF_VAR_db_ocid "Base Database" ocid1.dbsystem
+read_ocid TF_VAR_mysql_ocid "MySQL" ocid1.mysqldbsystem
+read_ocid TF_VAR_psql_ocid "PostgreSQL" ocid1.postgresqldbsystem
+read_ocid TF_VAR_opensearch_ocid "OpenSearch" ocid1.opensearchcluster
+read_ocid TF_VAR_nosql_ocid "NoSQL Table" ocid1.nosqltable
+read_ocid TF_VAR_vault_ocid "Vault" ocid1.vault
+read_ocid TF_VAR_oic_ocid "Integration" ocid1.integrationinstance
+read_ocid TF_VAR_apigw_ocid "API Gateway" ocid1.apigateway
+read_ocid TF_VAR_fnapp_ocid "Function Application" ocid1.fnapp
+read_ocid TF_VAR_log_group_ocid "Log Group" ocid1.loggroup
+read_ocid TF_VAR_bastion_ocid "Bastion Instance" ocid1.instance
 # ? # read_ocid TF_VAR_vault_secret_authtoken_ocid "Enter your Private Subnet OCID" ocid1.subnet
 
 # -- env.sh
