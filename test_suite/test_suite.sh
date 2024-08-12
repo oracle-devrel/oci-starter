@@ -117,6 +117,11 @@ loop_lang () {
     OPTION_DB=atp 
     loop_shape
   fi    
+  if [ "$OPTION_DEPLOY" == "compute" ]; then
+    OPTION_LANG=apex
+    OPTION_DB=database 
+    loop_shape
+  fi    
   OPTION_LANG=go
   loop_db  
   OPTION_LANG=node 
