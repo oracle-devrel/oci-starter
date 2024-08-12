@@ -73,6 +73,7 @@ read_ocid TF_VAR_atp_ocid "Enter your Autonomous Datababase OCID" ocid1.autonomo
 read_ocid TF_VAR_db_ocid "Enter your Base Database OCID" ocid1.dbsystem
 read_ocid TF_VAR_mysql_ocid "Enter your MySQL OCID" ocid1.mysqldbsystem
 read_ocid TF_VAR_vault_ocid "Enter your Vault OCID" ocid1.vault
+
 # ? # read_ocid TF_VAR_vault_secret_authtoken_ocid "Enter your Private Subnet OCID" ocid1.subnet
 
 # -- env.sh
