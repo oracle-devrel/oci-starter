@@ -545,7 +545,7 @@ def env_sh_contents():
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
     contents.append('')
     if params.get('compartment_ocid') == None:
-        contents.append('# export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx')       
+        contents.append('export TF_VAR_compartment_ocid="__TO_FILL__"')       
     for s in group_common_contents:
         contents.append(s)
 

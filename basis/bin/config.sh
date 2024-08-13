@@ -8,7 +8,7 @@ if declare -p | grep -q "__TO_FILL__"; then
     fi
     echo "$REQUEST"
     echo ""  
-    read -r -p "Please confirm. [Yes/No/All] " response
+    read -r -p "Please confirm. [Yes/No] " response
     case "$response" in
         [aA][lL][lL])
             export ACCEPT_ALL="TRUE"
@@ -29,7 +29,6 @@ if declare -p | grep -q "__TO_FILL__"; then
       if [[ $response == $3* ]]; then
         export $1=$response
         sed -i "s&$1=\"__TO_FILL__\"&$1=\"${!1}\"&" $PROJECT_DIR/env.sh              
-        sed -i "s&# export $1=[.*]&export TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh
         echo "$1 stored in env.sh"            
         echo            
       else
@@ -64,8 +63,44 @@ if declare -p | grep -q "__TO_FILL__"; then
   # Livelabs Green Button (Autodetect compartment/vcn/subnet)
   livelabs_green_button
 
+  # COMPARTMENT_ID
+  if [ "$TF_VAR_compartment_ocid" == "__TO_FILL__" ]; then
+    export REQUEST="Create a new Compartment ? (<No> will ask to reuse an existing one) ?"
+    if accept_request; then
+      echo "Check if 'oci-starter' compartment exists"
+      STARTER_OCID=`oci iam compartment list --name oci-starter | jq .data[0].id -r`
+      if [ -z "$STARTER_OCID" ]; then
+        echo "Creating a new 'oci-starter' compartment"
+        oci iam compartment create --compartment-id $TF_VAR_tenancy_ocid --description oci-starter --name oci-starter --wait-for-state ACTIVE > $TARGET_DIR/compartment.log 2>&1
+        STARTER_OCID=`cat $TARGET_DIR/compartment.log | grep \"id\" | sed 's/"//g' | sed "s/.*id: //g" | sed "s/,//g"`
+        while [ "$NAME" != "oci-starter" ]
+        do
+            oci iam compartment get --compartment-id=$STARTER_OCID > $TARGET_DIR/waiting.log 2>&1
+            if grep -q "NotAuthorizedOrNotFound" $TARGET_DIR/waiting.log; then
+              echo "Waiting"
+              sleep 2
+            else
+              NAME=`cat $TARGET_DIR/waiting.log | jq -r .data.name`
+            fi
+        done
+        echo "Compartment created"
+      else
+        echo "Using the existing 'oci-starter' Compartment"
+      fi 
+      export TF_VAR_compartment_ocid=$STARTER_OCID
+      auto_echo "TF_VAR_compartment_ocid=$STARTER_OCID"
+      sed -i "s&TF_VAR_compartment_ocid=\"__TO_FILL__\"&TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh              
+      echo "TF_VAR_compartment_ocid stored in env.sh"            
+      echo            
+    else
+      read_ocid TF_VAR_compartment_ocid "Compartment" ocid1.compartment 
+    fi     
+    # echo "        The components will be created in the root compartment."
+    # export TF_VAR_compartment_ocid=$TF_VAR_tenancy_ocid
+
+  fi
+
   # OCIDs
-  read_ocid TF_VAR_compartment_ocid "Compartment" ocid1.compartment 
   read_ocid TF_VAR_vcn_ocid "Virtual Cloud Network (VCN)" ocid1.vcn 
   read_ocid TF_VAR_public_subnet_ocid "Public Subnet" ocid1.subnet
   read_ocid TF_VAR_private_subnet_ocid "Private Subnet" ocid1.subnet
