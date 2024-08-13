@@ -132,35 +132,6 @@ else
     export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
   fi
 
-  if [ -z "$TF_VAR_compartment_ocid" ]; then
-    echo "WARNING: compartment_ocid is not defined."
-    # echo "        The components will be created in the root compartment."
-    # export TF_VAR_compartment_ocid=$TF_VAR_tenancy_ocid
-
-    echo "         The components will be created in the 'oci-starter' compartment"
-    STARTER_OCID=`oci iam compartment list --name oci-starter | jq .data[0].id -r`
-    if [ -z "$STARTER_OCID" ]; then
-      echo "Creating a new 'oci-starter' compartment"
-      oci iam compartment create --compartment-id $TF_VAR_tenancy_ocid --description oci-starter --name oci-starter --wait-for-state ACTIVE > $TARGET_DIR/compartment.log 2>&1
-      STARTER_OCID=`cat $TARGET_DIR/compartment.log | grep \"id\" | sed 's/"//g' | sed "s/.*id: //g" | sed "s/,//g"`
-      while [ "$NAME" != "oci-starter" ]
-      do
-        oci iam compartment get --compartment-id=$STARTER_OCID > $TARGET_DIR/waiting.log 2>&1
-        if grep -q "NotAuthorizedOrNotFound" $TARGET_DIR/waiting.log; then
-          echo "Waiting"
-          sleep 2
-        else
-          NAME=`cat $TARGET_DIR/waiting.log | jq -r .data.name`
-        fi
-      done
-    else
-      echo "Using the existing 'oci-starter' Compartment"
-    fi 
-    export TF_VAR_compartment_ocid=$STARTER_OCID
-    auto_echo "TF_VAR_compartment_ocid=$STARTER_OCID"
-    echo "Compartment created"
-  fi
-
   # Echo
   auto_echo TF_VAR_tenancy_ocid=$TF_VAR_tenancy_ocid
   auto_echo TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid
