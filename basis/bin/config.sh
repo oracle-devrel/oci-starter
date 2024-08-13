@@ -2,6 +2,44 @@
 if declare -p | grep -q "__TO_FILL__"; then
   title "CONFIG.SH"
   
+  accept_request() {
+    if [ "$ACCEPT_ALL" == "TRUE" ]; then
+      return 0;
+    fi
+    echo "$REQUEST"
+    echo ""  
+    read -r -p "Please confirm. [Yes/No/All] " response
+    case "$response" in
+        [aA][lL][lL])
+            export ACCEPT_ALL="TRUE"
+            return 0
+            ;;
+        [yY][eE][sS]|[yY]) 
+            return 0
+            ;;
+        *)
+            echo "Skipping $1"
+            return 1 
+    esac
+  }
+
+  read_ocid() {
+    while [ "${!1}" == "__TO_FILL__" ]; do
+      read -r -p "Enter your $2 OCID (Format: $3.xxxxx): " response
+      if [[ $response == $3* ]]; then
+        export $1=$response
+        sed -i "s&$1=\"__TO_FILL__\"&$1=\"${!1}\"&" $PROJECT_DIR/env.sh              
+        sed -i "s&# export $1=[.*]&export TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh
+        echo "$1 stored in env.sh"            
+        echo            
+      else
+        echo "Wrong format $response"
+        echo            
+      fi
+    done    
+  }
+
+
   # DB_PASSWORD
   if [ "$TF_VAR_db_password" == "__TO_FILL__" ]; then
     export REQUEST="Generate password for the database ? (TF_VAR_db_password) ?"
