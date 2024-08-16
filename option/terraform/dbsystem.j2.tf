@@ -26,7 +26,16 @@ variable character_set {
   default = "AL32UTF8"
 }
 
+# Avoid that the DB is created before the Gateways...
+resource "null_resource" "sleep_before_db_system" {
+  depends_on = [ data.oci_core_subnet.starter_private_subnet ]
+  provisioner "local-exec" {
+    command = "sleep 15"
+  }
+}
+
 resource "oci_database_db_system" "starter_dbsystem" {
+  depends_on = [ null_resource.sleep_before_db_system ]
   availability_domain = data.oci_identity_availability_domain.ad.name
   compartment_id      = local.lz_database_cmp_ocid
   database_edition    = "##db_edition##"
