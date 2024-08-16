@@ -55,7 +55,7 @@ if [ "$ARG1" == "build" ]; then
   elif [ "$ARG2" == "ui" ]; then
     src/ui/build_ui.sh ${@:2}
   else 
-    echo "Unknow command: $ARG1 $ARG2"
+    echo "Unknown command: $ARG1 $ARG2"
   fi    
 
 
@@ -69,7 +69,7 @@ elif [ "$ARG1" == "ssh" ]; then
   elif [ "$ARG2" == "db_node" ]; then
     bin/ssh_db_node.sh
   else 
-    echo "Unknow command: $ARG1 $ARG2"
+    echo "Unknown command: $ARG1 $ARG2"
   fi    
 elif [ "$ARG1" == "terraform" ]; then
   if [ "$ARG2" == "plan" ]; then
@@ -79,13 +79,13 @@ elif [ "$ARG1" == "terraform" ]; then
   elif [ "$ARG2" == "destroy" ]; then
     src/terraform/destroy.sh ${@:2}
   else 
-    echo "Unknow command: $ARG1 $ARG2"
+    echo "Unknown command: $ARG1 $ARG2"
   fi    
 elif [ "$ARG1" == "generate" ]; then
   if [ "$ARG2" == "auth_token" ]; then
     bin/gen_auth_token.sh
   else 
-    echo "Unknow command: $ARG1 $ARG2"
+    echo "Unknown command: $ARG1 $ARG2"
   fi    
 elif [ "$ARG1" == "deploy" ]; then
   if [ "$ARG2" == "compute" ]; then
@@ -95,13 +95,13 @@ elif [ "$ARG1" == "deploy" ]; then
   elif [ "$ARG2" == "oke" ]; then
     bin/deploy_oke.sh
   else 
-    echo "Unknow command: $ARG1 $ARG2"
+    echo "Unknown command: $ARG1 $ARG2"
     exit 1
   fi    
 elif [ "$ARG1" == "env" ]; then
   bash --rcfile ./env.sh
 else 
-  echo "Unknow command: $ARG1"
+  echo "Unknown command: $ARG1"
   exit 1
 fi
 # Return the exit code 

@@ -85,6 +85,20 @@ if [ ! -z "$UI_URL" ]; then
   if [ "$TF_VAR_language" == "java" ] && [ "$TF_VAR_java_framework" == "springboot" ] && [ "$TF_VAR_ui_type" == "html" ] && [ "$TF_VAR_db_node_count" == "2" ]; then
     echo - RAC Page        : $UI_URL/rac.html
   fi
+  if [ "$TF_VAR_language" == "apex" ]; then
+    echo "-----------------------------------------------------------------------"
+    echo "APEX login:"
+    echo
+    echo "APEX Workspace"
+    echo "$UI_URL/ords/_/landing"
+    echo "  Workspace: APEX_APP"
+    echo "  User: APEX_APP"
+    echo "  Password: $TF_VAR_db_password"
+    echo
+    echo "APEX APP"
+    echo "$UI_URL/ords/r/apex_app/apex_app/"
+    echo "  User: APEX_APP / $TF_VAR_db_password"
+  fi
 fi
 
 if [ -f $PROJECT_DIR/src/after_done.sh ]; then
