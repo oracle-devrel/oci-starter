@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import oracle.nosql.driver.kv.StoreAccessTokenProvider;
 
 @Configuration
-@EnableNosqlRepositories(basePackageClasses = Dept.class)
+@EnableNosqlRepositories(basePackageClasses = scott.dept .class)
 public class AppConfig extends AbstractNosqlConfiguration {  
     @Bean
     public NosqlDbConfig nosqlDbConfig() throws java.io.IOException {

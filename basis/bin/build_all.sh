@@ -46,7 +46,7 @@ fi
 # Init target/compute
 if is_deploy_compute; then
     mkdir -p target/compute
-    cp -r src/compute/* target/compute/.
+    cp -r src/compute target/compute/.
 fi
 
 # Build all app* directories

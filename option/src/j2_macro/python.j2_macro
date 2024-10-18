@@ -45,7 +45,7 @@ handle = get_connection()
 {%- endif %}
 {%- endmacro -%}
 
-{%- macro dept() -%}
+{%- macro scott.dept () -%}
     {%- if db_family == "none" %}
     a = [ 
         { "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"},
@@ -90,7 +90,7 @@ handle = get_connection()
         for hit in j["hits"]["hits"]:
             a.append( {"deptno": hit["_source"]["deptno"], "dname": hit["_source"]["dname"], "loc": hit["_source"]["loc"]} )
         {%- elif db_family == "nosql" %}
-        request = QueryRequest().set_statement('select deptno, dname, loc from dept')
+        request = QueryRequest().set_statement('select scott.dept no, dname, loc from scott.dept ')
         while True: 
             result = handle.query_iterable(request)
             for row in result:
@@ -101,9 +101,9 @@ handle = get_connection()
         {%- if db_family != "opensearch" and db_family != "nosql" %}
         print("Successfully connected to database", flush=True)
         cursor = conn.cursor()
-        cursor.execute("SELECT deptno, dname, loc FROM dept")
-        deptRows = cursor.fetchall()
-        for row in deptRows:
+        cursor.execute("SELECT scott.dept no, dname, loc FROM scott.dept ")
+        scott.dept Rows = cursor.fetchall()
+        for row in scott.dept Rows:
             a.append( {"deptno": row[0], "dname": row[1], "loc": row[2]} )        
         {%- endif %}
     except Exception as e:

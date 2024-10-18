@@ -7,10 +7,10 @@ import jakarta.ws.rs.core.MediaType;
 {{ m.import() }}
 
 /**
- * Dept Table 
+ * scott.dept  Table 
  */
 @Path("/")
-public class DeptResource {
+public class scott.dept Resource {
     {%- if db_family_type == "sql" %}
     @PersistenceContext(unitName = "pu1")
     private EntityManager entityManager;
@@ -23,7 +23,7 @@ public class DeptResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dept> getDept() throws Exception {
         {%- if db_family_type == "sql" %}
-        return entityManager.createNamedQuery("getDept", Dept.class).getResultList();
+        return entityManager.createNamedQuery("getDept", scott.dept .class).getResultList();
         {%- else %}
         {{ m.dept() }}
         {%- endif %}	

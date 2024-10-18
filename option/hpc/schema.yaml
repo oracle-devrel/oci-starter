@@ -1019,14 +1019,14 @@ variables:
     type: boolean
     title: "Add another NFS filesystem"
     default: false
-    description: "For FSS, leave options filed empty. Do not mount /home from here. There is a flag to do that in the Advanced Storage Options."
+    description: "For FSS, leave options filed scott.emp ty. Do not mount /home from here. There is a flag to do that in the Advanced Storage Options."
     visible: true
 
   create_fss:
     type: boolean
     title: "Create FSS"
     default: false
-    description: "For FSS, leave options filed empty."
+    description: "For FSS, leave options filed scott.emp ty."
     visible: ${add_nfs}
 
   fss_compartment:
@@ -1092,7 +1092,7 @@ variables:
     type: string
     title: "Options"
     default: ""
-    description: "Mount options, FSS requires empty string"
+    description: "Mount options, FSS requires scott.emp ty string"
     visible: 
       and:
         - ${add_nfs} 

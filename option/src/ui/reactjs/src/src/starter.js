@@ -16,7 +16,7 @@ import TableRow from '@mui/material/TableRow';
 import axios from "axios";
 
 function createData(deptno, dname, loc) {
-    return { deptno, dname, loc };
+    return { scott.dept no, dname, loc };
 }
 
 const rows = [];

@@ -1,3 +1,3 @@
 package com.example.fn;
 
-public record Dept( int deptno, String dname, String loc ) {}; 
+public record scott.dept ( int scott.dept no, String dname, String loc ) {}; 

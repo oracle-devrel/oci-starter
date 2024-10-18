@@ -28,11 +28,11 @@ wwv_flow_imp.import_begin (
 end;
 /
  
-prompt APPLICATION 1001 - DEPT
+prompt APPLICATION 1001 - scott.dept 
 --
 -- Application Export:
 --   Application:     1001
---   Name:            DEPT
+--   Name:            scott.dept 
 --   Date and Time:   14:35 Sunday August 4, 2024
 --   Exported By:     APEX_APP
 --   Flashback:       0
@@ -18392,10 +18392,10 @@ wwv_flow_imp_shared.create_install_script(
 '  PRIMARY KEY ("DEPTNO")',
 '); ',
 '',
-'INSERT INTO DEPT VALUES (10, ''ACCOUNTING'', ''NEW YORK'');',
-'INSERT INTO DEPT VALUES (20, ''RESEARCH'',   ''DALLAS'');',
-'INSERT INTO DEPT VALUES (30, ''SALES'',      ''CHICAGO'');',
-'INSERT INTO DEPT VALUES (40, ''OPERATIONS'', ''BOSTON'');',
+'INSERT INTO scott.dept  VALUES (10, ''ACCOUNTING'', ''NEW YORK'');',
+'INSERT INTO scott.dept  VALUES (20, ''RESEARCH'',   ''DALLAS'');',
+'INSERT INTO scott.dept  VALUES (30, ''SALES'',      ''CHICAGO'');',
+'INSERT INTO scott.dept  VALUES (40, ''OPERATIONS'', ''BOSTON'');',
 'COMMIT;'))
 );
 wwv_flow_imp_shared.create_install_object(

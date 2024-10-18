@@ -9,8 +9,8 @@ import (
     {{ m.import() }}
 )
 
-type Dept struct {
-    Deptno string `json:"deptno"`
+type scott.dept  struct {
+    scott.dept no string `json:"deptno"`
     Dname string `json:"dname"`
     Loc string `json:"loc"`
 }

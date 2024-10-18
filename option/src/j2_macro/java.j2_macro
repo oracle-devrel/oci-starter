@@ -99,16 +99,16 @@ import javax.json.*;
     public DemoController() throws Exception {
     {%- endif %}
     {%- elif java_framework in ["helidon","helidon4"] %}
-    public DeptResource() throws Exception {
+    public scott.dept Resource() throws Exception {
         {%- if db_family == "nosql" %}
         if( handle!= null ) {
             return;
         }     
         {%- endif %}
     {%- elif java_framework == "micronaut" %}
-    public DeptController() throws Exception {
+    public scott.dept Controller() throws Exception {
     {%- elif java_framework == "tomcat" %}
-    public DeptServlet() throws Exception {
+    public scott.dept Servlet() throws Exception {
     {%- endif %}
     {%- if db_family == "oracle" and java_framework not in ["springboot", "micronaut"] %}
         pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
@@ -136,18 +136,18 @@ import javax.json.*;
 {%- endmacro -%}
     
 
-{% macro dept() -%}
-        {{ dept_no_return() }}
+{% macro scott.dept () -%}
+        {{ scott.dept _no_return() }}
         return rows; 
 {%- endmacro -%}
 
-{% macro dept_string() -%}
+{% macro scott.dept _string() -%}
         String json = "-";
         try {
             {%- if db_family_type == "sql" %}        
             Class.forName("{{ jdbcDriverClassName }}");    
             {%- endif %}        
-            {{ dept_no_return() | indent(4) }}
+            {{ scott.dept _no_return() | indent(4) }}
             // Jackson 
             ObjectMapper objectMapper = new ObjectMapper();
             json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rows);
@@ -157,7 +157,7 @@ import javax.json.*;
         }     
 {%- endmacro -%}
 
-{% macro dept_no_return() -%}
+{% macro scott.dept _no_return() -%}
         List<Dept> rows = new ArrayList<Dept>();
         {%- if db_family_type == "sql" %}
         {{ sql() }}        
@@ -182,9 +182,9 @@ import javax.json.*;
             try {
                 conn = pds.getConnection();
                 stmt = conn.createStatement();
-                rset = stmt.executeQuery("SELECT deptno, dname, loc FROM dept");
+                rset = stmt.executeQuery("SELECT scott.dept no, dname, loc FROM scott.dept ");
                 while (rset.next()) {
-                    rows.add(new Dept(rset.getInt(1), rset.getString(2), rset.getString(3)));
+                    rows.add(new scott.dept (rset.getInt(1), rset.getString(2), rset.getString(3)));
                 }
             } finally {
                 if (rset != null)
@@ -197,9 +197,9 @@ import javax.json.*;
 {%- else %}
             Connection conn = DriverManager.getConnection( System.getenv("JDBC_URL") , System.getenv("DB_USER"), System.getenv("DB_PASSWORD"));
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT deptno, dname, loc FROM dept");
+            ResultSet rs = stmt.executeQuery("SELECT scott.dept no, dname, loc FROM scott.dept ");
             while (rs.next()) {
-                rows.add(new Dept(rs.getInt(1), rs.getString(2), rs.getString(3) ));
+                rows.add(new scott.dept (rs.getInt(1), rs.getString(2), rs.getString(3) ));
             }
             rs.close();
             stmt.close();
@@ -213,10 +213,10 @@ import javax.json.*;
 {%- endmacro -%}  
 
 {% macro nodb() -%}    
-        rows.add(new Dept(10, "ACCOUNTING", "Seoul" ));
-        rows.add(new Dept(20, "RESEARCH", "Cape Town" ));
-        rows.add(new Dept(30, "SALES", "Brussels"));
-        rows.add(new Dept(40, "OPERATIONS", "San Francisco"));
+        rows.add(new scott.dept (10, "ACCOUNTING", "Seoul" ));
+        rows.add(new scott.dept (20, "RESEARCH", "Cape Town" ));
+        rows.add(new scott.dept (30, "SALES", "Brussels"));
+        rows.add(new scott.dept (40, "OPERATIONS", "San Francisco"));
 {%- endmacro -%}   
 
 {% macro opensearch() -%}    
@@ -233,15 +233,15 @@ import javax.json.*;
         JsonArray hitsArray = jsonObject.getJsonObject("hits").getJsonArray("hits");   
         for (JsonObject hit : hitsArray.getValuesAs(JsonObject.class)) {
             JsonObject source = hit.getJsonObject("_source");
-            rows.add(new Dept(Integer.valueOf(source.getString("deptno")), source.getString("dname"), source.getString("loc") ));
+            rows.add(new scott.dept (Integer.valueOf(source.getString("deptno")), source.getString("dname"), source.getString("loc") ));
         }
 {%- endmacro -%}   
 
 {% macro nosql() -%}    
         // See https://github.com/oracle/nosql-examples/blob/master/examples-nosql-java-sdk/sqlexamples/QueryData.java
-        QueryRequest queryRequest = new QueryRequest().setStatement("SELECT deptno, dname, loc FROM dept");
+        QueryRequest queryRequest = new QueryRequest().setStatement("SELECT scott.dept no, dname, loc FROM scott.dept ");
         QueryIterableResult results = handle.queryIterable(queryRequest);
         for (MapValue row : results) {
-           rows.add( new Dept( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
+           rows.add( new scott.dept ( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
         }        
 {%- endmacro -%}   

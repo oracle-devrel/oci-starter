@@ -9,28 +9,28 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "DEPT")
-public class Dept {
+public class scott.dept  {
 
     @Id
-    private int deptno;
+    private int scott.dept no;
     private String dname;
     private String loc;
 
-    public Dept() {
+    public scott.dept () {
     }
 
-    public Dept( int deptno, String dname, String loc) {
-        this.deptno = deptno;
+    public scott.dept ( int scott.dept no, String dname, String loc) {
+        this.deptno = scott.dept no;
         this.dname = dname;
         this.loc = loc;
     }
 
     public int getDeptno() {
-        return deptno;
+        return scott.dept no;
     }
 
-    public void setDeptno(int deptno) {
-        this.deptno = deptno;
+    public void setDeptno(int scott.dept no) {
+        this.deptno = scott.dept no;
     }
 
     public String getDname() {

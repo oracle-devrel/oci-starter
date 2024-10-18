@@ -3,14 +3,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { DeptComponent } from './dept/dept.component';
+import { scott.dept Component } from './dept/dept.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialExampleModule } from '../material.module';
 import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
-  declarations: [AppComponent, DeptComponent],
+  declarations: [AppComponent, scott.dept Component],
   imports: [
     BrowserAnimationsModule,
     BrowserModule,

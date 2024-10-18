@@ -1,8 +1,8 @@
-import { Dept } from './dept';
+import { scott.dept  } from './dept';
 
-export const DEPTS: Dept[] = [
-  { deptno: '1', dname: 'Finance', loc: 'Redwood' },
-  { deptno: '2', dname: 'IT', loc: 'Brussesl' },
+export const scott.dept S: scott.dept [] = [
+  { scott.dept no: '1', dname: 'Finance', loc: 'Redwood' },
+  { scott.dept no: '2', dname: 'IT', loc: 'Brussesl' },
 ];
 
 /*

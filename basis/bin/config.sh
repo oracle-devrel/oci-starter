@@ -23,14 +23,19 @@ if declare -p | grep -q "__TO_FILL__"; then
     esac
   }
 
+  store_env_sh() {
+    echo "$1=$2"            
+    sed -i "s&$1=\"__TO_FILL__\"&$1=\"$2\"&" $PROJECT_DIR/env.sh              
+    echo "$1 stored in env.sh"            
+    echo       
+  }
+
   read_ocid() {
     while [ "${!1}" == "__TO_FILL__" ]; do
       read -r -p "Enter your $2 OCID (Format: $3.xxxxx): " response
       if [[ $response == $3* ]]; then
         export $1=$response
-        sed -i "s&$1=\"__TO_FILL__\"&$1=\"${!1}\"&" $PROJECT_DIR/env.sh              
-        echo "$1 stored in env.sh"            
-        echo            
+        store_env_sh $1 ${!1}
       else
         echo "Wrong format $response"
         echo            
@@ -45,10 +50,41 @@ if declare -p | grep -q "__TO_FILL__"; then
     if accept_request; then
         echo "Generating password for the database"
         export TF_VAR_db_password=`python3 $BIN_DIR/gen_password.py`
-        sed -i "s&TF_VAR_db_password=\"__TO_FILL__\"&TF_VAR_db_password=\"$TF_VAR_db_password\"&" $PROJECT_DIR/env.sh
-        echo "Password stored in env.sh"
-        echo "> TF_VAR_db_password=$TF_VAR_db_password"
+    else
+        echo
+        echo "Rule: Minimum 12 characters, 2 in lowercase, 2 in uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345"  
+        echo "To avoid issues: for special characters use only ['#', '_', '-']"
+        read -r -p "Enter your database password: " TF_VAR_db_password
+        echo TF_VAR_db_password=$TF_VAR_db_password
+        if [[ "${TF_VAR_db_password}" =~ ^.{12,}$ ]]; then
+          # Check for length
+          echo TF_VAR_db_password=$TF_VAR_db_password
+          if [[ "${TF_VAR_db_password}" =~ (.*[A-Z].*[A-Z]) ]]; then
+            # Check for uppercase letters
+            if [[ "${TF_VAR_db_password}" =~ (.*[a-z].*[a-z]) ]]; then
+              # Check for lowercase letters
+              if [[ "${TF_VAR_db_password}" =~ (.*[-_#].*[-_#]) ]]; then
+              # Check for special characters
+                if [[ "${TF_VAR_db_password}" =~ (.*[0-9].*[0-9]) ]]; then
+                  # Check for numbers
+                  echo "The password meets all the requirements."
+                else
+                  error_exit "The password does not contain enough numbers."
+                fi
+              else
+                error_exit "The password does not contain enough special characters."
+              fi
+            else
+              error_exit "The password does not contain enough lowercase letters."
+            fi
+          else
+            error_exit "The password does not contain enough uppercase letters."
+          fi
+        else
+        error_exit "The password is too short."
+        fi        
     fi 
+    store_env_sh TF_VAR_db_password $TF_VAR_db_password
   fi
 
   # AUTH_TOKEN
@@ -59,6 +95,18 @@ if declare -p | grep -q "__TO_FILL__"; then
         . $BIN_DIR/gen_auth_token.sh
     fi 
   fi
+
+  # OIC_APPID
+  if [ "$TF_VAR_oic_appid" == "__TO_FILL__" ]; then
+    export REQUEST="Enter the OIC APPID ? (TF_VAR_oic_appid) ?"
+    read -r -p "Enter the OIC APPID ? (TF_VAR_oic_appid): " TF_VAR_oic_appid
+    if [[ "${TF_VAR_oic_appid}" =~ ^.*_APPID$ ]]; then
+        echo "TF_VAR_oic_appid ends with _APPID"
+    else
+        error_exit "TF_VAR_oic_appid does not end with _APPID"
+    fi    
+    store_env_sh TF_VAR_oic_appid $TF_VAR_oic_appid
+  fi  
 
   # Livelabs Green Button (Autodetect compartment/vcn/subnet)
   livelabs_green_button
@@ -88,9 +136,7 @@ if declare -p | grep -q "__TO_FILL__"; then
         echo "Using the existing 'oci-starter' Compartment"
       fi 
       export TF_VAR_compartment_ocid=$STARTER_OCID
-      auto_echo "TF_VAR_compartment_ocid=$STARTER_OCID"
-      sed -i "s&TF_VAR_compartment_ocid=\"__TO_FILL__\"&TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh              
-      echo "TF_VAR_compartment_ocid stored in env.sh"            
+      store_env_sh TF_VAR_compartment_ocid $TF_VAR_compartment_ocid
       echo            
     else
       read_ocid TF_VAR_compartment_ocid "Compartment" ocid1.compartment 
@@ -134,5 +180,3 @@ if declare -p | grep -q "__TO_FILL__"; then
     error_exit "Missing environment variables."
   fi 
 fi 
-
-

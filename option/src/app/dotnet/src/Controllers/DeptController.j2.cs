@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace starter.Controllers;
 
-public class DeptController : ControllerBase
+public class scott.dept Controller : ControllerBase
 {
     private readonly ILogger<DeptController> _logger;
 
     {{ m.class_def() }}
 
-    public DeptController(ILogger<DeptController> logger)
+    public scott.dept Controller(ILogger<DeptController> logger)
     {
         _logger = logger;
     }

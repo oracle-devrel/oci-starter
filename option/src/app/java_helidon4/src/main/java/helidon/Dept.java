@@ -3,20 +3,20 @@ package helidon;
 import jakarta.persistence.*;
 
 /**
- * A Dept Type entity.
+ * A scott.dept  Type entity.
  */
 @Entity(name = "Dept")
 @Table(name = "dept")
 @Access(AccessType.FIELD)
 @NamedQueries({
         @NamedQuery(name = "getDept",
-                    query = "SELECT t FROM Dept t"),
+                    query = "SELECT t FROM scott.dept  t"),
 })
-public class Dept {
+public class scott.dept  {
 
     @Id
     @Column(name = "deptno", nullable = false, updatable = false)
-    private int deptno;
+    private int scott.dept no;
 
     @Basic(optional = false)
     @Column(name = "dname")
@@ -26,21 +26,21 @@ public class Dept {
     @Column(name = "loc")
     private String loc;
 
-    public Dept() {
+    public scott.dept () {
     }
 
-    public Dept( int deptno, String dname, String loc) {
-        this.deptno = deptno;
+    public scott.dept ( int scott.dept no, String dname, String loc) {
+        this.deptno = scott.dept no;
         this.dname = dname;
         this.loc = loc;
     }
 
     public int getDeptno() {
-        return deptno;
+        return scott.dept no;
     }
 
-    public void setDeptno(int deptno) {
-        this.deptno = deptno;
+    public void setDeptno(int scott.dept no) {
+        this.deptno = scott.dept no;
     }
 
     public String getDname() {

@@ -65,6 +65,7 @@ build_function() {
      # Push the image to docker
      docker login ${TF_VAR_ocir} -u ${TF_VAR_namespace}/${TF_VAR_username} -p "${TF_VAR_auth_token}"
      docker push $TF_VAR_fn_image
+     exit_on_error
   else 
      echo "build_function - built successfully not found"
      exit 1
@@ -91,9 +92,11 @@ ocir_docker_push () {
   # Push image in registry
   docker tag ${TF_VAR_prefix}-app ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
   docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
+  exit_on_error
 
   docker tag ${TF_VAR_prefix}-ui ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
   docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
+  exit_on_error
 }
 
 replace_db_user_password_in_file() {
@@ -299,7 +302,7 @@ is_deploy_compute() {
 }
 
 livelabs_green_button() {
-  # Lot of tests to be sure we are in a empty Green Button LiveLabs
+  # Lot of tests to be sure we are in a scott.emp ty Green Button LiveLabs
   # compartment_ocid still undefined ? 
   if grep -q '# export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx' $PROJECT_DIR/env.sh; then
     # vnc_ocid still undefined ? 

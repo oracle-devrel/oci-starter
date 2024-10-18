@@ -13,9 +13,9 @@ import java.io.IOException;
 {{ m.import() }}
 
 /**
- * Servlet implementation class DeptServlet
+ * Servlet implementation class scott.dept Servlet
  */
-public class DeptServlet extends HttpServlet {
+public class scott.dept Servlet extends HttpServlet {
     {{ m.constructor() }}
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

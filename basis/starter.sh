@@ -22,6 +22,7 @@ if [ -z $ARG1 ] || [ "$ARG1" == "help" ]; then
   echo "./starter.sh destroy                  - Destroy all"
   echo
   echo "--- SSH --------------------------------------------------------------------------------------"
+  echo "target/ssh_key_starter                - SSH private key"
   echo "./starter.sh ssh compute              - SSH to compute (Deployment: Compute)"
   echo "./starter.sh ssh bastion              - SSH to bastion"
   echo "./starter.sh ssh db_node              - SSH to DB_NODE (Database: Oracle DB)"
@@ -42,6 +43,10 @@ if [ -z $ARG1 ] || [ "$ARG1" == "help" ]; then
   echo "--- KUBECTL ----------------------------------------------------------------------------------"
   echo "./starter.sh env                      - Set kubeconfig to connect to Kubernetes"
   echo "kubectl get pods                      - Example of a command to check the PODs"
+  echo
+  echo "--- LOGS ----------------------------------------------------------------------------------"
+  echo "cat target/build.log                  - Show last build log"
+  echo "cat target/destroy.log                - Show last destroy log"
   echo
   exit
 fi

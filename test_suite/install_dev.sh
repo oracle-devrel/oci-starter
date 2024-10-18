@@ -55,9 +55,15 @@ sudo dnf install -y jq
 # XXX Got forbidden and had to download manually ?
 mkdir -p $HOME/bin
 cd $HOME/bin
-curl -LO https://dl.k8s.io/release/v1.29.2/bin/linux/arm64/kubectl
+if [ `arch` == "x86_64" ]; then
+  ARCH_PREFIX=amd64
+else
+  ARCH_PREFIX=arm64
+fi
+curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH_PREFIX}/kubectl
 chmod +x kubectl
-echo "source <(./kubectl completion bash)" >> ~/.bashrc
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+echo "shopt -s direxpand" >> ~/.bashrc
 
 # Helm
 cd /tmp

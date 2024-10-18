@@ -1,9 +1,11 @@
 #!/bin/bash
-# compute_java_bootstrap 
 #
-# Script that is runned once during the setup of a 
-# - compute
-# - with Java
+# compute_init.sh
+# - Script that is runned once during the setup of a compute
+#
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd $SCRIPT_DIR
+
 if [[ -z "$TF_VAR_language" ]]; then
   echo "Missing env variables"
   exit
@@ -69,6 +71,8 @@ export -f install_java
 # -- App --------------------------------------------------------------------
 # Application Specific installation
 # Build all app* directories
+cd $HOME
+
 for APP_DIR in `ls -d app* | sort -g`; do
   if [ -f $APP_DIR/install.sh ]; then
     chmod +x ${APP_DIR}/install.sh
@@ -111,17 +115,23 @@ EOT
   fi
 done  
 
+# -- Helper --------------------------------------------------------------------
+cd $SCRIPT_DIR
+mv helper.sh $HOME
+
 # -- UI --------------------------------------------------------------------
 # Install NGINX
 sudo dnf install nginx -y > /tmp/dnf_nginx.log
 
-# Default: location /app/ { proxy_pass http://localhost:8080 }
-sudo cp nginx_app.locations /etc/nginx/conf.d/.
-if grep -q nginx_app /etc/nginx/nginx.conf; then
-  echo "Include nginx_app.locations is already there"
-else
+if [ -f nginx_app.locations ]; then
+  # Default: location /app/ { proxy_pass http://localhost:8080 }
+  sudo cp nginx_app.locations /etc/nginx/conf.d/.
+  if grep -q nginx_app /etc/nginx/nginx.conf; then
+    echo "Include nginx_app.locations is already there"
+  else
     echo "Adding nginx_app.locations"
     sudo awk -i inplace '/404.html/ && !x {print "        include conf.d/nginx_app.locations;"; x=1} 1' /etc/nginx/nginx.conf
+  fi
 fi
 
 # TLS

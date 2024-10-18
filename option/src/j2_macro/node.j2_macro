@@ -43,7 +43,7 @@ function createClient() {
 {%- endif %}
 {%- endmacro -%}
 
-{%- macro dept() -%}
+{%- macro scott.dept () -%}
 {%- if db_family == "none" -%}{{ nodb() }}
 {%- elif db_family == "oracle" -%}{{ oracle() }}
 {%- elif db_family == "mysql" -%}{{ mysql() }}
@@ -65,7 +65,7 @@ function createClient() {
 {% macro oracle() -%}
     let con = await oracledb.getConnection({ user: process.env.DB_USER, password: process.env.DB_PASSWORD, connectionString: process.env.DB_URL });
     result = await con.execute(
-        `select deptno, dname, loc from DEPT`,
+        `select scott.dept no, dname, loc from scott.dept `,
         [],
         { resultSet: true, outFormat: oracledb.OUT_FORMAT_OBJECT });
     const rs = result.resultSet;
@@ -86,7 +86,7 @@ function createClient() {
         password: process.env.DB_PASSWORD,
         database: "db1"
     });
-    const [rows, fields] = await con.execute("SELECT deptno, dname, loc FROM dept");
+    const [rows, fields] = await con.execute("SELECT scott.dept no, dname, loc FROM scott.dept ");
     con.end();   
 {%- endmacro -%}
 
@@ -101,7 +101,7 @@ function createClient() {
             rejectUnauthorized: false
         }
     })
-    response = await con.query("SELECT deptno, dname, loc FROM dept");
+    response = await con.query("SELECT scott.dept no, dname, loc FROM scott.dept ");
     rows = response.rows;
 {%- endmacro -%}
 
@@ -122,7 +122,7 @@ function createClient() {
 {% macro nosql() -%}
     // See https://oracle.github.io/nosql-node-sdk/pages/tables.html
     let rows = [];
-    for await(let result of client.queryIterable('SELECT deptno, dname, loc FROM dept')) {
+    for await(let result of client.queryIterable('SELECT scott.dept no, dname, loc FROM scott.dept ')) {
         for(let row of result.rows) {
             rows.push( row );
         }    
