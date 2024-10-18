@@ -147,7 +147,7 @@ import javax.json.*;
             {%- if db_family_type == "sql" %}        
             Class.forName("{{ jdbcDriverClassName }}");    
             {%- endif %}        
-            {{ scott.scott_dept _no_return() | indent(4) }}
+            {{ dept_no_return() | indent(4) }}
             // Jackson 
             ObjectMapper objectMapper = new ObjectMapper();
             json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rows);
