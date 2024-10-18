@@ -136,7 +136,7 @@ import javax.json.*;
 {%- endmacro -%}
     
 
-{% macro scott.dept () -%}
+{% macro scott.dept() -%}
         {{ scott.dept _no_return() }}
         return rows; 
 {%- endmacro -%}
