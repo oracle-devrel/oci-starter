@@ -14,7 +14,8 @@ variable "oke_shape" {
   {%- if shape == "ampere" %}
   default = "VM.Standard.A1.Flex"
   {%- else %}
-  default = "VM.Standard.AMD.Generic"
+  # default = "VM.Standard.AMD.Generic"
+  default = "VM.Standard.E4.flex"
   {%- endif %}
 }
 
