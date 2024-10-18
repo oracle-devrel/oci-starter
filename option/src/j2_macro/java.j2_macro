@@ -136,12 +136,12 @@ import javax.json.*;
 {%- endmacro -%}
     
 
-{% macro scott_dept() -%}
+{% macro dept() -%}
         {{ scott_dept _no_return() }}
         return rows; 
 {%- endmacro -%}
 
-{% macro scott_dept _string() -%}
+{% macro dept_string() -%}
         String json = "-";
         try {
             {%- if db_family_type == "sql" %}        
@@ -157,7 +157,7 @@ import javax.json.*;
         }     
 {%- endmacro -%}
 
-{% macro scott_dept _no_return() -%}
+{% macro dept_no_return() -%}
         List<Dept> rows = new ArrayList<Dept>();
         {%- if db_family_type == "sql" %}
         {{ sql() }}        
