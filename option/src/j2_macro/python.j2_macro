@@ -45,7 +45,7 @@ handle = get_connection()
 {%- endif %}
 {%- endmacro -%}
 
-{%- macro scott.dept () -%}
+{%- macro dept() -%}
     {%- if db_family == "none" %}
     a = [ 
         { "deptno": "10", "dname": "ACCOUNTING", "loc": "Seoul"},

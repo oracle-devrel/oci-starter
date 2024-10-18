@@ -59,7 +59,7 @@ using Oracle.NoSQL.SDK;
 {%- endif %}        
 {%- endmacro -%}
 
-{%- macro scott.dept () -%}
+{%- macro dept() -%}
     {%- if db_family == "none" %}
         var a = new scott.dept []
         {

@@ -43,7 +43,7 @@ function createClient() {
 {%- endif %}
 {%- endmacro -%}
 
-{%- macro scott.dept () -%}
+{%- macro dept() -%}
 {%- if db_family == "none" -%}{{ nodb() }}
 {%- elif db_family == "oracle" -%}{{ oracle() }}
 {%- elif db_family == "mysql" -%}{{ mysql() }}

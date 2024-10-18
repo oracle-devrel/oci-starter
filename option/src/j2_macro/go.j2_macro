@@ -55,7 +55,7 @@ type Result struct {
 {%- endif %}        
 {%- endmacro -%}
 
-{%- macro scott.dept () -%}
+{%- macro dept() -%}
     {%- if db_family == "none" %}
     var d = []Dept{
         scott.dept {Deptno: "10", Dname: "ACCOUNTING", Loc: "Seoul"},
