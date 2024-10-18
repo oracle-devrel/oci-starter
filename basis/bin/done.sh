@@ -34,7 +34,7 @@ if [ ! -z "$UI_URL" ]; then
       fi  
       curl $UI_URL/app/dept -b /tmp/cookie.txt -c /tmp/cookie.txt -L -D /tmp/result_json.log > /tmp/result.json
       if grep -q -i "deptno" /tmp/result.json; then
-        echo "----- OK ----- scott.dept no detected in $UI_URL/app/dept"
+        echo "----- OK ----- deptno detected in $UI_URL/app/dept"
        	break
       fi
       sleep 5  

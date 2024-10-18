@@ -16,4 +16,4 @@ cp orig/src/main/resources/application.properties src/main/resources/.
 rm src/test/java/com/example/DemoTest.java
 rm src/test/resources/application-test.properties
 
-# Missing redo the .j2 customisation for scott.dept Repository.java and pom.xml
+# Missing redo the .j2 customisation for DeptRepository.java and pom.xml

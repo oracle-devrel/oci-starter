@@ -28,7 +28,7 @@ using Oracle.NoSQL.SDK;
 {%- if db_family == "opensearch" %}
     public class Source
     {
-        public string scott.dept no { get; set; }
+        public string deptno { get; set; }
         public string dname { get; set; }
         public string loc { get; set; }
     }    
@@ -61,12 +61,12 @@ using Oracle.NoSQL.SDK;
 
 {%- macro dept() -%}
     {%- if db_family == "none" %}
-        var a = new scott.dept []
+        var a = new Dept[]
         {
-            new scott.dept  { scott.dept no = "10", dname = "ACCOUNTING", loc = "Seoul" },
-            new scott.dept  { scott.dept no = "20", dname = "RESEARCH", loc = "Cape Town" },
-            new scott.dept  { scott.dept no = "30", dname = "SALES", loc = "Brussels" },
-            new scott.dept  { scott.dept no = "40", dname = "OPERATIONS", loc = "San Francisco" }
+            new Dept { deptno = "10", dname = "ACCOUNTING", loc = "Seoul" },
+            new Dept { deptno = "20", dname = "RESEARCH", loc = "Cape Town" },
+            new Dept { deptno = "30", dname = "SALES", loc = "Brussels" },
+            new Dept { deptno = "40", dname = "OPERATIONS", loc = "San Francisco" }
         };
     {%- elif db_family == "opensearch" %}
         List<Dept> a = new List<Dept>();
@@ -86,7 +86,7 @@ using Oracle.NoSQL.SDK;
         {
             foreach (var hit in result.hits.hits )
             {
-                scott.dept  d = new scott.dept  { scott.dept no = hit._source.deptno, dname = hit._source.dname, loc = hit._source.loc };
+                Dept d = new Dept { deptno = hit._source.deptno, dname = hit._source.dname, loc = hit._source.loc };
                 a.Add(d);
             }
         }
@@ -97,10 +97,10 @@ using Oracle.NoSQL.SDK;
     {%- elif db_family == "nosql" %}
         List<Dept> a = new List<Dept>();
         try {
-            await foreach(var result in client.GetQueryAsyncEnumerable("select scott.dept no, dname, loc from scott.dept "))
+            await foreach(var result in client.GetQueryAsyncEnumerable("select deptno, dname, loc FROM dept"))
             {
                 foreach(var row in result.Rows) {
-                    a.Add( new scott.dept { scott.dept no = row.GetValueAtIndex(0).AsInt32.ToString(), dname = row.GetValueAtIndex(1).AsString, loc = row.GetValueAtIndex(2).AsString } );
+                    a.Add( new Dept{ deptno = row.GetValueAtIndex(0).AsInt32.ToString(), dname = row.GetValueAtIndex(1).AsString, loc = row.GetValueAtIndex(2).AsString } );
                 }
             }
         }
@@ -121,7 +121,7 @@ using Oracle.NoSQL.SDK;
             con.Open();
             Console.WriteLine("Connected to database");
 
-            cmd.CommandText = "SELECT scott.dept no, dname, loc FROM scott.dept ";
+            cmd.CommandText = "SELECT deptno, dname, loc FROM dept";
             OracleDataReader reader = cmd.ExecuteReader();
             {%- elif db_family == "mysql" %}
             string conStringUser = @"server=" + db.Split(':')[0] + ";userid=" + user + ";password=" + pwd + ";database=db1";
@@ -129,7 +129,7 @@ using Oracle.NoSQL.SDK;
             con.Open();
             Console.WriteLine("Connected to database");
 
-            using var cmd = new MySqlCommand("SELECT scott.dept no, dname, loc FROM scott.dept ", con);
+            using var cmd = new MySqlCommand("SELECT deptno, dname, loc FROM dept", con);
             using MySqlDataReader reader = cmd.ExecuteReader();
             {%- elif db_family == "psql" %}
             string conStringUser = @"Server=" + db + ";User Id=" + user + ";Password=" + pwd + ";Database=postgres;Trust Server Certificate=true";
@@ -138,13 +138,13 @@ using Oracle.NoSQL.SDK;
             Console.WriteLine("Connected to database");
 
             //Retrieve sample data
-            using var cmd = new NpgsqlCommand("SELECT scott.dept no, dname, loc FROM scott.dept ", con);
+            using var cmd = new NpgsqlCommand("SELECT deptno, dname, loc FROM dept", con);
             using NpgsqlDataReader reader = cmd.ExecuteReader();
             {%- endif %}
             while (reader.Read())
             {
-                scott.dept  d = new scott.dept  { scott.dept no = reader.GetInt64(0).ToString(), dname = reader.GetString(1), loc = reader.GetString(2) };
-                // scott.dept  d = new scott.dept  { scott.dept no = reader.GetString(0), dname = reader.GetString(1), loc = reader.GetString(2) };
+                Dept d = new Dept { deptno = reader.GetInt64(0).ToString(), dname = reader.GetString(1), loc = reader.GetString(2) };
+                // Dept d = new Dept { deptno = reader.GetString(0), dname = reader.GetString(1), loc = reader.GetString(2) };
                 a.Add(d);
             }
             reader.Dispose();

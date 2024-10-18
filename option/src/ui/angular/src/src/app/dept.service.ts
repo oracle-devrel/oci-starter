@@ -3,14 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { scott.dept  } from './dept';
+import { Dept  } from './dept';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MessageService } from './message.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class scott.dept Service {
+export class DeptService {
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -22,7 +22,7 @@ export class scott.dept Service {
 
   getDepts(): Observable<Dept[]> {
     return this.http.get<Dept[]>('app/dept').pipe(
-      tap((_) => this.log('fetched scott.dept ')),
+      tap((_) => this.log('fetched dept ')),
       catchError(this.handleError<Dept[]>('getDept', []))
     );
   }

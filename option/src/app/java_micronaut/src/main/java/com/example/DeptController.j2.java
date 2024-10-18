@@ -14,18 +14,18 @@ import static io.micronaut.http.HttpHeaders.LOCATION;
 
 @ExecuteOn(TaskExecutors.IO)  
 @Controller("/")  
-class scott.dept Controller {
+class DeptController {
     {%- if db_family_type == "sql" %}
     @Inject
-    scott.dept Repository scott.dept Repository;
+    DeptRepository DeptRepository;
     {%- endif %}	
     {{ m.constructor() }}
 
     @Get(uri = "dept") 
     @Produces(MediaType.APPLICATION_JSON)
-    List<Dept> scott.dept () throws Exception {
+    List<Dept> Dept() throws Exception {
         {%- if db_family_type == "sql" %}
-        return scott.dept Repository.findAll();
+        return DeptRepository.findAll();
         {%- else %}
         {{ m.dept() }}
         {%- endif %}	   

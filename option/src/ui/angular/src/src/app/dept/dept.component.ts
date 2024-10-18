@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { scott.dept  } from '../dept';
-import { scott.dept Service } from '../dept.service';
+import { Dept } from '../dept';
+import { DeptService } from '../dept.service';
 import { MessageService } from '../message.service';
 
 @Component({
@@ -9,19 +9,19 @@ import { MessageService } from '../message.service';
   templateUrl: './dept.component.html',
   styleUrls: ['./dept.component.css'],
 })
-export class scott.dept Component implements OnInit {
-  scott.dept s: scott.dept [] = [];
-  scott.dept s_json = '';
+export class DeptComponent implements OnInit {
+  depts: Dept [] = [];
+  depts_json = '';
   info = '';
 
   constructor(
-    private scott.dept Service: scott.dept Service,
+    private deptService: DeptService,
     private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
     this.deptService.getDepts().subscribe((depts) => {
-      this.depts = scott.dept s;
+      this.depts = depts;
       this.depts_json = JSON.stringify(depts);
     });
     this.deptService.getInfo().subscribe((info) => {

@@ -9,20 +9,20 @@ import jakarta.annotation.*;
 {{ m.import() }}
 
 /**
- * scott.dept  Table 
+ * Dept Table 
  */
 @Path("/")
-public class scott.dept Resource {
+public class DeptResource {
     @Inject
-    private scott.dept Repository repository;
+    private DeptRepository repository;
 
     @PostConstruct 
     private void init() {
         try {
-            System.out.println("Insert row " + repository.save(new scott.dept (10, "ACCOUNTING", "BRUSSELS")));
-            System.out.println("Insert row " + repository.save(new scott.dept (20, "RESEARCH", "JAKARTA NOSQL")));
-            System.out.println("Insert row " + repository.save(new scott.dept (30, "SALES", "ROME")));
-            System.out.println("Insert row " + repository.save(new scott.dept (40, "OPERATIONS", "MADRID")));
+            System.out.println("Insert row " + repository.save(new Dept (10, "ACCOUNTING", "BRUSSELS")));
+            System.out.println("Insert row " + repository.save(new Dept (20, "RESEARCH", "JAKARTA NOSQL")));
+            System.out.println("Insert row " + repository.save(new Dept (30, "SALES", "ROME")));
+            System.out.println("Insert row " + repository.save(new Dept (40, "OPERATIONS", "MADRID")));
         } catch (Exception e ) {
             System.err.println("Init Exception:" + e.getMessage());
             e.printStackTrace();

@@ -1,6 +1,6 @@
 package com.example.demo;
 
-public record scott.dept  (int scott.dept no,
+public record Dept(int deptno,
                     String dname,
                     String loc) {
 }

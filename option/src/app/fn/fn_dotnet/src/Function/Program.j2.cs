@@ -11,9 +11,9 @@ using System.Text.Json;
 
 [assembly: InternalsVisibleTo("Function.Tests")]
 namespace Function { class Starter {
-    public class scott.dept 
+    public class Dept 
     {
-        public string? scott.dept no { get; set; }
+        public string? deptno { get; set; }
         public string? dname { get; set; }
         public string? loc { get; set; }
     }
@@ -21,9 +21,9 @@ namespace Function { class Starter {
     {{ m.class_def() }} 
 
     {%- if db_family == "nosql" %}    
-    public async Task<string> scott.dept ()
+    public async Task<string> Dept()
     {%- else %}    
-    public string scott.dept ()
+    public string Dept()
     {%- endif %}   
     {
         {{ m.dept() }} 

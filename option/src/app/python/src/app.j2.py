@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 @app.route('/dept')
-def scott.dept ():
+def dept ():
     {{ m.dept() }}     
     response = jsonify(a)
     response.status_code = 200

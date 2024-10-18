@@ -5,5 +5,5 @@ import jakarta.data.repository.Repository;
 import org.eclipse.jnosql.databases.oracle.mapping.OracleNoSQLRepository;
 
 @Repository
-public interface scott.dept Repository extends OracleNoSQLRepository<Dept, Integer> {
+public interface DeptRepository extends OracleNoSQLRepository<Dept, Integer> {
 }

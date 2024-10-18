@@ -20,7 +20,7 @@ if (!$conn) {
     trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
 }
 
-$stid = oci_parse($conn, 'SELECT scott.dept no, dname, loc FROM scott.dept ');
+$stid = oci_parse($conn, 'SELECT deptno, dname, loc FROM dept ');
 if (!$stid) {
     $e = oci_error($conn);
     trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
@@ -48,7 +48,7 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-$sql = "SELECT scott.dept no, dname, loc FROM scott.dept ";
+$sql = "SELECT deptno, dname, loc FROM dept";
 $result = mysqli_query($conn, $sql);
 
 $data = array();
@@ -65,7 +65,7 @@ if (!$conn) {
     die("Connection failed" . pg_last_error($conn));
 }
 
-$sql = "SELECT scott.dept no, dname, loc FROM scott.dept ";
+$sql = "SELECT deptno, dname, loc FROM dept";
 $result = pg_query($conn, $sql);
 $data = pg_fetch_all($result);
 

@@ -1,5 +1,5 @@
-export interface scott.dept  {
-  scott.dept no: string;
+export interface Dept  {
+  deptno: string;
   dname: string;
   loc: string;
 }

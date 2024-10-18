@@ -1,12 +1,12 @@
 openapi: 3.0.0
 info:
-  title: scott.dept  API
+  title: dept API
   version: 1.0.0
 paths:
   /app/dept:
     get:
       summary: Rest DB API
-      operationId: scott.dept 
+      operationId: dept 
       responses:
         '200':
           description: List of departments
@@ -17,7 +17,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    scott.dept no:
+                    deptno:
                       type: integer
                       format: int32
                       description: Department number
