@@ -1088,6 +1088,7 @@ def jinja2_replace_template():
         for filename in files:    
             if filename.find('.j2.')>0 or filename.endswith('.j2'):
                 output_file_path = os.path.join(subdir, filename.replace(".j2", ""))
+                print(f"J2 - processing - {output_file_path}")
                 if os.path.isfile(output_file_path): 
                     print(f"J2 - Skipping - destination file already exists: {output_file_path}") 
                 else:
