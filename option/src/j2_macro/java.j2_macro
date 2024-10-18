@@ -136,18 +136,18 @@ import javax.json.*;
 {%- endmacro -%}
     
 
-{% macro scott.dept() -%}
-        {{ scott.dept _no_return() }}
+{% macro scott_dept() -%}
+        {{ scott_dept _no_return() }}
         return rows; 
 {%- endmacro -%}
 
-{% macro scott.dept _string() -%}
+{% macro scott_dept _string() -%}
         String json = "-";
         try {
             {%- if db_family_type == "sql" %}        
             Class.forName("{{ jdbcDriverClassName }}");    
             {%- endif %}        
-            {{ scott.dept _no_return() | indent(4) }}
+            {{ scott.scott_dept _no_return() | indent(4) }}
             // Jackson 
             ObjectMapper objectMapper = new ObjectMapper();
             json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rows);
@@ -157,7 +157,7 @@ import javax.json.*;
         }     
 {%- endmacro -%}
 
-{% macro scott.dept _no_return() -%}
+{% macro scott_dept _no_return() -%}
         List<Dept> rows = new ArrayList<Dept>();
         {%- if db_family_type == "sql" %}
         {{ sql() }}        
