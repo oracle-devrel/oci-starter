@@ -17,15 +17,15 @@ import static io.micronaut.http.HttpHeaders.LOCATION;
 class DeptController {
     {%- if db_family_type == "sql" %}
     @Inject
-    DeptRepository DeptRepository;
+    DeptRepository deptRepository;
     {%- endif %}	
     {{ m.constructor() }}
 
     @Get(uri = "dept") 
     @Produces(MediaType.APPLICATION_JSON)
-    List<Dept> Dept() throws Exception {
+    List<Dept> dept() throws Exception {
         {%- if db_family_type == "sql" %}
-        return DeptRepository.findAll();
+        return deptRepository.findAll();
         {%- else %}
         {{ m.dept() }}
         {%- endif %}	   

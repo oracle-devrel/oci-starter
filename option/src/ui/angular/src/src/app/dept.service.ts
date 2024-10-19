@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { Dept  } from './dept';
+import { Dept } from './dept';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MessageService } from './message.service';
 
@@ -22,7 +22,7 @@ export class DeptService {
 
   getDepts(): Observable<Dept[]> {
     return this.http.get<Dept[]>('app/dept').pipe(
-      tap((_) => this.log('fetched dept ')),
+      tap((_) => this.log('fetched dept')),
       catchError(this.handleError<Dept[]>('getDept', []))
     );
   }
@@ -49,7 +49,7 @@ export class DeptService {
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
 
-      // Let the app keep running by returning an scott.emp ty result.
+      // Let the app keep running by returning an empty result.
       return of(result as T);
     };
   }

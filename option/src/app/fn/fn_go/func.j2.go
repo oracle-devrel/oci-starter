@@ -10,7 +10,7 @@ import (
 )
 
 type Dept struct {
-    deptno string `json:"deptno"`
+    Deptno string `json:"deptno"`
     Dname string `json:"dname"`
     Loc string `json:"loc"`
 }

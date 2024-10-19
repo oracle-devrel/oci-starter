@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 {{ m.import() }}
 
 /**
- * Dept  Table 
+ * Dept Table 
  */
 @Path("/")
 public class DeptResource {

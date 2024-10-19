@@ -11,7 +11,7 @@
 resource "oci_nosql_table" "starter_nosql_table" {
   #Required
   compartment_id = var.compartment_ocid
-  ddl_statement  = "CREATE TABLE IF NOT EXISTS dept (deptno INTEGER, dname STRING, loc STRING, PRIMARY KEY(SHARD(deptno)))"
+  ddl_statement  = "CREATE TABLE IF NOT EXISTS dept(deptno INTEGER, dname STRING, loc STRING, PRIMARY KEY(SHARD(deptno)))"
   name           = "dept"
 
   table_limits {

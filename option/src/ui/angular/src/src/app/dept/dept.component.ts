@@ -10,7 +10,7 @@ import { MessageService } from '../message.service';
   styleUrls: ['./dept.component.css'],
 })
 export class DeptComponent implements OnInit {
-  depts: Dept [] = [];
+  depts: Dept[] = [];
   depts_json = '';
   info = '';
 

@@ -7,7 +7,7 @@ import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
 @MappedEntity
-public record Dept(@Id int deptno,
+public record Dept (@Id int deptno,
                     String dname,
                     String loc) {
 }

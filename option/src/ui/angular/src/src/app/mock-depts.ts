@@ -1,6 +1,6 @@
-import { Dept  } from './dept';
+import { Dept } from './dept';
 
-export const Dept S: Dept[] = [
+export const DEPTS: Dept[] = [
   { deptno: '1', dname: 'Finance', loc: 'Redwood' },
   { deptno: '2', dname: 'IT', loc: 'Brussesl' },
 ];

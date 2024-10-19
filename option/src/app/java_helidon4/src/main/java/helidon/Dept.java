@@ -3,14 +3,14 @@ package helidon;
 import jakarta.persistence.*;
 
 /**
- * A Dept  Type entity.
+ * A Dept Type entity.
  */
 @Entity(name = "Dept")
 @Table(name = "dept")
 @Access(AccessType.FIELD)
 @NamedQueries({
         @NamedQuery(name = "getDept",
-                    query = "SELECT t FROM dept  t"),
+                    query = "SELECT t FROM Dept t"),
 })
 public class Dept {
 

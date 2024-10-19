@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class DeptRepository implements CrudRepository<Dept, Long> {
     {%- if db_family == "opensearch" %}
     // Query created by Micronaut is not understood by OpenSearch driver
-    @Query("SELECT deptno,dname,loc from dept ")
+    @Query("SELECT deptno,dname,loc from dept")
     abstract List<Dept> findDept();
     {%- endif %}	
 }

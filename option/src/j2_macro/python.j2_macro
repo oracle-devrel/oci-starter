@@ -90,7 +90,7 @@ handle = get_connection()
         for hit in j["hits"]["hits"]:
             a.append( {"deptno": hit["_source"]["deptno"], "dname": hit["_source"]["dname"], "loc": hit["_source"]["loc"]} )
         {%- elif db_family == "nosql" %}
-        request = QueryRequest().set_statement('select deptno, dname, loc FROM dept')
+        request = QueryRequest().set_statement('select deptno, dname, loc from dept')
         while True: 
             result = handle.query_iterable(request)
             for row in result:

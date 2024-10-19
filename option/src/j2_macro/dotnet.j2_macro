@@ -97,7 +97,7 @@ using Oracle.NoSQL.SDK;
     {%- elif db_family == "nosql" %}
         List<Dept> a = new List<Dept>();
         try {
-            await foreach(var result in client.GetQueryAsyncEnumerable("select deptno, dname, loc FROM dept"))
+            await foreach(var result in client.GetQueryAsyncEnumerable("select deptno, dname, loc from dept"))
             {
                 foreach(var row in result.Rows) {
                     a.Add( new Dept{ deptno = row.GetValueAtIndex(0).AsInt32.ToString(), dname = row.GetValueAtIndex(1).AsString, loc = row.GetValueAtIndex(2).AsString } );

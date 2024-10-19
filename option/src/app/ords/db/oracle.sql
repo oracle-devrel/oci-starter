@@ -1,15 +1,15 @@
 -- XXXX This is a very bad practice to use the ADMIN user.
 -- XXXX Should create a user scott and replace connect string with SCOTT ?
--- DROP TABLE dept ;
-CREATE TABLE dept 
+-- DROP TABLE DEPT;
+CREATE TABLE DEPT
        (DEPTNO NUMBER PRIMARY KEY,
         DNAME VARCHAR2(64),
         LOC VARCHAR2(64) );
 
-INSERT INTO dept VALUES (10, 'ACCOUNTING', 'NEW YORK');
-INSERT INTO dept VALUES (20, 'RESEARCH',   'DALLAS');
-INSERT INTO dept VALUES (30, 'SALES',      'CHICAGO');
-INSERT INTO dept VALUES (40, 'OPERATIONS', 'BOSTON');
+INSERT INTO DEPT VALUES (10, 'ACCOUNTING', 'NEW YORK');
+INSERT INTO DEPT VALUES (20, 'RESEARCH',   'DALLAS');
+INSERT INTO DEPT VALUES (30, 'SALES',      'CHICAGO');
+INSERT INTO DEPT VALUES (40, 'OPERATIONS', 'BOSTON');
 COMMIT;
 
 BEGIN
@@ -41,7 +41,7 @@ BEGIN
       p_items_per_page =>  0,
       p_mimes_allowed  => '',
       p_comments       => NULL,
-      p_source         =>  'select ''application/json'', json_arrayagg( json_object(deptno, dname, loc) ) FROM dept '
+      p_source         =>  'select ''application/json'', json_arrayagg( json_object(deptno, dname, loc) ) FROM dept'
   );
 
   ORDS.define_template(

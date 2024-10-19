@@ -1,4 +1,4 @@
-export interface Dept  {
+export interface Dept {
   deptno: string;
   dname: string;
   loc: string;

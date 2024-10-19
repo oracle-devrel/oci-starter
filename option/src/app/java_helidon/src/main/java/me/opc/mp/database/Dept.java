@@ -8,9 +8,9 @@ import jakarta.persistence.*;
 @Access(AccessType.FIELD)
 @NamedQueries({
         @NamedQuery(name = "getDept",
-                    query = "SELECT t FROM dept t"),
+                    query = "SELECT t FROM Dept t"),
 })
-public class Dept  {
+public class Dept {
 
     @Id
     @Column(name = "deptno", nullable = false, updatable = false)
@@ -24,10 +24,10 @@ public class Dept  {
     @Column(name = "loc")
     private String loc;
 
-    public Dept () {
+    public Dept() {
     }
 
-    public Dept ( int deptno, String dname, String loc) {
+    public Dept( int deptno, String dname, String loc) {
         this.deptno = deptno;
         this.dname = dname;
         this.loc = loc;
