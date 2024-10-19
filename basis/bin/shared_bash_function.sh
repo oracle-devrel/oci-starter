@@ -302,7 +302,7 @@ is_deploy_compute() {
 }
 
 livelabs_green_button() {
-  # Lot of tests to be sure we are in a scott.emp ty Green Button LiveLabs
+  # Lot of tests to be sure we are in an Green Button LiveLabs
   # compartment_ocid still undefined ? 
   if grep -q '# export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx' $PROJECT_DIR/env.sh; then
     # vnc_ocid still undefined ? 
