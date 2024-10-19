@@ -37,7 +37,7 @@ resource "oci_identity_policy" "starter_nosql_policy" {
   description    = "${var.prefix}-nosql-policy"
   compartment_id = var.compartment_ocid
   statements = [
-    "Allow dynamic-group ${var.prefix}-nosql-dyngroup to manage nosql-family in compartment id ${var.compartment_ocid}",
+    "Allow dynamic-group default/${var.prefix}-nosql-dyngroup to manage nosql-family in compartment id ${var.compartment_ocid}",
   ]
   freeform_tags = local.freeform_tags
 }

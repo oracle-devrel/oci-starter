@@ -14,7 +14,8 @@ variable "oke_shape" {
   {%- if shape == "ampere" %}
   default = "VM.Standard.A1.Flex"
   {%- else %}
-  default = "VM.Standard.AMD.Generic"
+  # default = "VM.Standard.AMD.Generic"
+  default = "VM.Standard3.Flex"
   {%- endif %}
 }
 
@@ -71,6 +72,10 @@ locals {
   image_id = data.oci_core_images.oraclelinux.images.0.id
 }
   
+output image {
+    value = data.oci_core_images.shape_specific_images
+}
+
 
 #----------------------------------------------------------------------------
 # SECURITY LISTS

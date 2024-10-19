@@ -161,7 +161,7 @@ def db_rules():
     params['db_type'] = longhand(
         'db_type', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database', 'pdb': 'pluggable'})
 
-    if params.get('db_type') not in ['autonomous', 'db_free']:
+    if params.get('db_type') not in ['autonomous', 'db_free', 'database']:
         if params.get('language') == 'ords':
             error(f'ORDS not supported')
         if params.get('language') == 'apex':
@@ -545,7 +545,7 @@ def env_sh_contents():
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
     contents.append('')
     if params.get('compartment_ocid') == None:
-        contents.append('# export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx')       
+        contents.append('export TF_VAR_compartment_ocid="__TO_FILL__"')       
     for s in group_common_contents:
         contents.append(s)
 
@@ -586,7 +586,7 @@ def env_sh_contents():
 def tf_var_comment(contents, param):
     comments = {
         'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
-        'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345', 'If not filled, it will be generated randomly during the first build.'],
+        'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345'],
         'license': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
         'certificate_ocid': ['OCID of the OCI Certificate','If the certificate is not imported in OCI, use instead TF_VAR_certificate_dir=<directory where the certificate resides>', 'export TF_VAR_certificate_dir="__TO_FILL__"']
     }.get(param)
@@ -925,6 +925,8 @@ def create_output_dir():
             cp_terraform_existing("db_ocid", "dbsystem.j2.tf")
             if 'db_ocid' not in params:
                 output_replace_db_node_count()
+            if params.get('language') == 'apex':
+                output_copy_tree("option/src/db/apex", ".")                
 
         if params.get('db_type') == "pluggable":
             cp_terraform_existing("pdb_ocid", "dbsystem_pluggable.j2.tf")
@@ -1086,6 +1088,7 @@ def jinja2_replace_template():
         for filename in files:    
             if filename.find('.j2.')>0 or filename.endswith('.j2'):
                 output_file_path = os.path.join(subdir, filename.replace(".j2", ""))
+                print(f"J2 - processing - {output_file_path}")
                 if os.path.isfile(output_file_path): 
                     print(f"J2 - Skipping - destination file already exists: {output_file_path}") 
                 else:

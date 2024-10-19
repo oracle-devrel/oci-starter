@@ -83,31 +83,8 @@ if [ -v REPOSITORY_NAME ]; then
   return
 fi 
 
-if [ "$TF_VAR_db_password" == "__TO_FILL__" ]; then
-  echo "Generating password for the database"
-  export TF_VAR_db_password=`python3 $BIN_DIR/gen_password.py`
-  sed -i "s&TF_VAR_db_password=\"__TO_FILL__\"&TF_VAR_db_password=\"$TF_VAR_db_password\"&" $PROJECT_DIR/env.sh
-  echo "Password stored in env.sh"
-  echo "> TF_VAR_db_password=$TF_VAR_db_password"
-fi
-
-# Livelabs Green Button (Autodetect compartment/vcn/subnet)
-livelabs_green_button
-
-# -- env.sh
-# Do not stop if __TO_FILL__ are not replaced if TF_VAR_group_name exist in env variable
-# XXX -> It would be safer to check also for TF_VAR_xxx containing __TO_FILL__ too
-
-if declare -p | grep -q "__TO_FILL__"; then
-  echo
-  echo "ERROR: missing environment variables"
-  echo
-  declare -p | grep __TO_FILL__
-  echo
-  echo "Edit the file env.sh. Some variables needs to be filled:" 
-  cat env.sh | grep __TO_FILL__
-  error_exit "Missing environment variables."
-fi  
+# CONFIG.SH
+. $BIN_DIR/config.sh
 
 if ! command -v jq &> /dev/null; then
   error_exit "Unix command jq not found. Please install it."
@@ -117,6 +94,20 @@ fi
 if [ "$OCI_STARTER_VARIABLES_SET" == "$OCI_STARTER_CREATION_DATE" ]; then
   echo "Variables already set"
 else
+  #-- Check internet connection ---------------------------------------------
+  wget -q --spider http://www.oracle.com
+
+  if [ "$?" != "0" ]; then
+    echo "---------------------------------------------------------------------"
+    echo "WARNING - Are you sure that you have connection to Internet ? "
+    if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
+      echo "- For Cloud Shell, be sure that you have an connection to Internet."
+      echo "  Please change the Network connection to Public Network."
+      echo "  See: https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cloudshellintro_topic-Cloud_Shell_Networking.htm"
+    fi
+    echo "---------------------------------------------------------------------"
+  fi
+
   export OCI_STARTER_VARIABLES_SET=$OCI_STARTER_CREATION_DATE
   get_user_details
 
@@ -139,35 +130,6 @@ else
     export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
     export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)
     export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
-  fi
-
-  if [ -z "$TF_VAR_compartment_ocid" ]; then
-    echo "WARNING: compartment_ocid is not defined."
-    # echo "        The components will be created in the root compartment."
-    # export TF_VAR_compartment_ocid=$TF_VAR_tenancy_ocid
-
-    echo "         The components will be created in the 'oci-starter' compartment"
-    STARTER_OCID=`oci iam compartment list --name oci-starter | jq .data[0].id -r`
-    if [ -z "$STARTER_OCID" ]; then
-      echo "Creating a new 'oci-starter' compartment"
-      oci iam compartment create --compartment-id $TF_VAR_tenancy_ocid --description oci-starter --name oci-starter --wait-for-state ACTIVE > $TARGET_DIR/compartment.log 2>&1
-      STARTER_OCID=`cat $TARGET_DIR/compartment.log | grep \"id\" | sed 's/"//g' | sed "s/.*id: //g" | sed "s/,//g"`
-      while [ "$NAME" != "oci-starter" ]
-      do
-        oci iam compartment get --compartment-id=$STARTER_OCID > $TARGET_DIR/waiting.log 2>&1
-        if grep -q "NotAuthorizedOrNotFound" $TARGET_DIR/waiting.log; then
-          echo "Waiting"
-          sleep 2
-        else
-          NAME=`cat $TARGET_DIR/waiting.log | jq -r .data.name`
-        fi
-      done
-    else
-      echo "Using the existing 'oci-starter' Compartment"
-    fi 
-    export TF_VAR_compartment_ocid=$STARTER_OCID
-    auto_echo "TF_VAR_compartment_ocid=$STARTER_OCID"
-    echo "Compartment created"
   fi
 
   # Echo
@@ -314,7 +276,7 @@ if [ -f $STATE_FILE ]; then
   get_output_from_tfstate "DB_URL" "db_url"
 
 
-  if [ "$TF_VAR_db_type" == "autonomous" ]; then
+  if [ "$TF_VAR_db_type" == "autonomous" ] || [ "$TF_VAR_db_type" == "database" ] ; then
     get_output_from_tfstate "ORDS_URL" "ords_url"
   fi
 

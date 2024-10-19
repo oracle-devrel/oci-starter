@@ -65,6 +65,7 @@ build_function() {
      # Push the image to docker
      docker login ${TF_VAR_ocir} -u ${TF_VAR_namespace}/${TF_VAR_username} -p "${TF_VAR_auth_token}"
      docker push $TF_VAR_fn_image
+     exit_on_error
   else 
      echo "build_function - built successfully not found"
      exit 1
@@ -91,9 +92,11 @@ ocir_docker_push () {
   # Push image in registry
   docker tag ${TF_VAR_prefix}-app ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
   docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
+  exit_on_error
 
   docker tag ${TF_VAR_prefix}-ui ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
   docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
+  exit_on_error
 }
 
 replace_db_user_password_in_file() {
@@ -204,6 +207,8 @@ get_user_details() {
     # Cloud Shell
     export TF_VAR_tenancy_ocid=$OCI_TENANCY
     export TF_VAR_region=$OCI_REGION
+    # Needed for child region
+    export TF_VAR_home_region=`echo $OCI_CS_HOST_OCID | awk -F[/.] '{print $4}'`
     if [[ "$OCI_CS_USER_OCID" == *"ocid1.saml2idp"* ]]; then
       # Ex: ocid1.saml2idp.oc1..aaaaaaaaexfmggau73773/user@domain.com -> oracleidentitycloudservice/user@domain.com
       # Split the string in 2 
@@ -227,7 +232,9 @@ get_user_details() {
     export TF_VAR_user_ocid=`sed -n 's/user=//p' /tmp/ociconfig |head -1`
     export TF_VAR_fingerprint=`sed -n 's/fingerprint=//p' /tmp/ociconfig |head -1`
     export TF_VAR_private_key_path=`sed -n 's/key_file=//p' /tmp/ociconfig |head -1`
-    export TF_VAR_region=`sed -n 's/region=//p' /tmp/ociconfig |head -1`
+    export TF_VAR_home_region=`sed -n 's/region=//p' /tmp/ociconfig |head -1`
+    # XX maybe get region from 169.xxx ?
+    export TF_VAR_region=$TF_VAR_home_region
     export TF_VAR_tenancy_ocid=`sed -n 's/tenancy=//p' /tmp/ociconfig |head -1`  
     # echo TF_VAR_user_ocid=$TF_VAR_user_ocid
     # echo TF_VAR_fingerprint=$TF_VAR_fingerprint
@@ -295,7 +302,7 @@ is_deploy_compute() {
 }
 
 livelabs_green_button() {
-  # Lot of tests to be sure we are in a empty Green Button LiveLabs
+  # Lot of tests to be sure we are in an Green Button LiveLabs
   # compartment_ocid still undefined ? 
   if grep -q '# export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx' $PROJECT_DIR/env.sh; then
     # vnc_ocid still undefined ? 

@@ -9,6 +9,11 @@ SECONDS=0
 . env.sh -no-auto
 title "OCI Starter - Build"
 
+# Custom code before build
+if [ -f $PROJECT_DIR/src/before_build.sh ]; then
+  $PROJECT_DIR/src/before_build.sh
+fi
+
 # Build all
 # Generate sshkeys if not part of a Common Resources project 
 if [ "$TF_VAR_ssh_private_path" == "" ]; then
@@ -41,7 +46,7 @@ fi
 # Init target/compute
 if is_deploy_compute; then
     mkdir -p target/compute
-    cp src/compute/* target/compute/.
+    cp -r src/compute target/compute/.
 fi
 
 # Build all app* directories
@@ -82,6 +87,11 @@ if [ "$TF_VAR_tls" != "" ]; then
 fi
 
 $BIN_DIR/add_api_portal.sh
+
+# Custom code after build
+if [ -f $PROJECT_DIR/src/after_build.sh ]; then
+  $PROJECT_DIR/src/after_build.sh
+fi
 
 title "Done"
 $BIN_DIR/done.sh

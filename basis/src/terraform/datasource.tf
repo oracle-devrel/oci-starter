@@ -1,6 +1,10 @@
 ## Copyright (c) 2023, Oracle and/or its affiliates. 
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
+variable home_region {
+  default=""
+}
+
 data "oci_identity_availability_domains" "ADs" {
   compartment_id = var.tenancy_ocid
 }
@@ -25,10 +29,8 @@ locals {
     for r in data.oci_identity_regions.regions.regions :
     r.key => r.name
   } 
-  home_region = lookup(
-    local.region_map, 
-    data.oci_identity_tenancy.tenant_details.home_region_key
-  )
+  # XXXXX ISSUE WITH CHILD REGION - BAD work-around - Works only from home region
+  home_region = coalesce( var.home_region, try( lookup( local.region_map, data.oci_identity_tenancy.tenant_details.home_region_key ), var.region ) )
 }
 
 # Provider Home Region

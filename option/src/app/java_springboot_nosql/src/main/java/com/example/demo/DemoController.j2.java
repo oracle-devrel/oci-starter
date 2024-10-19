@@ -1,4 +1,4 @@
-{%import"java.j2_macro"as m with context%}
+{% import "java.j2_macro" as m with context %}
 package com.example.demo;
 
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +15,10 @@ public class DemoController {
     DemoController(DemoRepository repository) {
         this.repository = repository;
         try {
-            System.out.println("Insert row " + repository.save(new Dept(10, "ACCOUNTING", "BRUSSELS")));
-            System.out.println("Insert row " + repository.save(new Dept(20, "RESEARCH", "SPRING NOSQL")));
-            System.out.println("Insert row " + repository.save(new Dept(30, "SALES", "ROME")));
-            System.out.println("Insert row " + repository.save(new Dept(40, "OPERATIONS", "MADRID")));
+            System.out.println("Insert row " + repository.save(new Dept (10, "ACCOUNTING", "BRUSSELS")));
+            System.out.println("Insert row " + repository.save(new Dept (20, "RESEARCH", "SPRING NOSQL")));
+            System.out.println("Insert row " + repository.save(new Dept (30, "SALES", "ROME")));
+            System.out.println("Insert row " + repository.save(new Dept (40, "OPERATIONS", "MADRID")));
         } catch (Exception e ) {
             System.err.println("Exception:" + e.getMessage());
             e.printStackTrace();

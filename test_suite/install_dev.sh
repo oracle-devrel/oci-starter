@@ -13,8 +13,6 @@
 mkdir -p $HOME/data/github/mgueury.skynet.be/test_suite
 mkdir .oci
 
-oci setup repair-file-permissions --file $HOME/.oci/config
-oci setup repair-file-permissions --file $HOME/.oci/oci_api_key.pem
 
 # Already Installed
 # sudo dnf install -y dnf-utils zip unzip
@@ -30,9 +28,9 @@ sudo systemctl start docker
 # GIT - OCICLI
 sudo dnf install -y git python36-oci-cli
 
-cd $HOME/data/github/mgueury.skynet.be
-git clone https://github.com/mgueury/oci-starter.git
-cp oci-starter/test_suite/* test_suite/.
+oci setup repair-file-permissions --file $HOME/.oci/config
+oci setup repair-file-permissions --file $HOME/.oci/oci_api_key.pem
+
 
 # Java
 sudo dnf install -y graalvm22-ee-17-jdk 
@@ -55,12 +53,20 @@ sudo dnf install -y jq
 
 # Kubectl
 # XXX Got forbidden and had to download manually ?
+mkdir -p $HOME/bin
 cd $HOME/bin
-curl -LO https://dl.k8s.io/release/v1.29.2/bin/linux/arm64/kubectl
+if [ `arch` == "x86_64" ]; then
+  ARCH_PREFIX=amd64
+else
+  ARCH_PREFIX=arm64
+fi
+curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH_PREFIX}/kubectl
 chmod +x kubectl
-echo "source <(./kubectl completion bash)" >> ~/.bashrc
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+echo "shopt -s direxpand" >> ~/.bashrc
 
 # Helm
+cd /tmp
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
 chmod 700 get_helm.sh
 ./get_helm.sh

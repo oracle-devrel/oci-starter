@@ -20,7 +20,7 @@ if is_deploy_compute; then
   cp src/install.sh target/.
 
   mkdir -p ../../target/compute/$APP_DIR
-  cp nginx_app.locations ../../target/compute
+  cp nginx_app.locations ../../target/compute/compute
   cp -r target/* ../../target/compute/$APP_DIR/.
   # Replace the user and password in the start file
   replace_db_user_password_in_file ../../target/compute/$APP_DIR/start.sh  

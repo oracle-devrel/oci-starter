@@ -116,6 +116,8 @@ loop_lang () {
     OPTION_LANG=apex
     OPTION_DB=atp 
     loop_shape
+    OPTION_DB=database 
+    loop_shape
   fi    
   OPTION_LANG=go
   loop_db  

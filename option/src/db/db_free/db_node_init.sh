@@ -20,32 +20,6 @@ dnf -y localinstall ${FREEDB_RPM}
 # echo DB_PASSWORD=$DB_PASSWORD
 (echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-23ai configure
 
-ls -al /usr/local/bin
-if [ "$TF_VAR_language" = "apex" ]; then
-  # Install ORDS in silent mode
-  dnf install -y graalvm22-ee-17-jdk
-  dnf install -y ords
-  cat > $HOME/password.txt << EOF
-${DB_PASSWORD}
-${DB_PASSWORD}
-EOF
-  su - oracle -c "/usr/local/bin/ords --config /etc/ords/config install --admin-user SYS --proxy-user --db-hostname localhost --db-port 1521 --db-servicename FREE --log-folder /etc/ords/logs --feature-sdw true --feature-db-api true --feature-rest-enabled-sql true --password-stdin < password.txt"
-  /etc/init.d/ords start
-  firewall-cmd --zone=public --add-port=8080/tcp --permanent
-
-  # Install APEX
-  cd /tmp
-  su - oracle -c "wget https://download.oracle.com/otn_software/apex/apex_23.2_en.zip"
-  su - oracle -c "unzip apex_23.2_en.zip"
-  su - oracle -c "cd apex; sqlplus '/ as sysdba' @apexins.sql SYSAUX SYSAUX TEMP /i/"
-else
-  echo "TF_VAR_language=$TF_VAR_language. APEX not installed."
-fi
-
-# Open the Firewall
-firewall-cmd --zone=public --add-port=1521/tcp --permanent
-firewall-cmd --reload
-
 cat >> /home/oracle/.bash_profile << EOF
 
 # Setup Oracle Free environment
@@ -54,6 +28,37 @@ export ORAENV_ASK=NO
 . /opt/oracle/product/23ai/dbhomeFree/bin/oraenv
 unset ORAENV_ASK
 EOF
+
+ls -al /usr/local/bin
+if [ "$TF_VAR_language" = "apex" ]; then
+  # Install ORDS in silent mode
+  dnf install -y graalvm22-ee-17-jdk
+  dnf install -y ords
+  chown oracle /etc/ords 
+  cat > /tmp/password.txt << EOF
+${DB_PASSWORD}
+${DB_PASSWORD}
+EOF
+  su - oracle -c "/usr/local/bin/ords --config /etc/ords/config install --admin-user SYS --proxy-user --db-hostname localhost --db-port 1521 --db-servicename FREE --log-folder /etc/ords/logs --feature-sdw true --feature-db-api true --feature-rest-enabled-sql true --password-stdin < /tmp/password.txt"
+  /etc/init.d/ords start
+  firewall-cmd --zone=public --add-port=8080/tcp --permanent
+
+  # Install APEX
+  cd /tmp
+  export APEX_ZIP=apex_23.2_en.zip
+  su - oracle -c "wget https://download.oracle.com/otn_software/apex/$APEX_ZIP"
+  su - oracle -c "unzip $APEX_ZIP"
+  su - oracle -c "cd apex; sqlplus '/ as sysdba' <<EOF
+@apexins.sql SYSAUX SYSAUX TEMP /i/
+exit
+EOF"
+else
+  echo "TF_VAR_language=$TF_VAR_language. APEX not installed."
+fi
+
+# Open the Firewall
+firewall-cmd --zone=public --add-port=1521/tcp --permanent
+firewall-cmd --reload
 
 # -- Root container
 # sqlplus sys/$DB_PASSWORD@//localhost:1521/free as sysdba
