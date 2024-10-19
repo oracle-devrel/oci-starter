@@ -7,7 +7,7 @@ import (
     {{ m.import() }}
 )
 
-type Dept  struct {
+type Dept struct {
     Deptno string `json:"deptno"`
     Dname string `json:"dname"`
     Loc string `json:"loc"`
@@ -15,7 +15,7 @@ type Dept  struct {
 
 {{ m.class_def() }}
 
-func dept (c *gin.Context) {
+func dept(c *gin.Context) {
     {{ m.dept() }}
     c.IndentedJSON(http.StatusOK, d)
 }
@@ -28,6 +28,6 @@ func info(c *gin.Context) {
 func main() {
     router := gin.Default()
     router.GET("/info", info)
-    router.GET("/dept", dept )
+    router.GET("/dept", dept)
     router.Run(":8080")
 }

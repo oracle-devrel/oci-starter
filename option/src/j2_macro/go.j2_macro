@@ -45,7 +45,7 @@ type Result struct {
     Hits struct {
         Hits []struct {
             Source struct {
-                deptno string `json:"deptno"`
+                Deptno string `json:"deptno"`
                 Dname  string `json:"dname"`
                 Loc    string `json:"loc"`
             } `json:"_source"`
@@ -102,7 +102,7 @@ type Result struct {
         Endpoint: os.Getenv("TF_VAR_nosql_endpoint"),
     }
     client, err := nosqldb.NewClient(cfg)
-    queryReq := &nosqldb.QueryRequest{ Statement: "select deptno, dname, loc FROM dept" }
+    queryReq := &nosqldb.QueryRequest{ Statement: "select deptno, dname, loc from dept" }
     var d []*types.MapValue
     for {
         queryRes, err := client.Query(queryReq)
@@ -137,7 +137,7 @@ type Result struct {
     }
     defer db.Close()
      
-    rows,err := db.Query("select deptno, dname, loc FROM dept")
+    rows,err := db.Query("select deptno, dname, loc from dept")
     if err != nil {
         fmt.Println("Error running query")
         fmt.Println(err)

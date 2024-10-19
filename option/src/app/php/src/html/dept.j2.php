@@ -20,7 +20,7 @@ if (!$conn) {
     trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
 }
 
-$stid = oci_parse($conn, 'SELECT deptno, dname, loc FROM dept ');
+$stid = oci_parse($conn, 'SELECT deptno, dname, loc FROM dept');
 if (!$stid) {
     $e = oci_error($conn);
     trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);

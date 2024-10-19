@@ -1,6 +1,6 @@
 namespace starter;
 
-public class dept
+public class Dept
 {
     public string? deptno { get; set; }
     public string? dname { get; set; }
