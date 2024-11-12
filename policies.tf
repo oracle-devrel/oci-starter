@@ -28,6 +28,7 @@ resource "oci_identity_dynamic_group" "devopsgroup3" {
 
 # Policy without Dynamic group
 # ALLOW ANY-USER to manage generative-ai-family in tenancy WHERE ALL {request.principal.type='opensearchcluster', request.resource.compartment.id='<cluster_compartment_id>'}
+# ALLOW ANY-USER to manage generative-ai-family in tenancy WHERE request.principal.id='ocid1..oda.xxxx'
 
 resource "oci_identity_policy" "devopspolicy" {
   provider       = oci.home_region

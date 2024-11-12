@@ -304,7 +304,7 @@ is_deploy_compute() {
 livelabs_green_button() {
   # Lot of tests to be sure we are in an Green Button LiveLabs
   # compartment_ocid still undefined ? 
-  if grep -q '# export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx' $PROJECT_DIR/env.sh; then
+  if grep -q 'export TF_VAR_compartment_ocid="__TO_FILL__"' $PROJECT_DIR/env.sh; then
     # vnc_ocid still undefined ? 
     if [ "$TF_VAR_vcn_ocid" != "__TO_FILL__" ]; then
       # Variables already set
@@ -337,7 +337,7 @@ livelabs_green_button() {
     echo TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid
 
     if [ "$TF_VAR_compartment_ocid" != "" ]; then
-      sed -i "s&# export TF_VAR_compartment_ocid=ocid1.compartment.xxxxx&export TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh
+      sed -i "s&export TF_VAR_compartment_ocid=\"__TO_FILL__\"&export TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh
       echo "TF_VAR_compartment_ocid stored in env.sh"
     fi  
 
