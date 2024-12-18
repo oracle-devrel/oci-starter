@@ -895,9 +895,9 @@ def create_output_dir():
                 output_copy_tree("option/tls/new_http_01", "src/tls")
             elif params.get('tls') == 'existing_ocid':
                 cp_terraform_apigw("apigw_compute_append.tf")   
-            # Compute in app_subnet uses APIGW front-end    
+            # Compute in app_subnet uses an APIGW in web_subnet
             if params.get('deploy_type') == 'compute' and params.get('db_install') == 'shared_compute':
-                cp_terraform_apigw("apigw_compute_append.tf")          
+                cp_terraform_apigw("apigw_compute_append.tf")
 
         elif params.get('deploy_type') == "container_instance":
             cp_terraform("container_instance.j2.tf")
