@@ -72,9 +72,9 @@ resource "oci_core_instance_configuration" "starter_instance_configuration" {
         }
 
         create_vnic_details {
-            subnet_id                 = data.oci_core_subnet.starter_web_subnet.id
+            subnet_id                 = data.oci_core_subnet.starter_app_subnet.id
             display_name              = "Primaryvnic"
-            assign_public_ip          = true
+            assign_public_ip          = false
             assign_private_dns_record = true
             hostname_label            = "${var.prefix}-instance"
         }
@@ -118,7 +118,7 @@ resource "oci_core_instance_pool" "starter_instance_pool" {
 
   placement_configurations {
     availability_domain = data.oci_identity_availability_domain.ad.name
-    primary_subnet_id = data.oci_core_subnet.starter_web_subnet.id
+    primary_subnet_id = data.oci_core_subnet.starter_app_subnet.id
   }
 
   load_balancers {

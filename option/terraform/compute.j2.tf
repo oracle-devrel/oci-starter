@@ -82,5 +82,5 @@ locals {
 }
 
 output "compute_ip" {
-  value = local.compute_public_ip
+  value = local.compute_private_ip
 }
