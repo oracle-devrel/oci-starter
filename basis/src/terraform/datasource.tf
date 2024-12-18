@@ -24,6 +24,20 @@ data "oci_identity_regions" "current_region" {
 data oci_identity_regions regions {
 }
 
+# IDCS
+variable idcs_domain_name { default = "Default" }
+variable idcs_url { default = "" }
+
+data "oci_identity_domains" "starter_domains" {
+    #Required
+    compartment_id = var.tenancy_ocid
+    display_name = var.idcs_domain_name
+}
+
+locals {
+  idcs_url = (var.idcs_url!="")?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url
+}
+
 locals {
   region_map = {
     for r in data.oci_identity_regions.regions.regions :

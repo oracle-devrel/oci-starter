@@ -22,12 +22,12 @@ resource "oci_nosql_table" "starter_nosql_table" {
   }
 }
 
-resource "oci_identity_dynamic_group" "starter_nosql_dyngroup" {
+resource "oci_identity_domains_dynamic_resource_group" "starter_nosql_dyngroup" {
   provider       = oci.home  
   compartment_id = var.tenancy_ocid
-  name           = "${var.prefix}-nosql-dyngroup"
-  description    = "${var.prefix}-nosql-dyngroup"
+  display_name   = "${var.prefix}-nosql-dyngroup"
   matching_rule  = "ANY {instance.compartment.id = '${var.compartment_ocid}', ALL {resource.type = 'fnfunc', resource.compartment.id ='${var.compartment_ocid}'}, ALL {resource.type = 'computecontainerinstance', resource.compartment.id ='${var.compartment_ocid}' }}"
+  schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
   freeform_tags = local.freeform_tags
 }
 
@@ -37,7 +37,7 @@ resource "oci_identity_policy" "starter_nosql_policy" {
   description    = "${var.prefix}-nosql-policy"
   compartment_id = var.compartment_ocid
   statements = [
-    "Allow dynamic-group default/${var.prefix}-nosql-dyngroup to manage nosql-family in compartment id ${var.compartment_ocid}",
+    "Allow dynamic-group ${var.idcs_domain_name}/${var.prefix}-nosql-dyngroup to manage nosql-family in compartment id ${var.compartment_ocid}",
   ]
   freeform_tags = local.freeform_tags
 }
