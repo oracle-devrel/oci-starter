@@ -214,7 +214,7 @@ if [ -f $STATE_FILE ]; then
   # OBJECT_STORAGE_URL
   export OBJECT_STORAGE_URL=https://objectstorage.${TF_VAR_region}.oraclecloud.com
 
-  # APIGW URL
+  # APIGW URL - not always used
   get_attribute_from_tfstate "APIGW_HOSTNAME" "starter_apigw" "hostname"
   # APIGW Deployment id
   get_attribute_from_tfstate "APIGW_DEPLOYMENT_OCID" "starter_apigw_deployment" "id"
