@@ -24,20 +24,7 @@ data "oci_identity_regions" "current_region" {
 data oci_identity_regions regions {
 }
 
-# IDCS
-variable idcs_domain_name { default = "Default" }
-variable idcs_url { default = "" }
-
-data "oci_identity_domains" "starter_domains" {
-    #Required
-    compartment_id = var.tenancy_ocid
-    display_name = var.idcs_domain_name
-}
-
-locals {
-  idcs_url = (var.idcs_url!="")?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url
-}
-
+# HOME REGION
 locals {
   region_map = {
     for r in data.oci_identity_regions.regions.regions :
@@ -61,6 +48,20 @@ data "oci_core_images" "node_pool_images" {
   shape                    = "VM.Standard.E4.Flex"
   sort_by                  = "TIMECREATED"
   sort_order               = "DESC"
+}
+
+# IDCS
+variable idcs_domain_name { default = "Default" }
+variable idcs_url { default = "" }
+
+data "oci_identity_domains" "starter_domains" {
+    #Required
+    compartment_id = var.tenancy_ocid
+    display_name = var.idcs_domain_name
+}
+
+locals {
+  idcs_url = (var.idcs_url!="")?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url
 }
 
 # OCI Services
