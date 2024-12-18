@@ -274,7 +274,7 @@ if [ -f $STATE_FILE ]; then
   # Check if there is a BASTION SERVICE with a BASTION COMMAND
   get_output_from_tfstate "BASTION_COMMAND" "bastion_command"
   if [ "$BASTION_COMMAND" == "" ]; then
-      BASTION_USER_HOST = "opc@$$BASTION_IP"
+      export BASTION_USER_HOST="opc@$$BASTION_IP"
       export BASTION_PROXY_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p $BASTION_USER_HOST"
   elif [ "$BASTION_IP" == "$COMPUTE_IP" ]; then
      export BASTION_PROXY_COMMAND=""
