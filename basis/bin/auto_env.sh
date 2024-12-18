@@ -214,14 +214,11 @@ if [ -f $STATE_FILE ]; then
   # OBJECT_STORAGE_URL
   export OBJECT_STORAGE_URL=https://objectstorage.${TF_VAR_region}.oraclecloud.com
 
-  # API GW
-  if [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_ui_type" == "api" ]; then
-    # APIGW URL
-    get_attribute_from_tfstate "APIGW_HOSTNAME" "starter_apigw" "hostname"
-    # APIGW Deployment id
-    get_attribute_from_tfstate "APIGW_DEPLOYMENT_OCID" "starter_apigw_deployment" "id"
-  fi
-
+  # APIGW URL
+  get_attribute_from_tfstate "APIGW_HOSTNAME" "starter_apigw" "hostname"
+  # APIGW Deployment id
+  get_attribute_from_tfstate "APIGW_DEPLOYMENT_OCID" "starter_apigw_deployment" "id"
+ 
   # Instance Pool
   if [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
     # XXX Does not work with Resource Manager XXX
