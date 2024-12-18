@@ -24,11 +24,10 @@ resource "oci_nosql_table" "starter_nosql_table" {
 
 resource "oci_identity_domains_dynamic_resource_group" "starter_nosql_dyngroup" {
   provider       = oci.home  
-  compartment_id = var.tenancy_ocid
+  idcs_endpoint  = local.idcs_url  
   display_name   = "${var.prefix}-nosql-dyngroup"
   matching_rule  = "ANY {instance.compartment.id = '${var.compartment_ocid}', ALL {resource.type = 'fnfunc', resource.compartment.id ='${var.compartment_ocid}'}, ALL {resource.type = 'computecontainerinstance', resource.compartment.id ='${var.compartment_ocid}' }}"
   schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
-  freeform_tags = local.freeform_tags
 }
 
 resource "oci_identity_policy" "starter_nosql_policy" {
