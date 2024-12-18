@@ -196,8 +196,9 @@ build_option() {
        -tls $OPTION_TLS \
        -compartment_ocid $EX_COMPARTMENT_OCID \
        -vcn_ocid $TF_VAR_vcn_ocid \
-       -public_subnet_ocid $TF_VAR_public_subnet_ocid \
-       -private_subnet_ocid $TF_VAR_private_subnet_ocid \
+       -web_subnet_ocid $TF_VAR_web_subnet_ocid \
+       -app_subnet_ocid $TF_VAR_app_subnet_ocid \
+       -db_subnet_ocid $TF_VAR_db_subnet_ocid \
        -oke_ocid $TF_VAR_oke_ocid \
        -atp_ocid $TF_VAR_atp_ocid \
        -db_ocid $TF_VAR_db_ocid \

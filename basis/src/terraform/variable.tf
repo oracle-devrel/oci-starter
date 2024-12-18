@@ -21,8 +21,10 @@ variable instance_ocpus { default = 1 }
 variable instance_shape_config_memory_in_gbs { default = 8 }
 
 # Landing Zones
-variable lz_appdev_cmp_ocid { default="" }
-variable lz_database_cmp_ocid { default="" }
+variable lz_web_cmp_ocid { default="" }
+variable lz_app_cmp_ocid { default="" }
+variable lz_db_cmp_ocid { default="" }
+variable lz_serv_cmp_ocid { default="" }
 variable lz_network_cmp_ocid { default="" }
 variable lz_security_cmp_ocid { default="" }
 
@@ -57,8 +59,10 @@ locals {
   }
   
   # Landing Zone
-  lz_appdev_cmp_ocid = var.lz_appdev_cmp_ocid == "" ? var.compartment_ocid : var.lz_appdev_cmp_ocid
-  lz_database_cmp_ocid = var.lz_database_cmp_ocid == "" ? var.compartment_ocid : var.lz_database_cmp_ocid
+  lz_web_cmp_ocid = var.lz_web_cmp_ocid == "" ? var.compartment_ocid : var.lz_web_cmp_ocid
+  lz_app_cmp_ocid = var.lz_app_cmp_ocid == "" ? var.compartment_ocid : var.lz_app_cmp_ocid
+  lz_db_cmp_ocid = var.lz_db_cmp_ocid == "" ? var.compartment_ocid : var.lz_db_cmp_ocid
+  lz_serv_cmp_ocid = var.lz_serv_cmp_ocid == "" ? var.compartment_ocid : var.lz_serv_cmp_ocid
   lz_network_cmp_ocid = var.lz_network_cmp_ocid == "" ? var.compartment_ocid : var.lz_network_cmp_ocid
   lz_security_cmp_ocid = var.lz_security_cmp_ocid == "" ? var.compartment_ocid : var.lz_security_cmp_ocid
 }

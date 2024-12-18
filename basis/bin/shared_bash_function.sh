@@ -58,14 +58,16 @@ build_function() {
 
   if grep --quiet "built successfully" $TARGET_DIR/fn_build.log; then
      fn bump
-     # Store the image name and DB_URL in files
-     grep "built successfully" $TARGET_DIR/fn_build.log | sed "s/Function //" | sed "s/ built successfully.//" > $TARGET_DIR/fn_image.txt
-     echo "$1" > $TARGET_DIR/fn_db_url.txt
-     . ../../env.sh
+     export TF_VAR_fn_image=`grep "built successfully" $TARGET_DIR/fn_build.log | sed "s/Function //" | sed "s/ built successfully.//"`
      # Push the image to docker
      docker login ${TF_VAR_ocir} -u ${TF_VAR_namespace}/${TF_VAR_username} -p "${TF_VAR_auth_token}"
+     exit_on_error
      docker push $TF_VAR_fn_image
      exit_on_error
+     # Store the image name and DB_URL in files
+     echo $TF_VAR_fn_image > $TARGET_DIR/fn_image.txt
+     echo "$1" > $TARGET_DIR/fn_db_url.txt
+     . ../../env.sh
   else 
      echo "build_function - built successfully not found"
      exit 1
@@ -351,12 +353,14 @@ livelabs_green_button() {
     export TF_VAR_subnet_ocid=`oci network subnet list --compartment-id $TF_VAR_compartment_ocid | jq -c -r '.data[].id'`
     echo TF_VAR_subnet_ocid=$TF_VAR_subnet_ocid  
     if [ "$TF_VAR_subnet_ocid" != "" ]; then
-      sed -i "s&TF_VAR_public_subnet_ocid=\"__TO_FILL__\"&TF_VAR_public_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
-      sed -i "s&TF_VAR_private_subnet_ocid=\"__TO_FILL__\"&TF_VAR_private_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
+      sed -i "s&TF_VAR_web_subnet_ocid=\"__TO_FILL__\"&TF_VAR_web_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
+      sed -i "s&TF_VAR_app_subnet_ocid=\"__TO_FILL__\"&TF_VAR_app_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
+      sed -i "s&TF_VAR_db_subnet_ocid=\"__TO_FILL__\"&TF_VAR_db_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
       echo "TF_VAR_subnet_ocid stored in env.sh"
       # Set the real variables such that the first "build" works too.
-      export TF_VAR_public_subnet_ocid=$TF_VAR_subnet_ocid
-      export TF_VAR_private_subnet_ocid=$TF_VAR_subnet_ocid
+      export TF_VAR_web_subnet_ocid=$TF_VAR_subnet_ocid
+      export TF_VAR_app_subnet_ocid=$TF_VAR_subnet_ocid
+      export TF_VAR_db_subnet_ocid=$TF_VAR_subnet_ocid
     fi  
     
     # LiveLabs support only E4 Shapes

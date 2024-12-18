@@ -2,7 +2,7 @@ variable compute_ready { default = "" }
 
 resource "oci_core_image" "custom_image" {
   count          = var.compute_ready == "" ? 0 : 1
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
   instance_id    = oci_core_instance.starter_instance.id
   launch_mode = "NATIVE"
   display_name = "${var.prefix}-image"
@@ -15,8 +15,8 @@ resource "oci_core_image" "custom_image" {
 
 resource "oci_load_balancer" "starter_pool_lb" {
   shape          = "flexible"
-  compartment_id = local.lz_appdev_cmp_ocid
-  subnet_ids = [ data.oci_core_subnet.starter_public_subnet.id ]
+  compartment_id = local.lz_app_cmp_ocid
+  subnet_ids = [ data.oci_core_subnet.starter_web_subnet.id ]
   shape_details {
     #Required
     minimum_bandwidth_in_mbps = 10
@@ -53,7 +53,7 @@ resource "oci_load_balancer_listener" "starter_pool_lb_listener" {
 
 resource "oci_core_instance_configuration" "starter_instance_configuration" {
   count          = var.compute_ready == "" ? 0 : 1
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-instance-config"
 
   instance_details {
@@ -61,7 +61,7 @@ resource "oci_core_instance_configuration" "starter_instance_configuration" {
 
     launch_details {
         availability_domain = data.oci_identity_availability_domain.ad.name
-        compartment_id      = local.lz_appdev_cmp_ocid
+        compartment_id      = local.lz_app_cmp_ocid
         display_name        = "${var.prefix}-launch-details"
         shape               = var.instance_shape
 
@@ -72,7 +72,7 @@ resource "oci_core_instance_configuration" "starter_instance_configuration" {
         }
 
         create_vnic_details {
-            subnet_id                 = data.oci_core_subnet.starter_public_subnet.id
+            subnet_id                 = data.oci_core_subnet.starter_web_subnet.id
             display_name              = "Primaryvnic"
             assign_public_ip          = true
             assign_private_dns_record = true
@@ -108,7 +108,7 @@ resource "oci_core_instance_configuration" "starter_instance_configuration" {
 
 resource "oci_core_instance_pool" "starter_instance_pool" {
   count          = var.compute_ready == "" ? 0 : 1
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
   instance_configuration_id = oci_core_instance_configuration.starter_instance_configuration[0].id
   size = 2
   state = "RUNNING"
@@ -118,7 +118,7 @@ resource "oci_core_instance_pool" "starter_instance_pool" {
 
   placement_configurations {
     availability_domain = data.oci_identity_availability_domain.ad.name
-    primary_subnet_id = data.oci_core_subnet.starter_public_subnet.id
+    primary_subnet_id = data.oci_core_subnet.starter_web_subnet.id
   }
 
   load_balancers {
@@ -135,7 +135,7 @@ resource "oci_core_instance_pool" "starter_instance_pool" {
 
 data "oci_core_instance_pool_instances" "starter_instance_pool_instances_datasource" {
   count            = var.compute_ready == "" ? 0 : 1  
-  compartment_id   = local.lz_appdev_cmp_ocid
+  compartment_id   = local.lz_app_cmp_ocid
   instance_pool_id = oci_core_instance_pool.starter_instance_pool[0].id
 }
 

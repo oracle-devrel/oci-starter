@@ -9,7 +9,7 @@ data "oci_core_instance" "starter_instance" {
 resource "oci_core_instance" "starter_instance" {
 
   availability_domain = data.oci_identity_availability_domain.ad.name
-  compartment_id      = local.lz_appdev_cmp_ocid
+  compartment_id      = local.lz_app_cmp_ocid
   display_name        = "${var.prefix}-instance"
   shape               = var.instance_shape
 
@@ -20,7 +20,11 @@ resource "oci_core_instance" "starter_instance" {
   }
 
   create_vnic_details {
-    subnet_id                 = data.oci_core_subnet.starter_public_subnet.id
+{%- if db_install == "shared_compute" %}
+    subnet_id                 = data.oci_core_subnet.starter_web_subnet.id
+{%- else %}
+    subnet_id                 = data.oci_core_subnet.starter_app_subnet.id
+{%- endif %}
     display_name              = "Primaryvnic"
     assign_public_ip          = true
     assign_private_dns_record = true

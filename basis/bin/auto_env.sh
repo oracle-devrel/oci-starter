@@ -271,6 +271,20 @@ if [ -f $STATE_FILE ]; then
   # Bastion 
   get_output_from_tfstate "BASTION_IP" "bastion_public_ip"
 
+  # Check if there is a BASTION SERVICE with a BASTION COMMAND
+  get_output_from_tfstate "BASTION_COMMAND" "bastion_command"
+  if [ "$BASTION_COMMAND" == "" ]; then
+      BASTION_USER_HOST = "opc@$$BASTION_IP"
+      export BASTION_PROXY_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p $BASTION_USER_HOST"
+  elif [ "$BASTION_IP" == "$COMPUTE_IP" ]; then
+     export BASTION_PROXY_COMMAND=""
+  else 
+      # export Ex: BASTION_COMMAND="ssh -i <privateKey>-o ProxyCommand=\"ssh -i <privateKey> -W %h:%p -p 22 ocid1.bastionsession.oc1.eu-frankfurt-1.xxxxxxxx@host.bastion.eu-frankfurt-1.oci.oraclecloud.com\" -p 22 opc@10.0.1.97"
+      export BASTION_USER_HOST=`echo $BASTION_COMMAND | sed "s/.*ocid1.bastionsession/ocid1.bastionsession/" | sed "s/oci\.oraclecloud\.com.*/oci\.oraclecloud\.com/"`
+      export BASTION_IP=`echo $BASTION_COMMAND | sed "s/.*opc@//"`
+      export BASTION_PROXY_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p $BASTION_USER_HOST"
+  fi
+
   # JDBC_URL
   get_output_from_tfstate "JDBC_URL" "jdbc_url"
   get_output_from_tfstate "DB_URL" "db_url"

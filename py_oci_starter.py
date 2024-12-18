@@ -84,7 +84,7 @@ default_options = {
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
                       '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid', '-psql_ocid', '-opensearch_ocid', '-nosql_ocid',
                       '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token', '-tls',
-                      '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape','-db_install', 
+                      '-subnet_ocid','-web_subnet_ocid','-app_subnet_ocid','-db_subnet_ocid','-shape','-db_install', 
                       '-ui', '-deploy', '-database', '-license']
 
 # hidden_options - allowed but not advertised
@@ -200,12 +200,13 @@ def kubernetes_rules():
 
 def vcn_rules():
     if 'subnet_ocid' in params:
-        params['public_subnet_ocid'] = params['subnet_ocid']
-        params['private_subnet_ocid'] = params['subnet_ocid']
+        params['web_subnet_ocid'] = params['subnet_ocid']
+        params['app_subnet_ocid'] = params['subnet_ocid']
+        params['db_subnet_ocid'] = params['subnet_ocid']
         params.pop('subnet_ocid')
-    if 'vcn_ocid' in params and 'public_subnet_ocid' not in params:
+    if 'vcn_ocid' in params and 'web_subnet_ocid' not in params:
         error('-subnet_ocid or required for -vcn_ocid')
-    elif 'vcn_ocid' not in params and 'public_subnet_ocid' in params:
+    elif 'vcn_ocid' not in params and 'web_subnet_ocid' in params:
         error('-vcn_ocid required for -subnet_ocid')
     
  
@@ -353,8 +354,9 @@ starter.sh
    -nosql_ocid (optional)
    -oke_ocid (optional)
    -prefix (default starter)
-   -public_subnet_ocid (optional)
-   -private_subnet_ocid (optional)
+   -web_subnet_ocid (optional)
+   -app_subnet_ocid (optional)
+   -db_subnet_ocid (optional)
    -shape (optional freetier)
    -ui (default html | reactjs | jet | angular | none) 
    -vcn_ocid (optional)
@@ -566,8 +568,8 @@ def env_sh_contents():
     #    contents.append('  # export TF_VAR_instance_shape=VM.Standard.E4.Flex')
     #    contents.append('')
     # contents.append('  # Landing Zone')
-    # contents.append('  # export TF_VAR_lz_appdev_cmp_ocid=$TF_VAR_compartment_ocid')
-    # contents.append('  # export TF_VAR_lz_database_cmp_ocid=$TF_VAR_compartment_ocid')
+    # contents.append('  # export TF_VAR_lz_app_cmp_ocid=$TF_VAR_compartment_ocid')
+    # contents.append('  # export TF_VAR_lz_db_cmp_ocid=$TF_VAR_compartment_ocid')
     # contents.append('  # export TF_VAR_lz_network_cmp_ocid=$TF_VAR_compartment_ocid')
     # contents.append('  # export TF_VAR_lz_security_cmp_ocid=$TF_VAR_compartment_ocid')
     contents.append("fi")      
@@ -1166,8 +1168,9 @@ if 'group_common' in params:
     # The application will use the Common Resources created by group_name above.
     # del params['group_common']
     params['vcn_ocid'] = TO_FILL
-    params['public_subnet_ocid'] = TO_FILL
-    params['private_subnet_ocid'] = TO_FILL
+    params['web_subnet_ocid'] = TO_FILL
+    params['app_subnet_ocid'] = TO_FILL
+    params['db_subnet_ocid'] = TO_FILL
     # Use a bastion only for the database
     if params.get('db_type')!='none':
         params['bastion_ocid'] = TO_FILL

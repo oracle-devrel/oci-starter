@@ -8,7 +8,7 @@ locals {
 resource "oci_core_instance" "starter_db_free" {
 
   availability_domain = data.oci_identity_availability_domain.ad.name
-  compartment_id      = local.lz_database_cmp_ocid
+  compartment_id      = local.lz_db_cmp_ocid
   display_name        = "${var.prefix}-db-free"
   shape               = var.instance_shape
 
@@ -19,7 +19,7 @@ resource "oci_core_instance" "starter_db_free" {
   }
 
   create_vnic_details {
-    subnet_id                 = data.oci_core_subnet.starter_private_subnet.id
+    subnet_id                 = data.oci_core_subnet.starter_db_subnet.id
     display_name              = "Primaryvnic"
     assign_public_ip          = false
     assign_private_dns_record = true

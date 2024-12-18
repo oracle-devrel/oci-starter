@@ -51,7 +51,7 @@ resource "oci_dns_rrset" "starter_rrset" {
     zone_name_or_id = var.dns_zone_name
     domain = var.dns_name
     rtype  = "A"
-    compartment_id = local.lz_appdev_cmp_ocid
+    compartment_id = local.lz_app_cmp_ocid
     items {
         #Required
         domain = var.dns_name

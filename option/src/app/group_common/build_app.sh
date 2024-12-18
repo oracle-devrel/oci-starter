@@ -21,12 +21,16 @@ if [ -z "$TF_VAR_vcn_ocid" ]; then
    get_id_from_tfstate "TF_VAR_vcn_ocid" "starter_vcn"
 fi   
 
-if [ -z "$TF_VAR_public_subnet_ocid" ]; then
-   get_id_from_tfstate "TF_VAR_public_subnet_ocid" "starter_public_subnet"
+if [ -z "$TF_VAR_web_subnet_ocid" ]; then
+   get_id_from_tfstate "TF_VAR_web_subnet_ocid" "starter_web_subnet"
 fi   
 
-if [ -z "$TF_VAR_private_subnet_ocid" ]; then
-   get_id_from_tfstate "TF_VAR_private_subnet_ocid" "starter_private_subnet"
+if [ -z "$TF_VAR_app_subnet_ocid" ]; then
+   get_id_from_tfstate "TF_VAR_app_subnet_ocid" "starter_app_subnet"
+fi   
+
+if [ -z "$TF_VAR_db_subnet_ocid" ]; then
+   get_id_from_tfstate "TF_VAR_db_subnet_ocid" "starter_db_subnet"
 fi   
 
 if [ -z "$TF_VAR_atp_ocid" ]; then
@@ -111,15 +115,18 @@ cat >> ../../../group_common_env.sh <<EOT
 export TF_VAR_group_name=$TF_VAR_prefix
 
 # Landing Zone
-# export TF_VAR_lz_appdev_cmp_ocid=$TF_VAR_compartment_ocid
-# export TF_VAR_lz_database_cmp_ocid=$TF_VAR_compartment_ocid
+# export TF_VAR_lz_web_cmp_ocid=$TF_VAR_compartment_ocid
+# export TF_VAR_lz_app_cmp_ocid=$TF_VAR_compartment_ocid
+# export TF_VAR_lz_db_cmp_ocid=$TF_VAR_compartment_ocid
+# export TF_VAR_lz_serv_cmp_ocid=$TF_VAR_compartment_ocid
 # export TF_VAR_lz_network_cmp_ocid=$TF_VAR_compartment_ocid
 # export TF_VAR_lz_security_cmp_ocid=$TF_VAR_compartment_ocid
 
 # Network
 export TF_VAR_vcn_ocid=$TF_VAR_vcn_ocid
-export TF_VAR_public_subnet_ocid=$TF_VAR_public_subnet_ocid
-export TF_VAR_private_subnet_ocid=$TF_VAR_private_subnet_ocid
+export TF_VAR_web_subnet_ocid=$TF_VAR_web_subnet_ocid
+export TF_VAR_app_subnet_ocid=$TF_VAR_app_subnet_ocid
+export TF_VAR_db_subnet_ocid=$TF_VAR_db_subnet_ocid
 
 # Bastion
 export TF_VAR_bastion_ocid=$TF_VAR_bastion_ocid
