@@ -1,5 +1,9 @@
 # --- Network ---
-{%- if vcn_ocid is defined %}
+{%- if vcn_ocid not is defined %}
+/* 
+{%- endif %}
+
+# Existing VCN and Subnets
 variable "vcn_ocid" {}
 variable "web_subnet_ocid" {}
 variable "app_subnet_ocid" {}
@@ -21,7 +25,13 @@ data "oci_core_subnet" "starter_db_subnet" {
   subnet_id = var.db_subnet_ocid
 }
 
-{%- else %}  
+{%- if vcn_ocid not is defined %}
+*/
+{%- else %}
+/*
+{%- endif %}
+
+# New VCN and Subnets
 locals {
   cidr_vcn = "10.0.0.0/16"
   cidr_web_subnet = "10.0.1.0/24"
@@ -317,4 +327,6 @@ resource "oci_core_route_table" "starter_route_private" {
 }
 
 {%- endif %} 
-{%- endif %} 
+{%- if vcn_ocid is defined %}
+*/
+{%- endif %}

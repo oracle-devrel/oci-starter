@@ -22,11 +22,11 @@ resource "oci_core_instance" "starter_instance" {
   create_vnic_details {
 {%- if db_install == "shared_compute" %}
     subnet_id                 = data.oci_core_subnet.starter_web_subnet.id
+    assign_public_ip          = true
 {%- else %}
     subnet_id                 = data.oci_core_subnet.starter_app_subnet.id
 {%- endif %}
     display_name              = "Primaryvnic"
-    assign_public_ip          = true
     assign_private_dns_record = true
     hostname_label            = "${var.prefix}-instance"
   }
