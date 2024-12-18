@@ -1,5 +1,6 @@
 # --- Network ---
-{%- if vcn_ocid not is defined %}
+{%- if vcn_ocid is defined %}
+{%- else %}
 /* 
 {%- endif %}
 
@@ -25,10 +26,10 @@ data "oci_core_subnet" "starter_db_subnet" {
   subnet_id = var.db_subnet_ocid
 }
 
-{%- if vcn_ocid not is defined %}
-*/
-{%- else %}
+{%- if vcn_ocid is defined %}
 /*
+{%- else %}
+*/
 {%- endif %}
 
 # New VCN and Subnets
