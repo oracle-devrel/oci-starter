@@ -896,7 +896,7 @@ def create_output_dir():
             elif params.get('tls') == 'existing_ocid':
                 cp_terraform_apigw("apigw_compute_append.tf")   
             # Compute in app_subnet uses an APIGW in web_subnet
-            if params.get('deploy_type') == 'compute' and params.get('db_install') == 'shared_compute':
+            if params.get('deploy_type') == 'compute' and params.get('db_install') != 'shared_compute':
                 cp_terraform_apigw("apigw_compute_append.tf")
 
         elif params.get('deploy_type') == "container_instance":
