@@ -267,6 +267,9 @@ get_ui_url() {
       export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     else 
       export UI_URL=http://${COMPUTE_IP}
+      if [ "APIGW_HOSTNAME" != "" ]; then 
+        export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
+      fi
       if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
         export UI_HTTP=$UI_URL
         export UI_URL=https://${TF_VAR_dns_name}
