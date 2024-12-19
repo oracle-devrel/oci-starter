@@ -56,7 +56,6 @@ resource_manager_create_or_update() {
   VAR_FILE_PATH=$TARGET_DIR/resource_manager_variables.json
   if [ -f $TARGET_DIR/resource_manager_stackid ]; then
      echo "Stack exists already ( file target/resource_manager_stackid found )"
-     DATE_POSTFIX=`date '+%Y%m%d-%H%M%S'`
      mv $ZIP_FILE_PATH $ZIP_FILE_PATH.$DATE_POSTFIX
      mv $VAR_FILE_PATH $VAR_FILE_PATH.$DATE_POSTFIX
   fi    

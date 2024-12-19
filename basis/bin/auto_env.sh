@@ -137,6 +137,9 @@ else
   auto_echo TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid
   auto_echo TF_VAR_region=$TF_VAR_region
 
+  # DATE_POSTFIX (used for logs names)
+  DATE_POSTFIX=`date '+%Y%m%d-%H%M%S'`
+
   # Kubernetes and OCIR
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     export TF_VAR_namespace=`oci os ns get | jq -r .data`
