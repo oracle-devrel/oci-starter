@@ -177,6 +177,14 @@ build_option() {
       return
     fi
   fi
+  if [ "$TEST_DIRECTORY_ONLY" != "" ]; then
+    if grep -q "$TEST_DIR" $TEST_HOME/error_rerun.sh; then
+      echo "FOUND TEST_DIRECTORY_ONLY: $TEST_DIR" 
+    else
+      echo "SKIP: $TEST_DIR" 
+      return
+    fi
+  fi  
 
   cd $TEST_HOME/oci-starter
   if [ "$OPTION_GROUP_NAME" == "dummy" ]; then
