@@ -267,7 +267,7 @@ get_ui_url() {
       export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     else 
       if [ "$TF_VAR_db_install" == "shared_compute" ]; then
-        export UI_URL=http://${BASTION_IP}
+        export UI_URL=http://${COMPUTE_IP}
       else 
         export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
       fi    

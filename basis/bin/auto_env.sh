@@ -277,7 +277,9 @@ if [ -f $STATE_FILE ]; then
       export BASTION_USER_HOST="opc@$BASTION_IP"
       export BASTION_PROXY_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p $BASTION_USER_HOST"
   elif [ "$TF_VAR_db_install" == "shared_compute" ]; then
+      # No proxy needed. Set COMPUTE_IP to public IP.
       export BASTION_PROXY_COMMAND=""
+      export COMPUTE_IP=$BASTION_IP
   else 
       # export Ex: BASTION_COMMAND="ssh -i <privateKey>-o ProxyCommand=\"ssh -i <privateKey> -W %h:%p -p 22 ocid1.bastionsession.oc1.eu-frankfurt-1.xxxxxxxx@host.bastion.eu-frankfurt-1.oci.oraclecloud.com\" -p 22 opc@10.0.1.97"
       export BASTION_USER_HOST=`echo $BASTION_COMMAND | sed "s/.*ocid1.bastionsession/ocid1.bastionsession/" | sed "s/oci\.oraclecloud\.com.*/oci\.oraclecloud\.com/"`
