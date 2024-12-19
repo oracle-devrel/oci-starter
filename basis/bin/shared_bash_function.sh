@@ -92,12 +92,17 @@ ocir_docker_push () {
   echo DOCKER_PREFIX=$DOCKER_PREFIX
 
   # Push image in registry
-  docker tag ${TF_VAR_prefix}-app ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
-  docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
-  exit_on_error
+  if [ -n "$(docker images -q ${TF_VAR_prefix}-app 2> /dev/null)" ]; then
+    docker tag ${TF_VAR_prefix}-app ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
+    docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
+    exit_on_error
+  fi
 
-  docker tag ${TF_VAR_prefix}-ui ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
-  docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
+  # Push image in registry
+  if [ -n "$(docker images -q ${TF_VAR_prefix}-ui 2> /dev/null)" ]; then
+    docker tag ${TF_VAR_prefix}-ui ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
+    docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
+  fi
   exit_on_error
 }
 
