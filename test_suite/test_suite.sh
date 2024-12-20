@@ -241,8 +241,11 @@ generate_only() {
   export GENERATE_ONLY=true
 }
 
-pre_test_suite
-# pre_git_refresh
+if [ -d $TEST_HOME ]; then
+  pre_git_refresh
+else  
+  pre_test_suite
+fi
 # generate_only
 cd $TEST_HOME
 . ./group_common_env.sh

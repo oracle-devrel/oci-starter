@@ -1,6 +1,8 @@
+{%- if language == "apex" %}
 locals {
-  apigw_dest_private_ip = local.compute_private_ip
+  db_root_url = replace(data.oci_database_autonomous_database.starter_atp.connection_urls[0].apex_url, "/ords/apex", "" )
 }
+{%- endif }
 
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
   compartment_id = local.lz_app_cmp_ocid
@@ -8,6 +10,31 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
   gateway_id     = local.apigw_ocid
   path_prefix    = "/${var.prefix}"
   specification {
+{%- if language == "apex" %}
+    # Go directly from APIGW to APEX in the DB    
+    routes {
+      path    = "/{pathname*}"
+      methods = [ "ANY" ]
+      backend {
+        type = "HTTP_BACKEND"
+        url    = "${local.db_root_url}/$${request.path[pathname]}"
+        connect_timeout_in_seconds = 60
+        read_timeout_in_seconds = 120
+        send_timeout_in_seconds = 120            
+      }
+      request_policies {
+        header_transformations {
+          set_headers {
+            items {
+              name = "Host"
+              values = ["$${request.headers[Host]}"]
+            }
+          }
+        }
+      }
+    }    
+{%- else }
+    # Route the COMPUTE_PRIVATE_IP 
     routes {
       path    = "/app/{pathname*}"
       methods = [ "ANY" ]
@@ -21,9 +48,10 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
       methods = [ "ANY" ]
       backend {
         type = "HTTP_BACKEND"
-        url    = "http://${local.apigw_dest_private_ip}/$${request.path[pathname]}"
+        url    = "http://${local.compute_private_ip}/$${request.path[pathname]}"
       }
-    }        
+    }    
+{%- endif %}      
   }
   freeform_tags = local.api_tags
 }
