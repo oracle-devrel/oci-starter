@@ -5,4 +5,4 @@ cd $SCRIPT_DIR/..
 
 eval "$(ssh-agent -s)"
 ssh-add $TF_VAR_ssh_private_path
-ssh -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP
+ssh -o StrictHostKeyChecking=no $BASTION_PROXY_COMMAND opc@$COMPUTE_IP
