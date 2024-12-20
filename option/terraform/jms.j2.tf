@@ -69,11 +69,11 @@ resource "oci_identity_policy" "starter_jms_policy" {
     "ALLOW SERVICE javamanagementservice TO READ instances IN tenancy",
     "ALLOW SERVICE javamanagementservice TO INSPECT instance-agent-plugins IN tenancy",
 
-    "ALLOW DYNAMIC-GROUP ${local.jms_dyngroup} TO USE METRICS IN COMPARTMENT ID ${var.compartment_ocid}",
-    "ALLOW DYNAMIC-GROUP ${local.jms_dyngroup}  TO MANAGE management-agents IN COMPARTMENT ID ${var.compartment_ocid}",
-    "ALLOW DYNAMIC-GROUP ${local.jms_dyngroup}  TO USE tag-namespaces IN TENANCY", 
-    "ALLOW DYNAMIC-GROUP ${local.jms_dyngroup}  TO MANAGE log-content IN COMPARTMENT ID ${var.compartment_ocid}",
-    "ALLOW dynamic-group ${local.jms_dyngroup} TO MANAGE instances IN COMPARTMENT ID ${var.compartment_ocid}"
+    "Allow dynamic-group ${var.idcs_domain_name}/${local.jms_dyngroup} TO USE METRICS IN COMPARTMENT ID ${var.compartment_ocid}",
+    "Allow dynamic-group ${var.idcs_domain_name}/${local.jms_dyngroup}  TO MANAGE management-agents IN COMPARTMENT ID ${var.compartment_ocid}",
+    "Allow dynamic-group ${var.idcs_domain_name}/${local.jms_dyngroup}  TO USE tag-namespaces IN TENANCY", 
+    "Allow dynamic-group ${var.idcs_domain_name}/${local.jms_dyngroup}  TO MANAGE log-content IN COMPARTMENT ID ${var.compartment_ocid}",
+    "Allow dynamic-group ${var.idcs_domain_name}/${local.jms_dyngroup} TO MANAGE instances IN COMPARTMENT ID ${var.compartment_ocid}"
   ]
   freeform_tags = local.freeform_tags
 }

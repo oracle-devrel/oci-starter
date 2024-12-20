@@ -37,7 +37,7 @@ resource "oci_identity_policy" "oke_tls_policy" {
   compartment_id = var.compartment_ocid
 
   statements = [
-    "Allow dynamic-group ${var.prefix}-instance-dyngroup to manage dns in compartment id ${var.compartment_ocid}",
+    "Allow dynamic-group ${var.idcs_domain_name}/${var.prefix}-instance-dyngroup to manage dns in compartment id ${var.compartment_ocid}",
     "Allow any-user to manage dns in compartment id ${var.compartment_ocid} where all {request.principal.type='workload',request.principal.cluster_id='${local.oke_ocid}',request.principal.service_account='external-dns'}"
   ]
 }

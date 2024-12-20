@@ -87,8 +87,8 @@ resource "oci_identity_policy" "starter-policy" {
   compartment_id = var.tenancy_ocid
 
   statements = [
-    "Allow dynamic-group ${var.prefix}-atp-dyngroup to manage objects in compartment id ${var.compartment_ocid}",
-    "Allow dynamic-group ${var.prefix}-atp-dyngroup to manage all-resources in tenancy"
+    "Allow dynamic-group ${var.idcs_domain_name}/${var.prefix}-atp-dyngroup to manage objects in compartment id ${var.compartment_ocid}",
+    "Allow dynamic-group ${var.idcs_domain_name}/${var.prefix}-atp-dyngroup to manage all-resources in tenancy"
   ]
 }
 */

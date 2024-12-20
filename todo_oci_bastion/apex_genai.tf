@@ -63,7 +63,7 @@ resource "oci_identity_policy" "starter-adb-policy" {
     compartment_id = local.lz_app_cmp_ocid
 
     statements = [
-        "Allow dynamic-group ${var.prefix}-adb-dyngroup to manage generative-ai-family in compartment id ${var.compartment_ocid}"
+        "Allow dynamic-group ${var.idcs_domain_name}/${var.prefix}-adb-dyngroup to manage generative-ai-family in compartment id ${var.compartment_ocid}"
     ]
 }
 
@@ -75,7 +75,7 @@ resource "oci_identity_policy" "starter-instance-policy" {
     compartment_id = local.lz_app_cmp_ocid
 
     statements = [
-        "Allow dynamic-group ${var.prefix}-instance-dyngroup to manage generative-ai-family in compartment id ${var.compartment_ocid}"
+        "Allow dynamic-group ${var.idcs_domain_name}/${var.prefix}-instance-dyngroup to manage generative-ai-family in compartment id ${var.compartment_ocid}"
     ]
 }
 */

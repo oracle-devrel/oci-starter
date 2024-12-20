@@ -109,7 +109,15 @@ build_test () {
 
 echo_errors_csv() {
   echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,$OPTION_JAVA_FRAMEWORK,$OPTION_JAVA_VM,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/errors.csv 
-  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/error_rerun.sh
+  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_rerun.sh
+}
+
+remove_errors_csv() {
+  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/ok.sh
+  if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
+    sed -i '&$TEST_DIR&d' $TEST_HOME/errors_rerun.sh          
+    echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_old.sh
+  fi  
 }
 
 build_test_destroy () {
@@ -146,6 +154,14 @@ build_test_destroy () {
   if [ "$CSV_JSON_OK" != "1" ] || [ "$CSV_HTML_OK" != "1" ]; then
     echo_errors_csv
   fi
+
+  if [ -f $TEST_HOME/stop_after_destroy ]; then
+    echo "-------------------------------------------------------"
+    echo "stop_after_destroy file dectected"
+    echo "Last directory: $TEST_DIR"
+    rm $TEST_HOME/stop_after_destroy
+    exit
+  fi  
 }
 
 build_option() {
@@ -170,15 +186,15 @@ build_option() {
   NAME=${NAME/_/-}
   start_test $NAME
   if [ "$TEST_ERROR_ONLY" != "" ]; then
-    if grep -q "$TEST_DIR" $TEST_HOME/error_rerun.sh; then
-      echo "FOUND in error_rerun.sh: $TEST_DIR" 
+    if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
+      echo "FOUND in errors_rerun.sh: $TEST_DIR" 
     else
-      echo "SKIP not in error_rerun.sh: $TEST_DIR" 
+      echo "SKIP not in errors_rerun.sh: $TEST_DIR" 
       return
     fi
   fi
   if [ "$TEST_DIRECTORY_ONLY" != "" ]; then
-    if grep -q "$TEST_DIR" $TEST_HOME/error_rerun.sh; then
+    if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
       echo "FOUND TEST_DIRECTORY_ONLY: $TEST_DIR" 
     else
       echo "SKIP: $TEST_DIR" 
@@ -303,7 +319,7 @@ pre_test_suite() {
 pre_git_refresh() {
   cd $TEST_HOME/oci-starter
   git pull origin main
-  echo "----------------------------------------------" >> $TEST_HOME/error_rerun.sh
+  echo "----------------------------------------------------------------------------" >> $TEST_HOME/errors_rerun.sh
 }
 
 post_test_suite() {
