@@ -1,8 +1,14 @@
+
 {%- if language == "apex" %}
 locals {
   db_root_url = replace(data.oci_database_autonomous_database.starter_atp.connection_urls[0].apex_url, "/ords/apex", "" )
 }
-{%- endif %}
+{%- else }
+# Used for APIGW and TAGS
+locals {
+  apigw_dest_private_ip = local.compute_private_ip
+}
+{%- endif }
 
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
   compartment_id = local.lz_app_cmp_ocid
@@ -33,7 +39,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
         }
       }
     }    
-{%- else %}
+{%- else }
     # Route the COMPUTE_PRIVATE_IP 
     routes {
       path    = "/app/{pathname*}"
@@ -48,7 +54,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
       methods = [ "ANY" ]
       backend {
         type = "HTTP_BACKEND"
-        url    = "http://${local.compute_private_ip}/$${request.path[pathname]}"
+        url    = "http://${local.apigw_dest_private_ip}/$${request.path[pathname]}"
       }
     }    
 {%- endif %}      
