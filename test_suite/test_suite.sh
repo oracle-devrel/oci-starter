@@ -249,4 +249,4 @@ cd $TEST_HOME
 # export TEST_ERROR_ONLY=TRUE
 # export TEST_GRAALVM_NATIVE=TRUE
 loop_deploy
-post_test_suite
+# post_test_suite
