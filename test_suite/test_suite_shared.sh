@@ -216,6 +216,13 @@ build_option() {
     fi
   fi  
 
+  # Avoid 2 parallel creation of code
+  while [ -f $TEST_HOME/oci_starter_busy ]; done
+    echo "FOUND oci_starter_busy - Waiting"
+    wait 5
+  done
+  touch $TEST_HOME/oci_starter_busy
+
   cd $TEST_HOME/oci-starter
   if [ "$OPTION_GROUP_NAME" == "dummy" ]; then
     ./oci_starter.sh \
@@ -268,6 +275,8 @@ build_option() {
        -compartment_ocid $EX_COMPARTMENT_OCID > ${TEST_DIR}.log 2>&1 
   fi
 #      -db_compartment_ocid $EX_COMPARTMENT_OCID \
+  rm $TEST_HOME/oci_starter_busy
+
 
   RESULT=$?
   if [ $RESULT -eq 0 ] && [ -d output ]; then 
