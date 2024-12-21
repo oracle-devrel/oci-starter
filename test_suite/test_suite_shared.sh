@@ -107,13 +107,21 @@ build_test () {
   fi   
 }
 
-echo_errors_csv() {
-  echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,$OPTION_JAVA_FRAMEWORK,$OPTION_JAVA_VM,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/errors.csv 
-  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_rerun.sh
+add_inprogress_rerun() {
+  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/inprogress_rerun.sh
 }
 
-remove_errors_csv() {
-  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/ok.sh
+add_errors_rerun() {
+  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_rerun.sh
+  # Remove from inprogress
+  sed -i '&$TEST_DIR&d' $TEST_HOME/inprogress_rerun.sh          
+}
+
+add_ok_rerun() {
+  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/ok_rerun.sh
+  # Remove from inprogress_rerun
+  sed -i '&$TEST_DIR&d' $TEST_HOME/inprogress_rerun.sh          
+  # Remove from errors_rerun
   if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
     sed -i '&$TEST_DIR&d' $TEST_HOME/errors_rerun.sh          
     echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_old.sh
@@ -126,6 +134,8 @@ build_test_destroy () {
      cd $TEST_DIR
       ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
   fi
+  add_inprogress_rerun
+
   BUILD_ID=1
   build_test
   if [ "$BUILD_COUNT" = "2" ]; then
@@ -152,7 +162,10 @@ build_test_destroy () {
     echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,-,-,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/result.csv 
   fi
   if [ "$CSV_JSON_OK" != "1" ] || [ "$CSV_HTML_OK" != "1" ]; then
-    echo_errors_csv
+    echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,$OPTION_JAVA_FRAMEWORK,$OPTION_JAVA_VM,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/errors.csv 
+    add_errors_rerun
+  else 
+    add_ok_rerun  
   fi
 
   if [ -f $TEST_HOME/stop_after_destroy ]; then
@@ -185,6 +198,15 @@ build_option() {
   NAME=${NAME/_/-}
   NAME=${NAME/_/-}
   start_test $NAME
+
+  if grep -q "$TEST_DIR" $TEST_HOME/inprogress_rerun.sh; then
+    echo "SKIP not in inprogress_rerun.sh: $TEST_DIR" 
+    return
+  fi  
+  if grep -q "$TEST_DIR" $TEST_HOME/ok_rerun.sh; then
+    echo "SKIP not in ok_rerun.sh: $TEST_DIR" 
+    return
+  fi  
   if [ "$TEST_ERROR_ONLY" != "" ]; then
     if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
       echo "FOUND in errors_rerun.sh: $TEST_DIR" 
@@ -270,7 +292,7 @@ build_option() {
   else
     echo -e "${COLOR_RED}ERROR ./oci_starter.sh failed.${COLOR_NONE}"
     echo "Check ${TEST_DIR}.log"
-    echo_errors_csv
+    add_errors_rerun
   fi  
 }
 
