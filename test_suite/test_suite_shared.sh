@@ -217,7 +217,7 @@ build_option() {
   fi  
 
   # Avoid 2 parallel creation of code
-  while [ -f $TEST_HOME/oci_starter_busy ]; done
+  while [ -f $TEST_HOME/oci_starter_busy ]; do
     echo "FOUND oci_starter_busy - Waiting"
     wait 5
   done
