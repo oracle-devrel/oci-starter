@@ -207,7 +207,7 @@ build_option() {
     echo "SKIP - FOUND in ok_rerun.sh: $TEST_DIR" 
     return
   fi  
-  if [ "$TEST_ERROR_ONLY" = "" ]; then
+  if [ "$TEST_ERRORS_ONLY" = "" ]; then
     if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
         echo "SKIP - FOUND in errors_rerun.sh: $TEST_DIR" 
         return
