@@ -134,7 +134,6 @@ build_test_destroy () {
      cd $TEST_DIR
       ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
   fi
-  add_inprogress_rerun
 
   BUILD_ID=1
   build_test
@@ -221,6 +220,7 @@ build_option() {
       return
     fi
   fi  
+  add_inprogress_rerun
 
   # Avoid 2 parallel creation of code
   while [ -f $TEST_HOME/oci_starter_busy ]; do
