@@ -113,17 +113,17 @@ add_inprogress_rerun() {
 
 add_errors_rerun() {
   echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_rerun.sh
-  # Remove from inprogress
-  sed -i '\#$TEST_DIR#d' $TEST_HOME/inprogress_rerun.sh          
+  # Remove from inprogress_rerun
+  sed -i "\#$TEST_DIR#d" $TEST_HOME/inprogress_rerun.sh          
 }
 
 add_ok_rerun() {
   echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/ok_rerun.sh
   # Remove from inprogress_rerun
-  sed -i '\#$TEST_DIR#d' $TEST_HOME/inprogress_rerun.sh          
+  sed -i "\#$TEST_DIR#d" $TEST_HOME/inprogress_rerun.sh          
   # Remove from errors_rerun
   if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
-    sed -i '\#$TEST_DIR#d' $TEST_HOME/errors_rerun.sh          
+    sed -i "\#$TEST_DIR#d" $TEST_HOME/errors_rerun.sh          
     echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_old.sh
   fi  
 }
