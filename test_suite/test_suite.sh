@@ -249,7 +249,6 @@ fi
 # generate_only
 cd $TEST_HOME
 . ./group_common_env.sh
-# export TEST_ERROR_ONLY=TRUE
 # export TEST_GRAALVM_NATIVE=TRUE
 loop_deploy
 # post_test_suite

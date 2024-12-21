@@ -168,11 +168,11 @@ build_test_destroy () {
     add_ok_rerun  
   fi
 
-  if [ -f $TEST_HOME/stop_after_destroy ]; then
+  if [ -f $TEST_HOME/stop_all_after_destroy ]; then
     echo "-------------------------------------------------------"
-    echo "stop_after_destroy file dectected"
+    echo "stop_all_after_destroy file dectected"
     echo "Last directory: $TEST_DIR"
-    # rm $TEST_HOME/stop_after_destroy
+    # rm $TEST_HOME/stop_all_after_destroy
     exit
   fi  
 }
