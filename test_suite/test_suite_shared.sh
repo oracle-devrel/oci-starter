@@ -114,16 +114,16 @@ add_inprogress_rerun() {
 add_errors_rerun() {
   echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_rerun.sh
   # Remove from inprogress
-  sed -i '&$TEST_DIR&d' $TEST_HOME/inprogress_rerun.sh          
+  sed -i '\#$TEST_DIR#d' $TEST_HOME/inprogress_rerun.sh          
 }
 
 add_ok_rerun() {
   echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/ok_rerun.sh
   # Remove from inprogress_rerun
-  sed -i '&$TEST_DIR&d' $TEST_HOME/inprogress_rerun.sh          
+  sed -i '\#$TEST_DIR#d' $TEST_HOME/inprogress_rerun.sh          
   # Remove from errors_rerun
   if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
-    sed -i '&$TEST_DIR&d' $TEST_HOME/errors_rerun.sh          
+    sed -i '\#$TEST_DIR#d' $TEST_HOME/errors_rerun.sh          
     echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_old.sh
   fi  
 }
@@ -200,21 +200,13 @@ build_option() {
   start_test $NAME
 
   if grep -q "$TEST_DIR" $TEST_HOME/inprogress_rerun.sh; then
-    echo "SKIP not in inprogress_rerun.sh: $TEST_DIR" 
+    echo "SKIP - FOUND in inprogress_rerun.sh: $TEST_DIR" 
     return
   fi  
   if grep -q "$TEST_DIR" $TEST_HOME/ok_rerun.sh; then
-    echo "SKIP not in ok_rerun.sh: $TEST_DIR" 
+    echo "SKIP - FOUND in ok_rerun.sh: $TEST_DIR" 
     return
   fi  
-  if [ "$TEST_ERROR_ONLY" != "" ]; then
-    if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
-      echo "FOUND in errors_rerun.sh: $TEST_DIR" 
-    else
-      echo "SKIP not in errors_rerun.sh: $TEST_DIR" 
-      return
-    fi
-  fi
   if [ "$TEST_DIRECTORY_ONLY" != "" ]; then
     if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
       echo "FOUND TEST_DIRECTORY_ONLY: $TEST_DIR" 
