@@ -61,7 +61,7 @@ resource "oci_core_instance" "starter_instance" {
   }
 
   provisioner "remote-exec" {
-    on_failure = continue
+    # on_failure = continue
     inline = [
       "date"
     ]
