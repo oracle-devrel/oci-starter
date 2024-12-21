@@ -222,10 +222,10 @@ build_option() {
   fi  
   add_inprogress_rerun
 
-  # Avoid 2 parallel creation of code
+  # Avoid 2 parallel creations of code
   while [ -f $TEST_HOME/oci_starter_busy ]; do
     echo "FOUND oci_starter_busy - Waiting"
-    wait 5
+    sleep 5
   done
   touch $TEST_HOME/oci_starter_busy
 
