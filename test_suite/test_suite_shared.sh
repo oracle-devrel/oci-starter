@@ -172,7 +172,7 @@ build_test_destroy () {
     echo "-------------------------------------------------------"
     echo "stop_after_destroy file dectected"
     echo "Last directory: $TEST_DIR"
-    rm $TEST_HOME/stop_after_destroy
+    # rm $TEST_HOME/stop_after_destroy
     exit
   fi  
 }
@@ -207,6 +207,12 @@ build_option() {
     echo "SKIP - FOUND in ok_rerun.sh: $TEST_DIR" 
     return
   fi  
+  if [ "$TEST_ERROR_ONLY" = "" ]; then
+    if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
+        echo "SKIP - FOUND in errors_rerun.sh: $TEST_DIR" 
+        return
+    fi
+  fi
   if [ "$TEST_DIRECTORY_ONLY" != "" ]; then
     if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
       echo "FOUND TEST_DIRECTORY_ONLY: $TEST_DIR" 
