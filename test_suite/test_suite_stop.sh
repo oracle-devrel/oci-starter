@@ -6,7 +6,7 @@ touch $TEST_HOME/stop_after_build
 
 if [ "$1" == "stop_after_build" ]; then
   touch $TEST_HOME/stop_after_build
-elif [ "$1" == "stop_after_build" ]; then
+elif [ "$1" == "stop_after_destroy" ]; then
   touch $TEST_HOME/stop_after_destroy
 else
   echo "ERROR: argument missing"
