@@ -198,7 +198,7 @@ build_option() {
   NAME=${NAME/_/-}
   start_test $NAME
   if [ "$TEST_DIRECTORY_ONLY" != "" ]; then
-    if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
+    if [ "$TEST_DIRECTORY_ONLY" == "$TEST_DIR" ]; then
       echo "FOUND TEST_DIRECTORY_ONLY: $TEST_DIR" 
     else
       echo "SKIP: $TEST_DIR" 
@@ -219,7 +219,6 @@ build_option() {
             return
         fi
     fi
-  fi
   add_inprogress_rerun
 
   # Avoid 2 parallel creations of code
