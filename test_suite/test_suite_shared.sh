@@ -283,7 +283,6 @@ build_option() {
 #      -db_compartment_ocid $EX_COMPARTMENT_OCID \
   rm $TEST_HOME/oci_starter_busy
 
-
   RESULT=$?
   if [ $RESULT -eq 0 ] && [ -d output ]; then 
     mkdir output/target
@@ -301,6 +300,11 @@ build_option() {
     echo "Check ${TEST_DIR}.log"
     add_errors_rerun
   fi  
+
+  # Stop after finding the TEST_DIRECTORY_ONLY
+  if [ "$TEST_DIRECTORY_ONLY" != "" ]; then
+    exit
+  fi
 }
 
 # Create the $OPTION_DEPLOY directory
