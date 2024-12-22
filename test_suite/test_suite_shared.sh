@@ -219,6 +219,7 @@ build_option() {
             return
         fi
     fi
+  fi  
   add_inprogress_rerun
 
   # Avoid 2 parallel creations of code
