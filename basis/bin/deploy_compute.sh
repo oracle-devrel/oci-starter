@@ -14,20 +14,19 @@ ssh-add $TF_VAR_ssh_private_path
 #   scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path target/compute/* opc@$COMPUTE_IP:/home/opc/.
 # fi
 
+# Try 5 times to copy the files / wait 5 secs between each try
 i=0
-# Set the initial return value to failure
-false
-while [ $? -ne 0 -a $i -lt 5 ]
-do
- i=$(($i+1))
+while [ true ]; do
  scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" target/compute/* opc@$COMPUTE_IP:/home/opc/.
-done
-
-if [ $i -eq $MAX_RETRIES ]
-then
-  echo "deploy_compute.sh: Maximum number of retries, ending."
+ if [ $? -eq 0 ]; do
+   break;
+ elif [ "$i" == "5" ]; then
+  echo "deploy_compute.sh: Maximum number of scp retries, ending."
   error_exit
-fi
+ fi
+ sleep 5
+ i=$(($i+1))
+done
 
 ssh -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP "export TF_VAR_java_version=\"$TF_VAR_java_version\";export TF_VAR_java_vm=\"$TF_VAR_java_vm\";export TF_VAR_language=\"$TF_VAR_language\";export JDBC_URL=\"$JDBC_URL\";export DB_URL=\"$DB_URL\";bash compute/compute_init.sh 2>&1 | tee -a compute/compute_init.log"
 
