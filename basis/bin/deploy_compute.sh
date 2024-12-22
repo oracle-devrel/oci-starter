@@ -19,7 +19,7 @@ function scp_compute() {
 i=0
 while [ true ]; do
  scp_compute
- if [ $? -eq 0 ]; do
+ if [ $? -eq 0 ]; then
    break;
  elif [ "$i" == "5" ]; then
   echo "deploy_compute.sh: Maximum number of scp retries, ending."

@@ -16,7 +16,7 @@ function scp_bastion() {
 i=0
 while [ true ]; do
  scp_bastion
- if [ $? -eq 0 ]; do
+ if [ $? -eq 0 ]; then
    break;
  elif [ "$i" == "5" ]; then
   echo "deploy_bastion.sh: Maximum number of scp retries, ending."
