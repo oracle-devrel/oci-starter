@@ -3,10 +3,9 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR/..
 . env.sh -silent
 
-# Create the DB table from the BASTION
-# Using RSYNC allow to reapply the same command several times easily. 
 function scp_bastion() {
   if command -v rsync &> /dev/null; then
+    # Using RSYNC allow to reapply the same command several times easily. 
     rsync -av -e "ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path" src/db opc@$BASTION_IP:.
   else
     scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path src/db opc@$BASTION_IP:/home/opc/.
@@ -20,7 +19,7 @@ while [ true ]; do
  if [ $? -eq 0 ]; do
    break;
  elif [ "$i" == "5" ]; then
-  echo "deploy_compute.sh: Maximum number of scp retries, ending."
+  echo "deploy_bastion.sh: Maximum number of scp retries, ending."
   error_exit
  fi
  sleep 5
