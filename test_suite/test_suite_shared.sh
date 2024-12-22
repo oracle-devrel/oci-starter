@@ -197,21 +197,6 @@ build_option() {
   NAME=${NAME/_/-}
   NAME=${NAME/_/-}
   start_test $NAME
-
-  if grep -q "$TEST_DIR" $TEST_HOME/inprogress_rerun.sh; then
-    echo "SKIP - FOUND in inprogress_rerun.sh: $TEST_DIR" 
-    return
-  fi  
-  if grep -q "$TEST_DIR" $TEST_HOME/ok_rerun.sh; then
-    echo "SKIP - FOUND in ok_rerun.sh: $TEST_DIR" 
-    return
-  fi  
-  if [ "$TEST_ERRORS_ONLY" = "" ]; then
-    if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
-        echo "SKIP - FOUND in errors_rerun.sh: $TEST_DIR" 
-        return
-    fi
-  fi
   if [ "$TEST_DIRECTORY_ONLY" != "" ]; then
     if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
       echo "FOUND TEST_DIRECTORY_ONLY: $TEST_DIR" 
@@ -219,7 +204,22 @@ build_option() {
       echo "SKIP: $TEST_DIR" 
       return
     fi
-  fi  
+  else 
+    if grep -q "$TEST_DIR" $TEST_HOME/inprogress_rerun.sh; then
+        echo "SKIP - FOUND in inprogress_rerun.sh: $TEST_DIR" 
+        return
+    fi  
+    if grep -q "$TEST_DIR" $TEST_HOME/ok_rerun.sh; then
+        echo "SKIP - FOUND in ok_rerun.sh: $TEST_DIR" 
+        return
+    fi  
+    if [ "$TEST_ERRORS_ONLY" = "" ]; then
+        if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
+            echo "SKIP - FOUND in errors_rerun.sh: $TEST_DIR" 
+            return
+        fi
+    fi
+  fi
   add_inprogress_rerun
 
   # Avoid 2 parallel creations of code
