@@ -60,13 +60,6 @@ resource "oci_core_instance" "starter_instance" {
     private_key = var.ssh_private_key
   }
 
-  provisioner "remote-exec" {
-    on_failure = continue
-    inline = [
-      "date"
-    ]
-  }
-
   freeform_tags = local.freeform_tags
 }
 
