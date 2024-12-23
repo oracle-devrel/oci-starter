@@ -10,20 +10,20 @@ locals {
 }
 {%- endif %}
 
-resource "oci_apigateway_deployment" "starter_apigw_deployment" {
+{%- if language == "apex" %}
+resource "oci_apigateway_deployment" "starter_apigw_deployment_ords" {
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-apigw-deployment"
   gateway_id     = local.apigw_ocid
-  path_prefix    = "/${var.prefix}"
+  path_prefix    = "/ords"
   specification {
-{%- if language == "apex" %}
     # Go directly from APIGW to APEX in the DB    
     routes {
       path    = "/{pathname*}"
       methods = [ "ANY" ]
       backend {
         type = "HTTP_BACKEND"
-        url    = "${local.db_root_url}/$${request.path[pathname]}"
+        url    = "${local.db_root_url}/ords/$${request.path[pathname]}"
         connect_timeout_in_seconds = 60
         read_timeout_in_seconds = 120
         send_timeout_in_seconds = 120            
@@ -38,8 +38,49 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
           }
         }
       }
-    }    
+    }
+  }
+  freeform_tags = local.api_tags
+}
+
+resource "oci_apigateway_deployment" "starter_apigw_deployment_i" {
+  compartment_id = local.lz_app_cmp_ocid
+  display_name   = "${var.prefix}-apigw-deployment"
+  gateway_id     = local.apigw_ocid
+  path_prefix    = "/i"
+  specification {
+    # Go directly from APIGW to APEX in the DB    
+    routes {
+      path    = "/{pathname*}"
+      methods = [ "ANY" ]
+      backend {
+        type = "HTTP_BACKEND"
+        url    = "${local.db_root_url}/i/$${request.path[pathname]}"
+        connect_timeout_in_seconds = 60
+        read_timeout_in_seconds = 120
+        send_timeout_in_seconds = 120            
+      }
+      request_policies {
+        header_transformations {
+          set_headers {
+            items {
+              name = "Host"
+              values = ["$${request.headers[Host]}"]
+            }
+          }
+        }
+      }
+    }
+  }
+  freeform_tags = local.api_tags
+}
 {%- else %}
+resource "oci_apigateway_deployment" "starter_apigw_deployment" {
+  compartment_id = local.lz_app_cmp_ocid
+  display_name   = "${var.prefix}-apigw-deployment"
+  gateway_id     = local.apigw_ocid
+  path_prefix    = "/${var.prefix}"
+  specification {
     # Route the COMPUTE_PRIVATE_IP 
     routes {
       path    = "/app/{pathname*}"
@@ -57,10 +98,10 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
         url    = "http://${local.apigw_dest_private_ip}/$${request.path[pathname]}"
       }
     }    
-{%- endif %}      
   }
   freeform_tags = local.api_tags
-}
+}    
+{%- endif %}      
 
 /*
 resource oci_logging_log starter_apigw_deployment_execution {
