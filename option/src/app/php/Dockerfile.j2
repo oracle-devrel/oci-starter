@@ -8,7 +8,10 @@ RUN  /app/wa_php_oci.sh && \
      yum install -y php-pgsql && \
      {%- endif %}     
      sed -i "s/Listen 80$/Listen 8080/" /etc/httpd/conf/httpd.conf && \
-     rm /etc/nginx/default.d/php.conf
+     rm /etc/nginx/default.d/php.conf && \
+     sed -i "s/^listen.acl_users/;listen.acl_users/g" /etc/php-fpm.d/www.conf
+
+# Comment listen.acl_users for Container Instance     
 
 WORKDIR /app
 COPY src/html/* /var/www/html/

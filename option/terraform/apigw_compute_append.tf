@@ -11,6 +11,9 @@ locals {
 {%- endif %}
 
 {%- if language == "apex" %}
+
+# One single entry "/" would work too. 
+# The reason of the 3 entries is to allow to make it work when the APIGW is shared with other URLs (ex: testsuite)
 resource "oci_apigateway_deployment" "starter_apigw_deployment_ords" {
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-apigw-deployment"
@@ -74,6 +77,40 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment_i" {
   }
   freeform_tags = local.api_tags
 }
+
+resource "oci_apigateway_deployment" "starter_apigw_deployment_app" {
+  compartment_id = local.lz_app_cmp_ocid
+  display_name   = "${var.prefix}-apigw-deployment"
+  gateway_id     = local.apigw_ocid
+  path_prefix    ="/${var.prefix}"
+  specification {
+    # Go directly from APIGW to APEX in the DB    
+    routes {
+      path    = "/{pathname*}"
+      methods = [ "ANY" ]
+      backend {
+        type = "HTTP_BACKEND"
+        url    = "${local.db_root_url}/ords/r/apex_app/apex_app/$${request.path[pathname]}"
+        connect_timeout_in_seconds = 60
+        read_timeout_in_seconds = 120
+        send_timeout_in_seconds = 120            
+      }
+      request_policies {
+        header_transformations {
+          set_headers {
+            items {
+              name = "Host"
+              values = ["$${request.headers[Host]}"]
+            }
+          }
+        }
+      }
+    }
+  }
+  freeform_tags = local.api_tags
+}   
+
+
 {%- else %}
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
   compartment_id = local.lz_app_cmp_ocid
