@@ -274,9 +274,6 @@ get_ui_url() {
     else 
       if [ "$TF_VAR_db_install" == "shared_compute" ]; then
         export UI_URL=http://${COMPUTE_IP}
-      elif [ "$TF_VAR_language" == "apex" ]; then
-        # One single APEX URL per APIGW (/ords and /i)
-        export UI_URL=https://${APIGW_HOSTNAME}
       else 
         export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
       fi    

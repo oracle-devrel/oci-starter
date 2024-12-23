@@ -10,12 +10,16 @@ RUN  /app/wa_php_oci.sh && \
      sed -i "s/Listen 80$/Listen 8080/" /etc/httpd/conf/httpd.conf && \
      rm /etc/nginx/default.d/php.conf 
 
-# Comment listen.acl_users for Container Instance     
+  
 # Set error_log and access_log to stout/stderr
 RUN  sed -i 's#ErrorLog "logs/error_log"#ErrorLog /dev/stderr#g' /etc/httpd/conf/httpd.conf && \
      sed -i 's#CustomLog "logs/access_log"#CustomLog /dev/stdout#g' /etc/httpd/conf/httpd.conf && \
-     sed -i 's/apache, nginx/apache/g' /etc/php-fpm.d/www.conf && \
-     sed -i 's/^;listen.acl_groups =/listen.acl_groups = apache/g' /etc/php-fpm.d/www.conf
+{%- if db_family == "container_instance" %}
+# Comment listen.acl_users for Container Instance  
+RUN  sed -i 's/apache,nginx/root/g' /etc/php-fpm.d/www.conf && \
+     sed -i 's/^;listen.acl_groups =/listen.acl_groups = root/g' /etc/php-fpm.d/www.conf
+{%- endif %}     
+
 # sed -i 's/^listen.acl_users/;listen.acl_users/g' /etc/php-fpm.d/www.conf
 
 WORKDIR /app

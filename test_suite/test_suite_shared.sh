@@ -82,6 +82,9 @@ build_test () {
     if grep -q -i "starter" /tmp/result.html; then
       echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
       CSV_HTML_OK=1
+    elif grep -q -i "deptno" /tmp/result.html; then
+      echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
+      CSV_HTML_OK=1
     else
       echo -e "${COLOR_RED}RESULT HTML: ***** BAD ******${COLOR_NONE}"
     fi
