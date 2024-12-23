@@ -90,7 +90,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment_app" {
       methods = [ "ANY" ]
       backend {
         type = "HTTP_BACKEND"
-        url    = "${local.db_root_url}/ords/r/apex_app/apex_app/$${request.path[pathname]}"
+        url    = "${local.db_root_url}/ords/r/apex_app/apex_app"
         connect_timeout_in_seconds = 60
         read_timeout_in_seconds = 120
         send_timeout_in_seconds = 120            
