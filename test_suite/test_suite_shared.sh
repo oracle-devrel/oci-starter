@@ -132,12 +132,6 @@ add_ok_rerun() {
 }
 
 build_test_destroy () {
-  # Prevent to have undeleted resource when rerunning the test_suite
-  if [ -d $TEST_DIR/target ]; then
-     cd $TEST_DIR
-      ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
-  fi
-
   BUILD_ID=1
   build_test
   if [ "$BUILD_COUNT" = "2" ]; then
@@ -222,7 +216,14 @@ build_option() {
             return
         fi
     fi
-  fi  
+  fi
+    
+  # Prevent to have undeleted resource when rerunning the test_suite
+  if [ -d $TEST_DIR/target ]; then
+     cd $TEST_DIR
+     ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
+  fi
+
   add_inprogress_rerun
 
   # Avoid 2 parallel creations of code
