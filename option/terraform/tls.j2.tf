@@ -3,7 +3,7 @@ variable "dns_name" { default="" }
 variable "dns_ip" { default="" }
 
 locals {
-{%- if deploy_type == "compute" and tls != "existing_ocid" %}  
+{%- if deploy_type == "compute" and tls != "existing_ocid" and db_install == "shared_compute" %}  
   dns_ip = local.compute_public_ip
 {%- elif deploy_type == "instance_pool" %}  
   dns_ip = local.instance_pool_lb_ip
