@@ -57,7 +57,7 @@ if [ ! -z "$UI_URL" ]; then
       # Get the compute logs
       eval "$(ssh-agent -s)"      
       ssh-add $TF_VAR_ssh_private_path
-      scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" target/compute/* opc@$COMPUTE_IP:/home/opc/.
+      scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/compute/*.log target/.
       scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/*.log target/.
       scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/app/*.log target/.
       if [ "$TF_VAR_language" == "java" ]; then
