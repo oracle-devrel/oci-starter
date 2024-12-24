@@ -279,7 +279,11 @@ get_ui_url() {
       fi    
       if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
         export UI_HTTP=$UI_URL
-        export UI_URL=https://${TF_VAR_dns_name}
+        if [ "$TF_VAR_db_install" == "shared_compute" ]; then
+            export UI_URL=https://${TF_VAR_dns_name}
+        else 
+            export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
+        fi    
       fi
     fi  
   elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
