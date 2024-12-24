@@ -10,7 +10,7 @@ data "oci_core_instance" "starter_bastion" {
   instance_id = var.bastion_ocid
 }
 
-{%- elif db_type != "none" %}
+{%- else %}
 
 {%- if bastion_type=="bastion_service" %}
 
