@@ -148,6 +148,14 @@ if [ -n "$TF_VAR_log_group_ocid" ]; then
   append "export TF_VAR_log_group_ocid=$TF_VAR_log_group_ocid"
 fi   
 
+if [ -n "$TF_VAR_idcs_url" ]; then
+  append "export TF_VAR_idcs_url=$TF_VAR_idcs_url"
+fi   
+
+if [ -n "$TF_VAR_idcs_domain_name" ]; then
+  append "export TF_VAR_idcs_domain_name=$TF_VAR_idcs_domain_name"
+fi   
+
 cat >> ../../../group_common_env.sh <<EOT 
 
 # Database Password

@@ -588,3 +588,30 @@ certificate_run_certbot_http_01()
   exit_on_error
   export TF_VAR_certificate_dir=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
 }
+
+# SCP via Bastion
+function scp_via_bastion() {
+  eval "$(ssh-agent -s)"
+  ssh-add $TF_VAR_ssh_private_path
+
+  # Try 5 times to copy the files / wait 5 secs between each try
+  echo "scp_via_bastion"
+  i=0
+  while [ true ]; do
+    if command -v rsync &> /dev/null; then
+      # Using RSYNC allow to reapply the same command several times easily. 
+      rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" $1 $2
+    else
+      scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" $1 $2
+    fi  
+    if [ $? -eq 0 ]; then
+      echo "-- done"
+      break;
+    elif [ "$i" == "5" ]; then
+      echo "scp_via_bastion: Maximum number of scp retries, ending."
+      error_exit
+    fi
+  sleep 5
+  i=$(($i+1))
+  done
+}
