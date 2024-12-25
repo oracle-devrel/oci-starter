@@ -50,7 +50,7 @@ data "oci_core_images" "node_pool_images" {
   sort_order               = "DESC"
 }
 
-# IDCS
+# Identity Domain
 variable idcs_domain_name { default = "Default" }
 variable idcs_url { default = "" }
 
