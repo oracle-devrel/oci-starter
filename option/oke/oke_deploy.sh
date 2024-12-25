@@ -34,7 +34,7 @@ if [ ! -f $KUBECONFIG ]; then
 
     # external-dns.yaml
     sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns.yaml > $TARGET_DIR/external-dns.yaml
-    sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns.yaml > $TARGET_DIR/external-dns-config.yaml
+    sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns.yaml > $TARGET_DIR/external-dns.yaml
     kubectl apply -f $TARGET_DIR/external-dns.yaml
   else
     helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
