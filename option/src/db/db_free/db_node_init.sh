@@ -4,7 +4,12 @@
 
 # Doc: https://docs.oracle.com/en/database/oracle/oracle-database/23/xeinl/installing-oracle-database-free.html
 # Run as root
-FREEDB_RPM=oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
+if [ `arch` != "aarch64" ]; then
+  FREEDB_RPM=oracle-database-free-23ai-1.0-1.el8.aarch64.rpm
+else
+  FREEDB_RPM=oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
+fi
+
 if [ -f ${FREEDB_RPM} ]; then
   echo "SKIPPING DB INSTALL - File ${FREEDB_RPM} already downloaded"
   exit
@@ -45,7 +50,8 @@ EOF
 
   # Install APEX
   cd /tmp
-  export APEX_ZIP=apex_23.2_en.zip
+
+  export APEX_ZIP=apex_24.1_en.zip
   su - oracle -c "wget https://download.oracle.com/otn_software/apex/$APEX_ZIP"
   su - oracle -c "unzip $APEX_ZIP"
   su - oracle -c "cd apex; sqlplus '/ as sysdba' <<EOF

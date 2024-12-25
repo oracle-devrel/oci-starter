@@ -66,6 +66,7 @@ fi
 title "Deploy $TF_VAR_deploy_type"
 if [ "$TF_VAR_deploy_type" == "compute" ]; then
     $BIN_DIR/deploy_compute.sh
+    exit_on_error
 elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
     $BIN_DIR/deploy_compute.sh
     export TF_VAR_compute_ready="true"
