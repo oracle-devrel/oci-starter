@@ -195,9 +195,11 @@ loop_tls() {
   loop_tls_deploy
   # existing_ocid is part of existing_dir
 
+  OPTION_DB_INSTALL=shared_compute
   OPTION_TLS=new_http_01
   OPTION_DEPLOY=compute
   build_option  
+  OPTION_DB_INSTALL=default
 
   OPTION_TLS=new_http_01
   OPTION_DEPLOY=kubernetes
