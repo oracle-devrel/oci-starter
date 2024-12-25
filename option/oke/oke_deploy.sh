@@ -37,13 +37,13 @@ if [ ! -f $KUBECONFIG ]; then
     kubectl apply -f $TARGET_DIR/ccm-letsencrypt-staging.yaml
 
     # external-dns-config.yaml
-    sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns-config.yaml > $TARGET_DIR/external-dns-config.yaml
-    sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns-config.yaml > $TARGET_DIR/external-dns-config.yaml
+    sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns-config.yaml > $TARGET_DIR/external-dns-config.tmp
+    sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns-config.tmp > $TARGET_DIR/external-dns-config.yaml
     kubectl create secret generic external-dns-config --from-file=$TARGET_DIR/external-dns-config.yaml
 
     # external-dns.yaml
-    sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns.yaml > $TARGET_DIR/external-dns.yaml
-    sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns.yaml > $TARGET_DIR/external-dns.yaml
+    sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns.yaml > $TARGET_DIR/external-dns.tmp
+    sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns.tmp > $TARGET_DIR/external-dns.yaml
     kubectl apply -f $TARGET_DIR/external-dns.yaml
   else
     helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
