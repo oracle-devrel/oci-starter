@@ -4,6 +4,13 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $BIN_DIR/build_common.sh
 cd $SCRIPT_DIR/..
 
+function wait_ingress() {
+  # Wait for the ingress deployment
+  echo "Waiting for Ingress Controller Pods..."
+  kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=600s
+  kubectl wait --namespace ingress-nginx --for=condition=Complete job/ingress-nginx-admission-patch  
+}
+
 # Call build_common to push the ${TF_VAR_prefix}-app:latest and ${TF_VAR_prefix}-ui:latest to OCIR Docker registry
 ocir_docker_push
 
@@ -21,6 +28,7 @@ if [ ! -f $KUBECONFIG ]; then
     --namespace ingress-nginx \
     --create-namespace \
     --set controller.enableExternalDNS=true 
+    wait_ingress
 
     # ccm-letsencrypt-prod.yaml
     sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-prod.yaml > $TARGET_DIR/ccm-letsencrypt-prod.yaml
@@ -41,12 +49,8 @@ if [ ! -f $KUBECONFIG ]; then
     helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
     --namespace ingress-nginx \
     --create-namespace 
+    wait_ingress
   fi
-
-  # Wait for the deployment
-  echo "Waiting for Ingress Controller Pods..."
-  kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=600s
-  kubectl wait --namespace ingress-nginx --for=condition=Complete job/ingress-nginx-admission-patch  
   
   # Wait for the ingress external IP
   TF_VAR_ingress_ip=""
