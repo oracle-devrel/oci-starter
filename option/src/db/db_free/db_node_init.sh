@@ -5,9 +5,9 @@
 # Doc: https://docs.oracle.com/en/database/oracle/oracle-database/23/xeinl/installing-oracle-database-free.html
 # Run as root
 if [ `arch` != "aarch64" ]; then
-  FREEDB_RPM=oracle-database-free-23ai-1.0-1.el8.aarch64.rpm
-else
   FREEDB_RPM=oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
+else
+  FREEDB_RPM=oracle-database-free-23ai-1.0-1.el8.aarch64.rpm
 fi
 
 if [ -f ${FREEDB_RPM} ]; then
