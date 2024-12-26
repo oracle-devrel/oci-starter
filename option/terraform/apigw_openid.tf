@@ -9,20 +9,26 @@ variable "client_secret" {
 variable "client_secret_version_number" {
   default = 1
 }
-
-locals {
-  apigw_hostname = oci_apigateway_gateway.starter_apigw.hostname
+variable "vault_ocid" {
+  default = ""
 }
 
+
+
 resource "oci_kms_vault" "starter_vault" {
+  count = var.vault_ocid=="" ? 1 : 0  
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-vault"
   vault_type     = "DEFAULT"
 }
 
+locals {
+  apigw_hostname = oci_apigateway_gateway.starter_apigw.hostname
+  vault_ocid = var.vault_ocid=="" ? oci_kms_vault.starter_vault.id : var.vault_ocid 
+}
+
 data "oci_kms_vault" "starter_vault" {
-  #Required
-  vault_id = oci_kms_vault.starter_vault.id
+  vault_id = local.vault_ocid
 }
 
 resource "oci_kms_key" "starter_key" {
