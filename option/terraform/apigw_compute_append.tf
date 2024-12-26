@@ -154,7 +154,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
             // Discover the OAuth2/OpenID configuration from an RFC8414
             // metadata endpoint (https://www.rfc-editor.org/rfc/rfc8414)
             type = "DISCOVERY_URI"
-            uri = "${IDCS_URL}/.well-known/openid-configuration"
+            uri = "${local.idcs_url}/.well-known/openid-configuration"
           }
           client_details {
             // Specify the OAuth client id and secret to use with the
