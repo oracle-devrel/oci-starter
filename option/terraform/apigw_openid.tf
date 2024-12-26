@@ -24,7 +24,7 @@ resource "oci_kms_vault" "starter_vault" {
 
 locals {
   apigw_hostname = oci_apigateway_gateway.starter_apigw.hostname
-  vault_ocid = var.vault_ocid=="" ? oci_kms_vault.starter_vault.id : var.vault_ocid 
+  vault_ocid = var.vault_ocid=="" ? oci_kms_vault.starter_vault[0].id : var.vault_ocid 
 }
 
 data "oci_kms_vault" "starter_vault" {
