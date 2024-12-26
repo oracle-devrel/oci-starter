@@ -142,6 +142,13 @@ data "oci_identity_compartment" "compartment" {
   id = var.compartment_ocid
 }
 
+# Random ID
+resource "random_string" "id" {
+  length  = 4
+  special = false
+  upper = false
+}
+
 locals {
   ocir_docker_repository = join("", [lower(lookup(data.oci_identity_regions.current_region.regions[0], "key")), ".ocir.io"])
   ocir_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace")

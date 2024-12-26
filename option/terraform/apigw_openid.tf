@@ -57,7 +57,7 @@ resource "oci_vault_secret" "starter_openid_secret" {
     stage   = "CURRENT"
   }
   key_id      = oci_kms_key.starter_key.id
-  secret_name = "${var.prefix}-openid-secret"
+  secret_name = "${var.prefix}-openid-secret-${random_id.tag.hex}"
   vault_id    = local.vault_ocid
 }
 
