@@ -1,13 +1,8 @@
 locals {
   openid_client_id = oci_identity_domains_app.starter_confidential_app.name
+  openid_client_secret = oci_identity_domains_app.starter_confidential_app.client_secret
 }
-variable "client_secret" {
-  description = "OAuth2 Client Secret"
-  default = "UNKNOWN"
-}
-variable "client_secret_version_number" {
-  default = 1
-}
+
 variable "vault_ocid" {
   default = ""
 }
@@ -51,7 +46,7 @@ resource "oci_vault_secret" "starter_openid_secret" {
     content_type = "BASE64"
 
     #Optional
-    content = base64encode(var.client_secret)
+    content = base64encode(local.openid_client_secret)
     name    = "${var.prefix}-openid-secret"
     stage   = "CURRENT"
   }
