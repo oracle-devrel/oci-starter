@@ -78,7 +78,7 @@ default_options = {
     '-infra_as_code': 'terraform_local',
     '-output_dir' : 'output',
     '-db_password' : TO_FILL,
-    '-oke_type' : 'managed'
+    '-oke_type' : 'managed',
     '-security' : 'none'
 }
 
