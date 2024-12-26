@@ -39,8 +39,9 @@ resource "oci_kms_key" "starter_key" {
   key_shape {
     #Required
     algorithm = "AES"
-    length    = "256"
+    length    = "16"
   }
+  protection_mode="SOFTWARE"
 }
 
 resource "oci_vault_secret" "starter_openid_secret" {
@@ -85,7 +86,7 @@ resource "oci_identity_domains_app" "starter_confidential_app" {
   client_type        = "confidential"
   delegated_service_names = [
   ]
-  display_name = "starter-confidential-app"
+  display_name = "${var.prefix}-confidential-app"
   idcs_endpoint = "${local.idcs_url}"
   is_alias_app      = "false"
   is_enterprise_app = "false"
