@@ -159,10 +159,10 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
           client_details {
             // Specify the OAuth client id and secret to use with the
             // introspection endpoint
-            type = "CUSTOM"
-            client_id = var.client_id
-            client_secret_id = oci_vault_secret.starter_openid_secret.id
-            client_secret_version_number = var.client_secret_version_number
+            type                         = "CUSTOM"
+            client_id                    = local.client_id
+            client_secret_id             = oci_vault_secret.starter_openid_secret.id
+            client_secret_version_number = oci_vault_secret.starter_openid_secret.current_version_number
           }
         }
         validation_failure_policy {

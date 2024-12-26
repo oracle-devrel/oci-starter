@@ -1,6 +1,5 @@
-variable "client_id" {
-  description = "OAuth2 Client ID"
-  default = "UNKNOWN"
+locals {
+  openid_client_id = oci_identity_domains_app.starter_confidential_app.name
 }
 variable "client_secret" {
   description = "OAuth2 Client Secret"
