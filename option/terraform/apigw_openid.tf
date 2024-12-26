@@ -57,7 +57,7 @@ resource "oci_vault_secret" "starter_openid_secret" {
   }
   key_id      = oci_kms_key.starter_key.id
   secret_name = "${var.prefix}-openid-secret"
-  vault_id    = oci_kms_vault.starter_vault.id
+  vault_id    = local.vault_ocid
 }
 
 resource "oci_identity_domains_app" "starter_confidential_app" {
