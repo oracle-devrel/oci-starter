@@ -20,6 +20,11 @@ resource "oci_kms_vault" "starter_vault" {
   vault_type     = var.vault_type[0]
 }
 
+data "oci_kms_vault" "starter_vault" {
+  #Required
+  vault_id = oci_kms_vault.starter_vault.id
+}
+
 resource "oci_kms_key" "starter_key" {
   #Required
   compartment_id      = local.lz_app_cmp_ocid
