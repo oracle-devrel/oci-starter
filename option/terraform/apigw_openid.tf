@@ -10,6 +10,10 @@ variable "client_secret_version_number" {
   default = 1
 }
 
+locals {
+  apigw_hostname = oci_apigateway_gateway.starter_apigw.hostname
+}
+
 resource "oci_kms_vault" "starter_vault" {
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-vault"
