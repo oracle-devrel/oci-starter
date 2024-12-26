@@ -1,7 +1,10 @@
 variable "client_id" {
-  description = "The OAuth2 Client ID"
+  description = "OAuth2 Client ID"
+  default = "UNKNOWN"
 }
 variable "client_secret" {
+  description = "OAuth2 Client Secret"
+  default = "UNKNOWN"
 }
 variable "client_secret_version_number" {
   default = 1
