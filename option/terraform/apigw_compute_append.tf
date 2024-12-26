@@ -161,7 +161,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
             // introspection endpoint
             type = "CUSTOM"
             client_id = var.client_id
-            client_secret_id = var.client_secret_id
+            client_secret_id = oci_vault_secret.starter_openid_secret.id
             client_secret_version_number = var.client_secret_version_number
           }
         }
