@@ -135,6 +135,60 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
         url    = "http://${local.apigw_dest_private_ip}/$${request.path[pathname]}"
       }
     }    
+
+{%- if security == "openid" %}     
+    request_policies {
+      authentication {
+        type = "TOKEN_AUTHENTICATION"
+        token_header = "Authorization"
+        token_auth_scheme = "Bearer"
+        is_anonymous_access_allowed = false
+        validation_policy {
+          // Example validation policy using an OAuth2 introspection endpoint
+          // (https://datatracker.ietf.org/doc/html/rfc7662) to validate the
+          // clients authorization credentials
+          type = "REMOTE_DISCOVERY"
+          is_ssl_verify_disabled = true
+          max_cache_duration_in_hours = 1
+          source_uri_details {
+            // Discover the OAuth2/OpenID configuration from an RFC8414
+            // metadata endpoint (https://www.rfc-editor.org/rfc/rfc8414)
+            type = "DISCOVERY_URI"
+            uri = "${IDCS_URL}/.well-known/openid-configuration"
+          }
+          client_details {
+            // Specify the OAuth client id and secret to use with the
+            // introspection endpoint
+            type = "CUSTOM"
+            client_id = var.client_id
+            client_secret_id = var.client_secret_id
+            client_secret_version_number = var.client_secret_version_number
+          }
+        }
+        validation_failure_policy {
+          // When a client uses the API without auth credentials, or
+          // invalid/expired credentials then invoke the OAuth2 flow using
+          // the configuration below.
+          type = "OAUTH2"
+          scopes = ["openid"]
+          response_type = "CODE"
+          max_expiry_duration_in_hours = 1
+          use_cookies_for_intermediate_steps = true
+          use_cookies_for_session = true
+          use_pkce = true
+          fallback_redirect_path = "/fallback"
+          source_uri_details {
+            // Use the same discovery URI as the validation policy above.
+            type = "VALIDATION_BLOCK"
+          }
+          client_details {
+            // Use the same OAuth2 client details as the validation policy above.
+            type = "VALIDATION_BLOCK"
+          }
+        }
+      }
+    }  
+{%- endif %}      
   }
   freeform_tags = local.api_tags
 }    

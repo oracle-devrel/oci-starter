@@ -32,7 +32,7 @@ if [ ! -f $KUBECONFIG ]; then
 
     # ccm-letsencrypt-prod.yaml
     sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-prod.yaml > $TARGET_DIR/ccm-letsencrypt-prod.yaml
-    kubectl apply -f $TARGET_DIR/ccm-letsencrypt-prod.yaml
+    kubectl apply -f $TARGET_DIR/ccm-letsencrypt-prod.yaml --timeout=600s
     sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-staging.yaml > $TARGET_DIR/ccm-letsencrypt-staging.yaml
     kubectl apply -f $TARGET_DIR/ccm-letsencrypt-staging.yaml
 
