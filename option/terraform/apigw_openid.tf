@@ -100,8 +100,6 @@ resource "oci_identity_domains_app" "starter_confidential_app" {
   is_web_tier_policy       = "false"
   login_mechanism = "OIDC"
   logout_uri = "https://${local.apigw_hostname}/${var.prefix}/"
-  name       = "777b363ffc7b43bd92f0a9c3a7e108d5"
-  ocid       = "ocid1.domainapp.oc1.eu-frankfurt-1.amaaaaaa3gcex5iazzvu3de2wsug4evhs3ltmh6o47ibd4d6bqecvd5gvffq"
   post_logout_redirect_uris = [
     "https://${local.apigw_hostname}/${var.prefix}/",
   ]
