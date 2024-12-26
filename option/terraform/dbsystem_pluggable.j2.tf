@@ -14,7 +14,7 @@ variable "db_ocid" {}
 variable "db_compartment_ocid" { default="" }
 
 locals {
-  db_compartment_ocid = var.db_compartment_ocid == "" ? local.lz_database_cmp_ocid : var.db_compartment_ocid
+  db_compartment_ocid = var.db_compartment_ocid == "" ? local.lz_db_cmp_ocid : var.db_compartment_ocid
   db_ocid = var.db_ocid
 }
 
@@ -24,7 +24,7 @@ data "oci_database_db_homes" "starter_db_homes" {
 }
 
 data "oci_database_databases" "starter_dbs" {
-  compartment_id = local.lz_database_cmp_ocid
+  compartment_id = local.lz_db_cmp_ocid
   db_home_id     = data.oci_database_db_homes.starter_db_homes.db_homes.0.db_home_id
 }
 

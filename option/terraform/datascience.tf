@@ -18,7 +18,7 @@ resource "oci_datascience_project" "starter_project" {
   display_name = "${var.prefix} Project"
 
   depends_on = [
-    data.oci_core_subnet.starter_private_subnet
+    data.oci_core_subnet.starter_app_subnet
   ]
 }
 
@@ -35,7 +35,7 @@ resource "oci_datascience_notebook_session" "starter_notebook_session" {
 
   notebook_session_config_details {
     shape = data.oci_datascience_notebook_session_shapes.ds_shapes.notebook_session_shapes[0].name
-    subnet_id = data.oci_core_subnet.starter_private_subnet.id 
+    subnet_id = data.oci_core_subnet.starter_app_subnet.id 
   }
 
   depends_on = [

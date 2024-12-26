@@ -7,7 +7,7 @@ sudo dnf -y install oraclelinux-developer-release-el8
 sudo dnf -y install python36-oci-cli
 
 # OCI CLI config file
-mkdir $HOME/.oci
+mkdir -p $HOME/.oci
 touch $HOME/.oci/config 
 oci setup repair-file-permissions --file $HOME/.oci/config 
 

@@ -372,7 +372,7 @@ resource "oci_core_subnet" "starter_pod_subnet" {
 
 resource "oci_containerengine_cluster" "starter_oke" {
   #Required
-  compartment_id     = local.lz_appdev_cmp_ocid
+  compartment_id     = local.lz_app_cmp_ocid
   kubernetes_version = data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions[length(data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions)-1]
   name               = "${var.prefix}-oke"
   vcn_id             = data.oci_core_vcn.starter_vcn.id
@@ -418,7 +418,7 @@ resource "oci_containerengine_cluster" "starter_oke" {
 resource "oci_containerengine_node_pool" "starter_node_pool" {
   #Required
   cluster_id         = oci_containerengine_cluster.starter_oke.id
-  compartment_id     = local.lz_appdev_cmp_ocid
+  compartment_id     = local.lz_app_cmp_ocid
   kubernetes_version = data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions[length(data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions)-1]
   name               = "${var.prefix}-pool"
   node_shape         = var.oke_shape

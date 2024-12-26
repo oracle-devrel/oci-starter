@@ -1,13 +1,13 @@
 # DATA 1 - Get a list of element in Marketplace, using filters, eg name of the stack
 data "oci_marketplace_listings" "forms_listings" {
   name = ["Oracle Forms"]
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
 }
 
 # DATA 2 - Get details cf the specific listing you are interested in and which you obtained through generic listing
 data "oci_marketplace_listing" "forms_listing" {
   listing_id     = data.oci_marketplace_listings.forms_listings.listings[0].id
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
 }
 
 # DATA 3 - Get the list of versions for the specific entry (11.3, 12.2.1, ....)
@@ -16,7 +16,7 @@ data "oci_marketplace_listing_packages" "forms_listing_packages" {
   listing_id = data.oci_marketplace_listing.forms_listing.id
 
   #Optional
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
   package_version = data.oci_marketplace_listing.forms_listing.default_package_version
 }
 
@@ -27,7 +27,7 @@ data "oci_marketplace_listing_package" "forms_listing_package" {
   package_version = data.oci_marketplace_listing_packages.forms_listing_packages.package_version
 
   #Optional
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
 }
 
 # DATA 5 - agreement for a specific version
@@ -37,7 +37,7 @@ data "oci_marketplace_listing_package_agreements" "forms_listing_package_agreeme
   package_version = data.oci_marketplace_listing_packages.forms_listing_packages.package_version
 
   #Optional
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
 }
 
 data "oci_core_app_catalog_listing_resource_version" "forms_catalog_listing" {
@@ -57,7 +57,7 @@ resource "oci_marketplace_listing_package_agreement" "forms_listing_package_agre
 resource "oci_marketplace_accepted_agreement" "forms_accepted_agreement" {
   #Required
   agreement_id    = oci_marketplace_listing_package_agreement.forms_listing_package_agreement.agreement_id
-  compartment_id  = local.lz_appdev_cmp_ocid
+  compartment_id  = local.lz_app_cmp_ocid
   listing_id      = data.oci_marketplace_listing.forms_listing.id
   package_version = data.oci_marketplace_listing_packages.forms_listing_packages.package_version
   signature       = oci_marketplace_listing_package_agreement.forms_listing_package_agreement.signature
@@ -82,7 +82,7 @@ output "listing_resource_id" {
 resource oci_core_instance starter_instance {
 
   availability_domain = data.oci_identity_availability_domain.ad.name
-  compartment_id      = local.lz_appdev_cmp_ocid
+  compartment_id      = local.lz_app_cmp_ocid
   display_name        = "${var.prefix}-instance"
   shape               = "VM.Standard.E4.Flex"
   
@@ -92,7 +92,7 @@ resource oci_core_instance starter_instance {
   }
   
   create_vnic_details {
-    subnet_id                 = data.oci_core_subnet.starter_public_subnet.id
+    subnet_id                 = data.oci_core_subnet.starter_web_subnet.id
     display_name              = "Primaryvnic"    
     assign_public_ip          = "true"
     hostname_label            = "${var.prefix}-instance"

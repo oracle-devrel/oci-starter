@@ -82,6 +82,9 @@ build_test () {
     if grep -q -i "starter" /tmp/result.html; then
       echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
       CSV_HTML_OK=1
+    elif grep -q -i "deptno" /tmp/result.html; then
+      echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
+      CSV_HTML_OK=1
     else
       echo -e "${COLOR_RED}RESULT HTML: ***** BAD ******${COLOR_NONE}"
     fi
@@ -107,17 +110,28 @@ build_test () {
   fi   
 }
 
-echo_errors_csv() {
-  echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,$OPTION_JAVA_FRAMEWORK,$OPTION_JAVA_VM,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/errors.csv 
-  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/error_rerun.sh
+add_inprogress_rerun() {
+  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/inprogress_rerun.sh
+}
+
+add_errors_rerun() {
+  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_rerun.sh
+  # Remove from inprogress_rerun
+  sed -i "\#$TEST_DIR#d" $TEST_HOME/inprogress_rerun.sh          
+}
+
+add_ok_rerun() {
+  echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/ok_rerun.sh
+  # Remove from inprogress_rerun
+  sed -i "\#$TEST_DIR#d" $TEST_HOME/inprogress_rerun.sh          
+  # Remove from errors_rerun
+  if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
+    sed -i "\#$TEST_DIR#d" $TEST_HOME/errors_rerun.sh          
+    echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_old.sh
+  fi  
 }
 
 build_test_destroy () {
-  # Prevent to have undeleted resource when rerunning the test_suite
-  if [ -d $TEST_DIR/target ]; then
-     cd $TEST_DIR
-      ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
-  fi
   BUILD_ID=1
   build_test
   if [ "$BUILD_COUNT" = "2" ]; then
@@ -144,16 +158,27 @@ build_test_destroy () {
     echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,-,-,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/result.csv 
   fi
   if [ "$CSV_JSON_OK" != "1" ] || [ "$CSV_HTML_OK" != "1" ]; then
-    echo_errors_csv
+    echo "$CSV_DATE,$OPTION_DEPLOY,$OPTION_LANG,$OPTION_JAVA_FRAMEWORK,$OPTION_JAVA_VM,$OPTION_DB,$OPTION_DB_INSTALL,$OPTION_UI,$OPTION_SHAPE,$CSV_NAME,$CSV_HTML_OK,$CSV_JSON_OK,$CSV_BUILD_SECOND,$CSV_DESTROY_SECOND,$CSV_RUN100_OK,$CSV_RUN100_SECOND" >> $TEST_HOME/errors.csv 
+    add_errors_rerun
+  else 
+    add_ok_rerun  
   fi
+
+  if [ -f $TEST_HOME/stop_all_after_destroy ]; then
+    echo "-------------------------------------------------------"
+    echo "stop_all_after_destroy file dectected"
+    echo "Last directory: $TEST_DIR"
+    # rm $TEST_HOME/stop_all_after_destroy
+    exit
+  fi  
 }
 
 build_option() {
   mkdir_deploy
-  if [ "$OPTION_DB_INSTALL" == "shared_compute" ]; then
-    NAME=shared-compute-${OPTION_DB}
-  elif [ "$OPTION_TLS" != "none" ]; then
+  if [ "$OPTION_TLS" != "none" ]; then
     NAME=tls-${OPTION_TLS}-${OPTION_DEPLOY}
+  elif [ "$OPTION_DB_INSTALL" == "shared_compute" ]; then
+    NAME=shared-compute-${OPTION_DB}
   elif [ "$OPTION_LANG" == "java" ] && [ "$OPTION_DEPLOY" != "function" ]; then
     NAME=${OPTION_LANG}-${OPTION_JAVA_FRAMEWORK}-${OPTION_JAVA_VM}-${OPTION_DB}-${OPTION_UI}
   else
@@ -169,14 +194,44 @@ build_option() {
   NAME=${NAME/_/-}
   NAME=${NAME/_/-}
   start_test $NAME
-  if [ "$TEST_ERROR_ONLY" != "" ]; then
-    if grep -q "$TEST_DIR" $TEST_HOME/error_rerun.sh; then
-      echo "FOUND in error_rerun.sh: $TEST_DIR" 
+  if [ "$TEST_DIRECTORY_ONLY" != "" ]; then
+    if [ "$TEST_DIRECTORY_ONLY" == "$TEST_DIR" ]; then
+      echo "FOUND TEST_DIRECTORY_ONLY: $TEST_DIR" 
     else
-      echo "SKIP not in error_rerun.sh: $TEST_DIR" 
+      echo "SKIP: $TEST_DIR" 
       return
     fi
+  else 
+    if grep -q "$TEST_DIR" $TEST_HOME/inprogress_rerun.sh; then
+        echo "SKIP - FOUND in inprogress_rerun.sh: $TEST_DIR" 
+        return
+    fi  
+    if grep -q "$TEST_DIR" $TEST_HOME/ok_rerun.sh; then
+        echo "SKIP - FOUND in ok_rerun.sh: $TEST_DIR" 
+        return
+    fi  
+    if [ "$TEST_ERRORS_ONLY" = "" ]; then
+        if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
+            echo "SKIP - FOUND in errors_rerun.sh: $TEST_DIR" 
+            return
+        fi
+    fi
   fi
+    
+  # Prevent to have undeleted resource when rerunning the test_suite
+  if [ -d $TEST_DIR/target ]; then
+     cd $TEST_DIR
+     ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
+  fi
+
+  add_inprogress_rerun
+
+  # Avoid 2 parallel creations of code
+  while [ -f $TEST_HOME/oci_starter_busy ]; do
+    echo "FOUND oci_starter_busy - Waiting"
+    sleep 5
+  done
+  touch $TEST_HOME/oci_starter_busy
 
   cd $TEST_HOME/oci-starter
   if [ "$OPTION_GROUP_NAME" == "dummy" ]; then
@@ -196,8 +251,9 @@ build_option() {
        -tls $OPTION_TLS \
        -compartment_ocid $EX_COMPARTMENT_OCID \
        -vcn_ocid $TF_VAR_vcn_ocid \
-       -public_subnet_ocid $TF_VAR_public_subnet_ocid \
-       -private_subnet_ocid $TF_VAR_private_subnet_ocid \
+       -web_subnet_ocid $TF_VAR_web_subnet_ocid \
+       -app_subnet_ocid $TF_VAR_app_subnet_ocid \
+       -db_subnet_ocid $TF_VAR_db_subnet_ocid \
        -oke_ocid $TF_VAR_oke_ocid \
        -atp_ocid $TF_VAR_atp_ocid \
        -db_ocid $TF_VAR_db_ocid \
@@ -229,6 +285,7 @@ build_option() {
        -compartment_ocid $EX_COMPARTMENT_OCID > ${TEST_DIR}.log 2>&1 
   fi
 #      -db_compartment_ocid $EX_COMPARTMENT_OCID \
+  rm $TEST_HOME/oci_starter_busy
 
   RESULT=$?
   if [ $RESULT -eq 0 ] && [ -d output ]; then 
@@ -245,8 +302,13 @@ build_option() {
   else
     echo -e "${COLOR_RED}ERROR ./oci_starter.sh failed.${COLOR_NONE}"
     echo "Check ${TEST_DIR}.log"
-    echo_errors_csv
+    add_errors_rerun
   fi  
+
+  # Stop after finding the TEST_DIRECTORY_ONLY
+  if [ "$TEST_DIRECTORY_ONLY" != "" ]; then
+    exit
+  fi
 }
 
 # Create the $OPTION_DEPLOY directory
@@ -294,7 +356,7 @@ pre_test_suite() {
 pre_git_refresh() {
   cd $TEST_HOME/oci-starter
   git pull origin main
-  echo "----------------------------------------------" >> $TEST_HOME/error_rerun.sh
+  echo "----------------------------------------------------------------------------" >> $TEST_HOME/errors_rerun.sh
 }
 
 post_test_suite() {

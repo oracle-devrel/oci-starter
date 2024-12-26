@@ -8,7 +8,19 @@ RUN  /app/wa_php_oci.sh && \
      yum install -y php-pgsql && \
      {%- endif %}     
      sed -i "s/Listen 80$/Listen 8080/" /etc/httpd/conf/httpd.conf && \
-     rm /etc/nginx/default.d/php.conf
+     rm /etc/nginx/default.d/php.conf 
+
+# Set error_log and access_log to stout/stderr
+RUN  sed -i 's#ErrorLog "logs/error_log"#ErrorLog /dev/stderr#g' /etc/httpd/conf/httpd.conf && \
+     sed -i 's#CustomLog "logs/access_log"#CustomLog /dev/stdout#g' /etc/httpd/conf/httpd.conf
+{%- if deploy_type == "container_instance" %}
+# Comment listen.acl_users for Container Instance, and force the listen.owner/listen.group
+RUN  sed -i 's/^listen.acl_users/;listen.acl_users/g' /etc/php-fpm.d/www.conf && \
+     echo ";------------------------------" >> /etc/php-fpm.d/www.conf && \ 
+     echo "listen.owner = apache" >> /etc/php-fpm.d/www.conf && \
+     echo "listen.group = apache" >> /etc/php-fpm.d/www.conf && \
+     echo "listen.mode = 0660"
+{%- endif %}     
 
 WORKDIR /app
 COPY src/html/* /var/www/html/
@@ -17,4 +29,4 @@ RUN cat /app/php.ini.append.docker >> /etc/php.ini
 COPY src/app.conf /etc/httpd/conf.d/
 # ENTRYPOINT ["httpd", "-D", "FOREGROUND"]
 # Docker does not start php-fpm as service for strange reasons...
-CMD ["/bin/bash", "-c", "mkdir /run/php-fpm && php-fpm && httpd -D FOREGROUND"]
+CMD ["/bin/bash", "-c", "mkdir -p /run/php-fpm && php-fpm && httpd -D FOREGROUND"]

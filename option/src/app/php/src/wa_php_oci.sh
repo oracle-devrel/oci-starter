@@ -34,3 +34,4 @@ echo extension=oci8 > /etc/php.d/20-oci8.ini
 systemctl enable httpd
 systemctl enable php-fpm
 
+mkdir -p /run/php-fpm

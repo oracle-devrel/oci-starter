@@ -1,3 +1,5 @@
+# When APIGW is used, this is not used. 2 deployments (/ords and /i) in APIGW does the same.
+
 location /app {
     proxy_pass ##ORDS_URL##/r/apex_app/apex_app;    
     proxy_set_header Origin "" ;

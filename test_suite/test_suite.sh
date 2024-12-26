@@ -195,9 +195,11 @@ loop_tls() {
   loop_tls_deploy
   # existing_ocid is part of existing_dir
 
+  OPTION_DB_INSTALL=shared_compute
   OPTION_TLS=new_http_01
   OPTION_DEPLOY=compute
   build_option  
+  OPTION_DB_INSTALL=default
 
   OPTION_TLS=new_http_01
   OPTION_DEPLOY=kubernetes
@@ -241,12 +243,14 @@ generate_only() {
   export GENERATE_ONLY=true
 }
 
-pre_test_suite
-# pre_git_refresh
+if [ -d $TEST_HOME ]; then
+  pre_git_refresh
+else  
+  pre_test_suite
+fi
 # generate_only
 cd $TEST_HOME
 . ./group_common_env.sh
-# export TEST_ERROR_ONLY=TRUE
 # export TEST_GRAALVM_NATIVE=TRUE
 loop_deploy
-post_test_suite
+# post_test_suite

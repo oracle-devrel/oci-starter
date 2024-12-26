@@ -6,7 +6,7 @@ variable "db_ocid" {}
 variable "db_compartment_ocid" { default="" }
 
 locals {
-  db_compartment_ocid = var.db_compartment_ocid == "" ? local.lz_database_cmp_ocid : var.db_compartment_ocid
+  db_compartment_ocid = var.db_compartment_ocid == "" ? local.lz_db_cmp_ocid : var.db_compartment_ocid
   db_ocid = var.db_ocid
 }
 
@@ -28,7 +28,7 @@ variable character_set {
 
 # Avoid that the DB is created before the Gateways...
 resource "null_resource" "sleep_before_db_system" {
-  depends_on = [ data.oci_core_subnet.starter_private_subnet ]
+  depends_on = [ data.oci_core_subnet.starter_db_subnet ]
   provisioner "local-exec" {
     command = "sleep 15"
   }
@@ -37,7 +37,7 @@ resource "null_resource" "sleep_before_db_system" {
 resource "oci_database_db_system" "starter_dbsystem" {
   depends_on = [ null_resource.sleep_before_db_system ]
   availability_domain = data.oci_identity_availability_domain.ad.name
-  compartment_id      = local.lz_database_cmp_ocid
+  compartment_id      = local.lz_db_cmp_ocid
   database_edition    = "##db_edition##"
 
   db_home {
@@ -58,7 +58,7 @@ resource "oci_database_db_system" "starter_dbsystem" {
 
   shape                   = "VM.Standard.E4.Flex"
   cpu_core_count          = ##cpu_core_count##
-  subnet_id               = data.oci_core_subnet.starter_private_subnet.id
+  subnet_id               = data.oci_core_subnet.starter_db_subnet.id
   ssh_public_keys         = [var.ssh_public_key]
   display_name            = "${var.prefix}db"
   hostname                = "${var.prefix}db"
@@ -71,12 +71,12 @@ resource "oci_database_db_system" "starter_dbsystem" {
 
 # Compatibility with db_existing.tf 
 data "oci_database_db_homes" "starter_db_homes" {
-  compartment_id = local.lz_database_cmp_ocid
+  compartment_id = local.lz_db_cmp_ocid
   db_system_id   = oci_database_db_system.starter_dbsystem.id
 }
 
 locals {
-  db_compartment_ocid = local.lz_database_cmp_ocid
+  db_compartment_ocid = local.lz_db_cmp_ocid
   db_ocid = oci_database_db_system.starter_dbsystem.id
 }
 {%- endif %}  

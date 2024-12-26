@@ -78,13 +78,14 @@ default_options = {
     '-infra_as_code': 'terraform_local',
     '-output_dir' : 'output',
     '-db_password' : TO_FILL,
-    '-oke_type' : 'managed'
+    '-oke_type' : 'managed',
+    '-security' : 'none'
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
                       '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid', '-psql_ocid', '-opensearch_ocid', '-nosql_ocid',
                       '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token', '-tls',
-                      '-subnet_ocid','-public_subnet_ocid','-private_subnet_ocid','-shape','-db_install', 
+                      '-subnet_ocid','-web_subnet_ocid','-app_subnet_ocid','-db_subnet_ocid','-shape','-db_install', 
                       '-ui', '-deploy', '-database', '-license']
 
 # hidden_options - allowed but not advertised
@@ -117,7 +118,8 @@ allowed_values = {
     '-shape': {'amd','freetier_amd','ampere','arm'},
     '-db_install': {'default', 'shared_compute', 'kubernetes'},
     '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'},
-    '-oke_type': {'managed', 'virtual_node'}
+    '-oke_type': {'managed', 'virtual_node'},
+    '-security': {'none', 'openid'}
 }
 
 def check_values():
@@ -200,12 +202,13 @@ def kubernetes_rules():
 
 def vcn_rules():
     if 'subnet_ocid' in params:
-        params['public_subnet_ocid'] = params['subnet_ocid']
-        params['private_subnet_ocid'] = params['subnet_ocid']
+        params['web_subnet_ocid'] = params['subnet_ocid']
+        params['app_subnet_ocid'] = params['subnet_ocid']
+        params['db_subnet_ocid'] = params['subnet_ocid']
         params.pop('subnet_ocid')
-    if 'vcn_ocid' in params and 'public_subnet_ocid' not in params:
+    if 'vcn_ocid' in params and 'web_subnet_ocid' not in params:
         error('-subnet_ocid or required for -vcn_ocid')
-    elif 'vcn_ocid' not in params and 'public_subnet_ocid' in params:
+    elif 'vcn_ocid' not in params and 'web_subnet_ocid' in params:
         error('-vcn_ocid required for -subnet_ocid')
     
  
@@ -353,8 +356,9 @@ starter.sh
    -nosql_ocid (optional)
    -oke_ocid (optional)
    -prefix (default starter)
-   -public_subnet_ocid (optional)
-   -private_subnet_ocid (optional)
+   -web_subnet_ocid (optional)
+   -app_subnet_ocid (optional)
+   -db_subnet_ocid (optional)
    -shape (optional freetier)
    -ui (default html | reactjs | jet | angular | none) 
    -vcn_ocid (optional)
@@ -566,8 +570,8 @@ def env_sh_contents():
     #    contents.append('  # export TF_VAR_instance_shape=VM.Standard.E4.Flex')
     #    contents.append('')
     # contents.append('  # Landing Zone')
-    # contents.append('  # export TF_VAR_lz_appdev_cmp_ocid=$TF_VAR_compartment_ocid')
-    # contents.append('  # export TF_VAR_lz_database_cmp_ocid=$TF_VAR_compartment_ocid')
+    # contents.append('  # export TF_VAR_lz_app_cmp_ocid=$TF_VAR_compartment_ocid')
+    # contents.append('  # export TF_VAR_lz_db_cmp_ocid=$TF_VAR_compartment_ocid')
     # contents.append('  # export TF_VAR_lz_network_cmp_ocid=$TF_VAR_compartment_ocid')
     # contents.append('  # export TF_VAR_lz_security_cmp_ocid=$TF_VAR_compartment_ocid')
     contents.append("fi")      
@@ -725,7 +729,11 @@ def cp_terraform_apigw(append_tf):
     else:
         app_url = "http://${local.apigw_dest_private_ip}:8080/$${request.path[pathname]}" 
 
-    cp_terraform_existing("apigw_ocid", "apigw.j2.tf", append_tf)
+    security_tf = None
+    if params.get('security') == "openid":
+        security_tf = "apigw_openid.tf"
+
+    cp_terraform_existing("apigw_ocid", "apigw.j2.tf", append_tf, security_tf)
     if 'apigw_ocid' in params:
         output_replace('##APP_URL##', app_url,"src/terraform/apigw_existing.j2.tf")
     else:
@@ -754,7 +762,7 @@ def create_dir_shared():
     # -- Bastion ------------------------------------------------------------
     # Currently limited to provision the database ? 
     # XXXX In the future maybe as build machine ?
-    if params.get('db_install') == "shared_compute" or 'bastion_ocid' in params or params.get('db_type')!='none':
+    if params.get('deploy_type') in [ 'compute', 'instance_pool' ] or 'bastion_ocid' in params or params.get('db_type')!='none':
         cp_terraform_existing("bastion_ocid", "bastion.j2.tf")
 
 #----------------------------------------------------------------------------
@@ -886,13 +894,19 @@ def create_output_dir():
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
             if params.get('deploy_type') == 'instance_pool':
-                cp_terraform("instance_pool.j2.tf")            
+                cp_terraform("instance_pool.j2.tf") 
             elif params.get('tls') == 'existing_dir':
-                output_copy_tree("option/tls/compute_existing_dir", "src/tls")
+                if params.get('db_install') == 'shared_compute':
+                    output_copy_tree("option/tls/compute_existing_dir", "src/tls")
+                else: 
+                    cp_terraform_apigw("apigw_compute_append.tf")                             
             elif params.get('tls') == 'new_http_01':
                 output_copy_tree("option/tls/new_http_01", "src/tls")
             elif params.get('tls') == 'existing_ocid':
                 cp_terraform_apigw("apigw_compute_append.tf")   
+            # Compute in app_subnet uses an APIGW in web_subnet
+            if params.get('deploy_type') == 'compute' and params.get('db_install') != 'shared_compute':
+                cp_terraform_apigw("apigw_compute_append.tf")
 
         elif params.get('deploy_type') == "container_instance":
             cp_terraform("container_instance.j2.tf")
@@ -1088,7 +1102,7 @@ def jinja2_replace_template():
         for filename in files:    
             if filename.find('.j2.')>0 or filename.endswith('.j2'):
                 output_file_path = os.path.join(subdir, filename.replace(".j2", ""))
-                print(f"J2 - processing - {output_file_path}")
+                print(f"J2 - processing - {output_file_path}", flush=True)
                 if os.path.isfile(output_file_path): 
                     print(f"J2 - Skipping - destination file already exists: {output_file_path}") 
                 else:
@@ -1166,8 +1180,9 @@ if 'group_common' in params:
     # The application will use the Common Resources created by group_name above.
     # del params['group_common']
     params['vcn_ocid'] = TO_FILL
-    params['public_subnet_ocid'] = TO_FILL
-    params['private_subnet_ocid'] = TO_FILL
+    params['web_subnet_ocid'] = TO_FILL
+    params['app_subnet_ocid'] = TO_FILL
+    params['db_subnet_ocid'] = TO_FILL
     # Use a bastion only for the database
     if params.get('db_type')!='none':
         params['bastion_ocid'] = TO_FILL

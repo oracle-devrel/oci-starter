@@ -19,7 +19,7 @@ locals {
 variable "namespace" {}
 
 resource "oci_objectstorage_bucket" "starter_bucket" {
-  compartment_id = local.lz_security_cmp_ocid
+  compartment_id = local.lz_serv_cmp_ocid
   namespace      = var.namespace
   name           = "${var.prefix}-public-bucket"
   access_type    = "ObjectReadWithoutList"
@@ -46,7 +46,7 @@ resource "oci_identity_domains_dynamic_resource_group" "starter-instance-dyngrou
     provider       = oci.home    
     display_name = "${var.prefix}-instance-dyngroup"
     idcs_endpoint = local.idcs_url
-    matching_rule = "ANY{ instance.compartment.id = '${local.lz_appdev_cmp_ocid}' }"
+    matching_rule = "ANY{ instance.compartment.id = '${local.lz_app_cmp_ocid}' }"
     schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
 }
 
@@ -60,10 +60,10 @@ resource "oci_identity_policy" "starter-adb-policy" {
     depends_on     = [ time_sleep.wait_30_seconds ]
     name           = "${var.prefix}-adb-policy"
     description    = "${var.prefix} adb policy"
-    compartment_id = local.lz_appdev_cmp_ocid
+    compartment_id = local.lz_app_cmp_ocid
 
     statements = [
-        "Allow dynamic-group ${var.prefix}-adb-dyngroup to manage generative-ai-family in compartment id ${var.compartment_ocid}"
+        "Allow dynamic-group ${var.idcs_domain_name}/${var.prefix}-adb-dyngroup to manage generative-ai-family in compartment id ${var.compartment_ocid}"
     ]
 }
 
@@ -72,10 +72,10 @@ resource "oci_identity_policy" "starter-instance-policy" {
     depends_on     = [ time_sleep.wait_30_seconds ]
     name           = "${var.prefix}-instance-policy"
     description    = "${var.prefix} instance policy"
-    compartment_id = local.lz_appdev_cmp_ocid
+    compartment_id = local.lz_app_cmp_ocid
 
     statements = [
-        "Allow dynamic-group ${var.prefix}-instance-dyngroup to manage generative-ai-family in compartment id ${var.compartment_ocid}"
+        "Allow dynamic-group ${var.idcs_domain_name}/${var.prefix}-instance-dyngroup to manage generative-ai-family in compartment id ${var.compartment_ocid}"
     ]
 }
 */
@@ -86,7 +86,7 @@ resource "oci_identity_policy" "starter-policy" {
     provider       = oci.home    
     name           = "${var.prefix}-policy"
     description    = "${var.prefix} policy"
-    compartment_id = local.lz_appdev_cmp_ocid
+    compartment_id = local.lz_app_cmp_ocid
 
     statements = [
         "Allow any-user to use generative-ai-family in compartment id ${var.compartment_ocid}"
@@ -96,15 +96,15 @@ resource "oci_identity_policy" "starter-policy" {
 #-- API Gateway Private --------------------------------------------------
 
 resource oci_apigateway_gateway starter_apigw_private {
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
   display_name  = "${var.prefix}-apigw-private"
   endpoint_type = "PRIVATE" 
-  subnet_id = data.oci_core_subnet.starter_private_subnet.id
+  subnet_id = data.oci_core_subnet.starter_app_subnet.id
   freeform_tags = local.freeform_tags       
 }
 
 resource "oci_apigateway_deployment" "starter_apigw_private_deployment" {   
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-apigw-private-deployment"
   gateway_id     = oci_apigateway_gateway.starter_apigw_private.id
   path_prefix    = "/cohere"
@@ -135,10 +135,10 @@ resource "oci_apigateway_deployment" "starter_apigw_private_deployment" {
 #-- API Gateway Public ----------------------------------------------------
 
 resource oci_apigateway_gateway starter_apigw {
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
   display_name  = "${var.prefix}-apigw-public"
   endpoint_type = "PUBLIC"
-  subnet_id = data.oci_core_subnet.starter_public_subnet.id
+  subnet_id = data.oci_core_subnet.starter_web_subnet.id
   freeform_tags = local.freeform_tags       
 }
 
@@ -148,7 +148,7 @@ locals {
 }   
 
 resource "oci_apigateway_deployment" "starter_apigw_public_deployment" {   
-  compartment_id = local.lz_appdev_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-apigw-public-deployment"
   gateway_id     = oci_apigateway_gateway.starter_apigw.id
   path_prefix    = "/"
@@ -190,7 +190,7 @@ resource "oci_bastion_bastion" "starter_bastion" {
   name = "${var.prefix}-bastion"
   bastion_type     = "STANDARD"
   compartment_id   = var.compartment_ocid
-  target_subnet_id =  data.oci_core_subnet.starter_private_subnet.id
+  target_subnet_id =  data.oci_core_subnet.starter_app_subnet.id
   freeform_tags = local.freeform_tags      
   client_cidr_block_allow_list = [
     "0.0.0.0/0"
@@ -222,8 +222,8 @@ output "bastion_command" {
 
 resource "oci_load_balancer" "starter_pool_lb" {
   shape          = "flexible"
-  compartment_id = local.lz_appdev_cmp_ocid
-  subnet_ids = [ data.oci_core_subnet.starter_public_subnet.id ]
+  compartment_id = local.lz_app_cmp_ocid
+  subnet_ids = [ data.oci_core_subnet.starter_web_subnet.id ]
   shape_details {
     #Required
     minimum_bandwidth_in_mbps = 10

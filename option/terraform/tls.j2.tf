@@ -3,7 +3,7 @@ variable "dns_name" { default="" }
 variable "dns_ip" { default="" }
 
 locals {
-{%- if deploy_type == "compute" and tls != "existing_ocid" %}  
+{%- if deploy_type == "compute" and tls != "existing_ocid" and db_install == "shared_compute" %}  
   dns_ip = local.compute_public_ip
 {%- elif deploy_type == "instance_pool" %}  
   dns_ip = local.instance_pool_lb_ip
@@ -20,16 +20,6 @@ locals {
 {%- else %}
 # Todo: Better use Workload Access Principal - https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contenggrantingworkloadaccesstoresources.htm
 
-# This is needed for External DNS
-resource "oci_identity_dynamic_group" "starter_instance_dyngroup" {
-  provider       = oci.home
-  compartment_id = var.tenancy_ocid
-  name           = "${var.prefix}-instance-dyngroup"
-  description    = "${var.prefix}-instance-dyngroup"
-  matching_rule  = "instance.compartment.id = '${var.compartment_ocid}'"
-  freeform_tags  = local.freeform_tags
-}
-
 resource "oci_identity_policy" "oke_tls_policy" {
   provider       = oci.home    
   name           = "oke-tls-policy"
@@ -37,7 +27,8 @@ resource "oci_identity_policy" "oke_tls_policy" {
   compartment_id = var.compartment_ocid
 
   statements = [
-    "Allow dynamic-group ${var.prefix}-instance-dyngroup to manage dns in compartment id ${var.compartment_ocid}",
+    # "Allow any-user to manage dns in compartment id ${var.compartment_ocid} where instance.compartment.id='${var.compartment_ocid}'",
+    "Allow any-user to manage dns in compartment id ${var.compartment_ocid}",
     "Allow any-user to manage dns in compartment id ${var.compartment_ocid} where all {request.principal.type='workload',request.principal.cluster_id='${local.oke_ocid}',request.principal.service_account='external-dns'}"
   ]
 }
@@ -51,7 +42,7 @@ resource "oci_dns_rrset" "starter_rrset" {
     zone_name_or_id = var.dns_zone_name
     domain = var.dns_name
     rtype  = "A"
-    compartment_id = local.lz_appdev_cmp_ocid
+    compartment_id = local.lz_app_cmp_ocid
     items {
         #Required
         domain = var.dns_name

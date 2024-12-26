@@ -9,7 +9,7 @@ data "oci_core_instance" "starter_instance" {
 resource "oci_core_instance" "starter_instance" {
 
   availability_domain = data.oci_identity_availability_domain.ad.name
-  compartment_id      = local.lz_appdev_cmp_ocid
+  compartment_id      = local.lz_app_cmp_ocid
   display_name        = "${var.prefix}-instance"
   shape               = var.instance_shape
 
@@ -20,9 +20,14 @@ resource "oci_core_instance" "starter_instance" {
   }
 
   create_vnic_details {
-    subnet_id                 = data.oci_core_subnet.starter_public_subnet.id
-    display_name              = "Primaryvnic"
+{%- if db_install == "shared_compute" %}
+    subnet_id                 = data.oci_core_subnet.starter_web_subnet.id
     assign_public_ip          = true
+{%- else %}
+    subnet_id                 = data.oci_core_subnet.starter_app_subnet.id
+    assign_public_ip          = false
+{%- endif %}
+    display_name              = "Primaryvnic"
     assign_private_dns_record = true
     hostname_label            = "${var.prefix}-instance"
   }
@@ -55,13 +60,6 @@ resource "oci_core_instance" "starter_instance" {
     private_key = var.ssh_private_key
   }
 
-  provisioner "remote-exec" {
-    on_failure = continue
-    inline = [
-      "date"
-    ]
-  }
-
   freeform_tags = local.freeform_tags
 }
 
@@ -77,5 +75,5 @@ locals {
 }
 
 output "compute_ip" {
-  value = local.compute_public_ip
+  value = local.compute_private_ip
 }

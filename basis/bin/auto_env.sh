@@ -137,6 +137,9 @@ else
   auto_echo TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid
   auto_echo TF_VAR_region=$TF_VAR_region
 
+  # DATE_POSTFIX (used for logs names)
+  DATE_POSTFIX=`date '+%Y%m%d-%H%M%S'`
+
   # Kubernetes and OCIR
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     export TF_VAR_namespace=`oci os ns get | jq -r .data`
@@ -214,14 +217,11 @@ if [ -f $STATE_FILE ]; then
   # OBJECT_STORAGE_URL
   export OBJECT_STORAGE_URL=https://objectstorage.${TF_VAR_region}.oraclecloud.com
 
-  # API GW
-  if [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_ui_type" == "api" ]; then
-    # APIGW URL
-    get_attribute_from_tfstate "APIGW_HOSTNAME" "starter_apigw" "hostname"
-    # APIGW Deployment id
-    get_attribute_from_tfstate "APIGW_DEPLOYMENT_OCID" "starter_apigw_deployment" "id"
-  fi
-
+  # APIGW URL - not always used
+  get_attribute_from_tfstate "APIGW_HOSTNAME" "starter_apigw" "hostname"
+  # APIGW Deployment id
+  get_attribute_from_tfstate "APIGW_DEPLOYMENT_OCID" "starter_apigw_deployment" "id"
+ 
   # Instance Pool
   if [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
     # XXX Does not work with Resource Manager XXX
@@ -270,6 +270,21 @@ if [ -f $STATE_FILE ]; then
   
   # Bastion 
   get_output_from_tfstate "BASTION_IP" "bastion_public_ip"
+
+  # Check if there is a BASTION SERVICE with a BASTION COMMAND
+  get_output_from_tfstate "BASTION_COMMAND" "bastion_command"
+  if [ "$BASTION_COMMAND" == "" ]; then
+    if [ "$TF_VAR_db_install" == "shared_compute" ]; then
+      export COMPUTE_IP=$BASTION_IP
+    fi
+    export BASTION_USER_HOST="opc@$BASTION_IP"
+    export BASTION_PROXY_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p $BASTION_USER_HOST"
+  else 
+    # export Ex: BASTION_COMMAND="ssh -i <privateKey>-o ProxyCommand=\"ssh -i <privateKey> -W %h:%p -p 22 ocid1.bastionsession.oc1.eu-frankfurt-1.xxxxxxxx@host.bastion.eu-frankfurt-1.oci.oraclecloud.com\" -p 22 opc@10.0.1.97"
+    export BASTION_USER_HOST=`echo $BASTION_COMMAND | sed "s/.*ocid1.bastionsession/ocid1.bastionsession/" | sed "s/oci\.oraclecloud\.com.*/oci\.oraclecloud\.com/"`
+    export BASTION_IP=`echo $BASTION_COMMAND | sed "s/.*opc@//"`
+    export BASTION_PROXY_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p $BASTION_USER_HOST"
+  fi
 
   # JDBC_URL
   get_output_from_tfstate "JDBC_URL" "jdbc_url"

@@ -69,7 +69,6 @@ if [ "$TF_VAR_deploy_type" == "compute" ]; then
     exit_on_error
 elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
     $BIN_DIR/deploy_compute.sh
-    exit_on_error
     export TF_VAR_compute_ready="true"
     src/terraform/apply.sh --auto-approve -no-color
     exit_on_error
