@@ -17,7 +17,7 @@ locals {
 resource "oci_kms_vault" "starter_vault" {
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-vault"
-  vault_type     = var.vault_type[0]
+  vault_type     = "DEFAULT"
 }
 
 data "oci_kms_vault" "starter_vault" {
