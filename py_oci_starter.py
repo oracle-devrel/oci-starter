@@ -79,6 +79,7 @@ default_options = {
     '-output_dir' : 'output',
     '-db_password' : TO_FILL,
     '-oke_type' : 'managed'
+    '-security' : 'none'
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
@@ -117,7 +118,8 @@ allowed_values = {
     '-shape': {'amd','freetier_amd','ampere','arm'},
     '-db_install': {'default', 'shared_compute', 'kubernetes'},
     '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'},
-    '-oke_type': {'managed', 'virtual_node'}
+    '-oke_type': {'managed', 'virtual_node'},
+    '-security': {'none', 'openid'}
 }
 
 def check_values():
@@ -727,7 +729,11 @@ def cp_terraform_apigw(append_tf):
     else:
         app_url = "http://${local.apigw_dest_private_ip}:8080/$${request.path[pathname]}" 
 
-    cp_terraform_existing("apigw_ocid", "apigw.j2.tf", append_tf)
+    security_tf = None
+    if params.get('security') == "openid":
+        security_tf = "apigw_openid.tf"
+
+    cp_terraform_existing("apigw_ocid", "apigw.j2.tf", append_tf, security_tf)
     if 'apigw_ocid' in params:
         output_replace('##APP_URL##', app_url,"src/terraform/apigw_existing.j2.tf")
     else:
