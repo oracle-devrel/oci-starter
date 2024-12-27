@@ -36,8 +36,8 @@ resource "oci_kms_key" "starter_key" {
   protection_mode="SOFTWARE"
 }
 
-data "oci_kms_vault" "starter_vault" {
-  vault_id = local.vault_ocid
+data "oci_kms_key" "starter_key" {
+  key_id = local.vault_ocid
 }
 
 locals {
