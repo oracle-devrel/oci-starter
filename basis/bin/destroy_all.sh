@@ -39,17 +39,6 @@ else
   exit 
 fi
 
-if [ -f $STATE_FILE ]; then
-  export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
-  if [ "$TF_RESOURCE" == "0" ]; then
-    echo "No resource in terraform state file. Nothing to destroy."
-    exit 
-  fi
-else
-  echo "File $STATE_FILE does not exist. Nothing to destroy."
-  exit 
-fi
-
 # Confidential APP
 get_attribute_from_tfstate "CONFIDENTIAL_APP_OCID" "starter_confidential_app" "id"
 if [ "$CONFIDENTIAL_APP_OCID" != "" ]; then
