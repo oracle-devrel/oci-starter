@@ -37,7 +37,7 @@ resource "oci_kms_key" "starter_key" {
 }
 
 data "oci_kms_key" "starter_key" {
-  key_id = local.vault_ocid
+  key_id = local.vault_key_ocid
   management_endpoint = data.oci_kms_vault.starter_vault.management_endpoint
 }
 
