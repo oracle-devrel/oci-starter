@@ -100,6 +100,7 @@ resource "oci_identity_domains_app" "starter_confidential_app" {
   redirect_uris = [
     "https://${local.apigw_hostname}/${var.prefix}/",
     "https://${local.apigw_hostname}/${var.prefix}/app/dept",
+    "https://${local.apigw_hostname}/${var.prefix}/app/info"
   ]
   schemas = [
     "urn:ietf:params:scim:schemas:oracle:idcs:App",

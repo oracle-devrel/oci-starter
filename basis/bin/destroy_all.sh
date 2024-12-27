@@ -39,6 +39,27 @@ else
   exit 
 fi
 
+if [ -f $STATE_FILE ]; then
+  export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
+  if [ "$TF_RESOURCE" == "0" ]; then
+    echo "No resource in terraform state file. Nothing to destroy."
+    exit 
+  fi
+else
+  echo "File $STATE_FILE does not exist. Nothing to destroy."
+  exit 
+fi
+
+# Confidential APP
+get_attribute_from_tfstate "CONFIDENTIAL_APP_OCID" "starter_confidential_app" "id"
+if [ "$CONFIDENTIAL_APP_OCID" != "" ]; then
+  # Disable the app before destroy... (Bug?) if not destroy fails...
+  echo "Confidential app: set active to false"
+  get_output_from_tfstate "IDCS_URL" "idcs_url"
+  oci identity-domains app patch --app-id $CONFIDENTIAL_APP_OCID --endpoint $IDCS_URL -active false
+fi
+
+# OKE
 if [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
   title "OKE Destroy"
   bin/oke_destroy.sh --auto-approve
