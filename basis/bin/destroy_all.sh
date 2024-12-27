@@ -45,6 +45,8 @@ if [ "$CONFIDENTIAL_APP_OCID" != "" ]; then
   # Disable the app before destroy... (Bug?) if not destroy fails...
   echo "Confidential app: set active to false"
   get_output_from_tfstate "IDCS_URL" "idcs_url"
+  # Remove trailing /
+  IDCS_URL=${IDCS_URL::-1}
   oci identity-domains app-status-changer put --active false --app-status-changer-id $CONFIDENTIAL_APP_OCID --schemas '["urn:ietf:params:scim:schemas:oracle:idcs:AppStatusChanger"]' --endpoint $IDCS_URL  --force
 fi
 
