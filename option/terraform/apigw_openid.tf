@@ -7,7 +7,9 @@ variable "vault_ocid" {
   default = ""
 }
 
-
+variable "vault_key_ocid" {
+  default = ""
+}
 
 resource "oci_kms_vault" "starter_vault" {
   count = var.vault_ocid=="" ? 1 : 0  
@@ -16,17 +18,13 @@ resource "oci_kms_vault" "starter_vault" {
   vault_type     = "DEFAULT"
 }
 
-locals {
-  apigw_hostname = oci_apigateway_gateway.starter_apigw.hostname
-  vault_ocid = var.vault_ocid=="" ? oci_kms_vault.starter_vault[0].id : var.vault_ocid 
-}
-
 data "oci_kms_vault" "starter_vault" {
   vault_id = local.vault_ocid
 }
 
 resource "oci_kms_key" "starter_key" {
   #Required
+  count = var.vault_key_ocid=="" ? 1 : 0  
   compartment_id      = local.lz_app_cmp_ocid
   display_name        = "${var.prefix}-key"
   management_endpoint = data.oci_kms_vault.starter_vault.management_endpoint
@@ -36,6 +34,16 @@ resource "oci_kms_key" "starter_key" {
     length    = "16"
   }
   protection_mode="SOFTWARE"
+}
+
+data "oci_kms_vault" "starter_vault" {
+  vault_id = local.vault_ocid
+}
+
+locals {
+  apigw_hostname = oci_apigateway_gateway.starter_apigw.hostname
+  vault_ocid = var.vault_ocid=="" ? oci_kms_vault.starter_vault[0].id : var.vault_ocid 
+  vault_key_ocid = var.vault_key_ocid=="" ? oci_kms_key.starter_key[0].id : var.vault_key_ocid 
 }
 
 resource "oci_vault_secret" "starter_openid_secret" {
@@ -50,7 +58,7 @@ resource "oci_vault_secret" "starter_openid_secret" {
     name    = "${var.prefix}-openid-secret"
     stage   = "CURRENT"
   }
-  key_id      = oci_kms_key.starter_key.id
+  key_id      = local.vault_key_ocid
   secret_name = "${var.prefix}-openid-secret-${random_string.id.result}"
   vault_id    = local.vault_ocid
 }
