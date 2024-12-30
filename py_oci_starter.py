@@ -111,7 +111,7 @@ allowed_values = {
     '-java_version': {'8', '11', '17', '21'},
     '-kubernetes': {'oke', 'docker'},
     '-ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
-    '-db_type': {'atp', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
+    '-db_type': {'atp', 'autonomous', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
     '-license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},

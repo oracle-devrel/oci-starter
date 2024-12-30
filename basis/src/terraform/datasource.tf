@@ -64,6 +64,10 @@ locals {
   idcs_url = (var.idcs_url!="")?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url
 }
 
+output idcs_url {
+  value = local.idcs_url
+}
+
 # OCI Services
 ## Available Services
 data "oci_core_services" "all_services" {
