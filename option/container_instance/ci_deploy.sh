@@ -6,7 +6,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # Call build_common to push the ${TF_VAR_prefix}-app:latest and ui:latest to OCIR Docker registry
 ocir_docker_push
 
-if [ "$TF_VAR_ui_type" != "api" ]; then
+if [ -d $PROJECT_DIR/src/ui ]; then
   echo "${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest" > $TARGET_DIR/docker_image_ui.txt
 fi  
 if [ "$TF_VAR_language" != "ords" ]; then

@@ -56,19 +56,21 @@ if [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
   bin/oke_destroy.sh --auto-approve
 fi
 
+# Buckets
 cleanBucket() {
   BUCKET_NAME=$1
   export TF_OBJECT_STORAGE=`cat $STATE_FILE | jq -r '.resources[] | select(.instances[0].attributes.name=="'${BUCKET_NAME}'") | .instances[].attributes.bucket_id'`
   if [ "$TF_OBJECT_STORAGE" != "" ] && [ "$TF_OBJECT_STORAGE" != "null" ]; then
-    title "Delete Object Storage files"
-    oci os object bulk-delete -bn $BUCKET_NAME --force
+    title "Delete Object Storage"
+    oci os bucket delete --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace --empty --force
   else
     echo "No Object storage $BUCKET_NAME"
   fi  
 }
-
-cleanBucket ${TF_VAR_prefix}-public-bucket
-cleanBucket ${TF_VAR_prefix}-bucket
+for BUCKET_NAME in `cat $STATE_FILE | jq -r '.resources[] | select(.type=="oci_objectstorage_bucket") | .instances[].attributes.name'`;
+do
+   cleanBucket $BUCKET_NAME
+done;
 
 title "Terraform Destroy"
 src/terraform/destroy.sh --auto-approve -no-color

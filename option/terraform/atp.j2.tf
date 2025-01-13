@@ -10,9 +10,9 @@ data "oci_database_autonomous_database" "starter_atp" {
 {%- else %}   
 resource "oci_database_autonomous_database" "starter_atp" {
   #Required
-  admin_password           = var.db_password
-  compartment_id           = local.lz_db_cmp_ocid
-  # OCPU
+  admin_password             = var.db_password
+  compartment_id             = local.lz_db_cmp_ocid
+  db_version                 = "23ai"  
   cpu_core_count             = "1" 
   data_storage_size_in_tbs   = "1"
 

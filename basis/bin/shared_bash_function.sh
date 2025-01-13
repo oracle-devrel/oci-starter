@@ -58,16 +58,14 @@ build_function() {
 
   if grep --quiet "built successfully" $TARGET_DIR/fn_build.log; then
      fn bump
-     export TF_VAR_fn_image=`grep "built successfully" $TARGET_DIR/fn_build.log | sed "s/Function //" | sed "s/ built successfully.//"`
-     # Push the image to docker
-     docker login ${TF_VAR_ocir} -u ${TF_VAR_namespace}/${TF_VAR_username} -p "${TF_VAR_auth_token}"
-     exit_on_error
-     docker push $TF_VAR_fn_image
-     exit_on_error
      # Store the image name and DB_URL in files
-     echo $TF_VAR_fn_image > $TARGET_DIR/fn_image.txt
+     grep "built successfully" $TARGET_DIR/fn_build.log | sed "s/Function //" | sed "s/ built successfully.//" > $TARGET_DIR/fn_image.txt
      echo "$1" > $TARGET_DIR/fn_db_url.txt
      . ../../env.sh
+     # Push the image to docker
+     docker login ${TF_VAR_ocir} -u ${TF_VAR_namespace}/${TF_VAR_username} -p "${TF_VAR_auth_token}"
+     docker push $TF_VAR_fn_image
+     exit_on_error
   else 
      echo "build_function - built successfully not found"
      exit 1
@@ -92,18 +90,15 @@ ocir_docker_push () {
   echo DOCKER_PREFIX=$DOCKER_PREFIX
 
   # Push image in registry
-  if [ -n "$(docker images -q ${TF_VAR_prefix}-app 2> /dev/null)" ]; then
-    docker tag ${TF_VAR_prefix}-app ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
-    docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
-    exit_on_error
-  fi
+  docker tag ${TF_VAR_prefix}-app ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
+  docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
+  exit_on_error
 
-  # Push image in registry
-  if [ -n "$(docker images -q ${TF_VAR_prefix}-ui 2> /dev/null)" ]; then
+  if [ -d $PROJECT_DIR/src/ui ]; then
     docker tag ${TF_VAR_prefix}-ui ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
     docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
+    exit_on_error
   fi
-  exit_on_error
 }
 
 replace_db_user_password_in_file() {
@@ -269,21 +264,12 @@ get_user_details() {
 get_ui_url() {
   if [ "$TF_VAR_deploy_type" == "compute" ]; then
     if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_tls" == "existing_ocid" ]; then
-      # xx APEX ? xx
       export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     else 
-      if [ "$TF_VAR_db_install" == "shared_compute" ]; then
-        export UI_URL=http://${COMPUTE_IP}
-      else 
-        export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
-      fi    
+      export UI_URL=http://${COMPUTE_IP}
       if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
         export UI_HTTP=$UI_URL
-        if [ "$TF_VAR_db_install" == "shared_compute" ]; then
-            export UI_URL=https://${TF_VAR_dns_name}
-        else 
-            export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
-        fi    
+        export UI_URL=https://${TF_VAR_dns_name}
       fi
     fi  
   elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
@@ -367,14 +353,12 @@ livelabs_green_button() {
     export TF_VAR_subnet_ocid=`oci network subnet list --compartment-id $TF_VAR_compartment_ocid | jq -c -r '.data[].id'`
     echo TF_VAR_subnet_ocid=$TF_VAR_subnet_ocid  
     if [ "$TF_VAR_subnet_ocid" != "" ]; then
-      sed -i "s&TF_VAR_web_subnet_ocid=\"__TO_FILL__\"&TF_VAR_web_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
-      sed -i "s&TF_VAR_app_subnet_ocid=\"__TO_FILL__\"&TF_VAR_app_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
-      sed -i "s&TF_VAR_db_subnet_ocid=\"__TO_FILL__\"&TF_VAR_db_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
+      sed -i "s&TF_VAR_public_subnet_ocid=\"__TO_FILL__\"&TF_VAR_public_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
+      sed -i "s&TF_VAR_private_subnet_ocid=\"__TO_FILL__\"&TF_VAR_private_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
       echo "TF_VAR_subnet_ocid stored in env.sh"
       # Set the real variables such that the first "build" works too.
-      export TF_VAR_web_subnet_ocid=$TF_VAR_subnet_ocid
-      export TF_VAR_app_subnet_ocid=$TF_VAR_subnet_ocid
-      export TF_VAR_db_subnet_ocid=$TF_VAR_subnet_ocid
+      export TF_VAR_public_subnet_ocid=$TF_VAR_subnet_ocid
+      export TF_VAR_private_subnet_ocid=$TF_VAR_subnet_ocid
     fi  
     
     # LiveLabs support only E4 Shapes
@@ -544,7 +528,7 @@ certificate_dir_before_terraform() {
   elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
     if [ "$TF_VAR_tls" == "new_http_01" ]; then
       echo "New Certificate will be created after the deployment."      
-    elif [ "$TF_VAR_certificate_dir" == "" ]; then
+    elif [ "$TF_VAR_certificate_dir" != "" ]; then
       echo "ERROR: kubernetes: certificate_dir_before_terraform: missing variables TF_VAR_certificate_dir"
       exit 1
     fi    
@@ -581,35 +565,10 @@ certificate_run_certbot_http_01()
   fi   
 
   # Generate the certificate with Let'Encrypt on the COMPUTE
-  scp_via_bastion src/tls opc@$COMPUTE_IP:/home/opc/.
-  ssh -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export TF_VAR_certificate_email=\"$TF_VAR_certificate_email\"; bash tls/certbot_http_01.sh 2>&1 | tee -a tls/certbot_http_01.log"
-  scp_via_bastion opc@$COMPUTE_IP:tls/certificate target/.
+  scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path src/tls opc@$COMPUTE_IP:/home/opc/.
+  exit_on_error
+  ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export TF_VAR_certificate_email=\"$TF_VAR_certificate_email\"; bash tls/certbot_http_01.sh 2>&1 | tee -a tls/certbot_http_01.log"
+  scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:tls/certificate target/.
+  exit_on_error
   export TF_VAR_certificate_dir=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
-}
-
-# SCP via Bastion
-function scp_via_bastion() {
-  eval "$(ssh-agent -s)"
-  ssh-add $TF_VAR_ssh_private_path
-
-  # Try 5 times to copy the files / wait 5 secs between each try
-  echo "scp_via_bastion"
-  i=0
-  while [ true ]; do
-    if command -v rsync &> /dev/null; then
-      # Using RSYNC allow to reapply the same command several times easily. 
-      rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" $1 $2
-    else
-      scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" $1 $2
-    fi  
-    if [ $? -eq 0 ]; then
-      echo "-- done"
-      break;
-    elif [ "$i" == "5" ]; then
-      echo "scp_via_bastion: Maximum number of scp retries, ending."
-      error_exit
-    fi
-  sleep 5
-  i=$(($i+1))
-  done
 }
