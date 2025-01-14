@@ -133,6 +133,6 @@ resource "oci_integration_integration_instance" "oic_instance" {
   is_visual_builder_enabled = "true"
   state                     = "ACTIVE"
 
-  idcs_at = jsondecode(data.local_file.idcs_token.content)["access_token"]
+  idcs_at = data.local_file.idcs_token.content
 }
 
