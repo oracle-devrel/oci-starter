@@ -27,7 +27,7 @@ if [ "$TF_VAR_tls" != "" ]; then
 fi  
 
 title "Terraform Apply"
-src/terraform/apply.sh --auto-approve -no-color
+bin/terraform_apply.sh --auto-approve -no-color
 exit_on_error
 
 . env.sh
