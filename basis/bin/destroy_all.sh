@@ -73,7 +73,7 @@ do
 done;
 
 title "Terraform Destroy"
-src/terraform/destroy.sh --auto-approve -no-color
+bin/terraform_destroy.sh --auto-approve -no-color
 exit_on_error
 
 echo "Destroy time: ${SECONDS} secs"
