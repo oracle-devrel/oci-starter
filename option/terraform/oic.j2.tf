@@ -105,7 +105,7 @@ locals {
 resource "null_resource" "get_idcs_token" { 
   provisioner "local-exec" {
       command = <<EOT
-        curl -X POST ${local.idcs_url}/oauth2/v1/token -H 'Authorization: Basic ${base64encode(format("%s:%s",local.oic_client_id,local.oic_client_secret))}' -d 'grant_type=client_credentials&scope=urn:opc:idm:__myscopes__' | jq -r ".access_token" > idcs_token
+        curl -X POST ${local.idcs_url}/oauth2/v1/token -H 'Authorization: Basic ${base64encode(format("%s:%s",local.oic_client_id,local.oic_client_secret))}' -d 'grant_type=client_credentials&scope=urn:opc:idm:__myscopes__' | jq -r ".access_token" > ../../target/idcs_token
 EOT
   }
 }
@@ -119,7 +119,7 @@ EOT
 # IDCS TOKEN
 data "local_file" "idcs_token" {
   depends_on = [ null_resource.get_idcs_token ]
-  filename = "idcs_token"
+  filename = "../../target/idcs_token"
 }
 
 resource "oci_integration_integration_instance" "oic_instance" {
