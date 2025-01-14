@@ -125,12 +125,12 @@ data "local_file" "idcs_token" {
 resource "oci_integration_integration_instance" "oic_instance" {
   compartment_id            = local.lz_app_cmp_ocid
   display_name              = "${var.prefix}-oic"
-  integration_instance_type = "ENTERPRISEX"                 #  Gen 2 STANDARD/ENTERPRISE - OIC Gen3 STANDARDX/ENTERPRISEX"
+  integration_instance_type = "STANDARDX"                 #  Gen 2 STANDARD/ENTERPRISE - OIC Gen3 STANDARDX/ENTERPRISEX"
   is_byol                   = var.license_model == "BRING_YOUR_OWN_LICENSE" ? "true":"false"
   message_packs             = 1
 
   is_file_server_enabled    = "true"
-  is_visual_builder_enabled = "true"
+  is_visual_builder_enabled = "false"
   state                     = "ACTIVE"
 
   idcs_at = data.local_file.idcs_token.content
