@@ -119,7 +119,7 @@ EOT
 # IDCS TOKEN
 data "local_file" "idcs_token" {
   depends_on = [ null_resource.get_idcs_token ]
-  filename = "token"
+  filename = "idcs_token"
 }
 
 resource "oci_integration_integration_instance" "oic_instance" {
