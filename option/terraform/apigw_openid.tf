@@ -112,8 +112,7 @@ resource "oci_identity_domains_app" "starter_confidential_app" {
     "https://${local.apigw_hostname}/${var.prefix}/app/info"
   ]
   schemas = [
-    "urn:ietf:params:scim:schemas:oracle:idcs:App",
-    "urn:ietf:params:scim:schemas:oracle:idcs:extension:OCITags",
+    "urn:ietf:params:scim:schemas:oracle:idcs:App"
   ]
   show_in_my_apps = "false"
   trust_scope     = "Account"

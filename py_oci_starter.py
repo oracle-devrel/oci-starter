@@ -105,7 +105,7 @@ def allowed_options():
 
 allowed_values = {
     '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
-    '-deploy_type': {'compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience'},
+    '-deploy_type': {'compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
     '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     '-java_version': {'8', '11', '17', '21'},
@@ -862,6 +862,8 @@ def create_output_dir():
         cp_terraform("hpc_variables.tf")
     elif params.get('deploy_type') == "datascience":
         cp_terraform("datascience.tf")
+    elif params.get('deploy_type') == "oic":
+        cp_terraform("oic.j2.tf")
     elif params['language'] != "none":
         if params.get('deploy_type') == "kubernetes":
             if params.get('oke_type') == "managed":
