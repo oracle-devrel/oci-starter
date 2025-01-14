@@ -1,5 +1,5 @@
 # Confidential app: Goal get the IDCS Token
-resource oci_identity_domains_app export_MG_OIC_TERRAFORM1 {
+resource oci_identity_domains_app starter_oic_confidential_app {
   active                  = "true"
   all_url_schemes_allowed = "false"
   allow_access_control    = "false"
