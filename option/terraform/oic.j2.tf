@@ -129,8 +129,8 @@ resource "oci_integration_integration_instance" "oic_instance" {
   is_byol                   = var.license_model == "BRING_YOUR_OWN_LICENSE" ? "true":"false"
   message_packs             = 1
 
-  is_file_server_enabled    = true
-  is_visual_builder_enabled = false
+  # is_file_server_enabled    = false
+  # is_visual_builder_enabled = false
   state                     = "ACTIVE"
 
   idcs_at = data.local_file.idcs_token.content
