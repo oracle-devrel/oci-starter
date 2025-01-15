@@ -22,7 +22,7 @@ resource oci_identity_domains_app starter_oic_confidential_app {
   bypass_consent     = "false"
   client_ip_checking = ""
   client_type        = "confidential"
-  display_name      = "${var.prefix}-oic-app"
+  display_name      = "${var.prefix}-confidential-oic-app"
   idcs_endpoint     = "${local.idcs_url}"
   is_alias_app      = "false"
   is_enterprise_app = "false"

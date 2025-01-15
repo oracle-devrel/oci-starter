@@ -43,6 +43,7 @@ locals {
 
 // API Management - Tags
 variable git_url { default = "" }
+variable build_src { default = "" }
 
 locals {
   api_git_tags = {
@@ -55,6 +56,7 @@ locals {
       api_git_spec_type = "OpenAPI"
       api_git_endpoint_path = "src/terraform/apigw_existing.tf"
       api_endpoint_url = "app/dept"
+      path_module = path.module
   }
   api_tags = var.git_url !=""? local.api_git_tags:local.freeform_tags
 }
