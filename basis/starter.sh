@@ -11,7 +11,7 @@ export ARG1=$1
 export ARG2=$2
 export ARG3=$3
 
-if [ -z $ARG1 ] then
+if [ -z $ARG1 ]; then
   python src/starter_menu.py
 elif [ "$ARG1" == "help" ]; then
   echo "--- HELP -------------------------------------------------------------------------------------"
@@ -47,9 +47,8 @@ elif [ "$ARG1" == "help" ]; then
   echo "cat target/destroy.log                - Show last destroy log"
   echo
   exit
-fi
-
-if [ "$ARG1" == "build" ]; then
+  
+elif [ "$ARG1" == "build" ]; then
   if [ "$ARG2" == "" ]; then
     export LOG_NAME=$TARGET_DIR/logs/build.${DATE_POSTFIX}.log
     # Show the log and save it to target/build.log and target/logs
