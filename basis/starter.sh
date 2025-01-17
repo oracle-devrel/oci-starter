@@ -11,7 +11,9 @@ export ARG1=$1
 export ARG2=$2
 export ARG3=$3
 
-if [ -z $ARG1 ] || [ "$ARG1" == "help" ]; then
+if [ -z $ARG1 ] then
+  python src/starter_menu.py
+elif [ "$ARG1" == "help" ]; then
   echo "--- HELP -------------------------------------------------------------------------------------"
   echo "https://www.ocistarter.com/"
   echo "https://www.ocistarter.com/help (tutorial + how to customize)"  
