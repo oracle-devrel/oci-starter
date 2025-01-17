@@ -565,10 +565,35 @@ certificate_run_certbot_http_01()
   fi   
 
   # Generate the certificate with Let'Encrypt on the COMPUTE
-  scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path src/tls opc@$COMPUTE_IP:/home/opc/.
-  exit_on_error
-  ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export TF_VAR_certificate_email=\"$TF_VAR_certificate_email\"; bash tls/certbot_http_01.sh 2>&1 | tee -a tls/certbot_http_01.log"
-  scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$COMPUTE_IP:tls/certificate target/.
-  exit_on_error
+  scp_via_bastion src/tls opc@$COMPUTE_IP:/home/opc/.
+  ssh -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export TF_VAR_certificate_email=\"$TF_VAR_certificate_email\"; bash tls/certbot_http_01.sh 2>&1 | tee -a tls/certbot_http_01.log"
+  scp_via_bastion opc@$COMPUTE_IP:tls/certificate target/. 
   export TF_VAR_certificate_dir=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
+}
+
+# SCP via Bastion
+function scp_via_bastion() {
+  eval "$(ssh-agent -s)"
+  ssh-add $TF_VAR_ssh_private_path
+
+  # Try 5 times to copy the files / wait 5 secs between each try
+  echo "scp_via_bastion"
+  i=0
+  while [ true ]; do
+    if command -v rsync &> /dev/null; then
+      # Using RSYNC allow to reapply the same command several times easily. 
+      rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" $1 $2
+    else
+      scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" $1 $2
+    fi  
+    if [ $? -eq 0 ]; then
+      echo "-- done"
+      break;
+    elif [ "$i" == "5" ]; then
+      echo "scp_via_bastion: Maximum number of scp retries, ending."
+      error_exit
+    fi
+  sleep 5
+  i=$(($i+1))
+  done
 }
