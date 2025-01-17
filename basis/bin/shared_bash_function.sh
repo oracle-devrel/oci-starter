@@ -58,14 +58,16 @@ build_function() {
 
   if grep --quiet "built successfully" $TARGET_DIR/fn_build.log; then
      fn bump
-     # Store the image name and DB_URL in files
-     grep "built successfully" $TARGET_DIR/fn_build.log | sed "s/Function //" | sed "s/ built successfully.//" > $TARGET_DIR/fn_image.txt
-     echo "$1" > $TARGET_DIR/fn_db_url.txt
-     . ../../env.sh
+     export TF_VAR_fn_image=`grep "built successfully" $TARGET_DIR/fn_build.log | sed "s/Function //" | sed "s/ built successfully.//"`
      # Push the image to docker
      docker login ${TF_VAR_ocir} -u ${TF_VAR_namespace}/${TF_VAR_username} -p "${TF_VAR_auth_token}"
+     exit_on_error
      docker push $TF_VAR_fn_image
      exit_on_error
+     # Store the image name and DB_URL in files
+     echo $TF_VAR_fn_image > $TARGET_DIR/fn_image.txt
+     echo "$1" > $TARGET_DIR/fn_db_url.txt
+     . ../../env.sh
   else 
      echo "build_function - built successfully not found"
      exit 1
@@ -87,13 +89,17 @@ create_kubeconfig() {
 ocir_docker_push () {
   # Docker Login
   docker login ${TF_VAR_ocir} -u ${TF_VAR_namespace}/${TF_VAR_username} -p "${TF_VAR_auth_token}"
+  exit_on_error
   echo DOCKER_PREFIX=$DOCKER_PREFIX
 
   # Push image in registry
-  docker tag ${TF_VAR_prefix}-app ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
-  docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
-  exit_on_error
+  if [ -n "$(docker images -q ${TF_VAR_prefix}-app 2> /dev/null)" ]; then
+    docker tag ${TF_VAR_prefix}-app ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
+    docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
+    exit_on_error
+  fi
 
+  # Push image in registry
   if [ -d $PROJECT_DIR/src/ui ]; then
     docker tag ${TF_VAR_prefix}-ui ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
     docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
@@ -362,12 +368,14 @@ livelabs_green_button() {
     export TF_VAR_subnet_ocid=`oci network subnet list --compartment-id $TF_VAR_compartment_ocid | jq -c -r '.data[].id'`
     echo TF_VAR_subnet_ocid=$TF_VAR_subnet_ocid  
     if [ "$TF_VAR_subnet_ocid" != "" ]; then
-      sed -i "s&TF_VAR_public_subnet_ocid=\"__TO_FILL__\"&TF_VAR_public_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
-      sed -i "s&TF_VAR_private_subnet_ocid=\"__TO_FILL__\"&TF_VAR_private_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
+      sed -i "s&TF_VAR_web_subnet_ocid=\"__TO_FILL__\"&TF_VAR_web_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
+      sed -i "s&TF_VAR_app_subnet_ocid=\"__TO_FILL__\"&TF_VAR_app_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
+      sed -i "s&TF_VAR_db_subnet_ocid=\"__TO_FILL__\"&TF_VAR_db_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
       echo "TF_VAR_subnet_ocid stored in env.sh"
       # Set the real variables such that the first "build" works too.
-      export TF_VAR_public_subnet_ocid=$TF_VAR_subnet_ocid
-      export TF_VAR_private_subnet_ocid=$TF_VAR_subnet_ocid
+      export TF_VAR_web_subnet_ocid=$TF_VAR_subnet_ocid
+      export TF_VAR_app_subnet_ocid=$TF_VAR_subnet_ocid
+      export TF_VAR_db_subnet_ocid=$TF_VAR_subnet_ocid
     fi  
     
     # LiveLabs support only E4 Shapes
@@ -537,7 +545,7 @@ certificate_dir_before_terraform() {
   elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
     if [ "$TF_VAR_tls" == "new_http_01" ]; then
       echo "New Certificate will be created after the deployment."      
-    elif [ "$TF_VAR_certificate_dir" != "" ]; then
+    elif [ "$TF_VAR_certificate_dir" == "" ]; then
       echo "ERROR: kubernetes: certificate_dir_before_terraform: missing variables TF_VAR_certificate_dir"
       exit 1
     fi    
@@ -576,7 +584,7 @@ certificate_run_certbot_http_01()
   # Generate the certificate with Let'Encrypt on the COMPUTE
   scp_via_bastion src/tls opc@$COMPUTE_IP:/home/opc/.
   ssh -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP "export TF_VAR_dns_name=\"$TF_VAR_dns_name\";export TF_VAR_certificate_email=\"$TF_VAR_certificate_email\"; bash tls/certbot_http_01.sh 2>&1 | tee -a tls/certbot_http_01.log"
-  scp_via_bastion opc@$COMPUTE_IP:tls/certificate target/. 
+  scp_via_bastion opc@$COMPUTE_IP:tls/certificate target/.
   export TF_VAR_certificate_dir=$PROJECT_DIR/target/certificate/$TF_VAR_dns_name
 }
 
