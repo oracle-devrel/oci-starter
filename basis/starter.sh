@@ -12,7 +12,7 @@ export ARG2=$2
 export ARG3=$3
 
 if [ -z $ARG1 ]; then
-  python src/starter_menu.py
+  python bin/starter_menu.py
 elif [ "$ARG1" == "help" ]; then
   echo "--- HELP -------------------------------------------------------------------------------------"
   echo "https://www.ocistarter.com/"
@@ -47,7 +47,7 @@ elif [ "$ARG1" == "help" ]; then
   echo "cat target/destroy.log                - Show last destroy log"
   echo
   exit
-  
+
 elif [ "$ARG1" == "build" ]; then
   if [ "$ARG2" == "" ]; then
     export LOG_NAME=$TARGET_DIR/logs/build.${DATE_POSTFIX}.log
