@@ -37,7 +37,7 @@ EOF
 ls -al /usr/local/bin
 if [ "$TF_VAR_language" = "apex" ]; then
   # Install ORDS in silent mode
-  dnf install -y graalvm22-ee-17-jdk
+  dnf install -y java-17
   dnf install -y ords
   chown oracle /etc/ords 
   cat > /tmp/password.txt << EOF
