@@ -1,7 +1,7 @@
 
 {%- if language == "apex" %}
 locals {
-  db_root_url = replace(data.oci_database_autonomous_database.starter_atp.connection_urls[0].apex_url, "/ords/apex", "" )
+  db_root_url = replace(local.ords_url, "/ords", "" )
 }
 {%- else %}
 # Used for APIGW and TAGS
