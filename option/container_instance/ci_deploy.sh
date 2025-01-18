@@ -15,4 +15,4 @@ fi
 
 cd $SCRIPT_DIR/..
 . env.sh 
-src/terraform/apply.sh --auto-approve -no-color
+bin/terraform_apply.sh --auto-approve -no-color

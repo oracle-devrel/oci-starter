@@ -77,7 +77,7 @@ build_function() {
   # Run env.sh to get function image 
   cd $PROJECT_DIR
   . env.sh 
-  src/terraform/apply.sh --auto-approve
+  bin/terraform_apply.sh --auto-approve
 }
 
 # Create KUBECONFIG file
@@ -569,7 +569,7 @@ certificate_post_deploy() {
   elif [ "$TF_VAR_deploy_type" == "kubernetes"  ]; then
     # Set the TF_VAR_ingress_ip
     get_ui_url 
-    src/terraform/apply.sh --auto-approve -no-color
+    bin/terraform_apply.sh --auto-approve -no-color
     exit_on_error
   fi  
 }
