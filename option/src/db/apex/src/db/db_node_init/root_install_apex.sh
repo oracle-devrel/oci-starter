@@ -7,7 +7,7 @@ fi
 export DB_SERVICE_NAME=`sudo su - oracle -c "lsnrctl status | grep pdb1. | sed -e 's/.* \"//; s/\" .*//'"`
 echo DB_SERVICE_NAME=$DB_SERVICE_NAME
 
-dnf install -y graalvm22-ee-17-jdk
+dnf install -y java-17
 dnf install -y ords
 chown oracle /etc/ords 
 
