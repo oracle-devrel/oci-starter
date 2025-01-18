@@ -112,7 +112,7 @@ locals {
 # APEX (installed manually)
 output "ords_url" {
   value = local.ords_url
-
+}
 {%- endif %}  
 
 
