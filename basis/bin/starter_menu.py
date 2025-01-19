@@ -28,8 +28,8 @@ advanced_menu = [
     ]),
     ("Terraform", [
         ("Plan      - Terraform Plan",        "./starter.sh terraform plan"), 
-        ("Apply     - Destroy all",           "./starter.sh terraform apply"),
-        ("Destroy   - Show last build log",   "./starter.sh terraform destroy")
+        ("Apply     - Terraform Apply",       "./starter.sh terraform apply"),
+        ("Destroy   - Terraform Destroy",     "./starter.sh terraform destroy")
     ]),                
     ("Other", [
         ("Env       - Set Environment variables", "./starter.sh env"), 
