@@ -1,24 +1,64 @@
 import curses
 import subprocess
 
+normal_menu = [
+    ("Build", [
+        ("Build    - Build and deploy all", "./starter.sh build"), 
+        ("Destroy  - Destroy all",          "./starter.sh destroy"),
+        ("Log      - Show last build log",  "cat target/build.log")
+    ]),
+    ("Other", [
+        ("Help", "./starter.sh help"), 
+        ("Advanced", "Advanced"),
+        ("Exit", "Exit")
+    ])
+]
+
+advanced_menu = [
+    ("Build", [
+        ("Build     - Build and deploy all", "./starter.sh build"), 
+        ("Destroy   - Destroy all",          "./starter.sh destroy"),
+        ("Log       - Show last build log",  "cat target/build.log")
+    ]),
+    ("SSH", [
+        ("Key       - SSH private key",      "cat target/ssh_key_starter"), 
+        ("Bastion   - SSH Bastion",          "./starter.sh ssh bastion"), 
+        ("Compute   - SSH Compute",          "./starter.sh ssh compute"),
+        ("Database  - SSH Database Node",    "./starter.sh ssh db_node"),
+    ]),
+    ("Terraform", [
+        ("Plan      - Terraform Plan",        "./starter.sh terraform plan"), 
+        ("Apply     - Destroy all",           "./starter.sh terraform apply"),
+        ("Destroy   - Show last build log",   "./starter.sh terraform destroy")
+    ]),                
+    ("Other", [
+        ("Env       - Set Environment variables", "./starter.sh env"), 
+        ("Help", "./starter.sh help"), 
+        ("Exit", "Exit")
+    ])
+]
+
+def resetMenu( a_menu ):
+    global current_item
+    global current_subitem 
+    global menu     
+
+    current_item = 0
+    current_subitem = 0  # Start with the first command selected
+    menu = a_menu
+ 
 def main(stdscr):
+    global current_item
+    global current_subitem 
+    global menu 
+
     stdscr.clear()
     curses.curs_set(0)
     stdscr.keypad(True)
     curses.start_color()
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
 
-    menu = [
-        ("Build", [
-            ("Build    - Build and deploy all", "./starter.sh build"), 
-            ("Destroy  - Destroy all",          "./starter.sh destroy"),
-            ("Log      - Show last build log",  "cat target/build.log")
-        ]),
-        ("Other", [("Help", "./starter.sh help"), ("Exit", None)])
-    ]
-
-    current_item = 0
-    current_subitem = 0  # Start with the first command selected
+    resetMenu( normal_menu )
 
     while True:
         stdscr.clear()
@@ -54,7 +94,7 @@ def main(stdscr):
                 else: #if it is exit
                     current_subitem = 0
         elif key == curses.KEY_DOWN:
-            if current_item == len(menu)-1 and current_subitem == 1: #prevent going down from exit
+            if current_item == len(menu)-1 and current_subitem == 2: #prevent going down from exit
                 continue
             if menu[current_item][1] and current_subitem < len(menu[current_item][1]) - 1:
                 current_subitem += 1
@@ -67,17 +107,21 @@ def main(stdscr):
 
         elif key in (curses.KEY_ENTER, 10):
             selected_item = menu[current_item]
-            if selected_command is None:
+            if selected_command == "Exit":
                 break
+            elif selected_command == "Advanced":
+                resetMenu( advanced_menu )
             elif selected_item[1]:
-                command_to_run = selected_item[1][current_subitem][1]
+                command_path = selected_item[1][current_subitem][1]
                 curses.endwin()
                 try:
-                    subprocess.run(["bash", "-c", command_to_run], check=True)
+                    print(f"Command: {command_path}")
+                    print()
+                    subprocess.run(["bash", "-c", command_path], check=True)
                 except subprocess.CalledProcessError as e:
-                    print(f"Error executing {command_to_run}: {e}")
+                    print(f"Error executing {command_path}: {e}")
                 except FileNotFoundError:
-                    print(f"Error: {command_to_run} not found")
+                    print(f"Error: {command_path} not found")
                 break
 
 if __name__ == "__main__":
