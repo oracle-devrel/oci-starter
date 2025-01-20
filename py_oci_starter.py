@@ -498,7 +498,7 @@ Check LICENSE file (Apache 2.0)
         contents.append("  ./build_group.sh")       
     else:
         contents.append(f"  cd {params['prefix']}")
-        contents.append("  ./starter.sh")
+        contents.append("  ./starter.sh ")
     return contents
 
 def is_param_default_value(name):
