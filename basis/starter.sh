@@ -12,7 +12,19 @@ export ARG2=$2
 export ARG3=$3
 
 if [ -z $ARG1 ]; then
-  python bin/starter_menu.py
+  COMMAND_FILE=$TARGET_DIR/command.txt 
+  if [ -f $COMMAND_FILE ]; then
+    rm $COMMAND_FILE
+  fi
+  if [ ! -f $COMMAND_FILE ]; then
+    python bin/starter_menu.py 
+    if [ -f $COMMAND_FILE ]; then
+      COMMAND=$(cat $COMMAND_FILE)
+      rm $COMMAND_FILE
+      # Execute the command from bash to avoid issue with terminal prompt
+      eval "$COMMAND"    
+    fi
+  fi
 elif [ "$ARG1" == "help" ]; then
   echo "--- HELP -------------------------------------------------------------------------------------"
   echo "https://www.ocistarter.com/"
