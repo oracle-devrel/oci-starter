@@ -1,5 +1,6 @@
 import curses
 import subprocess
+import os
 
 normal_menu = [
     ("Build", [
@@ -115,9 +116,12 @@ def main(stdscr):
                 command_path = selected_item[1][current_subitem][1]
                 curses.endwin()
                 try:
-                    print(f"Command: {command_path}")
-                    print()
-                    subprocess.run(["bash", "-c", command_path], check=True)
+                    print(f"Command: {command_path}", Flush=True)
+                    print("", Flush=True)
+                    # Write the command to a file and execute via bash to avoid issue with the terminal prompt
+                    with open(f"{os.environ['TARGET_DIR']}/command.txt", "w") as f:
+                        f.write(command_path)
+                    # subprocess.run(["bash", "-c", command_path], check=True)
                 except subprocess.CalledProcessError as e:
                     print(f"Error executing {command_path}: {e}")
                 except FileNotFoundError:
