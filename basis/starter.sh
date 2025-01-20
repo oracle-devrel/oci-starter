@@ -21,9 +21,8 @@ if [ -z $ARG1 ]; then
     if [ -f $COMMAND_FILE ]; then
       COMMAND=$(cat $COMMAND_FILE)
       rm $COMMAND_FILE
-      # Execute teh command from bash to avoid issue with terminal prompt
+      # Execute the command from bash to avoid issue with terminal prompt
       eval "$COMMAND"    
-      rm $COMMAND_FILE
     fi
   fi
 elif [ "$ARG1" == "help" ]; then
