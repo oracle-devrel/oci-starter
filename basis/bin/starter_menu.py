@@ -116,7 +116,8 @@ def main(stdscr):
                 command_path = selected_item[1][current_subitem][1]
                 curses.endwin()
                 try:
-                    print(f"Command: {command_path}", Flush=True)
+                    print(f"Command: {command_path}")
+                    print()
                     # Write the command to a file and execute via bash to avoid issue with the terminal prompt
                     with open(f"{os.environ['TARGET_DIR']}/command.txt", "w") as f:
                         f.write(command_path)
