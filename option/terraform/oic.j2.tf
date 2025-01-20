@@ -48,6 +48,55 @@ resource oci_identity_domains_app starter_oic_confidential_app {
   trust_scope = "Explicit"
 }
 
+resource oci_identity_domains_app_role export_Identity-Domain-Administrator_1 {
+  admin_role = "true"
+  app {
+    value = "IDCSAppId"
+  }
+  #attribute_sets = <<Optional value not found in discovery>>
+  #attributes = <<Optional value not found in discovery>>
+  #authorization = <<Optional value not found in discovery>>
+  available_to_clients = "true"
+  available_to_groups  = "true"
+  available_to_users   = "true"
+  #description = <<Optional value not found in discovery>>
+  display_name  = "Identity Domain Administrator"
+  idcs_endpoint = "https://idcs-9728d67d6b9346c69f0eb2cc8abba762.identity.oraclecloud.com:443"
+  #legacy_group_name = <<Optional value not found in discovery>>
+  ocid   = "ocid1.domainapprole.oc1.eu-frankfurt-1.amaaaaaa24n2mcaajikqfzoy26hmro3prxh3sjfyceepcfc5owuczjbsmdsq"
+  public = "false"
+  #resource_type_schema_version = <<Optional value not found in discovery>>
+  schemas = [
+    "urn:ietf:params:scim:schemas:oracle:idcs:AppRole",
+  ]
+}
+
+resource oci_identity_domains_grant export_OracleIdentityCloudService_grant_1516 {
+  app {
+    value = "IDCSAppId"
+  }
+  #app_entitlement_collection = <<Optional value not found in discovery>>
+  #attribute_sets = <<Optional value not found in discovery>>
+  #attributes = <<Optional value not found in discovery>>
+  #authorization = <<Optional value not found in discovery>>
+  entitlement {
+    attribute_name  = "appRoles"
+    attribute_value = "92697707caa343dc9b1fe8e468ee5ced"
+  }
+  grant_mechanism = "SERVICE_MANAGER_TO_APP"
+  #granted_attribute_values_json = <<Optional value not found in discovery>>
+  grantee {
+    type  = "App"
+    value = "2717cf37639241b09e4d407623472978"
+  }
+  idcs_endpoint = "https://idcs-930d7b2ea2cb46049963ecba3049f509.identity.oraclecloud.com:443"
+  ocid          = "ocid1.domaingrant.oc1.eu-frankfurt-1.amaaaaaaaqtp5baa4aginpsk6ypgo7umod3vq7fmkqb2xc45bkbgoeybtluq"
+  #resource_type_schema_version = <<Optional value not found in discovery>>
+  schemas = [
+    "urn:ietf:params:scim:schemas:oracle:idcs:Grant",
+  ]
+}
+
 /*
 resource "oci_identity_domains_app" "starter_oic_confidential_app" {
   active                  = "true"
