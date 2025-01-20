@@ -3,7 +3,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR/..
 
 if [ -z "$TF_VAR_deploy_type" ]; then
-  . ./env.sh -silent
+  . env.sh -silent
 else
   . bin/shared_bash_function.sh
 fi 

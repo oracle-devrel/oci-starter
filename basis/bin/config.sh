@@ -91,9 +91,12 @@ if declare -p | grep -q "__TO_FILL__"; then
   if [ "$TF_VAR_auth_token" == "__TO_FILL__" ]; then
     export REQUEST="Generate OCI Auth token ? (TF_VAR_auth_token) ?"
     if accept_request; then
-        echo "Generating OCI Auth token"
-        . $BIN_DIR/gen_auth_token.sh
-    fi 
+      echo "Generating OCI Auth token"
+      . $BIN_DIR/gen_auth_token.sh
+    else 
+      read -r -p "Enter your OCI Auth token (TF_VAR_auth_token) " TF_VAR_auth_token 
+      store_env_sh TF_VAR_auth_token $TF_VAR_auth_token
+    fi      
   fi
 
   # OIC_APPID
@@ -101,9 +104,9 @@ if declare -p | grep -q "__TO_FILL__"; then
     export REQUEST="Enter the OIC APPID ? (TF_VAR_oic_appid) ?"
     read -r -p "Enter the OIC APPID ? (TF_VAR_oic_appid): " TF_VAR_oic_appid
     if [[ "${TF_VAR_oic_appid}" =~ ^.*_APPID$ ]]; then
-        echo "TF_VAR_oic_appid ends with _APPID"
+      echo "TF_VAR_oic_appid ends with _APPID"
     else
-        error_exit "TF_VAR_oic_appid does not end with _APPID"
+      error_exit "TF_VAR_oic_appid does not end with _APPID"
     fi    
     store_env_sh TF_VAR_oic_appid $TF_VAR_oic_appid
   fi  

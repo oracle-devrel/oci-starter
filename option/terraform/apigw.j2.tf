@@ -43,6 +43,7 @@ locals {
 
 // API Management - Tags
 variable git_url { default = "" }
+variable build_src { default = "" }
 
 locals {
   api_git_tags = {

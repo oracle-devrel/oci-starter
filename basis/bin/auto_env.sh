@@ -7,6 +7,13 @@ _starter_completions()
 }
 complete -F _starter_completions ./starter.sh
 
+# group_common_env.sh
+if [ -f $PROJECT_DIR/../group_common_env.sh ]; then
+  . $PROJECT_DIR/../group_common_env.sh
+elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then
+  . $PROJECT_DIR/../../group_common_env.sh
+fi
+
 # Check the SHAPE
 unset MISMATCH_PLATFORM
 if [ "$TF_VAR_instance_shape" == "VM.Standard.A1.Flex" ]; then

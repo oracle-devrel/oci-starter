@@ -105,7 +105,7 @@ def allowed_options():
 
 allowed_values = {
     '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
-    '-deploy_type': {'compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience'},
+    '-deploy_type': {'compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
     '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     '-java_version': {'8', '11', '17', '21'},
@@ -457,6 +457,7 @@ Check LICENSE file (Apache 2.0)
 ### Usage 
 
 ### Commands
+- starter.sh         : Show the menu
 - starter.sh help    : Show the list of commands
 - starter.sh build   : Build the whole program: Run Terraform, Configure the DB, Build the App, Build the UI
 - starter.sh destroy : Destroy the objects created by Terraform
@@ -514,6 +515,10 @@ def env_param_list():
         exclude.append('group_common')
     if is_param_default_value('infra_as_code'):
         exclude.append('infra_as_code')        
+    if is_param_default_value('security'):
+        exclude.append('security')        
+    if 'oke_ocid' not in params:
+        exclude.append('oke_type')        
 
     print(exclude)
     for x in exclude:
@@ -554,11 +559,7 @@ def env_sh_contents():
         contents.append(s)
 
     contents.append('')
-    contents.append("if [ -f $PROJECT_DIR/../group_common_env.sh ]; then")      
-    contents.append("  . $PROJECT_DIR/../group_common_env.sh")      
-    contents.append("elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then")      
-    contents.append("  . $PROJECT_DIR/../../group_common_env.sh")      
-    contents.append("elif [ -f $HOME/.oci_starter_profile ]; then")
+    contents.append("if [ -f $HOME/.oci_starter_profile ]; then")
     contents.append("  . $HOME/.oci_starter_profile")
     # contents.append("else")      
     # contents.append('')
@@ -578,7 +579,7 @@ def env_sh_contents():
     contents.append('')
     contents.append('# Creation Details')
     contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
-    contents.append(f'export OCI_STARTER_VERSION=2.0')
+    contents.append(f'export OCI_STARTER_VERSION=3.2')
     contents.append(f'export OCI_STARTER_PARAMS="{params["params"]}"')
     contents.append('')
     contents.append(
@@ -862,6 +863,8 @@ def create_output_dir():
         cp_terraform("hpc_variables.tf")
     elif params.get('deploy_type') == "datascience":
         cp_terraform("datascience.tf")
+    elif params.get('deploy_type') == "oic":
+        cp_terraform("oic.j2.tf")
     elif params['language'] != "none":
         if params.get('deploy_type') == "kubernetes":
             if params.get('oke_type') == "managed":

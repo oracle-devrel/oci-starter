@@ -2,6 +2,7 @@
 set -e
 
 infra_as_code_plan() {
+  cd $PROJECT_DIR/src/terraform    
   if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
      resource_manager_plan
   else
@@ -14,6 +15,7 @@ infra_as_code_plan() {
 }
 
 infra_as_code_apply() {
+  cd $PROJECT_DIR/src/terraform  
   if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
     resource_manager_create_or_update
     resource_manager_apply
@@ -29,6 +31,7 @@ infra_as_code_apply() {
 }
 
 infra_as_code_destroy() {
+  cd $PROJECT_DIR/src/terraform    
   if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
     resource_manager_destroy
   else

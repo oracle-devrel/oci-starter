@@ -77,7 +77,7 @@ build_function() {
   # Run env.sh to get function image 
   cd $PROJECT_DIR
   . env.sh 
-  src/terraform/apply.sh --auto-approve
+  bin/terraform_apply.sh --auto-approve
 }
 
 # Create KUBECONFIG file
@@ -89,6 +89,7 @@ create_kubeconfig() {
 ocir_docker_push () {
   # Docker Login
   docker login ${TF_VAR_ocir} -u ${TF_VAR_namespace}/${TF_VAR_username} -p "${TF_VAR_auth_token}"
+  exit_on_error
   echo DOCKER_PREFIX=$DOCKER_PREFIX
 
   # Push image in registry
@@ -99,11 +100,11 @@ ocir_docker_push () {
   fi
 
   # Push image in registry
-  if [ -n "$(docker images -q ${TF_VAR_prefix}-ui 2> /dev/null)" ]; then
+  if [ -d $PROJECT_DIR/src/ui ]; then
     docker tag ${TF_VAR_prefix}-ui ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
     docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
+    exit_on_error
   fi
-  exit_on_error
 }
 
 replace_db_user_password_in_file() {
@@ -568,7 +569,7 @@ certificate_post_deploy() {
   elif [ "$TF_VAR_deploy_type" == "kubernetes"  ]; then
     # Set the TF_VAR_ingress_ip
     get_ui_url 
-    src/terraform/apply.sh --auto-approve -no-color
+    bin/terraform_apply.sh --auto-approve -no-color
     exit_on_error
   fi  
 }
