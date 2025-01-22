@@ -72,7 +72,7 @@ if [ -z "$TF_VAR_bastion_ocid" ]; then
 fi
 
 if [ -z "$TF_VAR_compute_ocid" ]; then
-   get_id_from_tfstate "TF_VAR_compute_ocid" "starter_instance"
+   get_id_from_tfstate "TF_VAR_compute_ocid" "starter_compute"
 fi   
 
 if [ -z "$TF_VAR_log_group_ocid" ]; then

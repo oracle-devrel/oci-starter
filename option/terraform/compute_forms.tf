@@ -79,11 +79,11 @@ output "listing_resource_id" {
   value = data.oci_core_app_catalog_listing_resource_version.forms_catalog_listing.listing_resource_id
 }
 
-resource oci_core_instance starter_instance {
+resource oci_core_instance starter_compute {
 
   availability_domain = data.oci_identity_availability_domain.ad.name
   compartment_id      = local.lz_app_cmp_ocid
-  display_name        = "${var.prefix}-instance"
+  display_name        = "${var.prefix}-compute"
   shape               = "VM.Standard.E4.Flex"
   
   shape_config {
@@ -95,7 +95,7 @@ resource oci_core_instance starter_instance {
     subnet_id                 = data.oci_core_subnet.starter_web_subnet.id
     display_name              = "Primaryvnic"    
     assign_public_ip          = "true"
-    hostname_label            = "${var.prefix}-instance"
+    hostname_label            = "${var.prefix}-compute"
   }
 
   metadata = {
@@ -114,7 +114,7 @@ resource oci_core_instance starter_instance {
       timeout     = "5m"
       user        = "opc"
       private_key = var.ssh_private_key
-      host        = oci_core_instance.starter_instance.public_ip
+      host        = oci_core_instance.starter_compute.public_ip
     }
     source      = "../app/.success"
     destination = "/u01/oracle/.frm_config/msg/.success"  
@@ -126,7 +126,7 @@ resource oci_core_instance starter_instance {
       timeout     = "5m"
       user        = "opc"
       private_key = var.ssh_private_key
-      host        = oci_core_instance.starter_instance.public_ip
+      host        = oci_core_instance.starter_compute.public_ip
     }
     source      = "../app/.autosetup.ini"
     destination = "/u01/oracle/.autosetup.ini"  
@@ -138,7 +138,7 @@ resource oci_core_instance starter_instance {
       timeout     = "5m"
       user        = "opc"
       private_key = var.ssh_private_key
-      host        = oci_core_instance.starter_instance.public_ip
+      host        = oci_core_instance.starter_compute.public_ip
     }
     source      = "../app/.autosetup.json"
     destination = "/u01/oracle/.autosetup.json"  
@@ -150,7 +150,7 @@ resource oci_core_instance starter_instance {
       timeout     = "5m"
       user        = "opc"
       private_key = var.ssh_private_key
-      host        = oci_core_instance.starter_instance.public_ip
+      host        = oci_core_instance.starter_compute.public_ip
     }
     source      = "../app/domainconfig.sh"
     destination = "/u01/oracle/.frm_config/domainconfig.sh"  
@@ -162,7 +162,7 @@ resource oci_core_instance starter_instance {
       timeout     = "5m"
       user        = "opc"
       private_key = var.ssh_private_key
-      host        = oci_core_instance.starter_instance.public_ip
+      host        = oci_core_instance.starter_compute.public_ip
     }
     inline = [
       "sh /u01/oracle/.frm_config/domainconfig.sh"
@@ -172,7 +172,7 @@ resource oci_core_instance starter_instance {
 }
 
 locals {
-  compute_ocid = oci_core_instance.starter_instance.id
-  compute_public_ip = oci_core_instance.starter_instance.public_ip
-  compute_private_ip = oci_core_instance.starter_instance.private_ip
+  compute_ocid = oci_core_instance.starter_compute.id
+  compute_public_ip = oci_core_instance.starter_compute.public_ip
+  compute_private_ip = oci_core_instance.starter_compute.private_ip
 }

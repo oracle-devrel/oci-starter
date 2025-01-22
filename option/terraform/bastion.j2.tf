@@ -1,6 +1,6 @@
 {%- if db_install == "shared_compute" %}
 data "oci_core_instance" "starter_bastion" {
-  instance_id = oci_core_instance.starter_instance.id
+  instance_id = oci_core_instance.starter_compute.id
 }
 
 {%- elif bastion_ocid is defined %}
@@ -35,7 +35,7 @@ resource "oci_bastion_session" "starter_bastion_session" {
 
   target_resource_details {
     session_type                               = "MANAGED_SSH"
-    target_resource_id = data.oci_core_instance.starter_instance.id
+    target_resource_id = data.oci_core_instance.starter_compute.id
     target_resource_operating_system_user_name = "opc"
     target_resource_port                       = "22"
   }
@@ -76,6 +76,7 @@ resource "oci_core_instance" "starter_bastion" {
 
   source_details {
     source_type = "image"
+    boot_volume_size_in_gbs = "75" 
     source_id   = data.oci_core_images.oraclelinux.images.0.id
   }
 

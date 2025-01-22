@@ -3,7 +3,7 @@ variable compute_ready { default = "" }
 resource "oci_core_image" "custom_image" {
   count          = var.compute_ready == "" ? 0 : 1
   compartment_id = local.lz_app_cmp_ocid
-  instance_id    = oci_core_instance.starter_instance.id
+  instance_id    = oci_core_instance.starter_compute.id
   launch_mode = "NATIVE"
   display_name = "${var.prefix}-image"
   freeform_tags = local.freeform_tags
