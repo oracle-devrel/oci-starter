@@ -127,6 +127,9 @@ def main(stdscr):
                     print(f"Error: {command_path} not found")
                 break
 
+        elif key == 27: # ESC
+            break
+
 if __name__ == "__main__":
     curses.wrapper(main)
 
