@@ -1,4 +1,9 @@
 #!/bin/bash
+if [ "$PROJECT_DIR" = "" ]; then
+  echo "Error: PROJECT_DIR not set. Please use starter.sh."
+  exit 1
+fi
+
 if declare -p | grep -q "__TO_FILL__"; then
   title "CONFIG.SH"
   

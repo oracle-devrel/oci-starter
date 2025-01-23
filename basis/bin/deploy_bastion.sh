@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "$PROJECT_DIR" == "" ]; then
-  echo "ERROR: PROJECT_DIR undefined. Use starter.sh deploy bastion"
+  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh deploy bastion"
   exit 1
 fi  
 cd $PROJECT_DIR

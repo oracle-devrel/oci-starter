@@ -1,5 +1,10 @@
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR/..
+#!/bin/bash
+if [ "$PROJECT_DIR" == "" ]; then
+  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh"
+  exit 1
+fi  
+cd $PROJECT_DIR
+
 . env.sh -silent
 . $BIN_DIR/tls/dns_shared_function.sh
 

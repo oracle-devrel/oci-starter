@@ -1,6 +1,9 @@
 #!/bin/bash
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR/..
+if [ "$PROJECT_DIR" == "" ]; then
+  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh ssh db_node"
+  exit 1
+fi  
+cd $PROJECT_DIR
 . env.sh
 
 eval "$(ssh-agent -s)"

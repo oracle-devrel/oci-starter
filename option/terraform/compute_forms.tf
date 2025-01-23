@@ -103,7 +103,7 @@ resource oci_core_instance starter_compute {
   }
 
   source_details {
-    boot_volume_size_in_gbs = "75"
+    boot_volume_size_in_gbs = "50"
     source_id = data.oci_core_app_catalog_listing_resource_version.forms_catalog_listing.listing_resource_id
     source_type = "image"
   }

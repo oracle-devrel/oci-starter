@@ -77,7 +77,7 @@ build_function() {
   # Run env.sh to get function image 
   cd $PROJECT_DIR
   . env.sh 
-  bin/terraform_apply.sh --auto-approve
+  $BIN_DIR/terraform_apply.sh --auto-approve
 }
 
 # Create KUBECONFIG file

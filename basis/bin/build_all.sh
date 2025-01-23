@@ -1,7 +1,7 @@
 #!/bin/bash
-if [[ -z "${PROJECT_DIR}" ]]; then
-  echo "Error: PROJECT_DIR not set"
-  exit
+if [ "$PROJECT_DIR" = "" ]; then
+  echo "Error: PROJECT_DIR not set. Please use ./starter.sh build"
+  exit 1
 fi
 cd $PROJECT_DIR
 SECONDS=0

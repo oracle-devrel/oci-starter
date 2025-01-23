@@ -1,13 +1,12 @@
 #!/bin/bash
-if [[ -z "${PROJECT_DIR}" ]]; then
-  echo "Error: PROJECT_DIR not set"
-  exit
-fi
+if [ "$PROJECT_DIR" == "" ]; then
+  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh destroy"
+  exit 1
+fi  
 cd $PROJECT_DIR
 SECONDS=0
 
 # Call the script with --auto-approve to destroy without prompt
-
 . env.sh -no-auto
 title "OCI Starter - Destroy"
 echo 

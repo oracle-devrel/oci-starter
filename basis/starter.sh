@@ -1,11 +1,11 @@
 #!/bin/bash
 export PROJECT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 export TARGET_DIR=$PROJECT_DIR/target
+export BIN_DIR=$PROJECT_DIR/bin
 mkdir -p $TARGET_DIR/logs
 cd $PROJECT_DIR
 
 DATE_POSTFIX=`date '+%Y%m%d-%H%M%S'`
-
 
 export ARG1=$1
 export ARG2=$2
@@ -79,46 +79,48 @@ elif [ "$ARG1" == "destroy" ]; then
   LOG_NAME=$TARGET_DIR/logs/destroy.${DATE_POSTFIX}.log
   # Show the log and save it to target/build.log and target/logs
   ln -sf $LOG_NAME $TARGET_DIR/destroy.log
-  bin/destroy_all.sh ${@:2} 2>&1 | tee $LOG_NAME
+  $BIN_DIR/destroy_all.sh ${@:2} 2>&1 | tee $LOG_NAME
 elif [ "$ARG1" == "ssh" ]; then
   if [ "$ARG2" == "compute" ]; then
-    bin/ssh_compute.sh
+    $BIN_DIR/ssh_compute.sh
   elif [ "$ARG2" == "bastion" ]; then
-    bin/ssh_bastion.sh
+    $BIN_DIR/ssh_bastion.sh
   elif [ "$ARG2" == "db_node" ]; then
-    bin/ssh_db_node.sh
+    $BIN_DIR/ssh_db_node.sh
   else 
     echo "Unknown command: $ARG1 $ARG2"
   fi    
 elif [ "$ARG1" == "terraform" ]; then
   if [ "$ARG2" == "plan" ]; then
-    bin/terraform_plan.sh ${@:2}
+    $BIN_DIR/terraform_plan.sh ${@:2}
   elif [ "$ARG2" == "apply" ]; then
-    bin/terraform_apply.sh ${@:2}
+    $BIN_DIR/terraform_apply.sh ${@:2}
   elif [ "$ARG2" == "destroy" ]; then
-    bin/terraform_destroy.sh ${@:2}
+    $BIN_DIR/terraform_destroy.sh ${@:2}
   else 
     echo "Unknown command: $ARG1 $ARG2"
   fi    
 elif [ "$ARG1" == "generate" ]; then
   if [ "$ARG2" == "auth_token" ]; then
-    bin/gen_auth_token.sh
+    $BIN_DIR/gen_auth_token.sh
   else 
     echo "Unknown command: $ARG1 $ARG2"
   fi    
 elif [ "$ARG1" == "deploy" ]; then
   if [ "$ARG2" == "compute" ]; then
-    bin/deploy_compute.sh
+    $BIN_DIR/deploy_compute.sh
   elif [ "$ARG2" == "bastion" ]; then
-    bin/deploy_bastion.sh
+    $BIN_DIR/deploy_bastion.sh
   elif [ "$ARG2" == "oke" ]; then
-    bin/deploy_oke.sh
+    $BIN_DIR/deploy_oke.sh
   else 
     echo "Unknown command: $ARG1 $ARG2"
     exit 1
   fi    
 elif [ "$ARG1" == "env" ]; then
   bash --rcfile ./env.sh ${@:2}
+elif [ "$ARG1" == "upgrade" ]; then
+  $BIN_DIR/upgrade.sh 
 else 
   echo "Unknown command: $ARG1"
   exit 1

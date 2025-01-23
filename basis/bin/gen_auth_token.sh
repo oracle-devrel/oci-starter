@@ -1,6 +1,9 @@
 #!/bin/bash
-export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-export PROJECT_DIR=${BIN_DIR%/*}
+if [ "$PROJECT_DIR" == "" ]; then
+  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh."
+  exit 1
+fi  
+cd $PROJECT_DIR
 
 # Shared BASH Functions
 . $BIN_DIR/shared_bash_function.sh

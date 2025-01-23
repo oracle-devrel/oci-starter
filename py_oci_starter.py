@@ -439,7 +439,7 @@ Check LICENSE file (Apache 2.0)
 - group_common
     - starter.sh build   : Create the Common Resources using Terraform
     - starter.sh destroy : Destroy the objects created by Terraform
-    - env.sh                 : Contains the settings of the project
+    - env.sh             : Contains the settings of the project
 
 ### Directories
 - group_common/src : Sources files
