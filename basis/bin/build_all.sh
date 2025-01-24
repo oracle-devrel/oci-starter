@@ -27,12 +27,12 @@ if [ "$TF_VAR_tls" != "" ]; then
 fi  
 
 title "Terraform Apply"
-bin/terraform_apply.sh --auto-approve -no-color
+$BIN_DIR/terraform_apply.sh --auto-approve -no-color
 exit_on_error
 
 . env.sh
 # Run config command on the DB directly (ex RAC)
-if [ -f bin/deploy_db_node.sh ]; then
+if [ -f $BIN_DIR/deploy_db_node.sh ]; then
   title "Deploy DB Node"
   $BIN_DIR/deploy_db_node.sh
 fi 
@@ -70,7 +70,7 @@ if [ "$TF_VAR_deploy_type" == "compute" ]; then
 elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
     $BIN_DIR/deploy_compute.sh
     export TF_VAR_compute_ready="true"
-    bin/terraform_apply.sh --auto-approve -no-color
+    $BIN_DIR/terraform_apply.sh --auto-approve -no-color
     exit_on_error
 elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
     $BIN_DIR/oke_deploy.sh
