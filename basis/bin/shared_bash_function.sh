@@ -569,7 +569,7 @@ certificate_post_deploy() {
   elif [ "$TF_VAR_deploy_type" == "kubernetes"  ]; then
     # Set the TF_VAR_ingress_ip
     get_ui_url 
-    bin/terraform_apply.sh --auto-approve -no-color
+    $BIN_DIR/terraform_apply.sh --auto-approve -no-color
     exit_on_error
   fi  
 }

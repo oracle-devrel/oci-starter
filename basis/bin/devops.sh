@@ -47,7 +47,7 @@ if [ "$1" == "build" ]; then
   cd ${TF_VAR_prefix}
   cp -r $PROJECT_DIR/* .
   rm -Rf target
-  cp bin/devops/build_devops.yaml .
+  cp $BIN_DIR/devops/build_devops.yaml .
   sed -i "s/terraform_local/resource_manager/" env.sh
   git config --local user.email "dummy@ocistarter.com"
   git config --local user.name "${TF_VAR_username}"

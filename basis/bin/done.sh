@@ -5,7 +5,7 @@ cd $SCRIPT_DIR/..
 if [ -z "$TF_VAR_deploy_type" ]; then
   . env.sh -silent
 else
-  . bin/shared_bash_function.sh
+  . env.sh -no-auto
 fi 
 
 get_ui_url
