@@ -56,7 +56,7 @@ locals {
     group = local.group_name
     app_prefix = var.prefix
     SSS_stop = "-"
-    path_module = path.root
+    path = path.cwd
   }
   
   # Landing Zone
