@@ -65,7 +65,7 @@ elif [ "$ARG1" == "build" ]; then
     export LOG_NAME=$TARGET_DIR/logs/build.${DATE_POSTFIX}.log
     # Show the log and save it to target/build.log and target/logs
     ln -sf $LOG_NAME $TARGET_DIR/build.log
-    bin/build_all.sh ${@:2} 2>&1 | tee $LOG_NAME
+    $BIN_DIR/build_all.sh ${@:2} 2>&1 | tee $LOG_NAME
   elif [ "$ARG2" == "app" ]; then
     src/app/build_app.sh ${@:2}
   elif [ "$ARG2" == "ui" ]; then
