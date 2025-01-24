@@ -17,7 +17,7 @@ if [ -z $ARG1 ]; then
     rm $COMMAND_FILE
   fi
   if [ ! -f $COMMAND_FILE ]; then
-    python bin/starter_menu.py 
+    python $BIN_DIR/starter_menu.py 
     if [ -f $COMMAND_FILE ]; then
       COMMAND=$(cat $COMMAND_FILE)
       rm $COMMAND_FILE
