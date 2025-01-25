@@ -582,9 +582,11 @@ def env_sh_contents():
     contents.append(f'export OCI_STARTER_VERSION=3.2')
     contents.append(f'export OCI_STARTER_PARAMS="{params["params"]}"')
     contents.append('')
-    contents.append(
-        '# Get other env variables automatically (-silent flag can be passed)')
-    contents.append('. $BIN_DIR/auto_env.sh $1')
+    contents.append('# Get other env variables automatically (-silent flag can be passed)')
+    contents.append('if [ -f $PROJECT_DIR/bin/oci-starter.sh ]; then')
+    contents.append('  export PATH=$PATH:$PROJECT_DIR/bin')
+    contents.append('fi')
+    contents.append('. auto_env.sh $1')
     return contents
 
 
