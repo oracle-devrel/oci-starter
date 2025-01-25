@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# PROJECT_DIR
+if [[ -z "${PROJECT_DIR}" ]]; then
+  error_exit "PROJECT_DIR not set"
+fi
+# TARGET_DIR
+export TARGET_DIR=$PROJECT_DIR/target
+if [ ! -d $TARGET_DIR ]; then
+  mkdir $TARGET_DIR
+fi
+# BIN_DIR
+if [[ -z "${BIN_DIR}" ]]; then
+  export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+fi
+
 # Autocompletion in bash
 _starter_completions()
 {
@@ -53,19 +67,6 @@ fi
 if [ "$0" != "-bash" ]; then
   unset HISTFILE
   set -o history -o histexpand
-fi
-
-if [[ -z "${BIN_DIR}" ]]; then
-  export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-fi
-if [[ -z "${PROJECT_DIR}" ]]; then
-  error_exit "PROJECT_DIR not set"
-fi
-
-# Target DIR
-export TARGET_DIR=$PROJECT_DIR/target
-if [ ! -d $TARGET_DIR ]; then
-  mkdir $TARGET_DIR
 fi
 
 # Shared BASH Functions
