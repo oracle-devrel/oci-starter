@@ -6,7 +6,6 @@ title() {
   echo "-- $NAME ${line:${#NAME}} ($SECONDS secs)"
   echo  
 }
-export -f title
 
 # Used in for loop for APP_DIR
 app_dir_list() {
