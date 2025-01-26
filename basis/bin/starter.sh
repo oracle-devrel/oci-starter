@@ -15,7 +15,6 @@ fi
 
 export TARGET_DIR=$PROJECT_DIR/target
 mkdir -p $TARGET_DIR/logs
-cd $PROJECT_DIR
 DATE_POSTFIX=`date '+%Y%m%d-%H%M%S'`
 
 export ARG1=$1
@@ -77,9 +76,9 @@ elif [ "$ARG1" == "build" ]; then
     ln -sf $LOG_NAME $TARGET_DIR/build.log
     $BIN_DIR/build_all.sh ${@:2} 2>&1 | tee $LOG_NAME
   elif [ "$ARG2" == "app" ]; then
-    src/app/build_app.sh ${@:2}
+    $PROJECT_DIR/src/app/build_app.sh ${@:2}
   elif [ "$ARG2" == "ui" ]; then
-    src/ui/build_ui.sh ${@:2}
+    $PROJECT_DIR/src/ui/build_ui.sh ${@:2}
   else 
     echo "Unknown command: $ARG1 $ARG2"
   fi    
