@@ -129,10 +129,14 @@ elif [ "$ARG1" == "deploy" ]; then
     exit 1
   fi    
 elif [ "$ARG1" == "env" ]; then
-  bash --rcfile ./env.sh ${@:2}
-elif [ "$ARG1" == "auto_env" ]; then
-  . $PROJECT_DIR/env.sh ${@:2}
-  return
+  # Check if sourced or not
+  (return 0 2>/dev/null) && SOURCED=1 || SOURCED=0
+  if [ "$SOURCED" == "1" ];
+    . $PROJECT_DIR/env.sh ${@:2}
+    return
+  else
+    bash --rcfile $PROJECT_DIR/env.sh ${@:2}
+  fi
 elif [ "$ARG1" == "upgrade" ]; then
   $BIN_DIR/upgrade.sh 
 else 
