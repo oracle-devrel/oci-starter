@@ -130,6 +130,8 @@ elif [ "$ARG1" == "deploy" ]; then
   fi    
 elif [ "$ARG1" == "env" ]; then
   bash --rcfile ./env.sh ${@:2}
+elif [ "$ARG1" == "auto_env" ]; then
+  . $PROJECT_DIR/env.sh ${@:2}
 elif [ "$ARG1" == "upgrade" ]; then
   $BIN_DIR/upgrade.sh 
 else 

@@ -259,17 +259,15 @@ if [ -f $STATE_FILE ]; then
 
   # Container Instance
   if [ "$TF_VAR_deploy_type" == "container_instance" ]; then
-    if [ -f $TARGET_DIR/docker_image_ui.txt ] || [ -f $TARGET_DIR/docker_image_app.txt ] ; then
-      if [ -f $TARGET_DIR/docker_image_ui.txt ]; then
-        export TF_VAR_docker_image_ui=`cat $TARGET_DIR/docker_image_ui.txt`
-      else
-        export TF_VAR_docker_image_ui="busybox"      
-      fi
-      if [ -f $TARGET_DIR/docker_image_app.txt ]; then
-        export TF_VAR_docker_image_app=`cat $TARGET_DIR/docker_image_app.txt`
-      else
-        export TF_VAR_docker_image_app="busybox"      
-      fi
+    if [ -f $TARGET_DIR/docker_image_ui.txt ]; then
+      export TF_VAR_docker_image_ui=`cat $TARGET_DIR/docker_image_ui.txt`
+    else
+      export TF_VAR_docker_image_ui="busybox"      
+    fi
+    if [ -f $TARGET_DIR/docker_image_app.txt ]; then
+      export TF_VAR_docker_image_app=`cat $TARGET_DIR/docker_image_app.txt`
+    else
+      export TF_VAR_docker_image_app="busybox"      
     fi
   fi
 
