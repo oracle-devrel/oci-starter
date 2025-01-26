@@ -130,7 +130,7 @@ elif [ "$ARG1" == "deploy" ]; then
   fi    
 elif [ "$ARG1" == "env" ]; then
   # Check if sourced or not
-  echo "SOURCED=$SOURCED"
+  (return 0 2>/dev/null) && SOURCED=1 || SOURCED=0
   if [ "$SOURCED" == "1" ]; then
     . $PROJECT_DIR/env.sh ${@:2}
     return
