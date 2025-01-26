@@ -5,7 +5,7 @@ if [ -f $PROJECT_DIR/bin/oci-starter.sh ]; then
   export PATH=$PROJECT_DIR/bin:$PATH
 fi  
 
-(return 0 2>/dev/null) && SOURCED=1 || SOURCED=0
+(return 0 2>/dev/null) && export SOURCED=1 || export SOURCED=0
 if [ "$SOURCED" == "1" ]; then
   . oci-starter.sh $@
   echo "RETURN"
