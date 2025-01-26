@@ -6,12 +6,11 @@ if [ -f $PROJECT_DIR/bin/oci-starter.sh ]; then
 fi  
 
 (return 0 2>/dev/null) && SOURCED=1 || SOURCED=0
-
 if [ "$SOURCED" == "1" ]; then
   . oci-starter.sh $@
   echo "RETURN"
 else
-  . oci-starter.sh $@
+  oci-starter.sh $@
   exit ${PIPESTATUS[0]}
 fi
 
