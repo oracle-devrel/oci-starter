@@ -134,23 +134,20 @@ loop_lang () {
 }
 
 loop_compute_other() {
-  # Shared compute / LiveLabs Green Button
+  # Public compute / LiveLabs Green Button
   OPTION_SHAPE=amd
   OPTION_LANG=java
   OPTION_JAVA_VM=jdk
   OPTION_JAVA_FRAMEWORK=springboot
-  OPTION_DB_INSTALL=shared_compute
+  OPTION_DEPLOY=public_compute
   OPTION_UI=html
   OPTION_DB=db_free
-  if [[ `arch` == "aarch64" ]]; then
-    echo "SKIP: db_free not available on ARM yet"
-  else
-    build_option  
-  fi
+  build_option  
   OPTION_DB=mysql
   build_option   
 
   # Resource Manager
+  OPTION_DEPLOY=compute
   OPTION_DB_INSTALL=default
   OPTION_DB=atp
   OPTION_INFRA_AS_CODE=resource_manager
@@ -195,7 +192,7 @@ loop_tls() {
   loop_tls_deploy
   # existing_ocid is part of existing_dir
 
-  OPTION_DB_INSTALL=shared_compute
+  OPTION_DEPLOY=public_compute
   OPTION_TLS=new_http_01
   OPTION_DEPLOY=compute
   build_option  

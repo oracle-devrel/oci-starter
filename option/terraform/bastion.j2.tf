@@ -1,4 +1,4 @@
-{%- if db_install == "shared_compute" %}
+{%- if deploy_type == "public_compute" %}
 data "oci_core_instance" "starter_bastion" {
   instance_id = oci_core_instance.starter_compute.id
 }

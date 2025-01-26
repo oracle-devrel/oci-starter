@@ -53,7 +53,7 @@ if [ ! -z "$UI_URL" ]; then
     fi  
     curl $UI_URL/app/info -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_info.log > /tmp/result.info
 
-    if [ "$TF_VAR_deploy_type" == "compute" ]; then
+    if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "compute" ]; then
       # Get the compute logs
       eval "$(ssh-agent -s)"      
       ssh-add $TF_VAR_ssh_private_path
@@ -81,7 +81,7 @@ if [ ! -z "$UI_URL" ]; then
     # echo - Rest DB API     : $UI_URL/$APP_DIR/dept
     # echo - Rest Info API   : $UI_URL/$APP_DIR/info
   done
-  if [ "$TF_VAR_deploy_type" == "compute" ] && [ "$TF_VAR_ui_type" == "api" ]; then   
+  if [[ ("$TF_VAR_deploy_type" == "public_compute" || "$TF_VAR_deploy_type" == "compute") && "$TF_VAR_ui_type" == "api" ]]; then   
     export APIGW_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}  
     echo - API Gateway URL : $APIGW_URL/app/dept 
   fi

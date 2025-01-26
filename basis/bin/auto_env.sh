@@ -284,7 +284,8 @@ if [ -f $STATE_FILE ]; then
   # Check if there is a BASTION SERVICE with a BASTION COMMAND
   get_output_from_tfstate "BASTION_COMMAND" "bastion_command"
   if [ "$BASTION_COMMAND" == "" ]; then
-    if [ "$TF_VAR_db_install" == "shared_compute" ]; then
+    if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
+      # Ideally BASTION_PROXY_COMMAND should be not used. But passing a empty value does not work...
       export COMPUTE_IP=$BASTION_IP
     fi
     export BASTION_USER_HOST="opc@$BASTION_IP"

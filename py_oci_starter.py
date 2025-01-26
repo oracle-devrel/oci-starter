@@ -105,7 +105,7 @@ def allowed_options():
 
 allowed_values = {
     '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
-    '-deploy_type': {'compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
+    '-deploy_type': { 'public_compute', 'compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
     '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     '-java_version': {'8', '11', '17', '21'},
@@ -116,7 +116,7 @@ allowed_values = {
     '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
     '-mode': {CLI, GIT, ZIP},
     '-shape': {'amd','freetier_amd','ampere','arm'},
-    '-db_install': {'default', 'shared_compute', 'kubernetes'},
+    '-db_install': {'default', 'kubernetes'},
     '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'},
     '-oke_type': {'managed', 'virtual_node'},
     '-security': {'none', 'openid'}
@@ -179,11 +179,7 @@ def db_rules():
     if params.get('db_type')=='none':
         params.pop('db_user')     
         params.pop('db_password')     
-    # shared_compute is valid only in compute deployment
-    if params.get('db_install') == "shared_compute":
-        if params.get('deploy_type')!='compute':
-            params.pop('db_install')            
-
+     
 
 def language_rules():
     if params.get('language') != 'java' or params.get('deploy_type') == 'function':
@@ -340,7 +336,7 @@ starter.sh
    -db_ocid (optional)
    -db_password (mandatory)
    -db_user (default admin)
-   -deploy (mandatory) compute | kubernetes | function | container_instance 
+   -deploy (mandatory) public_compute | compute | kubernetes | function | container_instance 
    -fnapp_ocid (optional)
    -group_common (optional) atp | database | mysql | psql | opensearch | nosql | fnapp | apigw | oke | jms 
    -group_name (optional)
@@ -360,6 +356,7 @@ starter.sh
    -app_subnet_ocid (optional)
    -db_subnet_ocid (optional)
    -shape (optional freetier)
+   -security (optional openid)
    -ui (default html | reactjs | jet | angular | none) 
    -vcn_ocid (optional)
    -output_dir (optional)
@@ -470,7 +467,7 @@ Check LICENSE file (Apache 2.0)
     - db        : SQL files of the database
     - terraform : Terraform scripts'''
                 ]
-        if params['deploy_type'] in [ 'compute', 'instance_pool' ]:
+        if params['deploy_type'] in [ 'public_compute', 'compute', 'instance_pool' ]:
             contents.append(
                 "    - compute   : Contains the deployment files to Compute")
         elif params['deploy_type'] == 'kubernetes':
@@ -756,7 +753,7 @@ def create_dir_shared():
     # -- Bastion ------------------------------------------------------------
     # Currently limited to provision the database ? 
     # XXXX In the future maybe as build machine ?
-    if params.get('deploy_type') in [ 'compute', 'instance_pool' ] or 'bastion_ocid' in params or params.get('db_type')!='none':
+    if params.get('deploy_type') in [ 'public_compute', 'compute', 'instance_pool' ] or 'bastion_ocid' in params or params.get('db_type')!='none':
         cp_terraform_existing("bastion_ocid", "bastion.j2.tf")
 
 #----------------------------------------------------------------------------
@@ -836,7 +833,7 @@ def create_output_dir():
     elif params.get('ui_type') == "api": 
         print("API Only")
         output_rm_tree("src/ui")   
-        if params.get('deploy_type') in [ 'compute', 'instance_pool' ]:
+        if params.get('deploy_type') in [ 'public_compute', 'compute', 'instance_pool' ]:
             cp_terraform_apigw("apigw_compute_append.tf")          
     else:
         ui_lower = params.get('ui_type').lower()
@@ -885,14 +882,14 @@ def create_output_dir():
                 apigw_append = "apigw_fn_append.tf"
             cp_terraform_existing("apigw_ocid", "apigw.j2.tf", apigw_append)
 
-        elif params.get('deploy_type') in [ 'compute', 'instance_pool' ]:
+        elif params.get('deploy_type') in [ 'public_compute', 'compute', 'instance_pool' ]:
             cp_terraform_existing("compute_ocid", "compute.j2.tf")
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
             if params.get('deploy_type') == 'instance_pool':
                 cp_terraform("instance_pool.j2.tf") 
             elif params.get('tls') == 'existing_dir':
-                if params.get('db_install') == 'shared_compute':
+                if params.get('deploy_type') == 'public_compute':
                     output_copy_tree("option/tls/compute_existing_dir", "src/tls")
                 else: 
                     cp_terraform_apigw("apigw_compute_append.tf")                             
@@ -901,7 +898,7 @@ def create_output_dir():
             elif params.get('tls') == 'existing_ocid':
                 cp_terraform_apigw("apigw_compute_append.tf")   
             # Compute in app_subnet uses an APIGW in web_subnet
-            if params.get('deploy_type') == 'compute' and params.get('db_install') != 'shared_compute':
+            if params.get('deploy_type') == 'compute':
                 cp_terraform_apigw("apigw_compute_append.tf")
 
         elif params.get('deploy_type') == "container_instance":
@@ -947,9 +944,9 @@ def create_output_dir():
             output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
 
         if params.get('db_type') == "mysql":
-            if params.get('db_install') == "shared_compute":
-               cp_terraform("mysql_shared_compute.tf")   
-               output_copy_tree("option/src/db/mysql_shared_compute", "src/db")  
+            if params.get('deploy_type') == "public_compute":
+               cp_terraform("mysql_public_compute.tf")   
+               output_copy_tree("option/src/db/mysql_public_compute", "src/db")  
                output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")       
             else:
                 cp_terraform_existing("mysql_ocid", "mysql.j2.tf")

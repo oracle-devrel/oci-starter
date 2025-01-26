@@ -20,7 +20,7 @@ resource "oci_core_instance" "starter_compute" {
   }
 
   create_vnic_details {
-{%- if db_install == "shared_compute" %}
+{%- if deploy_type == "public_compute" %}
     subnet_id                 = data.oci_core_subnet.starter_web_subnet.id
     assign_public_ip          = true
 {%- else %}

@@ -269,19 +269,19 @@ get_user_details() {
 
 # Get the user interface URL
 get_ui_url() {
-  if [ "$TF_VAR_deploy_type" == "compute" ]; then
+  if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "compute" ] ; then
     if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_tls" == "existing_ocid" ]; then
       # xx APEX ? xx
       export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     else 
-      if [ "$TF_VAR_db_install" == "shared_compute" ]; then
+      if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
         export UI_URL=http://${COMPUTE_IP}
       else 
         export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
       fi    
       if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
         export UI_HTTP=$UI_URL
-        if [ "$TF_VAR_db_install" == "shared_compute" ]; then
+        if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
             export UI_URL=https://${TF_VAR_dns_name}
         else 
             export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
@@ -312,7 +312,7 @@ get_ui_url() {
 }
 
 is_deploy_compute() {
-  if [ "$TF_VAR_deploy_type" == "compute" ] || [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
+  if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "compute" ];  || [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
     return 0
   else
     return 1
@@ -529,7 +529,7 @@ certificate_dir_before_terraform() {
     export TF_VAR_certificate_dir=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
   fi
 
-  if [ "$TF_VAR_deploy_type" == "compute" ]; then
+  if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "compute" ]; then
     if [ -d target/compute/certificate ]; then
       echo "Certificate Directory exists already" 
     elif [ "$TF_VAR_certificate_dir" != "" ]; then
@@ -562,7 +562,7 @@ certificate_dir_before_terraform() {
 # Certificate - Post Deploy
 certificate_post_deploy() {
   if [ "$TF_VAR_tls" == "new_http_01" ]; then
-    if [ "$TF_VAR_deploy_type" == "compute" ]; then
+    if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "compute" ]; then
       certificate_run_certbot_http_01
     elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
       echo "Skip: TLS - Kubernetes - HTTP_01"
