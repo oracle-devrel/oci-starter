@@ -2,7 +2,8 @@
 
 # PROJECT_DIR
 if [[ -z "${PROJECT_DIR}" ]]; then
-  error_exit "PROJECT_DIR not set"
+  echo "ERROR: PROJECT_DIR not set"
+  exit 1
 fi
 # TARGET_DIR
 export TARGET_DIR=$PROJECT_DIR/target
@@ -14,7 +15,10 @@ if [[ -z "${BIN_DIR}" ]]; then
   export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 fi
 
-# Autocompletion in bash
+# ENV.SH
+. $PROJECT_DIR/env.sh
+
+# Autocomplete in bash
 _starter_completions()
 {
   COMPREPLY=($(compgen -W "build ssh terraform destroy generate deploy env help" "${COMP_WORDS[1]}"))

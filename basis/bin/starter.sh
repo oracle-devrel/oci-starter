@@ -37,10 +37,6 @@ if [ -z $ARG1 ]; then
     fi
   fi
 elif [ "$ARG1" == "help" ]; then
-  echo "--- HELP -------------------------------------------------------------------------------------"
-  echo "https://www.ocistarter.com/"
-  echo "https://www.ocistarter.com/help (tutorial + how to customize)"  
-  echo 
   echo "--- BUILD ------------------------------------------------------------------------------------"
   echo "./starter.sh build                    - Build and deploy all"
   echo "./starter.sh build app                - Build the application (APP)"
@@ -68,7 +64,10 @@ elif [ "$ARG1" == "help" ]; then
   echo "--- LOGS -------------------------------------------------------------------------------------"
   echo "cat target/build.log                  - Show last build log"
   echo "cat target/destroy.log                - Show last destroy log"
-  echo
+  echo "--- HELP -------------------------------------------------------------------------------------"
+  echo "https://www.ocistarter.com/"
+  echo "https://www.ocistarter.com/help (tutorial + how to customize)"  
+  echo 
   exit
 
 elif [ "$ARG1" == "build" ]; then
@@ -132,10 +131,10 @@ elif [ "$ARG1" == "env" ]; then
   # Check if sourced or not
   (return 0 2>/dev/null) && SOURCED=1 || SOURCED=0
   if [ "$SOURCED" == "1" ]; then
-    . $PROJECT_DIR/env.sh ${@:2}
+    . $BIN_DIR/auto_env.sh ${@:2}
     return
   else
-    bash --rcfile $PROJECT_DIR/env.sh ${@:2}
+    bash --rcfile $BIN_DIR/auto_env.sh ${@:2}
   fi
 elif [ "$ARG1" == "upgrade" ]; then
   $BIN_DIR/upgrade.sh 

@@ -531,11 +531,7 @@ def env_sh_contents():
     print(env_params)
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
     contents = ['#!/bin/bash']
-    contents.append(
-        'PROJECT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )')
-    contents.append(f'export BIN_DIR=$PROJECT_DIR/bin')
-    contents.append('')
-    contents.append('# Env Variables')
+    contents.append('# Environment Variables')
     if 'group_name' in params:
         prefix = params["group_name"]
         contents.append(f'export TF_VAR_group_name="{prefix}"')
@@ -579,14 +575,9 @@ def env_sh_contents():
     contents.append('')
     contents.append('# Creation Details')
     contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
-    contents.append(f'export OCI_STARTER_VERSION=3.2')
+    contents.append(f'export OCI_STARTER_VERSION=3.3')
     contents.append(f'export OCI_STARTER_PARAMS="{params["params"]}"')
     contents.append('')
-    contents.append('# Get other env variables automatically (-silent flag can be passed)')
-    contents.append('if [ -f $PROJECT_DIR/bin/oci-starter.sh ]; then')
-    contents.append('  export PATH=$PROJECT_DIR/bin:$PATH')
-    contents.append('fi')
-    contents.append('. auto_env.sh $1')
     return contents
 
 
