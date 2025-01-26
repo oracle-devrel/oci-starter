@@ -7,7 +7,7 @@ cd $PROJECT_DIR
 SECONDS=0
 
 # Call the script with --auto-approve to destroy without prompt
-. env.sh -no-auto
+. starter.sh env -no-auto
 title "OCI Starter - Destroy"
 echo 
 echo "Warning: This will destroy all the resources created by Terraform."
@@ -24,7 +24,7 @@ if [ "$1" != "--auto-approve" ]; then
   esac
 fi
 
-. env.sh
+. starter.sh env
 
 # Check if there is something to destroy.
 if [ -f $STATE_FILE ]; then

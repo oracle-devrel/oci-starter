@@ -1,7 +1,7 @@
 #!/bin/bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # FN uses more variable like TF_VAR_ocir that are not available with ./env.sh -no-auto
-. $SCRIPT_DIR/../../env.sh 
+. $SCRIPT_DIR/../../starter.sh env 
 . $BIN_DIR/build_common.sh
 
 # fn -v deploy --app ${TF_VAR_prefix}-fn-application

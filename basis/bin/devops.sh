@@ -4,7 +4,7 @@ if [ "$PROJECT_DIR" == "" ]; then
   exit 1
 fi  
 cd $PROJECT_DIR
-. env.sh -silent
+. starter.sh env -silent
 
 if [ "$TF_VAR_auth_token" == "" ]; then
   echo "TF_VAR_auth_token not set"

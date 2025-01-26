@@ -6,7 +6,7 @@ fi
 cd $PROJECT_DIR
 SECONDS=0
 
-. env.sh -no-auto
+. starter.sh env -no-auto
 title "OCI Starter - Build"
 
 # Custom code before build
@@ -20,7 +20,7 @@ if [ "$TF_VAR_ssh_private_path" == "" ]; then
   . $BIN_DIR/sshkey_generate.sh
 fi
 
-. env.sh
+. starter.sh env
 if [ "$TF_VAR_tls" != "" ]; then
   title "Certificate"
   certificate_dir_before_terraform
@@ -30,7 +30,7 @@ title "Terraform Apply"
 $BIN_DIR/terraform_apply.sh --auto-approve -no-color
 exit_on_error
 
-. env.sh
+. starter.sh env
 # Run config command on the DB directly (ex RAC)
 if [ -f $BIN_DIR/deploy_db_node.sh ]; then
   title "Deploy DB Node"

@@ -5,7 +5,7 @@ if [ "$PROJECT_DIR" == "" ]; then
 fi  
 cd $PROJECT_DIR
 
-. env.sh -silent
+. starter.sh env -silent
 . $BIN_DIR/tls/dns_shared_function.sh
 
 # Start OCI Commands in Backgroud waiting from files coming from certbot 

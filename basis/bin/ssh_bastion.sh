@@ -4,6 +4,6 @@ if [ "$PROJECT_DIR" == "" ]; then
   exit 1
 fi  
 cd $PROJECT_DIR
-. env.sh
+. starter.sh env
 
 ssh opc@$BASTION_IP -i $TF_VAR_ssh_private_path

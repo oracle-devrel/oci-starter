@@ -3,9 +3,9 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR/..
 
 if [ -z "$TF_VAR_deploy_type" ]; then
-  . env.sh -silent
+  . starter.sh env -silent
 else
-  . env.sh -no-auto
+  . starter.sh env -no-auto
 fi 
 
 get_ui_url

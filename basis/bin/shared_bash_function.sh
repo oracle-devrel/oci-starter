@@ -6,6 +6,7 @@ title() {
   echo "-- $NAME ${line:${#NAME}} ($SECONDS secs)"
   echo  
 }
+export -f title
 
 # Used in for loop for APP_DIR
 app_dir_list() {
@@ -67,7 +68,6 @@ build_function() {
      # Store the image name and DB_URL in files
      echo $TF_VAR_fn_image > $TARGET_DIR/fn_image.txt
      echo "$1" > $TARGET_DIR/fn_db_url.txt
-     . ../../env.sh
   else 
      echo "build_function - built successfully not found"
      exit 1
@@ -76,7 +76,7 @@ build_function() {
   # First create the Function using terraform
   # Run env.sh to get function image 
   cd $PROJECT_DIR
-  . env.sh 
+  . starter.sh env 
   $BIN_DIR/terraform_apply.sh --auto-approve
 }
 
@@ -97,6 +97,7 @@ ocir_docker_push () {
     docker tag ${TF_VAR_prefix}-app ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
     docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
     exit_on_error
+    echo "${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest" > $TARGET_DIR/docker_image_app.txt
   fi
 
   # Push image in registry
@@ -104,6 +105,7 @@ ocir_docker_push () {
     docker tag ${TF_VAR_prefix}-ui ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
     docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
     exit_on_error
+    echo "${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest" > $TARGET_DIR/docker_image_ui.txt
   fi
 }
 

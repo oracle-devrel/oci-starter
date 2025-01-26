@@ -4,7 +4,7 @@ if [ "$PROJECT_DIR" == "" ]; then
   exit 1
 fi  
 cd $PROJECT_DIR
-. env.sh
+. starter.sh env
 
 ## Remove variable that should not be exposed
 export `compgen -A variable | grep _ocid | grep _ocid | sed 's/$/=__TO_FILL__/'`

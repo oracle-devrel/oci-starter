@@ -4,7 +4,7 @@ if [ "$PROJECT_DIR" == "" ]; then
   exit 1
 fi  
 cd $PROJECT_DIR
-. env.sh
+. starter.sh env
 
 eval "$(ssh-agent -s)"
 ssh-add $TF_VAR_ssh_private_path

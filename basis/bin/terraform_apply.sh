@@ -5,7 +5,7 @@ if [ "$PROJECT_DIR" == "" ]; then
 fi  
 cd $PROJECT_DIR
 
-. env.sh -silent
+. starter.sh env -silent
 . $BIN_DIR/shared_infra_as_code.sh
 cd $PROJECT_DIR/src/terraform
 infra_as_code_apply $@

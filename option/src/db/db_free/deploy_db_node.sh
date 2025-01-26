@@ -4,7 +4,7 @@ if [ "$PROJECT_DIR" == "" ]; then
   exit 1
 fi  
 cd $PROJECT_DIR
-. env.sh -silent
+. starter.sh env -silent
 
 # Do not rely on DB_NODE_IP in case of group with DATABASE and DB_FREE like the testsuite
 get_output_from_tfstate "DB_FREE_IP" "db_free_ip"

@@ -4,7 +4,7 @@ if [ "$PROJECT_DIR" == "" ]; then
   exit 1
 fi  
 cd $PROJECT_DIR
-. env.sh -silent
+. starter.sh env -silent
 
 function scp_bastion() {
   if command -v rsync &> /dev/null; then
