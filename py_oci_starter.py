@@ -1182,7 +1182,7 @@ if 'group_common' in params:
     # Use a bastion only for the database
     if params.get('db_type')!='none':
         params['bastion_ocid'] = TO_FILL
-    to_ocid = { "atp": "atp_ocid", "database": "db_ocid", "mysql": "mysql_ocid", "psql": "psql_ocid", "opensearch": "opensearch_ocid", "nosql": "nosql_ocid", "oke": "oke_ocid", "fnapp": "fnapp_ocid", "apigw": "apigw_ocid", "jms": "jms_ocid", "compute": "compute_ocid"}
+    to_ocid = { "atp": "atp_ocid", "database": "db_ocid", "mysql": "mysql_ocid", "psql": "psql_ocid", "opensearch": "opensearch_ocid", "nosql": "nosql_ocid", "oke": "oke_ocid", "fnapp": "fnapp_ocid", "apigw": "apigw_ocid", "jms": "jms_ocid", "public_compute": "compute_ocid", "private_compute": "compute_ocid"}
     for x in a_group_common:
         if x in to_ocid:
             ocid = to_ocid[x]

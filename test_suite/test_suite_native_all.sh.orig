@@ -55,7 +55,7 @@ loop_lang () {
 loop_deploy() {
   OPTION_DEPLOY=kubernetes
   loop_lang
-  OPTION_DEPLOY=compute
+  OPTION_DEPLOY=private_compute
   loop_lang
   OPTION_DEPLOY=container_instance
   loop_lang
