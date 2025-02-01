@@ -30,7 +30,7 @@ from borneo import QueryRequest
 
 # NoSQL connection  
 def get_connection():
-    {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+    {%- if deploy_type in ["public_compute", "private_compute", "kubernetes", "instance_pool"] %}
     provider = SignatureProvider.create_with_instance_principal()
     {%- else %}
     provider = SignatureProvider.create_with_resource_principal()

@@ -126,7 +126,7 @@ import javax.json.*;
 {%- endmacro -%}
 
 {% macro nosql_connection() -%}
-        {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+        {%- if deploy_type in ["public_compute", "private_compute", "kubernetes", "instance_pool"] %}
         SignatureProvider authProvider = SignatureProvider.createWithInstancePrincipal();
         {%- else %}
         SignatureProvider authProvider = SignatureProvider.createWithResourcePrincipal();

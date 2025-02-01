@@ -12,7 +12,7 @@ loop_ui() {
 loop_shape() {
   OPTION_SHAPE=amd 
   loop_ui
-  # if [ "$OPTION_DEPLOY" == "compute" ] && [ "$OPTION_DB" == "none" ]; then
+  # if [ "$OPTION_DEPLOY" == "public_compute" ] && [ "$OPTION_DB" == "none" ]; then
   #   OPTION_SHAPE=ampere
   #   loop_ui
   # fi

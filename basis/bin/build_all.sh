@@ -64,7 +64,7 @@ fi
 
 # Deploy
 title "Deploy $TF_VAR_deploy_type"
-if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "compute" ]; then
+if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then
     $BIN_DIR/deploy_compute.sh
     exit_on_error
 elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then

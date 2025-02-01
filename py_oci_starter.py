@@ -105,7 +105,7 @@ def allowed_options():
 
 allowed_values = {
     '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
-    '-deploy_type': { 'public_compute', 'compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
+    '-deploy_type': { 'public_compute', 'private_compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
     '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     '-java_version': {'8', '11', '17', '21'},
@@ -467,7 +467,7 @@ Check LICENSE file (Apache 2.0)
     - db        : SQL files of the database
     - terraform : Terraform scripts'''
                 ]
-        if params['deploy_type'] in [ 'public_compute', 'compute', 'instance_pool' ]:
+        if params['deploy_type'] in [ 'public_compute', 'private_compute', 'instance_pool' ]:
             contents.append(
                 "    - compute   : Contains the deployment files to Compute")
         elif params['deploy_type'] == 'kubernetes':
@@ -753,7 +753,7 @@ def create_dir_shared():
     # -- Bastion ------------------------------------------------------------
     # Currently limited to provision the database ? 
     # XXXX In the future maybe as build machine ?
-    if params.get('deploy_type') in [ 'public_compute', 'compute', 'instance_pool' ] or 'bastion_ocid' in params or params.get('db_type')!='none':
+    if params.get('deploy_type') in [ 'public_compute', 'private_compute', 'instance_pool' ] or 'bastion_ocid' in params or params.get('db_type')!='none':
         cp_terraform_existing("bastion_ocid", "bastion.j2.tf")
 
 #----------------------------------------------------------------------------
@@ -833,7 +833,7 @@ def create_output_dir():
     elif params.get('ui_type') == "api": 
         print("API Only")
         output_rm_tree("src/ui")   
-        if params.get('deploy_type') in [ 'public_compute', 'compute', 'instance_pool' ]:
+        if params.get('deploy_type') in [ 'public_compute', 'private_compute', 'instance_pool' ]:
             cp_terraform_apigw("apigw_compute_append.tf")          
     else:
         ui_lower = params.get('ui_type').lower()
@@ -882,7 +882,7 @@ def create_output_dir():
                 apigw_append = "apigw_fn_append.tf"
             cp_terraform_existing("apigw_ocid", "apigw.j2.tf", apigw_append)
 
-        elif params.get('deploy_type') in [ 'public_compute', 'compute', 'instance_pool' ]:
+        elif params.get('deploy_type') in [ 'public_compute', 'private_compute', 'instance_pool' ]:
             cp_terraform_existing("compute_ocid", "compute.j2.tf")
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
@@ -898,7 +898,7 @@ def create_output_dir():
             elif params.get('tls') == 'existing_ocid':
                 cp_terraform_apigw("apigw_compute_append.tf")   
             # Compute in app_subnet uses an APIGW in web_subnet
-            if params.get('deploy_type') == 'compute':
+            if params.get('deploy_type') == 'private_compute':
                 cp_terraform_apigw("apigw_compute_append.tf")
 
         elif params.get('deploy_type') == "container_instance":
@@ -1028,7 +1028,10 @@ def create_group_common_dir():
         if 'jms_ocid' not in params:
             cp_terraform("log_group.tf")
 
-    if 'compute' in a_group_common:
+    if 'private_compute' in a_group_common:
+        cp_terraform_existing("compute_ocid", "compute.j2.tf")
+
+    if 'public_compute' in a_group_common:
         cp_terraform_existing("compute_ocid", "compute.j2.tf")
 
     # Container Instance Common

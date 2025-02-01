@@ -76,7 +76,7 @@ loop_java_vm() {
   fi  
 
   if [ -n "$TEST_GRAALVM_NATIVE" ] && [ "$OPTION_JAVA_FRAMEWORK" != "tomcat" ] ; then
-    if [ "$OPTION_DEPLOY" == "compute" ] || [ "$OPTION_DEPLOY" == "kubernetes" ]; then 
+    if [ "$OPTION_DEPLOY" == "private_compute" ] || [ "$OPTION_DEPLOY" == "kubernetes" ]; then 
       OPTION_JAVA_VM=graalvm-native
       loop_db
     fi 
@@ -112,7 +112,7 @@ loop_lang () {
     OPTION_LANG=php
     loop_db
   fi
-  if [ "$OPTION_DEPLOY" == "compute" ]; then
+  if [ "$OPTION_DEPLOY" == "private_compute" ]; then
     OPTION_LANG=apex
     OPTION_DB=atp 
     loop_shape
@@ -147,7 +147,7 @@ loop_compute_other() {
   build_option   
 
   # Resource Manager
-  OPTION_DEPLOY=compute
+  OPTION_DEPLOY=private_compute
   OPTION_DB_INSTALL=default
   OPTION_DB=atp
   OPTION_INFRA_AS_CODE=resource_manager
@@ -168,7 +168,10 @@ loop_compute_other() {
 }
 
 loop_tls_deploy() {
-  OPTION_DEPLOY=compute
+  # Maybe remove one compute when all is working
+  OPTION_DEPLOY=public_compute
+  build_option  
+  OPTION_DEPLOY=private_compute
   build_option  
   OPTION_DEPLOY=kubernetes
   build_option  
@@ -194,7 +197,7 @@ loop_tls() {
 
   OPTION_DEPLOY=public_compute
   OPTION_TLS=new_http_01
-  OPTION_DEPLOY=compute
+  OPTION_DEPLOY=private_compute
   build_option  
   OPTION_DB_INSTALL=default
 
@@ -211,7 +214,10 @@ loop_tls() {
 }
 
 loop_deploy() {
-  OPTION_DEPLOY=compute
+  # Maybe remove one compute type when all is working    
+  OPTION_DEPLOY=public_compute
+  loop_lang  
+  OPTION_DEPLOY=private_compute
   loop_compute_other
   loop_lang  
   OPTION_DEPLOY=kubernetes
