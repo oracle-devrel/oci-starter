@@ -235,6 +235,36 @@ build_option() {
 
   cd $TEST_HOME/oci-starter
   if [ "$OPTION_GROUP_NAME" == "dummy" ]; then
+    echo ./oci_starter.sh\
+       -prefix $NAME \
+       -deploy $OPTION_DEPLOY \
+       -ui $OPTION_UI \
+       -language $OPTION_LANG \
+       -java_framework $OPTION_JAVA_FRAMEWORK \
+       -java_vm $OPTION_JAVA_VM \
+       -database $OPTION_DB \
+       -db_password $TEST_DB_PASSWORD \
+       -db_install $OPTION_DB_INSTALL \
+       -group_common $OPTION_GROUP_NAME \
+       -infra_as_code $OPTION_INFRA_AS_CODE \
+       -shape $OPTION_SHAPE \
+       -tls $OPTION_TLS \
+       -compartment_ocid $EX_COMPARTMENT_OCID \
+       -vcn_ocid $TF_VAR_vcn_ocid \
+       -web_subnet_ocid $TF_VAR_web_subnet_ocid \
+       -app_subnet_ocid $TF_VAR_app_subnet_ocid \
+       -db_subnet_ocid $TF_VAR_db_subnet_ocid \
+       -oke_ocid $TF_VAR_oke_ocid \
+       -atp_ocid $TF_VAR_atp_ocid \
+       -db_ocid $TF_VAR_db_ocid \
+       -mysql_ocid $TF_VAR_mysql_ocid \
+       -psql_ocid $TF_VAR_psql_ocid \
+       -opensearch_ocid $TF_VAR_opensearch_ocid \
+       -nosql_ocid $TF_VAR_nosql_ocid \
+       -auth_token $OCI_TOKEN \
+       -apigw_ocid $TF_VAR_apigw_ocid \
+       -bastion_ocid $TF_VAR_bastion_ocid \
+       -fnapp_ocid $TF_VAR_fnapp_ocid > ${TEST_DIR}.log 2>&1   
     ./oci_starter.sh \
        -prefix $NAME \
        -deploy $OPTION_DEPLOY \
