@@ -1,6 +1,11 @@
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR/..
-. env.sh -silent
+#!/bin/bash
+if [ "$PROJECT_DIR" == "" ]; then
+  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh"
+  exit 1
+fi  
+cd $PROJECT_DIR
+
+. starter.sh env -silent
 . $BIN_DIR/tls/dns_shared_function.sh
 
 # Start OCI Commands in Backgroud waiting from files coming from certbot 

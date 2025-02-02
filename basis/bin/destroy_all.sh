@@ -1,14 +1,13 @@
 #!/bin/bash
-if [[ -z "${PROJECT_DIR}" ]]; then
-  echo "Error: PROJECT_DIR not set"
-  exit
-fi
+if [ "$PROJECT_DIR" == "" ]; then
+  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh destroy"
+  exit 1
+fi  
 cd $PROJECT_DIR
 SECONDS=0
 
 # Call the script with --auto-approve to destroy without prompt
-
-. env.sh -no-auto
+. starter.sh env -no-auto
 title "OCI Starter - Destroy"
 echo 
 echo "Warning: This will destroy all the resources created by Terraform."
@@ -25,7 +24,7 @@ if [ "$1" != "--auto-approve" ]; then
   esac
 fi
 
-. env.sh
+. starter.sh env
 
 # Check if there is something to destroy.
 if [ -f $STATE_FILE ]; then
@@ -58,7 +57,7 @@ done;
 # OKE
 if [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
   title "OKE Destroy"
-  bin/oke_destroy.sh --auto-approve
+  $BIN_DIR/oke_destroy.sh --auto-approve
 fi
 
 # Buckets
@@ -78,7 +77,7 @@ do
 done;
 
 title "Terraform Destroy"
-bin/terraform_destroy.sh --auto-approve -no-color
+$BIN_DIR/terraform_destroy.sh --auto-approve -no-color
 exit_on_error
 
 echo "Destroy time: ${SECONDS} secs"

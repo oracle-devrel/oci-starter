@@ -3,7 +3,7 @@
 #
 # Build the group_common_env.sh file.
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-. $SCRIPT_DIR/../../env.sh -no-auto
+. $SCRIPT_DIR/../../starter.sh env -no-auto
 . $BIN_DIR/build_common.sh
 
 append () {
@@ -72,7 +72,7 @@ if [ -z "$TF_VAR_bastion_ocid" ]; then
 fi
 
 if [ -z "$TF_VAR_compute_ocid" ]; then
-   get_id_from_tfstate "TF_VAR_compute_ocid" "starter_instance"
+   get_id_from_tfstate "TF_VAR_compute_ocid" "starter_compute"
 fi   
 
 if [ -z "$TF_VAR_log_group_ocid" ]; then

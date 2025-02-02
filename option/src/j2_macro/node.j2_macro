@@ -31,7 +31,7 @@ function createClient() {
         compartment:process.env.TF_VAR_compartment_ocid,
         auth: {
             iam: {
-                {%- if deploy_type in ["compute", "kubernetes", "instance_pool"] %}
+                {%- if deploy_type in ["public_compute", "private_compute", "kubernetes", "instance_pool"] %}
                 useInstancePrincipal: true
                 {%- else %}
                 useResourcePrincipal: true

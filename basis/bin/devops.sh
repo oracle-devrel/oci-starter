@@ -1,6 +1,10 @@
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR/..
-. env.sh -silent
+#!/bin/bash
+if [ "$PROJECT_DIR" == "" ]; then
+  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh deploy bastion"
+  exit 1
+fi  
+cd $PROJECT_DIR
+. starter.sh env -silent
 
 if [ "$TF_VAR_auth_token" == "" ]; then
   echo "TF_VAR_auth_token not set"
@@ -43,7 +47,7 @@ if [ "$1" == "build" ]; then
   cd ${TF_VAR_prefix}
   cp -r $PROJECT_DIR/* .
   rm -Rf target
-  cp bin/devops/build_devops.yaml .
+  cp $BIN_DIR/devops/build_devops.yaml .
   sed -i "s/terraform_local/resource_manager/" env.sh
   git config --local user.email "dummy@ocistarter.com"
   git config --local user.name "${TF_VAR_username}"

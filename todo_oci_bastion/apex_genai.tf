@@ -41,17 +41,17 @@ resource "oci_identity_domains_dynamic_resource_group" "starter-adb-dyngroup" {
     schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
 }
 
-resource "oci_identity_domains_dynamic_resource_group" "starter-instance-dyngroup" {
+resource "oci_identity_domains_dynamic_resource_group" "starter-compute-dyngroup" {
     #Required
     provider       = oci.home    
-    display_name = "${var.prefix}-instance-dyngroup"
+    display_name = "${var.prefix}-compute-dyngroup"
     idcs_endpoint = local.idcs_url
     matching_rule = "ANY{ instance.compartment.id = '${local.lz_app_cmp_ocid}' }"
     schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
 }
 
 resource "time_sleep" "wait_30_seconds" {
-  depends_on = [ oci_identity_domains_dynamic_resource_group.starter-adb-dyngroup, oci_identity_domains_dynamic_resource_group.starter-instance-dyngroup ]
+  depends_on = [ oci_identity_domains_dynamic_resource_group.starter-adb-dyngroup, oci_identity_domains_dynamic_resource_group.starter-compute-dyngroup ]
   create_duration = "30s"
 }
 
@@ -67,15 +67,15 @@ resource "oci_identity_policy" "starter-adb-policy" {
     ]
 }
 
-resource "oci_identity_policy" "starter-instance-policy" {
+resource "oci_identity_policy" "starter-compute-policy" {
     provider       = oci.home    
     depends_on     = [ time_sleep.wait_30_seconds ]
-    name           = "${var.prefix}-instance-policy"
-    description    = "${var.prefix} instance policy"
+    name           = "${var.prefix}-compute-policy"
+    description    = "${var.prefix} compute policy"
     compartment_id = local.lz_app_cmp_ocid
 
     statements = [
-        "Allow dynamic-group ${var.idcs_domain_name}/${var.prefix}-instance-dyngroup to manage generative-ai-family in compartment id ${var.compartment_ocid}"
+        "Allow dynamic-group ${var.idcs_domain_name}/${var.prefix}-compute-dyngroup to manage generative-ai-family in compartment id ${var.compartment_ocid}"
     ]
 }
 */
@@ -205,7 +205,7 @@ resource "oci_bastion_session" "starter_bastion_session" {
 
   target_resource_details {
     session_type                               = "MANAGED_SSH"
-    target_resource_id = data.oci_core_instance.starter_instance.id
+    target_resource_id = data.oci_core_instance.starter_compute.id
     target_resource_operating_system_user_name = "opc"
     target_resource_port                       = "22"
   }

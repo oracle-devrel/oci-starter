@@ -1,16 +1,16 @@
 {%- if compute_ocid is defined %}
 variable "compute_ocid" {}
 
-data "oci_core_instance" "starter_instance" {
+data "oci_core_instance" "starter_compute" {
     instance_id = var.compute_ocid
 }
 
 {%- else %}   
-resource "oci_core_instance" "starter_instance" {
+resource "oci_core_instance" "starter_compute" {
 
   availability_domain = data.oci_identity_availability_domain.ad.name
   compartment_id      = local.lz_app_cmp_ocid
-  display_name        = "${var.prefix}-instance"
+  display_name        = "${var.prefix}-compute"
   shape               = var.instance_shape
 
   shape_config {
@@ -20,7 +20,7 @@ resource "oci_core_instance" "starter_instance" {
   }
 
   create_vnic_details {
-{%- if db_install == "shared_compute" %}
+{%- if deploy_type == "public_compute" %}
     subnet_id                 = data.oci_core_subnet.starter_web_subnet.id
     assign_public_ip          = true
 {%- else %}
@@ -29,7 +29,7 @@ resource "oci_core_instance" "starter_instance" {
 {%- endif %}
     display_name              = "Primaryvnic"
     assign_private_dns_record = true
-    hostname_label            = "${var.prefix}-instance"
+    hostname_label            = "${var.prefix}-compute"
   }
 
   # XXXX Should be there only for Java
@@ -50,12 +50,13 @@ resource "oci_core_instance" "starter_instance" {
 
   source_details {
     source_type = "image"
+    boot_volume_size_in_gbs = "50" 
     source_id   = data.oci_core_images.oraclelinux.images.0.id
   }
 
   connection {
     agent       = false
-    host        = oci_core_instance.starter_instance.public_ip
+    host        = oci_core_instance.starter_compute.public_ip
     user        = "opc"
     private_key = var.ssh_private_key
   }
@@ -63,15 +64,15 @@ resource "oci_core_instance" "starter_instance" {
   freeform_tags = local.freeform_tags
 }
 
-data "oci_core_instance" "starter_instance" {
-    instance_id = oci_core_instance.starter_instance.id
+data "oci_core_instance" "starter_compute" {
+    instance_id = oci_core_instance.starter_compute.id
 }
 {%- endif %}   
 
 locals {
-  compute_ocid = data.oci_core_instance.starter_instance.id
-  compute_public_ip = data.oci_core_instance.starter_instance.public_ip
-  compute_private_ip = data.oci_core_instance.starter_instance.private_ip
+  compute_ocid = data.oci_core_instance.starter_compute.id
+  compute_public_ip = data.oci_core_instance.starter_compute.public_ip
+  compute_private_ip = data.oci_core_instance.starter_compute.private_ip
 }
 
 output "compute_ip" {

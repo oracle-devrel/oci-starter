@@ -1,7 +1,10 @@
 #!/bin/bash
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR/..
-. env.sh -silent
+if [ "$PROJECT_DIR" == "" ]; then
+  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh"
+  exit 1
+fi  
+cd $PROJECT_DIR
+. starter.sh env -silent
 
 # Deploy directly on the DB_NODE (ex RAC)
 # Start ssh-agent to do a Jump from the BASTION to the DB_NODE

@@ -1,8 +1,11 @@
 #!/bin/bash
 # Add the API to the API Management Portal
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR/..
-. env.sh -silent
+if [ "$PROJECT_DIR" = "" ]; then
+  echo "Error: PROJECT_DIR not set. Please use starter.sh"
+  exit 1
+fi
+cd $PROJECT_DIR
+. starter.sh env -silent
 
 add_api_portal() {
   PARAM=$1

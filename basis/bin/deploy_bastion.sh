@@ -1,7 +1,10 @@
 #!/bin/bash
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR/..
-. env.sh -silent
+if [ "$PROJECT_DIR" == "" ]; then
+  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh deploy bastion"
+  exit 1
+fi  
+cd $PROJECT_DIR
+. starter.sh env -silent
 
 function scp_bastion() {
   if command -v rsync &> /dev/null; then

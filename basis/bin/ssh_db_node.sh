@@ -1,7 +1,10 @@
 #!/bin/bash
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR/..
-. env.sh
+if [ "$PROJECT_DIR" == "" ]; then
+  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh ssh db_node"
+  exit 1
+fi  
+cd $PROJECT_DIR
+. starter.sh env
 
 eval "$(ssh-agent -s)"
 ssh-add $TF_VAR_ssh_private_path

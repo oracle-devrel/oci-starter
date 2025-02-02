@@ -1,7 +1,7 @@
 #!/bin/bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR/..
-. env.sh -silent
+. starter.sh env -silent
 
 get_output_from_tfstate "MYSQL_COMPUTE_IP" "mysql_compute_ip"
 scp_via_bastion src/db/db_node_init.sh opc@$MYSQL_COMPUTE_IP:/tmp/.

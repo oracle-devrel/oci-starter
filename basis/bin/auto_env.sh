@@ -1,6 +1,24 @@
 #!/bin/bash
 
-# Autocompletion in bash
+# PROJECT_DIR
+if [[ -z "${PROJECT_DIR}" ]]; then
+  echo "ERROR: PROJECT_DIR not set"
+  exit 1
+fi
+# TARGET_DIR
+export TARGET_DIR=$PROJECT_DIR/target
+if [ ! -d $TARGET_DIR ]; then
+  mkdir $TARGET_DIR
+fi
+# BIN_DIR
+if [[ -z "${BIN_DIR}" ]]; then
+  export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+fi
+
+# ENV.SH
+. $PROJECT_DIR/env.sh
+
+# Autocomplete in bash
 _starter_completions()
 {
   COMPREPLY=($(compgen -W "build ssh terraform destroy generate deploy env help" "${COMP_WORDS[1]}"))
@@ -53,19 +71,6 @@ fi
 if [ "$0" != "-bash" ]; then
   unset HISTFILE
   set -o history -o histexpand
-fi
-
-if [[ -z "${BIN_DIR}" ]]; then
-  export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-fi
-if [[ -z "${PROJECT_DIR}" ]]; then
-  error_exit "PROJECT_DIR not set"
-fi
-
-# Target DIR
-export TARGET_DIR=$PROJECT_DIR/target
-if [ ! -d $TARGET_DIR ]; then
-  mkdir $TARGET_DIR
 fi
 
 # Shared BASH Functions
@@ -233,7 +238,7 @@ if [ -f $STATE_FILE ]; then
   if [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
     # XXX Does not work with Resource Manager XXX
     # Check in the terraform state is the compute is already created.
-    get_id_from_tfstate "COMPUTE_OCID" "starter_instance"
+    get_id_from_tfstate "COMPUTE_OCID" "starter_compute"
     if [ "$COMPUTE_OCID" != "" ]; then
       export TF_VAR_compute_ready="true"
     fi
@@ -258,17 +263,15 @@ if [ -f $STATE_FILE ]; then
 
   # Container Instance
   if [ "$TF_VAR_deploy_type" == "container_instance" ]; then
-    if [ -f $TARGET_DIR/docker_image_ui.txt ] || [ -f $TARGET_DIR/docker_image_app.txt ] ; then
-      if [ -f $TARGET_DIR/docker_image_ui.txt ]; then
-        export TF_VAR_docker_image_ui=`cat $TARGET_DIR/docker_image_ui.txt`
-      else
-        export TF_VAR_docker_image_ui="busybox"      
-      fi
-      if [ -f $TARGET_DIR/docker_image_app.txt ]; then
-        export TF_VAR_docker_image_app=`cat $TARGET_DIR/docker_image_app.txt`
-      else
-        export TF_VAR_docker_image_app="busybox"      
-      fi
+    if [ -f $TARGET_DIR/docker_image_ui.txt ]; then
+      export TF_VAR_docker_image_ui=`cat $TARGET_DIR/docker_image_ui.txt`
+    else
+      export TF_VAR_docker_image_ui="busybox"      
+    fi
+    if [ -f $TARGET_DIR/docker_image_app.txt ]; then
+      export TF_VAR_docker_image_app=`cat $TARGET_DIR/docker_image_app.txt`
+    else
+      export TF_VAR_docker_image_app="busybox"      
     fi
   fi
 
@@ -281,7 +284,8 @@ if [ -f $STATE_FILE ]; then
   # Check if there is a BASTION SERVICE with a BASTION COMMAND
   get_output_from_tfstate "BASTION_COMMAND" "bastion_command"
   if [ "$BASTION_COMMAND" == "" ]; then
-    if [ "$TF_VAR_db_install" == "shared_compute" ]; then
+    if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
+      # Ideally BASTION_PROXY_COMMAND should be not used. But passing a empty value does not work...
       export COMPUTE_IP=$BASTION_IP
     fi
     export BASTION_USER_HOST="opc@$BASTION_IP"
