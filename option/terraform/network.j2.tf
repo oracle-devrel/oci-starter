@@ -2,6 +2,17 @@
 {%- if vcn_ocid is defined %}
 {%- else %}
 /* 
+# To use a existing Landing Zone, add these variables in env.sh
+#
+# Landing Zone
+# export TF_VAR_lz_app_cmp_ocid=$TF_VAR_compartment_ocid')
+# export TF_VAR_lz_db_cmp_ocid=$TF_VAR_compartment_ocid')
+# export TF_VAR_lz_network_cmp_ocid=$TF_VAR_compartment_ocid')
+# export TF_VAR_lz_security_cmp_ocid=$TF_VAR_compartment_ocid')
+# export TF_VAR_lz_vcn_ocid="XXXX"')
+# export TF_VAR_lz_web_subnet_ocid="XXXX"')
+# export TF_VAR_lz_app_subnet_ocid="XXXX"')
+# export TF_VAR_lz_db_subnet_ocid="XXXX"')
 {%- endif %}
 
 # Existing VCN and Subnets
