@@ -33,21 +33,27 @@ locals {
 }  
 
 resource "oci_identity_domains_dynamic_resource_group" "starter-adb-dyngroup" {
-    #Required
-    provider       = oci.home    
-    display_name = "${var.prefix}-adb-dyngroup"
-    idcs_endpoint = local.idcs_url
-    matching_rule = "ANY{ resource.id = '${oci_database_autonomous_database.starter_atp.id}' }"
-    schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
+  #Required
+  provider       = oci.home    
+  display_name = "${var.prefix}-adb-dyngroup"
+  idcs_endpoint = local.idcs_url
+  matching_rule = "ANY{ resource.id = '${oci_database_autonomous_database.starter_atp.id}' }"
+  schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
+  lifecycle {
+    ignore_changes = [ schemas ]
+  }    
 }
 
 resource "oci_identity_domains_dynamic_resource_group" "starter-compute-dyngroup" {
-    #Required
-    provider       = oci.home    
-    display_name = "${var.prefix}-compute-dyngroup"
-    idcs_endpoint = local.idcs_url
-    matching_rule = "ANY{ instance.compartment.id = '${local.lz_app_cmp_ocid}' }"
-    schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
+  #Required
+  provider       = oci.home    
+  display_name = "${var.prefix}-compute-dyngroup"
+  idcs_endpoint = local.idcs_url
+  matching_rule = "ANY{ instance.compartment.id = '${local.lz_app_cmp_ocid}' }"
+  schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
+  lifecycle {
+    ignore_changes = [ schemas ]
+  }    
 }
 
 resource "time_sleep" "wait_30_seconds" {
