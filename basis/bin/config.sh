@@ -36,7 +36,8 @@ if declare -p | grep -q "__TO_FILL__"; then
   }
 
   read_ocid() {
-    while [ "${!1}" == "__TO_FILL__" ]; do
+    while [ "${!1}" == "__TO_FILL__" ]; do    
+      title "Config - $2 OCID"  
       read -r -p "Enter your $2 OCID (Format: $3.xxxxx): " response
       if [[ $response == $3* ]]; then
         export $1=$response
@@ -51,6 +52,7 @@ if declare -p | grep -q "__TO_FILL__"; then
 
   # DB_PASSWORD
   if [ "$TF_VAR_db_password" == "__TO_FILL__" ]; then
+    title "Config - Database Password"
     export REQUEST="Generate password for the database ? (TF_VAR_db_password) ?"
     if accept_request; then
         echo "Generating password for the database"
@@ -94,6 +96,7 @@ if declare -p | grep -q "__TO_FILL__"; then
 
   # AUTH_TOKEN
   if [ "$TF_VAR_auth_token" == "__TO_FILL__" ]; then
+    title "Config - Authentication Token"
     export REQUEST="Generate OCI Auth token ? (TF_VAR_auth_token) ?"
     if accept_request; then
       echo "Generating OCI Auth token"
@@ -104,8 +107,25 @@ if declare -p | grep -q "__TO_FILL__"; then
     fi      
   fi
 
+  # LICENSE_MODEL
+  if [ "$TF_VAR_license_model" == "__TO_FILL__" ]; then
+    title "Config - License Model"  
+    echo "License Model (TF_VAR_license_model): BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED"
+    while [ "${!1}" == "__TO_FILL__" ]; do
+      read -r -p "Enter BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED: " response
+      if [[ $response == "BRING_YOUR_OWN_LICENSE" ]] || [[ $response == "LICENSE_INCLUDED" ]] ; then
+        export TF_VAR_license_model=$response
+        store_env_sh TF_VAR_license_model $response
+      else
+        echo "Wrong value $response"
+        echo            
+      fi
+    done     
+  fi
+
   # OIC_APPID
   if [ "$TF_VAR_oic_appid" == "__TO_FILL__" ]; then
+    title "Config - Oracle Integration Confidential App ID"    
     export REQUEST="Enter the OIC APPID ? (TF_VAR_oic_appid) ?"
     read -r -p "Enter the OIC APPID ? (TF_VAR_oic_appid): " TF_VAR_oic_appid
     if [[ "${TF_VAR_oic_appid}" =~ ^.*_APPID$ ]]; then
@@ -118,6 +138,7 @@ if declare -p | grep -q "__TO_FILL__"; then
 
   # API_KEY
   if [ "$TF_VAR_api_key" == "__TO_FILL__" ]; then
+    title "Config - API Key"     
     read -r -p "Enter the value of the API_KEY (ex: MY_long_KEY_123456) ? (TF_VAR_api_key) " TF_VAR_api_key 
     store_env_sh TF_VAR_api_key $TF_VAR_api_key
   fi  
@@ -127,6 +148,7 @@ if declare -p | grep -q "__TO_FILL__"; then
 
   # COMPARTMENT_ID
   if [ "$TF_VAR_compartment_ocid" == "__TO_FILL__" ]; then
+    title "Config - Compartment"       
     export REQUEST="Create a new Compartment ? (<No> will ask to reuse an existing one) ?"
     if accept_request; then
       echo "Check if 'oci-starter' compartment exists"

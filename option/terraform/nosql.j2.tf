@@ -28,6 +28,9 @@ resource "oci_identity_domains_dynamic_resource_group" "starter_nosql_dyngroup" 
   display_name   = "${var.prefix}-nosql-dyngroup"
   matching_rule  = "ANY {instance.compartment.id = '${var.compartment_ocid}', ALL {resource.type = 'fnfunc', resource.compartment.id ='${var.compartment_ocid}'}, ALL {resource.type = 'computecontainerinstance', resource.compartment.id ='${var.compartment_ocid}' }}"
   schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
+  lifecycle {
+    ignore_changes = [ schemas ]
+  }
 }
 
 resource "oci_identity_policy" "starter_nosql_policy" {
