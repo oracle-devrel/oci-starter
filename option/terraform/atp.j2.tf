@@ -19,7 +19,7 @@ resource "oci_database_autonomous_database" "starter_atp" {
 
   compute_model            = "ECPU"  
   compute_count            = "2"
-  data_storage_size_in_gb  = "64" 
+  data_storage_size_in_gb  = "128" 
 
   # Random name to have several OCI Starter ATP named (starteratpxxxx) on the same Tenancy (Ex: livelabs)
   db_name                  = "${var.prefix}atp${random_string.id.result}"
