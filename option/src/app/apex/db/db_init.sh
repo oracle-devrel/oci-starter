@@ -3,7 +3,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
 # Install SQLCL (Java program)
-wget https://download.oracle.com/otn_software/java/sqldeveloper/sqlcl-latest.zip
+wget -nv https://download.oracle.com/otn_software/java/sqldeveloper/sqlcl-latest.zip
 rm -Rf sqlcl
 unzip sqlcl-latest.zip
 sudo dnf install -y java-17 

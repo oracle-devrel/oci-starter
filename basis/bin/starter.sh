@@ -109,6 +109,10 @@ elif [ "$ARG1" == "terraform" ]; then
   else 
     echo "Unknown command: $ARG1 $ARG2"
   fi    
+elif [ "$ARG1" == "start" ]; then
+    $BIN_DIR/start_stop.sh start $ARG1 $ARG2
+elif [ "$ARG1" == "stop" ]; then
+    $BIN_DIR/start_stop.sh start $ARG1 $ARG2
 elif [ "$ARG1" == "generate" ]; then
   if [ "$ARG2" == "auth_token" ]; then
     $BIN_DIR/gen_auth_token.sh

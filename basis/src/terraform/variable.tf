@@ -55,7 +55,7 @@ locals {
   freeform_tags = {
     group = local.group_name
     app_prefix = var.prefix
-    SSS_stop = "-"
+    # 3s_not_stop = "-"
     path = path.cwd
   }
   

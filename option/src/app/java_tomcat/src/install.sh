@@ -13,7 +13,7 @@ sudo dnf install -y wget
 VER=10.1.10
 cd /tmp
 sudo mkdir -p /opt/tomcat
-wget https://archive.apache.org/dist/tomcat/tomcat-10/v${VER}/bin/apache-tomcat-${VER}.tar.gz
+wget -nv https://archive.apache.org/dist/tomcat/tomcat-10/v${VER}/bin/apache-tomcat-${VER}.tar.gz
 sudo tar -xvf /tmp/apache-tomcat-$VER.tar.gz -C $TOMCAT_HOME --strip-components=1
 # XXXXXX
 sudo cp /home/opc/app/starter-1.0.war $TOMCAT_HOME/webapps

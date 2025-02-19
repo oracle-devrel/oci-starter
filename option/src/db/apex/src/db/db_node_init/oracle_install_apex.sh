@@ -19,7 +19,7 @@ export APEX_ZIP=apex_24.1_en.zip
 # export APEX_ZIP=apex_latest.zip
 
 echo "--- Downloading $APEX_ZIP"
-wget https://download.oracle.com/otn_software/apex/$APEX_ZIP
+wget -nv https://download.oracle.com/otn_software/apex/$APEX_ZIP
 unzip $APEX_ZIP
 
 echo "--- Add PDB1 to tnsnames.ora"
@@ -84,7 +84,7 @@ export WALLET_DIR=$HOME/wallet
 
 mkdir $DB_CERT_DIR
 cd $DB_CERT_DIR
-wget https://objectstorage.us-phoenix-1.oraclecloud.com/p/QsLX1mx9A-vnjjohcC7TIK6aTDFXVKr0Uogc2DAN-Rd7j6AagsmMaQ3D3Ti4a9yU/n/adwcdemo/b/CERTS/o/dbc_certs.tar
+wget -nv https://objectstorage.us-phoenix-1.oraclecloud.com/p/QsLX1mx9A-vnjjohcC7TIK6aTDFXVKr0Uogc2DAN-Rd7j6AagsmMaQ3D3Ti4a9yU/n/adwcdemo/b/CERTS/o/dbc_certs.tar
 tar xf dbc_certs.tar
 
 mkdir -p $WALLET_DIR

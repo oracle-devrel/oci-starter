@@ -111,7 +111,7 @@ if declare -p | grep -q "__TO_FILL__"; then
   if [ "$TF_VAR_license_model" == "__TO_FILL__" ]; then
     title "Config - License Model"  
     echo "License Model (TF_VAR_license_model): BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED"
-    while [ "${!1}" == "__TO_FILL__" ]; do
+    while [ "$TF_VAR_license_model" == "__TO_FILL__" ]; do
       read -r -p "Enter BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED: " response
       if [[ $response == "BRING_YOUR_OWN_LICENSE" ]] || [[ $response == "LICENSE_INCLUDED" ]] ; then
         export TF_VAR_license_model=$response
