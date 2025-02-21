@@ -47,6 +47,9 @@ elif [ "$ARG1" == "help" ]; then
   echo "./starter.sh ssh compute              - SSH to compute (Deployment: Compute)"
   echo "./starter.sh ssh bastion              - SSH to bastion"
   echo "./starter.sh ssh db_node              - SSH to DB_NODE (Database: Oracle DB)"
+  echo "--- START/STOP -------------------------------------------------------------------------------"
+  echo "./starter.sh start                    - Start all resources"
+  echo "./starter.sh stop                     - Stop all resources"
   echo "--- TERRAFORM (or RESOURCE MANAGER ) ---------------------------------------------------------"
   echo "./starter.sh terraform plan           - Plan"
   echo "./starter.sh terraform apply          - Apply"
@@ -109,6 +112,10 @@ elif [ "$ARG1" == "terraform" ]; then
   else 
     echo "Unknown command: $ARG1 $ARG2"
   fi    
+elif [ "$ARG1" == "start" ]; then
+    $BIN_DIR/start_stop.sh start $ARG1 $ARG2
+elif [ "$ARG1" == "stop" ]; then
+    $BIN_DIR/start_stop.sh start $ARG1 $ARG2
 elif [ "$ARG1" == "generate" ]; then
   if [ "$ARG2" == "auth_token" ]; then
     $BIN_DIR/gen_auth_token.sh

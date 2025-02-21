@@ -218,11 +218,6 @@ def ui_rules():
     elif params.get('ui_type') == 'ruby':
         params['language'] = 'ruby'
 
-def auth_token_rules():
-    if params.get('deploy_type') in [ 'kubernetes', 'container_instance', 'function' ] and params.get('auth_token') is None:
-        warning('-auth_token is not set. Will need to be set in env.sh')
-        params['auth_token'] = TO_FILL
-
 
 def compartment_rules():
     if params.get('compartment_ocid') is None:
@@ -296,7 +291,6 @@ def apply_rules():
     ui_rules()
     db_rules()
     vcn_rules()
-    auth_token_rules()
     compartment_rules()
     license_rules()
     shape_rules()

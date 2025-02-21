@@ -19,7 +19,7 @@ dnf install -y oraclelinux-developer-release-el8
 dnf config-manager --set-enabled ol8_developer 
 sudo dnf install -y oracle-database-preinstall-23ai
 
-wget https://download.oracle.com/otn-pub/otn_software/db-free/${FREEDB_RPM} 
+wget -nv https://download.oracle.com/otn-pub/otn_software/db-free/${FREEDB_RPM} 
 dnf -y localinstall ${FREEDB_RPM} 
 
 # echo DB_PASSWORD=$DB_PASSWORD

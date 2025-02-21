@@ -9,8 +9,8 @@ normal_menu = [
         ("Log      - Show last build log",  "cat target/build.log")
     ]),
     ("Other", [
-        ("Help", "./starter.sh help"), 
         ("Advanced", "Advanced"),
+        ("Help", "./starter.sh help"), 
         ("Exit", "Exit")
     ])
 ]
@@ -27,10 +27,14 @@ advanced_menu = [
         ("Compute   - SSH Compute",          "./starter.sh ssh compute"),
         ("Database  - SSH Database Node",    "./starter.sh ssh db_node"),
     ]),
+    ("Start/Stop", [
+        ("Start     - Start all resources",  "./starter.sh start"), 
+        ("Stop      - Stop all resources",   "./starter.sh stop")
+    ]),                
     ("Terraform", [
-        ("Plan      - Terraform Plan",        "./starter.sh terraform plan"), 
-        ("Apply     - Terraform Apply",       "./starter.sh terraform apply"),
-        ("Destroy   - Terraform Destroy",     "./starter.sh terraform destroy")
+        ("Plan      - Terraform Plan",       "./starter.sh terraform plan"), 
+        ("Apply     - Terraform Apply",      "./starter.sh terraform apply"),
+        ("Destroy   - Terraform Destroy",    "./starter.sh terraform destroy")
     ]),                
     ("Other", [
         ("Env       - Set Environment variables", "./starter.sh env"), 
