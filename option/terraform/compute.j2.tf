@@ -32,12 +32,11 @@ resource "oci_core_instance" "starter_compute" {
     hostname_label            = "${var.prefix}-compute"
   }
 
-  # XXXX Should be there only for Java
   agent_config {
-    plugins_config {
-      desired_state =  "ENABLED"
-      name = "Oracle Java Management Service"
-    }
+    # plugins_config {
+    #   desired_state =  "ENABLED"
+    #   name = "Oracle Java Management Service"
+    # }
     plugins_config {
       desired_state =  "ENABLED"
       name = "Management Agent"
