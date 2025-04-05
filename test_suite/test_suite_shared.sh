@@ -222,7 +222,14 @@ build_option() {
      ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
   fi
 
+  # Prevent to start test build if the group_common was not finished
+  if [ ! -f $TEST_HOME/group_common_env.sh]; then
+    echo "ERROR: $TEST_HOME/group_common_env.sh not found"
+    exit 1
+  fi 
+
   add_inprogress_rerun
+
 
   # Avoid 2 parallel creations of code
   while [ -f $TEST_HOME/oci_starter_busy ]; do
