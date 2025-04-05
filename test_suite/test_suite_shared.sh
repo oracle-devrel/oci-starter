@@ -292,7 +292,7 @@ build_option() {
        -auth_token $OCI_TOKEN \
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
-       -fnapp_ocid $TF_VAR_fnapp_ocid > ${TEST_DIR}.log 2>&1 
+       -fnapp_ocid $TF_VAR_fnapp_ocid >> ${TEST_DIR}.log 2>&1 
   else
     # Unique name to allow more generations of TLS certificates. The prefix is used as hostname for TLS http_01.
     OPTION_TSONE_ID=$((OPTION_TSONEID+1))
