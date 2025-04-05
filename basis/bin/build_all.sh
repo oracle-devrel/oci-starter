@@ -10,7 +10,7 @@ SECONDS=0
 title "OCI Starter - Build"
 
 # First build is auto-approved. Else you need to pass --auto-approve flag.
-if [ "$1" != "--auto-approve" ]; then
+if [ "$1" == "--auto-approve" ]; then
    export TERRAFORM_FLAG="--auto-approve"
 elif [ -f $STATE_FILE ]; then
    echo "$STATE_FILE detected."
