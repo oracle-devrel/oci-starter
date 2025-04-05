@@ -615,3 +615,28 @@ function scp_via_bastion() {
   i=$(($i+1))
   done
 }
+
+# Function to replace ##VARIABLES## in a file
+file_replace_variables() {
+  local file="$1"
+  local temp_file=$(mktemp)
+
+  while IFS= read -r line; do
+    while [[ $line =~ (.*)##(.*)##(.*) ]]; do
+      local var_name="${BASH_REMATCH[2]}"
+      local var_value="${!var_name}"
+
+      if [[ -z "$var_value" ]]; then
+        echo "ERROR: Environment variable '${var_name}' is not defined."
+        error_exit
+      fi
+
+      line=${line/"##${var_name}##"/${var_value}}
+    done
+
+    echo "$line" >> "$temp_file"
+  done < "$file"
+
+  mv "$temp_file" "$file"
+}
+
