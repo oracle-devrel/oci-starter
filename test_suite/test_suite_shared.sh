@@ -223,7 +223,7 @@ build_option() {
   fi
 
   # Prevent to start test build if the group_common was not finished
-  if [ ! -f $TEST_HOME/group_common_env.sh]; then
+  if [ ! -f $TEST_HOME/group_common_env.sh ]; then
     echo "ERROR: $TEST_HOME/group_common_env.sh not found"
     exit 1
   fi 
