@@ -101,11 +101,11 @@ elif [ "$ARG1" == "ssh" ]; then
   fi    
 elif [ "$ARG1" == "terraform" ]; then
   if [ "$ARG2" == "plan" ]; then
-    $BIN_DIR/terraform_plan.sh ${@:2}
+    $BIN_DIR/terraform_plan.sh ${@:3}
   elif [ "$ARG2" == "apply" ]; then
-    $BIN_DIR/terraform_apply.sh ${@:2}
+    $BIN_DIR/terraform_apply.sh ${@:3}
   elif [ "$ARG2" == "destroy" ]; then
-    $BIN_DIR/terraform_destroy.sh ${@:2}
+    $BIN_DIR/terraform_destroy.sh ${@:3}
   else 
     echo "Unknown command: $ARG1 $ARG2"
   fi    
