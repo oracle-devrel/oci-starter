@@ -87,6 +87,12 @@ resource "oci_core_instance" "starter_bastion" {
     private_key = var.ssh_private_key
   }
 
+  lifecycle {
+    ignore_changes = [
+      source_details[0].source_id
+    ]
+  }
+
   freeform_tags = local.freeform_tags   
 }
 

@@ -66,7 +66,7 @@ build_test () {
   cd $TEST_HOME
   cd $TEST_DIR
   pwd
-  ./starter.sh build > build_$BUILD_ID.log 2>&1
+  ./starter.sh build --auto-approve > build_$BUILD_ID.log 2>&1
 
   CSV_NAME=$NAME
   CSV_DIR=$TEST_DIR
@@ -222,7 +222,14 @@ build_option() {
      ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
   fi
 
+  # Prevent to start test build if the group_common was not finished
+  if [ ! -f $TEST_HOME/group_common_env.sh ]; then
+    echo "ERROR: $TEST_HOME/group_common_env.sh not found"
+    exit 1
+  fi 
+
   add_inprogress_rerun
+
 
   # Avoid 2 parallel creations of code
   while [ -f $TEST_HOME/oci_starter_busy ]; do
@@ -292,7 +299,7 @@ build_option() {
        -auth_token $OCI_TOKEN \
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
-       -fnapp_ocid $TF_VAR_fnapp_ocid > ${TEST_DIR}.log 2>&1 
+       -fnapp_ocid $TF_VAR_fnapp_ocid >> ${TEST_DIR}.log 2>&1 
   else
     # Unique name to allow more generations of TLS certificates. The prefix is used as hostname for TLS http_01.
     OPTION_TSONE_ID=$((OPTION_TSONEID+1))
@@ -375,7 +382,7 @@ pre_test_suite() {
   cd $TEST_HOME/group_common
   echo "# Test Suite use 2 nodes to avoid error: Too Many Pods (110 pods/node K8s limit)" >> env.sh
   echo "export TF_VAR_node_pool_size=2" >> env.sh
-  ./starter.sh build
+  ./starter.sh build --auto-approve
   exit_on_error
   date
   echo "CSV_DATE,OPTION_DEPLOY,OPTION_LANG,OPTION_JAVA_FRAMEWORK,OPTION_JAVA_VM,OPTION_DB,OPTION_DB_INSTALL,OPTION_UI,OPTION_SHAPE,CSV_NAME,CSV_HTML_OK,CSV_JSON_OK,CSV_BUILD_SECOND,CSV_DESTROY_SECOND,CSV_RUN100_OK,CSV_RUN100_SECOND" > $TEST_HOME/result.csv 

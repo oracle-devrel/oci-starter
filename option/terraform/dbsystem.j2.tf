@@ -66,6 +66,12 @@ resource "oci_database_db_system" "starter_dbsystem" {
   license_model           = var.license_model
   node_count              = ##db_node_count##
 
+  lifecycle {
+    ignore_changes = [
+      db_home[0].db_version
+    ]
+  }
+
   freeform_tags = local.freeform_tags
 }
 

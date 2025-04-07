@@ -73,19 +73,16 @@ elif [ "$ARG1" == "help" ]; then
   exit
 
 elif [ "$ARG1" == "build" ]; then
-  if [ "$ARG2" == "" ]; then
-    export LOG_NAME=$TARGET_DIR/logs/build.${DATE_POSTFIX}.log
-    # Show the log and save it to target/build.log and target/logs
-    ln -sf $LOG_NAME $TARGET_DIR/build.log
-    $BIN_DIR/build_all.sh ${@:2} 2>&1 | tee $LOG_NAME
-  elif [ "$ARG2" == "app" ]; then
+  if [ "$ARG2" == "app" ]; then
     $PROJECT_DIR/src/app/build_app.sh ${@:2}
   elif [ "$ARG2" == "ui" ]; then
     $PROJECT_DIR/src/ui/build_ui.sh ${@:2}
   else 
-    echo "Unknown command: $ARG1 $ARG2"
+    export LOG_NAME=$TARGET_DIR/logs/build.${DATE_POSTFIX}.log
+    # Show the log and save it to target/build.log and target/logs
+    ln -sf $LOG_NAME $TARGET_DIR/build.log
+    $BIN_DIR/build_all.sh ${@:2} 2>&1 | tee $LOG_NAME
   fi    
-
 
 elif [ "$ARG1" == "destroy" ]; then
   LOG_NAME=$TARGET_DIR/logs/destroy.${DATE_POSTFIX}.log
@@ -104,11 +101,11 @@ elif [ "$ARG1" == "ssh" ]; then
   fi    
 elif [ "$ARG1" == "terraform" ]; then
   if [ "$ARG2" == "plan" ]; then
-    $BIN_DIR/terraform_plan.sh ${@:2}
+    $BIN_DIR/terraform_plan.sh ${@:3}
   elif [ "$ARG2" == "apply" ]; then
-    $BIN_DIR/terraform_apply.sh ${@:2}
+    $BIN_DIR/terraform_apply.sh ${@:3}
   elif [ "$ARG2" == "destroy" ]; then
-    $BIN_DIR/terraform_destroy.sh ${@:2}
+    $BIN_DIR/terraform_destroy.sh ${@:3}
   else 
     echo "Unknown command: $ARG1 $ARG2"
   fi    

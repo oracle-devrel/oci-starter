@@ -9,6 +9,15 @@ SECONDS=0
 . starter.sh env -no-auto
 title "OCI Starter - Build"
 
+# First build is auto-approved. Else you need to pass --auto-approve flag.
+if [ "$1" == "--auto-approve" ]; then
+   export TERRAFORM_FLAG="--auto-approve"
+elif [ -f $STATE_FILE ]; then
+   echo "$STATE_FILE detected."
+else
+   export TERRAFORM_FLAG="--auto-approve"
+fi
+
 # Custom code before build
 if [ -f $PROJECT_DIR/src/before_build.sh ]; then
   $PROJECT_DIR/src/before_build.sh
@@ -27,7 +36,7 @@ if [ "$TF_VAR_tls" != "" ]; then
 fi  
 
 title "Terraform Apply"
-$BIN_DIR/terraform_apply.sh --auto-approve -no-color
+$BIN_DIR/terraform_apply.sh -no-color $TERRAFORM_FLAG
 exit_on_error
 
 . starter.sh env

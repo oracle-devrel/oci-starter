@@ -1,6 +1,25 @@
 -- XXXX This is a very bad practice to use the ADMIN user.
 -- XXXX Should create a user scott and replace connect string with SCOTT ?
 -- DROP TABLE DEPT;
+CREATE USER starter IDENTIFIED BY &1;
+GRANT "CONNECT" TO starter;
+GRANT "RESOURCE" TO starter;
+GRANT UNLIMITED TABLESPACE TO starter;
+
+BEGIN
+  ORDS.enable_schema(
+    p_enabled             => TRUE,
+    p_schema              => 'starter',
+    p_url_mapping_type    => 'BASE_PATH',
+    p_url_mapping_pattern => 'starter',
+    p_auto_rest_auth      => FALSE
+  );  
+  COMMIT;
+END;
+/
+
+connect starter/&1@DB
+
 CREATE TABLE DEPT
        (DEPTNO NUMBER PRIMARY KEY,
         DNAME VARCHAR2(64),
@@ -12,17 +31,7 @@ INSERT INTO DEPT VALUES (30, 'SALES',      'CHICAGO');
 INSERT INTO DEPT VALUES (40, 'OPERATIONS', 'BOSTON');
 COMMIT;
 
-BEGIN
-  ORDS.enable_schema(
-    p_enabled             => TRUE,
-    p_schema              => 'ADMIN',
-    p_url_mapping_type    => 'BASE_PATH',
-    p_url_mapping_pattern => 'starter',
-    p_auto_rest_auth      => FALSE
-  );  
-  COMMIT;
-END;
-/
+
 BEGIN
   ORDS.define_module(
     p_module_name    => 'module',

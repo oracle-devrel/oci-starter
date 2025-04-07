@@ -73,11 +73,18 @@ cleanBucket() {
 }
 for BUCKET_NAME in `cat $STATE_FILE | jq -r '.resources[] | select(.type=="oci_objectstorage_bucket") | .instances[].attributes.name'`;
 do
-   cleanBucket $BUCKET_NAME
+  cleanBucket $BUCKET_NAME
 done;
 
 title "Terraform Destroy"
 $BIN_DIR/terraform_destroy.sh --auto-approve -no-color
 exit_on_error
+
+export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
+if [ "$TF_RESOURCE" == "0" ]; then
+  echo "Empty state file - cleaning up .terraform"
+  rm -Rf $PROJECT_DIR/src/terraform/.terraform
+  rm -Rf $PROJECT_DIR/src/terraform/.terraform.lock.hcl
+fi
 
 echo "Destroy time: ${SECONDS} secs"

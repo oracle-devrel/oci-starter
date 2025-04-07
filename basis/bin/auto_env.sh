@@ -7,6 +7,7 @@ if [[ -z "${PROJECT_DIR}" ]]; then
 fi
 # TARGET_DIR
 export TARGET_DIR=$PROJECT_DIR/target
+export STATE_FILE=$TARGET_DIR/terraform.tfstate
 if [ ! -d $TARGET_DIR ]; then
   mkdir $TARGET_DIR
 fi
@@ -224,7 +225,6 @@ fi
 
 
 #-- POST terraform ----------------------------------------------------------
-export STATE_FILE=$TARGET_DIR/terraform.tfstate
 if [ -f $STATE_FILE ]; then
   # OBJECT_STORAGE_URL
   export OBJECT_STORAGE_URL=https://objectstorage.${TF_VAR_region}.oraclecloud.com
