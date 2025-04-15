@@ -45,14 +45,11 @@ if [ -d $TARGET_DIR ]; then
   echo
   read -p "Warning: Target dir detected. Are you sure that you want to continue (yes/no) " yn
   case $yn in 
-  	yes ) echo Upgrading
-          ;;
+  	yes ) echo Upgrading;;
 	no ) echo Exiting...;
-		exit
-        ;;
+		exit;;
 	* ) echo Invalid response;
-		exit 1
-        ;;
+		exit 1;;
   esac
 fi
 
@@ -123,6 +120,9 @@ sed -i '/elif [ -f $HOME\/.oci_starter_profile ]/c if [ -f $HOME/.oci_starter_pr
 title "Replacing OCI_STARTER versions with the downloaded version"
 sed -i "/export OCI_STARTER_CREATION_DATE/c $LINE_OCI_STARTER_CREATION_DATE" env.sh
 sed -i "/export OCI_STARTER_VERSION/c $LINE_OCI_STARTER_VERSION" env.sh
+
+title "Replacing OCI_STARTER versions with the downloaded version"
+sed -i 's/export TF_VAR_deploy_type="compute"/export TF_VAR_deploy_type="public_compute"' env.sh
 
 # Calls to env.sh
 title "Replacing calls to env.sh"

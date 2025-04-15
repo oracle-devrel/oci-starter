@@ -331,6 +331,7 @@ build_option() {
       rm ${TEST_DIR}_*
     fi
     mv output $TEST_DIR    
+    cp $SCRIPT_DIR/test_after_done.sh $TEST_DIR/src/after_done.sh
     if [ -z $GENERATE_ONLY ]; then
       build_test_destroy
     fi           
