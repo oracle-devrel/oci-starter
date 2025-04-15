@@ -49,6 +49,37 @@ if declare -p | grep -q "__TO_FILL__"; then
     done    
   }
 
+  # PREFIX
+  if [ "$TF_VAR_prefix" == "__TO_FILL__" ]; then
+    DEFAULT_PREFIX=starter
+    title "Prefix"
+    echo "Each resource name will start the same prefix."
+    echo "Ex: prefix: $DEFAULT_PREFIX -> $DEFAULT_PREFIX-instance, $DEFAULT_PREFIX-db, ..."
+ 
+    export REQUEST="Keep the default prefix (TF_VAR_prefix="$DEFAULT_PREFIX") ?"
+    if accept_request; then
+        export TF_VAR_prefix=$DEFAULT_PREFIX
+    else
+      while [ "$TF_VAR_prefix" == "__TO_FILL__" ]; do    
+        echo
+        echo "Rule: Maximum 8 characters, only lowercase or numbers. No UPPERCASE or special characters. Ex: starter"  
+        read -r -p "Enter your prefix: " response
+        # Check if the length is 8 characters or less
+        if [[ ${#response} -le 8 ]]; then
+          # Check if the variable contains only lowercase letters and numbers
+          if [[ "${response}" =~ ^[a-z0-9]+$ ]]; then
+            export TF_VAR_prefix=$response
+            echo "OK: The prefix meets all the requirements."
+          else
+            echo "ERROR: The prefix should contain only lowercase characters and numbers."
+          fi
+        else
+          echo "ERROR: Maximum 8 characters."
+        fi
+      done         
+    fi 
+    store_env_sh TF_VAR_prefix $TF_VAR_prefix
+  fi
 
   # DB_PASSWORD
   if [ "$TF_VAR_db_password" == "__TO_FILL__" ]; then

@@ -6,21 +6,24 @@ fi
 cd $PROJECT_DIR
 
 
-# Call the script with --auto-approve to upgrade without prompt
-. starter.sh env -no-auto
+if cat env.sh | grep -q "PROJECT_DIR="; then
+  . env.sh -no-auto
+else
+  . starter.sh env -no-auto
+fi
+
 title "OCI Starter - Upgrade"
-echo 
 echo 
 
 export UPGRADE_DIR=$PROJECT_DIR/upgrade
 if [ -d upgrade ]; then
   echo "ERROR: $UPGRADE_DIR exists already"
   exit
-di
+fi
 
 if [ "$1" != "--auto-approve" ]; then
   echo "Warning: Use at your own risk."
-  echo "It tries to upgrade the OCI-Starter version used to the latest one."
+  echo "Upgrade the bin directory (OCI-Starter) to the latest one."
   read -p "Do you want to proceed? (yes/no) " yn
 
   case $yn in 
@@ -31,16 +34,25 @@ if [ "$1" != "--auto-approve" ]; then
 		exit 1;;
   esac
 fi
-. starter.sh env
+
+# if cat env.sh | grep -q "PROJECT_DIR="; then
+#   . env.sh
+# else
+#   . starter.sh env
+# fi
 
 if [ -d $TARGET_DIR ]; then
+  echo
   read -p "Warning: Target dir detected. Are you sure that you want to continue (yes/no) " yn
   case $yn in 
-  	yes ) echo Upgrading;;
+  	yes ) echo Upgrading
+          ;;
 	no ) echo Exiting...;
-		exit;;
+		exit
+        ;;
 	* ) echo Invalid response;
-		exit 1;;
+		exit 1
+        ;;
   esac
 fi
 
@@ -78,6 +90,9 @@ rm upgrade.zip
 mv $TF_VAR_prefix/* $TF_VAR_prefix/.*  .
 rmdir $TF_VAR_prefix
 
+export LINE_OCI_STARTER_CREATION_DATE=`grep "export OCI_STARTER_CREATION_DATE" env.sh`
+export LINE_OCI_STARTER_VERSION=`grep "export OCI_STARTER_VERSION" env.sh`
+
 title "Upgrade directory"
 mkdir not_used
 mv src not_used
@@ -92,16 +107,74 @@ echo "Replaced the upgrade/src directory by src"
 cp ../env.sh .
 echo "Replaced the upgrade/env.sh directory by env.sh"
 
-echo "Done."
+# Remove lines in env.sh
+title "Removing unneeded lines in env.sh"
+sed -i "/PROJECT_DIR=/d" env.sh
+sed -i "/export BIN_DIR=/d" env.sh
+sed -i "/# Get other env variables/d" env.sh 
+sed -i '/. $BIN_DIR\/auto_env.sh/d' env.sh 
+
+# Change the OCI_STARTER_CREATION_DATE / VERSION
+
+title "Remove call to group_common_env.sh (now in auto_env.sh)"
+sed -i '/..\/group_common_env.sh/d' env.sh  
+sed -i '/elif [ -f $HOME\/.oci_starter_profile ]/c if [ -f $HOME/.oci_starter_profile ]; then'  env.sh  
+
+title "Replacing OCI_STARTER versions with the downloaded version"
+sed -i "/export OCI_STARTER_CREATION_DATE/c $LINE_OCI_STARTER_CREATION_DATE" env.sh
+sed -i "/export OCI_STARTER_VERSION/c $LINE_OCI_STARTER_VERSION" env.sh
+
+# Calls to env.sh
+title "Replacing calls to env.sh"
+function upgrade_calls_to_env_sh()
+{
+  FILE_NAME=$1
+  FILE_PATH=`dirname -- "$FILE_NAME"`
+  if [ -f $FILE_NAME ]; then
+     echo "Replacing env.sh by starter.sh env in $FILE_NAME" 
+     mkdir -p not_used/env/$FILE_PATH
+     cp $FILE_NAME not_used/env/$FILE_PATH/.
+     sed -i "s/env.sh/starter.sh env/" $FILE_NAME 
+     diff not_used/env/$FILE_PATH $FILE_NAME  
+  fi  
+}
+
+# Replace env.sh by starter.sh env  
+for APP_DIR in `app_dir_list`; do
+  upgrade_calls_to_env_sh src/$APP_DIR/build_app.sh
+done
+upgrade_calls_to_env_sh src/ui/build_ui.sh
+upgrade_calls_to_env_sh src/after_done.sh
+
+# Remove *.sh from src/terraform
+rm src/terraform/*.sh
+
+if [ -f ../build.sh ]; then
+  echo "Adding build.sh and destroy.sh pointing to starter.sh"
+  echo './starter.sh build $@' > build.sh
+  echo './starter.sh destroy $@' > destroy.sh
+  chmod 755 *.sh
+fi
+
+echo "Done. New version in directory upgrade"
 echo 
-echo "Next steps:"
-echo "cd upgrade"
+
+read -p "Do you want to replace the current directory by the upgrade directory ? (yes/no) " yn
+echo 
+case $yn in 
+	yes ) cd ..
+          mkdir orig
+          mv * orig
+          mv orig/upgrade/* .
+          echo "\norig" >> .gitignore
+          echo "Next steps:"
+          ;;
+    no ) echo "Next steps:"
+         echo "cd upgrade"
+         ;;
+esac
 echo "./starter.sh build"
-echo 
-echo "If OK:"
-echo "cd .."
-echo "mkdir orig"
-echo "mv * orig"
-echo "mv orig/upgrade/* ."
-echo "echo orig > .gitignore" 
+
+
+
 
