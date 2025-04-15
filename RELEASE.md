@@ -101,3 +101,9 @@ Date 7-Apr-2025
 - ords fix using not the ADMIN schema anymore
 - python 3.11 -> 3.12
 - terraform lifecycle / ignore_changes for Linux image name new version, etc..
+
+3.7
+---
+Date 14-Apr-2025
+- done.sh splitted in done.sh and test_after_done.sh
+- upgrade.sh 2.0 -> 3.x 
