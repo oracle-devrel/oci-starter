@@ -50,3 +50,54 @@ Date: 13-03-24
 ---
 Date : 6-Apr-2024
 - ocir region with key 
+
+3.3
+---
+Date: 21-Feb-2025
+Split of the bin directory and the rest of oci-starter project
+    $PROJECT/starter.sh is just a proxy to an oci_starter.sh that could be anywhere in the path or in $PROJECT/bin
+    auto_env.sh calls env.sh and not the opposite
+New name
+    for the compute: NEW: starter_compute / OLD: starter_instance
+    NEW: public_compute OLD: shared_compute
+    NEW: private_compute OLD: compute
+Python
+    version 3.11
+    use Virtual env to install package (not root anymore)
+    use HTTP server, use Flask Waitress for production version
+Known issues:
+    OCI terraform bug to create PDBs
+    OCI terraform bug to create Instance Pools
+
+3.4
+---
+Date: 11-Feb-2025
+Config.sh - title
+Config.sh - LICENSE_MODEL
+Reapply caused change in terraform because of automatics shemas ignore_changes
+-> lifecycle {
+ignore_changes = [ schemas ]
+}
+ATP DB23ai 1OCPU 1TB -> 2ECPU 128GB
+
+
+3.5
+---
+Date: 21-Feb-2025
+Replaced docker login by oci raw-request --region
+-> Removed need for AUTH_TOKEN
+Fix: config TF_VAR_license_model
+New ./starter.sh start / stop to start stop the resource in terraform.tfstate
+Fix: wget -nv
+
+3.6
+---
+Date 7-Apr-2025
+- ./starter build request to approve change in the second build.
+- ./starter destroy remove the .terraform cache after destroy ( 250Mb big...)
+- file_replace_variables for ##XXX## app/env.sh and compute (not used yet per default)
+- upgrade.sh improved
+- default Oracle Linux in case of no access to images list : Oracle-Linux-8.10-2025.03.18-0
+- ords fix using not the ADMIN schema anymore
+- python 3.11 -> 3.12
+- terraform lifecycle / ignore_changes for Linux image name new version, etc..
