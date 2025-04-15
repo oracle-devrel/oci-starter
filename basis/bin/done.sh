@@ -14,7 +14,7 @@ echo
 echo "Build done"
 
 if [ -f $PROJECT_DIR/src/after_done.sh ]; then
-  $PROJECT_DIR/src/after_done.sh
+  . $PROJECT_DIR/src/after_done.sh
 elif [ ! -z "$UI_URL" ]; then
   if [ "$TF_VAR_ui_type" != "api" ]; then
     echo - User Interface: $UI_URL/
