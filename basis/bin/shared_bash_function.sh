@@ -621,9 +621,11 @@ file_replace_variables() {
   local file="$1"
   local temp_file=$(mktemp)
 
+  echo "Replace variables in file: $1"
   while IFS= read -r line; do
     while [[ $line =~ (.*)##(.*)##(.*) ]]; do
       local var_name="${BASH_REMATCH[2]}"
+      echo "- variable: ${var_name}"
       local var_value="${!var_name}"
 
       if [[ -z "$var_value" ]]; then
@@ -639,4 +641,3 @@ file_replace_variables() {
 
   mv "$temp_file" "$file"
 }
-
