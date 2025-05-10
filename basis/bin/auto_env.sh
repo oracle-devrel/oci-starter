@@ -164,8 +164,26 @@ else
     auto_echo TF_VAR_region_key=$TF_VAR_region_key
     export TF_VAR_ocir=${TF_VAR_region_key}.ocir.io
     auto_echo TF_VAR_ocir=$TF_VAR_ocir
-    
-    export DOCKER_PREFIX=${TF_VAR_ocir}/${TF_VAR_namespace}
+    # Get compartment path
+    export TF_VAR_compartment_path=`oci iam compartment list --compartment-id-in-subtree true --all | jq ".data" | jq -r --arg target_id "$TF_VAR_compartment_ocid" '
+    def find_node($id): .[] | select(.id == $id);
+    def get_path($id):
+      find_node($id) as $node |
+        if $node then
+          if $node."compartment-id" | startswith("ocid1.tenancy") then
+            $node.name
+          else
+            get_path($node."compartment-id") + "/" + $node.name
+          end         
+        else
+          null
+        end;
+      get_path($target_id)
+    '`
+    echo $TF_VAR_compartment_path    
+ 
+    export DOCKER_PREFIX_NO_OCIR=$TF_VAR_compartment_path/${TF_VAR_namespace}
+    export DOCKER_PREFIX=${TF_VAR_ocir}/${DOCKER_PREFIX_NO_OCIR}
     auto_echo DOCKER_PREFIX=$DOCKER_PREFIX
     export KUBECONFIG=$TARGET_DIR/kubeconfig_starter
   fi
