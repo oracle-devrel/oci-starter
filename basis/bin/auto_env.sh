@@ -182,8 +182,8 @@ else
     '`
     echo $TF_VAR_compartment_path    
  
-    export DOCKER_PREFIX_NO_OCIR=${TF_VAR_namespace}/${TF_VAR_compartment_path}
-    export DOCKER_PREFIX=${TF_VAR_ocir}/${DOCKER_PREFIX_NO_OCIR}
+    export DOCKER_PREFIX_NO_OCIR=${TF_VAR_compartment_path}
+    export DOCKER_PREFIX=${TF_VAR_ocir}/${TF_VAR_namespace}/${DOCKER_PREFIX_NO_OCIR}
     auto_echo DOCKER_PREFIX=$DOCKER_PREFIX
     export KUBECONFIG=$TARGET_DIR/kubeconfig_starter
   fi
