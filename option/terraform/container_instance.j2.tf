@@ -80,9 +80,9 @@ resource "oci_artifacts_container_repository" "starter_repo_ui" {
 }
 
 output "repo_app" {
-  value = oci_artifacts_container_repository.starter_repo_app.id
+  value = oci_artifacts_container_repository.starter_repo_app.display_name
 }
 
 output "repo_ui" {
-  value = oci_artifacts_container_repository.starter_repo_ui.id
+  value = oci_artifacts_container_repository.starter_repo_ui.display_name
 }
