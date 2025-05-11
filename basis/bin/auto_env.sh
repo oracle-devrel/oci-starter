@@ -181,8 +181,8 @@ else
       get_path($target_id)
     '`
     echo $TF_VAR_compartment_path    
- 
-    export DOCKER_PREFIX_NO_OCIR=${TF_VAR_compartment_path}
+    get_output_from_tfstate "REPO_PREFIX" "repo_prefix"
+    export DOCKER_PREFIX_NO_OCIR=${REPO_PREFIX}
     export DOCKER_PREFIX=${TF_VAR_ocir}/${TF_VAR_namespace}/${DOCKER_PREFIX_NO_OCIR}
     auto_echo DOCKER_PREFIX=$DOCKER_PREFIX
     export KUBECONFIG=$TARGET_DIR/kubeconfig_starter

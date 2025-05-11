@@ -79,10 +79,7 @@ resource "oci_artifacts_container_repository" "starter_repo_ui" {
   freeform_tags = local.freeform_tags    
 }
 
-output "repo_app" {
-  value = oci_artifacts_container_repository.starter_repo_app.display_name
+output "repo_prefix" {
+  value = random_string.repo_prefix.result
 }
 
-output "repo_ui" {
-  value = oci_artifacts_container_repository.starter_repo_ui.display_name
-}
