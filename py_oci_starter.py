@@ -917,6 +917,9 @@ def create_output_dir():
         append_file( output_dir + "/src/app/openapi_spec.yaml", output_dir + "/src/app/openapi_spec_append.yaml")
         os.remove( output_dir + "/src/app/openapi_spec_append.yaml" )
 
+    if params.get('deploy_type') in ["kubernetes","container_instance","function"]:
+        cp_terraform("repository.tf") 
+
     # -- Database ----------------------------------------------------------------
     if params.get('db_type') != "none":
         cp_terraform("output.tf")
