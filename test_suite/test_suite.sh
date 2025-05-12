@@ -239,7 +239,7 @@ generate_only() {
   if [ -d $TEST_HOME ]; then    
     echo "$TEST_HOME directory detected"
   else
-    echo "$TEST_HOME does not exist"
+    echo "ERROR: $TEST_HOME does not exist"
     exit
   fi
   rm -rf $TEST_HOME/compute $TEST_HOME/kubernetes $TEST_HOME/container_instance $TEST_HOME/function
@@ -248,6 +248,10 @@ generate_only() {
 
 if [ -d $TEST_HOME ]; then
   pre_git_refresh
+  if [ ! -f $TEST_HOME/group_common_env.sh ]; then
+    echo "ERROR: $TEST_HOME/group_common_env.sh not detected"
+    exit 
+  fi
 else  
   pre_test_suite
 fi
