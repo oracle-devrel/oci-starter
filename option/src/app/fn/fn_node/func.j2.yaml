@@ -1,6 +1,6 @@
 # See https://hub.docker.com/r/fnproject/node/tags
 schema_version: 20180708
-name: fn-node-{{ db_family }}
+name: fn-{{ language }}-{{ db_family }}
 version: 0.0.1
 runtime: node
 build_image: fnproject/node:18-dev
