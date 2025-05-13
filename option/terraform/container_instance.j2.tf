@@ -58,3 +58,5 @@ resource oci_container_instances_container_instance starter_container_instance {
   }
   freeform_tags = local.freeform_tags    
 }
+
+

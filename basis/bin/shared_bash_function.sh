@@ -44,13 +44,18 @@ build_ui() {
   fi 
 }
 
+docker_login() {
+  oci raw-request --region $TF_VAR_region --http-method GET --target-uri "https://${TF_VAR_ocir}/20180419/docker/token" | jq -r .data.token | docker login -u BEARER_TOKEN --password-stdin ${TF_VAR_ocir}
+  exit_on_error
+}
+
 build_function() {
   # Build the function
   fn create context ${TF_VAR_region} --provider oracle
   fn use context ${TF_VAR_region}
   fn update context oracle.compartment-id ${TF_VAR_compartment_ocid}
   fn update context api-url https://functions.${TF_VAR_region}.oraclecloud.com
-  fn update context registry ${TF_VAR_ocir}/${TF_VAR_namespace}
+  fn update context registry ${DOCKER_PREFIX}
   # Set pipefail to get the error despite pip to tee
   set -o pipefail
   fn build -v | tee $TARGET_DIR/fn_build.log
@@ -60,8 +65,8 @@ build_function() {
      fn bump
      export TF_VAR_fn_image=`grep "built successfully" $TARGET_DIR/fn_build.log | sed "s/Function //" | sed "s/ built successfully.//"`
      # Push the image to docker
-     oci raw-request --region $TF_VAR_region --http-method GET --target-uri "https://${TF_VAR_ocir}/20180419/docker/token" | jq -r .data.token | docker login -u BEARER_TOKEN --password-stdin ${TF_VAR_ocir}
-     exit_on_error
+     docker_login
+     oci artifacts container repository create --compartment-id $TF_VAR_compartment_ocid --display-name ${TF_VAR_fn_image} 2>/dev/null
      docker push $TF_VAR_fn_image
      exit_on_error
      # Store the image name and DB_URL in files
@@ -87,13 +92,13 @@ create_kubeconfig() {
 
 ocir_docker_push () {
   # Docker Login
-  oci raw-request --region $TF_VAR_region --http-method GET --target-uri "https://${TF_VAR_ocir}/20180419/docker/token" | jq -r .data.token | docker login -u BEARER_TOKEN --password-stdin ${TF_VAR_ocir}
-  exit_on_error
+  docker_login
   echo DOCKER_PREFIX=$DOCKER_PREFIX
 
   # Push image in registry
   if [ -n "$(docker images -q ${TF_VAR_prefix}-app 2> /dev/null)" ]; then
     docker tag ${TF_VAR_prefix}-app ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
+    oci artifacts container repository create --compartment-id $TF_VAR_compartment_ocid --display-name ${DOCKER_PREFIX_NO_OCIR}/${TF_VAR_prefix}-app 2>/dev/null
     docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
     exit_on_error
     echo "${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest" > $TARGET_DIR/docker_image_app.txt
@@ -102,6 +107,7 @@ ocir_docker_push () {
   # Push image in registry
   if [ -d $PROJECT_DIR/src/ui ]; then
     docker tag ${TF_VAR_prefix}-ui ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
+    oci artifacts container repository create --compartment-id $TF_VAR_compartment_ocid --display-name ${DOCKER_PREFIX_NO_OCIR}/${TF_VAR_prefix}-ui 2>/dev/null
     docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
     exit_on_error
     echo "${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest" > $TARGET_DIR/docker_image_ui.txt
@@ -621,9 +627,11 @@ file_replace_variables() {
   local file="$1"
   local temp_file=$(mktemp)
 
+  echo "Replace variables in file: $1"
   while IFS= read -r line; do
     while [[ $line =~ (.*)##(.*)##(.*) ]]; do
       local var_name="${BASH_REMATCH[2]}"
+      echo "- variable: ${var_name}"
       local var_value="${!var_name}"
 
       if [[ -z "$var_value" ]]; then
@@ -639,4 +647,3 @@ file_replace_variables() {
 
   mv "$temp_file" "$file"
 }
-

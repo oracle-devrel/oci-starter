@@ -13,7 +13,6 @@ else
 fi
 
 title "OCI Starter - Upgrade"
-echo 
 
 export UPGRADE_DIR=$PROJECT_DIR/upgrade
 if [ -d upgrade ]; then
@@ -122,7 +121,7 @@ sed -i "/export OCI_STARTER_CREATION_DATE/c $LINE_OCI_STARTER_CREATION_DATE" env
 sed -i "/export OCI_STARTER_VERSION/c $LINE_OCI_STARTER_VERSION" env.sh
 
 title "Replacing OCI_STARTER versions with the downloaded version"
-sed -i 's/export TF_VAR_deploy_type="compute"/export TF_VAR_deploy_type="public_compute"' env.sh
+sed -i 's/export TF_VAR_deploy_type="compute"/export TF_VAR_deploy_type="public_compute"/' env.sh
 
 # Calls to env.sh
 title "Replacing calls to env.sh"

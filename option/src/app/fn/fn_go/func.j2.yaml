@@ -1,5 +1,5 @@
 schema_version: 20180708
-name: fn-python
+name: fn-{{ language }}-{{ db_family }}
 version: 0.0.1
 runtime: docker
 memory: 256
