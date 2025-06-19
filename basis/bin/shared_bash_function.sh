@@ -218,7 +218,7 @@ find_availabilty_domain_for_shape() {
 
 # Guess the shape E6/E5/E4
 guess_available_shape() {
-  if [ $TARGET_DIR/shape.json ]; then  
+  if [ -f $TARGET_DIR/shape.json ]; then  
     export TF_VAR_instance_shape=`cat $TARGET_DIR/shape.json`
     echo "Reading shape from $TARGET_DIR/shape.json ($TF_VAR_instance_shape)"
   else
@@ -232,7 +232,7 @@ guess_available_shape() {
         if [[ "$TEST" != "" ]]; then
             echo "Found Shape $s in $ad"
             export TF_VAR_instance_shape=$s
-            echo TF_VAR_instance_shape > $TARGET_DIR/shape.json
+            echo $TF_VAR_instance_shape > $TARGET_DIR/shape.json
             return 0
         fi
         done  
