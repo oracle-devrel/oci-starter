@@ -27,10 +27,10 @@ elif [ ! -z "$UI_URL" ]; then
     if [ -f  $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml ]; then
       # - does not work anymore - python3 $BIN_DIR/openapi_list.py $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml $UI_URL
       # Show the list of paths in the openapi_spec.yaml 
-      grep "^[[:space:]]*/.*:" $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml | sed "s#[[:space:]]*##" | sed "s/://" | sed  "s#^#- $UI_URL#"
+      grep "^[[:space:]]*/.*:" $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml | sed "s#[[:space:]]*##" | sed "s/://" | sed  "s#^#- Rest API: $UI_URL#"
     fi  
-    # echo - Rest DB API     : $UI_URL/$APP_DIR/dept
-    # echo - Rest Info API   : $UI_URL/$APP_DIR/info
+    # echo - Rest API: $UI_URL/$APP_DIR/dept
+    # echo - Rest API: $UI_URL/$APP_DIR/info
   done
   if [[ ("$TF_VAR_deploy_type" == "public_compute" || "$TF_VAR_deploy_type" == "private_compute") && "$TF_VAR_ui_type" == "api" ]]; then   
     export APIGW_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}  
