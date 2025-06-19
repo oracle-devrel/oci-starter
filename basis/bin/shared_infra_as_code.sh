@@ -43,7 +43,7 @@ infra_as_code_precheck() {
        echo  
        echo "export TF_VAR_PREFIX=xxx123"
        echo  
-       exit
+       error_exit
   fi
   done
 }
