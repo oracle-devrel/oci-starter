@@ -25,7 +25,9 @@ elif [ ! -z "$UI_URL" ]; then
   fi
   for APP_DIR in `app_dir_list`; do
     if [ -f  $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml ]; then
-      python3 $BIN_DIR/openapi_list.py $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml $UI_URL
+      # - does not work anymore - python3 $BIN_DIR/openapi_list.py $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml $UI_URL
+      # Show the list of paths in the openapi_spec.yaml 
+      grep "^[[:space:]]*/.*:" $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml | sed "s#[[:space:]]*##" | sed "s/://" | sed  "s/^/- $UI_URL/"
     fi  
     # echo - Rest DB API     : $UI_URL/$APP_DIR/dept
     # echo - Rest Info API   : $UI_URL/$APP_DIR/info

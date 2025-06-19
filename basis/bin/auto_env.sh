@@ -133,7 +133,7 @@ else
      if grep -q "VM.Standard.x86.Generic" $TARGET_DIR/shapes.list; then
        auto_echo "Fungible shape VM.Standard.x86.Generic found"
      else
-       export TF_VAR_instance_shape="VM.Standard.E4.Flex"
+       guess_available_shape
        echo "Warning: fungible shape VM.Standard.x86.Generic not found. Using $TF_VAR_instance_shape"
      fi
   fi
@@ -153,10 +153,12 @@ else
   # DATE_POSTFIX (used for logs names)
   DATE_POSTFIX=`date '+%Y%m%d-%H%M%S'`
 
+  # Namespace
+  export TF_VAR_namespace=`oci os ns get | jq -r .data`
+  auto_echo TF_VAR_namespace=$TF_VAR_namespace
+
   # Kubernetes and OCIR
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
-    export TF_VAR_namespace=`oci os ns get | jq -r .data`
-    auto_echo TF_VAR_namespace=$TF_VAR_namespace
     export TF_VAR_email=mail@domain.com
     auto_echo TF_VAR_email=$TF_VAR_email
     # ex: OCIR region is using the key prefix: fra.ocir.io

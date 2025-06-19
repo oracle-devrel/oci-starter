@@ -107,3 +107,9 @@ Date 7-Apr-2025
 Date 14-Apr-2025
 - done.sh splitted in done.sh and test_after_done.sh
 - upgrade.sh 2.0 -> 3.x 
+
+3.8
+---
+Date 13-May-2025
+- container repository in compartment (repository.tf) for Kubernetes, Container Instance, Function
+- container repository random prefix
