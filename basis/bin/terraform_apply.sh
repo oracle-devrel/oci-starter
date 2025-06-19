@@ -16,10 +16,8 @@ elif [ -f $STATE_FILE ]; then
   echo "$STATE_FILE detected."
 else
   infra_as_code_precheck
-  # Remove empty STATE_FILE
-  rm $STATE_FILE
   export TERRAFORM_FLAG="--auto-approve"
 fi
 
-infra_as_code_apply $@
+infra_as_code_apply $TERRAFORM_FLAG $@
 exit_on_error
