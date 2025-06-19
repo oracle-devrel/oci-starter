@@ -25,15 +25,15 @@ infra_as_code_plan() {
 
 # Before to run the build check the some resource with unique name in the tenancy does not exists already
 infra_as_code_precheck() {
-  title "Precheck"
+  echo "-- Precheck"
   cd $PROJECT_DIR/src/terraform 
   $TERRAFORM_COMMAND init -no-color -upgrade  
   $TERRAFORM_COMMAND plan -json -out=$TARGET_DIR/tfplan.out > /dev/null
   # Buckets
   LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfplan.out | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .name'`
   for BUCKET_NAME in $LIST_BUCKETS; do
-    echo "Checking if bucket $BUCKET_NAME exists"
-    BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace | jq -r .data.name`
+    echo "Precheck if bucket $BUCKET_NAME exists"
+    BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace 2> /dev/null | jq -r .data.name`
     if [ "$BUCKET_NAME" == "$BUCKET_CHECK" ]; then
        echo "PRECHECK ERROR: Bucket $BUCKET_NAME exists already in this tenancy."
        echo
