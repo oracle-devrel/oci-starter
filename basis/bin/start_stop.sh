@@ -48,6 +48,20 @@ function loop_resource() {
                 fi
             elif [ "$RESOURCE_TYPE" == "oci_oda_oda_instance" ]; then
                 oci oda instance $ACTION --oda-instance-id $OCID
+            elif [ "$RESOURCE_TYPE" == "oci_containerengine_cluster" ]; then
+                COMPARTMENT_ID=`oci ce cluster get --cluster-id $OCID | jq -r '.data["compartment-id"]'`
+                echo "COMPARTMENT_ID=$COMPARTMENT_ID"
+                POOLS=$( oci ce node-pool list --compartment-id $COMPARTMENT_ID --cluster-id $OCID | jq -r '.data[].id')
+                echo POOLS=$POOLS
+                for POOL in $POOLS
+                do            
+                    NODES=$(oci ce node-pool get --node-pool-id $POOL | jq -r '.data.nodes[].id')
+                    echo NODES=$NODES
+                    for NODE in $NODES
+                    do      
+                        oci compute instance action --action $ACTION --instance-id $NODE
+                    done
+                done                  
             fi
         else
             echo "Instance $OCID"
