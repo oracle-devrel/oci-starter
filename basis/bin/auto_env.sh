@@ -143,13 +143,14 @@ else
   fi
 
   # SSH keys
-  export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
   if [ "$TF_VAR_ssh_private_path" == "" ] && [ -f $TARGET_DIR/ssh_key_starter ]; then 
-    export TF_VAR_ssh_public_key=$(cat ${TF_VAR_ssh_private_path}.pub)
-    export TF_VAR_ssh_private_key=$(cat ${TF_VAR_ssh_private_path})
+    export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
+    export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
+    export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)
   elif [ "$TF_VAR_ssh_private_key" != "" ]; then
-    echo $TF_VAR_ssh_public_key > ${TF_VAR_ssh_private_path}.pub
-    echo $TF_VAR_ssh_private_key > ${TF_VAR_ssh_private_path}
+    export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
+    echo $TF_VAR_ssh_public_key > $TARGET_DIR/ssh_key_starter.pub
+    echo $TF_VAR_ssh_private_key > $TARGET_DIR/ssh_key_starter
   fi
 
   # Echo
