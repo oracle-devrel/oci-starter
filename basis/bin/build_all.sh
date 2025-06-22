@@ -91,6 +91,7 @@ terraform2() {
 }
 
 after_build() {
+  . starter.sh env    
   if [ "$TF_VAR_tls" != "" ]; then
     title "Certificate - Post Deploy"
     certificate_post_deploy 
