@@ -57,6 +57,11 @@ infra_as_code_apply() {
     resource_manager_create_or_update
     resource_manager_apply
     exit_on_error
+  elif [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
+    cd $PROJECT_DIR
+    resource_manager_create_or_update
+    resource_manager_apply
+    exit_on_error
   else
     if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ]; then
       sed "s/XX_TERRAFORM_STATE_URL_XX/$TF_VAR_terraform_state_url/g" terraform.template.tf > terraform/terraform.tf
@@ -112,17 +117,9 @@ resource_manager_create_or_update() {
   if [ -f $ZIP_FILE_PATH ]; then
     rm $ZIP_FILE_PATH
   fi  
-  zip -r $ZIP_FILE_PATH * -x "*.sh"
+  zip -r $ZIP_FILE_PATH * -x "*.sh" -x "target/*"
 
-  # Transforms the variables in a JSON format
-  # This is a complex way to get them. But it works for multi line variables like TF_VAR_private_key
-  excluded=$(env | sed -n 's/^\([A-Z_a-z][0-9A-Z_a-z]*\)=.*/\1/p' | grep -v 'TF_VAR_')
-  sh -c 'unset $1; export -p' sh "$excluded" > $TARGET_DIR/tf_var.sh
-  # Nasty WA trick for OCI Devops (not a proper fix)
-  sed -i "s/export maven.home//" $TARGET_DIR/tf_var.sh
-
-  echo -n "{" > $VAR_FILE_PATH
-  cat $TARGET_DIR/tf_var.sh | sed "s/export TF_VAR_/\"/g" | sed "s/=\"/\": \"/g" | sed ':a;N;$!ba;s/\"\n/\", /g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/$/}/'>> $VAR_FILE_PATH
+  resource_manager_json
 
   if [ -f $TARGET_DIR/resource_manager_stackid ]; then
     if cmp -s $ZIP_FILE_PATH $ZIP_FILE_PATH.$DATE_POSTFIX; then

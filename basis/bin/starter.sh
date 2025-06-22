@@ -77,18 +77,23 @@ elif [ "$ARG1" == "build" ]; then
     $PROJECT_DIR/src/app/build_app.sh ${@:2}
   elif [ "$ARG2" == "ui" ]; then
     $PROJECT_DIR/src/ui/build_ui.sh ${@:2}
-  else 
+  elif [ "TF_VAR_infra_as_code" == "from_resource_manager" ]; then
+    $BIN_DIR/terraform_apply.sh 
+  else
     export LOG_NAME=$TARGET_DIR/logs/build.${DATE_POSTFIX}.log
     # Show the log and save it to target/build.log and target/logs
     ln -sf $LOG_NAME $TARGET_DIR/build.log
     $BIN_DIR/build_all.sh ${@:2} 2>&1 | tee $LOG_NAME
   fi    
-
 elif [ "$ARG1" == "destroy" ]; then
-  LOG_NAME=$TARGET_DIR/logs/destroy.${DATE_POSTFIX}.log
-  # Show the log and save it to target/build.log and target/logs
-  ln -sf $LOG_NAME $TARGET_DIR/destroy.log
-  $BIN_DIR/destroy_all.sh ${@:2} 2>&1 | tee $LOG_NAME
+  if [ "TF_VAR_infra_as_code" == "from_resource_manager" ]; then
+    $BIN_DIR/terraform_destroy.sh 
+  else 
+    LOG_NAME=$TARGET_DIR/logs/destroy.${DATE_POSTFIX}.log
+    # Show the log and save it to target/build.log and target/logs
+    ln -sf $LOG_NAME $TARGET_DIR/destroy.log
+    $BIN_DIR/destroy_all.sh ${@:2} 2>&1 | tee $LOG_NAME
+  fi
 elif [ "$ARG1" == "ssh" ]; then
   if [ "$ARG2" == "compute" ]; then
     $BIN_DIR/ssh_compute.sh
@@ -139,7 +144,8 @@ elif [ "$ARG1" == "rm" ]; then
   elif [ "$ARG2" == "after_build" ]; then
     $BIN_DIR/build_all.sh --after_build
   fi    
-
+  . shared_infra_as_code.sh
+  resource_manager_json
 
 elif [ "$ARG1" == "start" ]; then
     $BIN_DIR/start_stop.sh start $ARG1 $ARG2
