@@ -106,6 +106,7 @@ resource_manager_json () {
   cat $TARGET_DIR/tf_var.sh | sed "s/export TF_VAR_/\"/g" | sed "s/=\"/\": \"/g" | sed ':a;N;$!ba;s/\"\n/\", /g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/$/}/'>> $VAR_FILE_PATH    
 }
 
+# Used in both infra_as_code = resource_manager and from_resource_manager
 resource_manager_create_or_update() {
   rs_echo "Create Stack"
   if [ -f $TARGET_DIR/resource_manager_stackid ]; then
@@ -117,7 +118,7 @@ resource_manager_create_or_update() {
   if [ -f $ZIP_FILE_PATH ]; then
     rm $ZIP_FILE_PATH
   fi  
-  zip -r $ZIP_FILE_PATH * -x "*.sh" -x "target/*"
+  zip -r $ZIP_FILE_PATH * -x "target/*" -x "src/terraform/.terraform/*"
 
   resource_manager_json
 
