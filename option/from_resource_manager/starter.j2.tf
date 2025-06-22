@@ -42,6 +42,8 @@ resource "null_resource" "build_deploy" {
   ]
 }
 
+{%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
+
 data "external" "env2" {
   program = ["cat", "target/resource_manager_variables.json"]
   depends_on = [
@@ -49,7 +51,6 @@ data "external" "env2" {
   ]
 }
 
-{%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
 module "terraform_after_build_module" {
   source = "./src/terraform2" # Path to your local module directory
 
