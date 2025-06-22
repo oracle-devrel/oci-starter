@@ -111,9 +111,9 @@ title "OCI Starter - Build"
 
 if [ "$1" == "BEFORE_TERRAFORM" ]; then
   before_terraform
-else [ "$1" == "BUILD_DEPLOY" ]; then
+elif [ "$1" == "BUILD_DEPLOY" ]; then
   build_deploy
-else [ "$1" == "AFTER_BUILD" ]; then
+elif [ "$1" == "AFTER_BUILD" ]; then
   after_build
 else
   before_terraform
