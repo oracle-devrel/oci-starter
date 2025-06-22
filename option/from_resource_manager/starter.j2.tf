@@ -47,7 +47,7 @@ output "bastion_public_ip" {
 
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
-    command = "cat target/terraform.tfstate; export; ./starter.sh frm build_deploy"
+    command = "./starter.sh frm build_deploy"
   }
   depends_on = [
     module.terraform_module
@@ -82,7 +82,7 @@ module "terraform_after_build_module" {
 
 resource "null_resource" "after_build" {
   provisioner "local-exec" {
-    command = "./starter.sh frm after_build"
+    command = "cat target/terraform.tfstate; export; ./starter.sh frm after_build"
   }
   depends_on = [
 {%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
