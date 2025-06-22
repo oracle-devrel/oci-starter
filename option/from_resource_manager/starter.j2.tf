@@ -41,6 +41,10 @@ output "compute_ip" {
     value = "${module.terraform_module.compute_ip}"
 }
 
+output "bastion_public_ip" {
+    value = "${module.terraform_module.bastion_public_ip}"
+}
+
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = "cat target/terraform.tfstate; ./starter.sh frm build_deploy"

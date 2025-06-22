@@ -137,6 +137,8 @@ elif [ "$ARG1" == "terraform" ]; then
   fi 
 
 elif [ "$ARG1" == "frm" ]; then # From Resource Manager
+  . $BIN_DIR/shared_bash_function.sh
+
   if [ "$ARG2" == "before_terraform" ]; then
     $BIN_DIR/build_all.sh --before_terraform
     exit_on_error    
