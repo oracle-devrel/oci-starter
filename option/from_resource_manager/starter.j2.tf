@@ -39,7 +39,7 @@ module "terraform_module" {
 
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
-    command = "starter.sh frm build_deploy"
+    command = "./starter.sh frm build_deploy"
   }
   depends_on = [
     module.terraform_module
