@@ -15,6 +15,10 @@ fi
 if [[ -z "${BIN_DIR}" ]]; then
   export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 fi
+# From Resource Manager 
+if [ -f $PROJECT_DIR/terraform.tfstate ]; then
+  ln $PROJECT_DIR/terraform.tfstate $STATE_FILE
+fi
 
 # ENV.SH
 . $PROJECT_DIR/env.sh
