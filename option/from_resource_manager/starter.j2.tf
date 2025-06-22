@@ -1,6 +1,6 @@
 # starter.tf
 
-resource "null_resource" "before_terraform4" {
+resource "null_resource" "before_terraform5" {
   provisioner "local-exec" {
     command = "pwd; ls -R -al; ./starter.sh frm before_terraform; ls -al target; export; cat target/resource_manager_variables.json"
   }
@@ -9,7 +9,7 @@ resource "null_resource" "before_terraform4" {
 data "external" "env" {
   program = ["cat", "target/resource_manager_variables.json"]
   depends_on = [
-    null_resource.before_terraform4
+    null_resource.before_terraform5
   ]
 }
 
