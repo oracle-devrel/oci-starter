@@ -4,6 +4,10 @@ resource "null_resource" "before_terraform1" {
   provisioner "local-exec" {
     command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
   }
+  provisioner "local-exec" {
+    when = destroy
+    command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
+  }  
 }
 
 data "external" "env" {
