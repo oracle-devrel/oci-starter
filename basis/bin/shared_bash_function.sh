@@ -266,8 +266,8 @@ get_user_details() {
     else 
       echo "From Resource Manager detected"
       export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
-      echo $TF_VAR_ssh_public_key > ${TF_VAR_ssh_private_path}.pub
-      echo $TF_VAR_ssh_private_key > $TF_VAR_ssh_private_path
+      echo "$TF_VAR_ssh_public_key" > ${TF_VAR_ssh_private_path}.pub
+      echo "$TF_VAR_ssh_private_key" > $TF_VAR_ssh_private_path
       chmod 600 ${TF_VAR_ssh_private_path}.pub
       chmod 600 $TF_VAR_ssh_private_path
     fi
