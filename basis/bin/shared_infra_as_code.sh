@@ -179,6 +179,8 @@ resource_manager_apply() {
   # Check the result of the destroy JOB and stop deletion if required
   if [ "$STATUS" != "SUCCEEDED" ]; then
     rs_echo "ERROR: Status ($STATUS) is not SUCCEEDED"
+
+    cat $TARGET_DIR/tf_apply.log | jq -r .data
     exit 1 # Exit with error
   fi  
 }

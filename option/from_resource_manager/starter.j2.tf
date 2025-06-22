@@ -2,7 +2,7 @@
 
 resource "null_resource" "before_terraform4" {
   provisioner "local-exec" {
-    command = "pwd; ls -R -al; ./starter.sh frm before_terraform; ls -al target; env; export; cat target/cat target/resource_manager_variables.json"
+    command = "pwd; ls -R -al; ./starter.sh frm before_terraform; ls -al target; export; cat target/resource_manager_variables.json"
   }
 }
 
