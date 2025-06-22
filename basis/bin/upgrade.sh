@@ -145,6 +145,12 @@ done
 upgrade_calls_to_env_sh src/ui/build_ui.sh
 upgrade_calls_to_env_sh src/after_done.sh
 
+# before_build.sh
+if [ -f src/before_build.sh ]; then
+  mv src/before_build.sh src/before_terraform.sh
+fi
+
+
 # Remove *.sh from src/terraform
 rm src/terraform/*.sh
 

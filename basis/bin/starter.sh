@@ -129,7 +129,18 @@ elif [ "$ARG1" == "terraform" ]; then
     $BIN_DIR/terraform_destroy.sh ${@:3}
   else 
     echo "Unknown command: $ARG1 $ARG2"
+  fi 
+
+elif [ "$ARG1" == "rm" ]; then
+  if [ "$ARG2" == "before_terraform" ]; then
+    $BIN_DIR/build_all.sh --before_terraform
+  elif [ "$ARG2" == "build_deploy" ]; then
+    $BIN_DIR/build_all.sh --build_deploy
+  elif [ "$ARG2" == "after_build" ]; then
+    $BIN_DIR/build_all.sh --after_build
   fi    
+
+
 elif [ "$ARG1" == "start" ]; then
     $BIN_DIR/start_stop.sh start $ARG1 $ARG2
 elif [ "$ARG1" == "stop" ]; then

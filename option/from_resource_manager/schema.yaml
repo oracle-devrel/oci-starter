@@ -1,0 +1,476 @@
+title: "OCI Starter: Create Source Code and Terraform"
+stackDescription: "Create source code and Terraform. The code generated is stored in a git repository in DevOps" 
+description: "Create source code and Terraform. The code generated is stored in a git repository in DevOps" 
+schemaVersion: 1.1.0
+version: "20221004"
+locale: "en"
+
+#################
+# Variable Groups
+#################
+variableGroups:
+- title: General Configuration
+  visible: false
+  variables:
+  - tenancy_ocid
+  - compartment_ocid
+  - region
+  - current_user_ocid
+
+- title: Starter Project
+  visible: true  
+  variables:
+  - prefix
+  - compartment_id
+
+- title: Application
+  visible: true  
+  variables:  
+  - language
+  - deploy_type  
+  - java_framework
+  - java_vm
+  - java_version
+
+- title: User Interface
+  visible: true  
+  variables:
+  - ui_type
+
+- title: Deployment
+  visible: true  
+  variables:
+  - kubernetes_strategy
+  - oke_strategy
+  - oke_ocid
+
+- title: Network
+  visible: true  
+  variables:
+  - vcn_strategy
+  - vcn_ocid
+  - subnet_ocid
+
+- title: "Database"
+  visible: true
+  variables:
+  - db_type
+  - db_existing_strategy
+  - atp_ocid
+  - db_ocid
+  - mysql_ocid
+  - db_user
+  - db_password
+
+- title: Security
+  visible: true  
+  variables:
+  - oci_username
+  - vault_strategy
+  - vault_ocid
+  - secret_strategy
+  - vault_secret_authtoken_ocid
+  - oci_token  
+
+#################
+# Output Groups
+#################
+
+######################
+# Variable Definitions
+######################
+
+variables:
+
+###################### Starter Project
+
+  prefix:
+    type: string
+    title: Resource Name Prefix
+    description: The names of all compute and network resources will begin with this prefix. It can only contain letters or numbers and must begin with a letter.
+    required: true
+
+  compartment_id: 
+    type: oci:identity:compartment:id
+    title: "Compartment"
+    description: "The compartment in which to create resources"
+    required: true
+    default: ${compartment_ocid}
+
+  language:
+    visible: true
+    type: enum
+    title: Language
+    description: Choose the Language for the middle-tier
+    enum:
+      - "Java"
+      - "Node"
+      - "Python"
+      - "Apache"
+      - "Nginx"
+    default: "Java"
+    required: true
+
+  deploy_type:
+    visible: true
+    type: enum
+    title: Deployment 
+    description: Choose the type of deployment
+    enum:
+      - "Kubernetes"
+      - "Virtual Machine"
+      - "Function"
+    default: ""
+    required: true    
+
+  java_framework:
+    visible:
+      and: 
+        - eq:
+          - ${language}
+          - "Java"  
+        - or:  
+          - eq:
+            - ${deploy_type}
+            - "Kubernetes"  
+          - eq:
+            - ${deploy_type}
+            - "Virtual Machine"              
+    type: enum
+    title: Java Framework
+    description: Java Framework
+    enum:
+      - "SpringBoot"
+      - "Tomcat"
+      - "Helidon"
+    default: ''
+    required: true
+
+  java_vm:
+    visible:
+      and: 
+        - eq:
+          - ${language}
+          - "Java"  
+        - or:  
+          - eq:
+            - ${deploy_type}
+            - "Kubernetes"  
+          - eq:
+            - ${deploy_type}
+            - "Virtual Machine"         
+    type: enum
+    title: Java Framework
+    description: Java Virtual Machine
+    enum:
+      - "JDK"
+      - "GraalVM"
+    default: "JDK"
+    required: true
+
+  java_version:
+    visible:
+      and: 
+        - and: 
+          - eq:
+            - ${language}
+            - "Java"  
+          - not:
+            - eq:
+              - ${java_framework}
+              - "Helidon"  
+        - or:  
+          - eq:
+            - ${deploy_type}
+            - "Kubernetes"  
+          - eq:
+            - ${deploy_type}
+            - "Virtual Machine"         
+    type: enum
+    title: Java Framework
+    description: Java Virtual Machine
+    enum:
+      - "8"
+      - "11"
+      - "17"
+    default: "17"
+    required: true
+
+###################### Network
+
+  vcn_strategy:
+    visible: true
+    type: enum
+    title: Virtual Cloud Network Strategy
+    description: Create or use an existing VCN. If you use an existing VCN, <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-E9B66B15-30A3-4D00-B031-F9ADDD1AB46E">validate the existing network setup</a>.
+    enum:
+      - "Create New VCN"
+      - "Use Existing VCN"
+    required: true
+    default: "Use Existing VCN"
+
+  vcn_ocid:
+    visible:
+      eq:
+        - ${vcn_strategy}
+        - "Use Existing VCN"
+    type: oci:core:vcn:id
+    dependsOn:
+      compartmentId: ${compartment_id}
+    required: true
+    default: ''
+    title: Existing Network
+    description: An existing Virtual Cloud Network (VCN) in which to create the compute instances, network resources, and load balancers. If not specified, a new VCN is created.
+
+  subnet_ocid:
+    visible:
+      eq:
+        - ${vcn_strategy}
+        - "Use Existing VCN"
+    type: oci:core:subnet:id
+    dependsOn:
+      vcnId: ${vcn_ocid}
+      compartmentId: ${compartment_id}
+    default: ''
+    required: true
+    title: Existing Subnet
+    description: An existing subnet. This subnet must already be present in the chosen VCN.
+
+###################### Deployment
+
+  kubernetes_strategy:
+    visible:
+      eq:
+        - ${deploy_type}
+        - "Kubernetes"
+    type: enum
+    enum:
+      - "OKE"
+      - "Docker image only"
+    default: ""    
+    title: Type of Kubernetes Cluster
+    description: Type of Kubernetes Cluster
+
+  oke_strategy:
+    visible: 
+      and:
+        - eq:
+          - ${deploy_type}
+          - "Kubernetes"      
+        - eq:
+          - ${kubernetes_strategy}
+          - "OKE"    
+    type: enum
+    title: OKE Strategy
+    description: Create or use an existing VCN. If you use an existing VCN, <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-E9B66B15-30A3-4D00-B031-F9ADDD1AB46E">validate the existing network setup</a>.
+    enum:
+      - "Create New OKE"
+      - "Use Existing OKE"
+    required: true
+    default: "Use Existing OKE"
+
+  oke_ocid:
+    visible:
+      and:
+        - eq:
+          - ${deploy_type}
+          - "Kubernetes"      
+        - eq:
+          - ${kubernetes_strategy}
+          - "OKE"
+        - eq:
+          - ${oke_strategy}
+          - "Use Existing OKE"
+    type: oci:container:cluster:id
+    dependsOn:
+      vcnId: ${vcn_ocid}
+      compartmentId: ${compartment_id}
+    default: ''
+    required: true
+    title: Existing OKE Cluster
+    description: Existing OKE Cluster
+
+###################### Database
+
+  db_type:
+    visible: true
+    type: enum
+    title: Database Type
+    description: Choose the database strategy for Application Database
+    enum:
+      - "Autonomous Transaction Processing Database"
+      - "Database System"
+      - "MySQL"
+    default: "Autonomous Transaction Processing Database"
+    required: true
+
+  db_existing_strategy:
+    visible: true
+    type: enum
+    title: Database Strategy
+    description: Create or use an existing Database</a>.
+    enum:
+      - "Create New DB"
+      - "Use Existing DB"
+    required: true
+    default: "Use Existing OKE"
+
+  atp_ocid:
+    visible:
+      and:
+        - eq:
+          - ${db_type}
+          - "Autonomous Transaction Processing Database"
+        - eq:
+          - ${db_existing_strategy}
+          - "Use Existing DB"
+    type: oci:database:autonomousdatabase:id
+    dependsOn:
+      compartmentId: ${compartment_id}
+    required: true
+    title: Autonomous Database
+    description: The Autonomous Transaction Processing (ATP) database in which to provision the schemas for the Application Database
+
+  db_ocid:
+    visible:
+      and:
+        - eq:
+          - ${db_type}
+          - "Database System"
+        - eq:
+          - ${db_existing_strategy}
+          - "Use Existing DB"
+    type: oci:database:dbsystem:id
+    dependsOn:
+      compartmentId: ${compartment_id}
+    required: true
+    title: Application Database System
+    description: The Oracle Cloud Infrastructure DB System to use for the Application Database Configuration.
+
+  mysql_ocid:
+    visible:
+      and:
+        - eq:
+          - ${db_type}
+          - "MySQL"
+        - eq:
+          - ${db_existing_strategy}
+          - "Use Existing DB"
+    type: string
+    dependsOn:
+      compartmentId: ${compartment_id}
+    required: true
+    title: MySQL Database
+    description: MySQL Database
+
+  db_user:
+    visible:
+      not:
+        - eq:
+          - ${db_existing_strategy}
+          - "Create New DB"
+    type: string
+    required: true
+    title: Database User Name
+    description: Database User
+
+  db_password:
+    visible: true
+    type: password
+    required: true
+    title: Database Password
+    description: Database Password
+    
+###################### User Interface
+
+  ui_type:
+    visible: true
+    type: enum
+    title: User Interface
+    description: Choose the User Interface Strategy
+    enum:
+      - "HTML"
+      - "ReactJS"
+      - "None"
+    default: "HTML"
+    required: true
+
+###################### Security
+  oci_username:
+    type: string
+    required: true
+    visibile: true
+    title: "OCI user"
+    description: "For a federated user (single sign-on with an identity provider), enter the username in the following format: Federation/UserName. For example, if you use OCI's identity provider, your login would be, oracleidentitycloudservice/alice.jones@acme.com. If you are using OCI's direct sign-in, enter the username in the following format: YourUserName. For example, Acme/alice_jones. Your password is the auth token you created previously."
+
+  vault_strategy:
+    visible: true
+    type: enum
+    title: Security Vault
+    description: Create or use an existing Vault
+    enum:
+      - "Create New Vault"
+      - "Use Existing Vault"
+    required: true
+    default: "Use Existing Vault"
+
+  vault_ocid:
+    visible:
+      eq:
+        - ${vault_strategy}
+        - "Use Existing Vault"
+    type: oci:kms:vault:id
+    dependsOn:
+      compartmentId: ${compartment_id}
+    default: ''
+    required: true
+    title: Existing Vault 
+    description: An existing Vault
+
+  secret_strategy:
+    visible:
+      eq:
+        - ${vault_strategy}
+        - "Use Existing Vault"
+    type: enum
+    title: Secret Strategy
+    description: Create or use an existing Secret
+    enum:
+      - "Create New Secret"
+      - "Use Existing Secret"
+    required: true
+    default: "Use Existing Secret"
+
+  vault_secret_authtoken_ocid:
+    visible:
+      and:
+        - eq:
+          - ${vault_strategy}
+          - "Use Existing Vault"
+        - eq:
+          - ${secret_strategy}
+          - "Use Existing Secret"
+    type: oci:kms:secret:id
+    dependsOn:
+      compartmentId: ${compartment_id}
+    default: ''
+    required: true
+    title: Existing Secret for the AuthToken
+    description: Existing Secret for the AuthToken
+
+  oci_token:
+    visible:  
+      or: 
+        - eq:
+          - ${vault_strategy}
+          - "Create New Vault"
+        - eq:
+          - ${secret_strategy}
+          - "Create New Secret"
+    type: password
+    # type: string
+    required: true
+    title: "OCI user auth token"
+    description: "You can get the auth token from your Profile menu -> click User Settings -> On left side  click *Auth Tokens -> Generate Token"
+
+

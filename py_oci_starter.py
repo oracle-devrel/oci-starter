@@ -113,7 +113,7 @@ allowed_values = {
     '-ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
     '-db_type': {'atp', 'autonomous', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
     '-license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
-    '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
+    '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager','from_resource_manager'},
     '-mode': {CLI, GIT, ZIP},
     '-shape': {'amd','freetier_amd','ampere','arm'},
     '-db_install': {'default', 'kubernetes'},
@@ -742,6 +742,8 @@ def create_dir_shared():
         print("resource_manager")
     elif params.get('infra_as_code') == "terraform_object_storage":
         output_copy_tree("option/infra_as_code/terraform_object_storage", "src/terraform")
+    else:
+        output_copy_tree("option/from_resource_manager", ".")
     else:
         output_copy_tree("option/infra_as_code/terraform_local", "src/terraform")
 
