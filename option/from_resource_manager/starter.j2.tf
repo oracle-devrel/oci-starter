@@ -12,7 +12,7 @@ resource "null_resource" "before_terraform" {
 data "external" "env" {
   program = ["cat", "target/resource_manager_variables.json"]
   depends_on = [
-    before_terraform
+    null_resource.before_terraform
   ]
 }
 
@@ -46,7 +46,7 @@ resource "null_resource" "build_deploy" {
 data "external" "env2" {
   program = ["cat", "target/resource_manager_variables.json"]
   depends_on = [
-    build_deploy
+    null_resource.build_deploy
   ]
 }
 
@@ -71,7 +71,7 @@ resource "null_resource" "after_build" {
 {%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
     module.terraform2_after_build_module
 {%- else %}
-    build_deploy
+    null_resource.build_deploy
 {%- endif %}
   ]
 }
