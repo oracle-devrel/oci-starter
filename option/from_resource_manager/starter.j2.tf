@@ -39,11 +39,15 @@ module "terraform_module" {
 
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
-    command = "./starter.sh frm build_deploy"
+    command = "cat target/terraform.tfstate; ./starter.sh frm build_deploy"
   }
   depends_on = [
     module.terraform_module
   ]
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }    
 }
 
 {%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
@@ -79,4 +83,8 @@ resource "null_resource" "after_build" {
     null_resource.build_deploy
 {%- endif %}
   ]
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }    
 }
