@@ -147,10 +147,6 @@ else
     export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
     export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
     export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)
-  elif [ "$TF_VAR_ssh_private_key" != "" ]; then
-    export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
-    echo $TF_VAR_ssh_public_key > $TARGET_DIR/ssh_key_starter.pub
-    echo $TF_VAR_ssh_private_key > $TARGET_DIR/ssh_key_starter
   fi
 
   # Echo
