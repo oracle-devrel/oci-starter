@@ -50,7 +50,9 @@ resource "null_resource" "build_deploy" {
     command = "cat target/terraform.tfstate; export; ./starter.sh frm build_deploy"
   }
   depends_on = [
-    module.terraform_module
+    module.terraform_module,
+    output.compute_ip,
+    output.bastion_public_ip
   ]
 
   triggers = {
