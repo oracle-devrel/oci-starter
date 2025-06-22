@@ -118,6 +118,10 @@ resource_manager_create_or_update() {
   if [ -f $ZIP_FILE_PATH ]; then
     rm $ZIP_FILE_PATH
   fi  
+  if [ -f "src/terraform/.terraform" ]; then
+    # Created during pre-check
+    rm "src/terraform/.terraform/*"
+  fi 
   zip -r $ZIP_FILE_PATH * -x "target/*" -x "src/terraform/.terraform/*"
 
   resource_manager_json
