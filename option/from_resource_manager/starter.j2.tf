@@ -34,6 +34,7 @@ module "terraform_module" {
   // namespace = data.external.env.result.namespace
   ssh_public_key = data.external.env.result.ssh_public_key
   ssh_private_key = data.external.env.result.ssh_private_key
+  instance_shape = data.external.env.result.instance_shape
 }
 
 resource "null_resource" "build_deploy" {
