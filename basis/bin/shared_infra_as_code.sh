@@ -100,7 +100,7 @@ resource_manager_json () {
   excluded=$(env | sed -n 's/^\([A-Z_a-z][0-9A-Z_a-z]*\)=.*/\1/p' | grep -v 'TF_VAR_')
   # Nasty WA trick for OCI Stack and OCI Devops (not a proper fix)
   excluded="$excluded maven.home OLDPWD"
-  sh -c 'unset $1; export -p' sh "$excluded" > $TARGET_DIR/tf_var.sh
+  sh -c 'unset $1; export -p' sh "$excluded" > $TARGET_DIR/tf_var.sh 2>/dev/null
 
   echo -n "{" > $VAR_FILE_PATH
   cat $TARGET_DIR/tf_var.sh | sed "s/export TF_VAR_/\"/g" | sed "s/=\"/\": \"/g" | sed ':a;N;$!ba;s/\"\n/\", /g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/$/}/'>> $VAR_FILE_PATH    
