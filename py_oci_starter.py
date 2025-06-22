@@ -742,7 +742,7 @@ def create_dir_shared():
         print("resource_manager")
     elif params.get('infra_as_code') == "terraform_object_storage":
         output_copy_tree("option/infra_as_code/terraform_object_storage", "src/terraform")
-    else:
+    elif params.get('infra_as_code') == "from_resource_manager":
         output_copy_tree("option/from_resource_manager", ".")
     else:
         output_copy_tree("option/infra_as_code/terraform_local", "src/terraform")
