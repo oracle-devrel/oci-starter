@@ -1,6 +1,6 @@
 # starter.tf
 
-resource "null_resource" "before_terraform2" {
+resource "null_resource" "before_terraform4" {
   provisioner "local-exec" {
     command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
   }
@@ -8,12 +8,15 @@ resource "null_resource" "before_terraform2" {
     when = destroy
     command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
   }  
+  triggers = {
+    always_run = "${timestamp()}"
+  }  
 }
 
 data "external" "env" {
   program = ["cat", "target/resource_manager_variables.json"]
   depends_on = [
-    null_resource.before_terraform2
+    null_resource.before_terraform4
   ]
 }
 
