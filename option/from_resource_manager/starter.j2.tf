@@ -47,13 +47,13 @@ output "bastion_public_ip" {
 
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
-    command = <<EOT 
-export COMPUTE_IP=${module.terraform_module.compute_ip}
-export BASTION_PUBLIC_IP=${module.terraform_module.bastion_public_ip}
-cat target/terraform.tfstate
-export
-./starter.sh frm build_deploy
-EOT
+    command = <<-EOT
+        export COMPUTE_IP=${module.terraform_module.compute_ip}
+        export BASTION_PUBLIC_IP=${module.terraform_module.bastion_public_ip}
+        cat target/terraform.tfstate
+        export
+        ./starter.sh frm build_deploy
+        EOT
   }
   depends_on = [
     module.terraform_module
