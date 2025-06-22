@@ -4,9 +4,6 @@ resource "null_resource" "before_terraform" {
   provisioner "local-exec" {
     command = "starter.sh before_terraform"
   }
-  depends_on = [
-    module.terraform_module
-  ]
 }
 
 data "external" "env" {
