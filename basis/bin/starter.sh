@@ -139,10 +139,13 @@ elif [ "$ARG1" == "terraform" ]; then
 elif [ "$ARG1" == "frm" ]; then # From Resource Manager
   if [ "$ARG2" == "before_terraform" ]; then
     $BIN_DIR/build_all.sh --before_terraform
+    exit_on_error    
   elif [ "$ARG2" == "build_deploy" ]; then
     $BIN_DIR/build_all.sh --build_deploy
+    exit_on_error
   elif [ "$ARG2" == "after_build" ]; then
     $BIN_DIR/build_all.sh --after_build
+    exit_on_error
   fi    
   . shared_infra_as_code.sh
   resource_manager_json

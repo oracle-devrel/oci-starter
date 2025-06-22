@@ -72,6 +72,7 @@ build_deploy() {
     exit_on_error
   elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
     $BIN_DIR/deploy_compute.sh
+    exit_on_error    
   elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
     $BIN_DIR/oke_deploy.sh
     exit_on_error

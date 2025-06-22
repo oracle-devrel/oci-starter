@@ -37,6 +37,10 @@ module "terraform_module" {
   instance_shape = data.external.env.result.instance_shape
 }
 
+output "compute_public_ip" {
+    value = "${module.terraform_module.compute_public_ip}"
+}
+
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = "cat target/terraform.tfstate; ./starter.sh frm build_deploy"
