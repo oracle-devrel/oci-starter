@@ -175,7 +175,10 @@ if declare -p | grep -q "__TO_FILL__"; then
   fi  
 
   # Livelabs Green Button (Autodetect compartment/vcn/subnet)
-  livelabs_green_button
+  livelabs_green_button 
+
+  # LunaLab (Autodetect compartment)
+  lunalab
 
   # COMPARTMENT_ID
   if [ "$TF_VAR_compartment_ocid" == "__TO_FILL__" ]; then
@@ -210,8 +213,21 @@ if declare -p | grep -q "__TO_FILL__"; then
     fi     
     # echo "        The components will be created in the root compartment."
     # export TF_VAR_compartment_ocid=$TF_VAR_tenancy_ocid
-
   fi
+  
+  # Vault
+  if [ "$TF_VAR_vault_ocid" == "__TO_FILL__" ]; then
+    title "Config - Vault"       
+    export REQUEST="Create a new vault ? (<No> will ask for the ocid of an existing one) ?"
+    if accept_request; then  
+      read_ocid TF_VAR_vault_ocid "Vault" ocid1.vault
+      read_ocid TF_VAR_vault_key_ocid "Vault" ocid1.key
+    else
+      # Comment the 2 line. The vault will be created.
+      sed -i "s/^export TF_VAR_vault_ocid/#export TF_VAR_vault_ocid/" $PROJECT_DIR/env.sh     
+      sed -i "s/^export TF_VAR_vault_key_ocid/#export TF_VAR_vault_key_ocid/" $PROJECT_DIR/env.sh     
+    fi     
+  fi    
 
   # OCIDs
   read_ocid TF_VAR_vcn_ocid "Virtual Cloud Network (VCN)" ocid1.vcn 

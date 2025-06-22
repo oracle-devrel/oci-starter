@@ -89,7 +89,8 @@ resource "oci_core_instance" "starter_bastion" {
 
   lifecycle {
     ignore_changes = [
-      source_details[0].source_id
+      source_details[0].source_id,
+      shape
     ]
   }
 

@@ -27,7 +27,7 @@ if [ -z $ARG1 ]; then
     rm $COMMAND_FILE
   fi
   if [ ! -f $COMMAND_FILE ]; then
-    python $BIN_DIR/starter_menu.py 
+    python3 $BIN_DIR/starter_menu.py 
     if [ -f $COMMAND_FILE ]; then
       COMMAND=$(cat $COMMAND_FILE)
       rm $COMMAND_FILE
@@ -99,6 +99,27 @@ elif [ "$ARG1" == "ssh" ]; then
   else 
     echo "Unknown command: $ARG1 $ARG2"
   fi    
+elif [ "$ARG1" == "rebuild" ]; then
+  . $BIN_DIR/shared_bash_function.sh
+
+  # Destroy
+  LOG_NAME=$TARGET_DIR/logs/destroy.${DATE_POSTFIX}.log
+  ln -sf $LOG_NAME $TARGET_DIR/destroy.log
+  $BIN_DIR/destroy_all.sh ${@:2} 2>&1 | tee $LOG_NAME
+  exit_on_error
+  
+  # Pull
+  git pull
+  exit_on_error
+  
+  # Cleanup target dir
+  rm -Rf $TARGET_DIR
+  mkdir -p $TARGET_DIR/logs
+
+  # Build
+  LOG_NAME=$TARGET_DIR/logs/build.${DATE_POSTFIX}.log
+  ln -sf $LOG_NAME $TARGET_DIR/build.log  
+  $BIN_DIR/build_all.sh ${@:2} 2>&1 | tee $LOG_NAME
 elif [ "$ARG1" == "terraform" ]; then
   if [ "$ARG2" == "plan" ]; then
     $BIN_DIR/terraform_plan.sh ${@:3}

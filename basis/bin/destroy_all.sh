@@ -18,7 +18,7 @@ if [ "$1" != "--auto-approve" ]; then
   case $yn in 
   	yes ) echo Deleting;;
 	no ) echo Exiting...;
-		exit;;
+		exit 1;;
 	* ) echo Invalid response;
 		exit 1;;
   esac
@@ -31,11 +31,16 @@ if [ -f $STATE_FILE ]; then
   export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
   if [ "$TF_RESOURCE" == "0" ]; then
     echo "No resource in terraform state file. Nothing to destroy."
-    exit 
+    exit 0
   fi
 else
   echo "File $STATE_FILE does not exist. Nothing to destroy."
-  exit 
+  exit 0
+fi
+
+# before_destroy.sh
+if [ -f src/before_destroy.sh ]; then
+  src/before_destroy.sh
 fi
 
 # Confidential APP
@@ -85,6 +90,8 @@ if [ "$TF_RESOURCE" == "0" ]; then
   echo "Empty state file - cleaning up .terraform"
   rm -Rf $PROJECT_DIR/src/terraform/.terraform
   rm -Rf $PROJECT_DIR/src/terraform/.terraform.lock.hcl
+  export DESTROY_DATE=`date '+%Y%m%d-%H%M%S'`
+  mv $TARGET_DIR $TARGET_DIR.$DESTROY_DATE
 fi
 
 echo "Destroy time: ${SECONDS} secs"

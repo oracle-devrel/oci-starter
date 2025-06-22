@@ -1,5 +1,14 @@
 #!/bin/bash
+# - 2025-06_17 : added Tofu support for LunaLab
 set -e
+
+if command -v terraform  &> /dev/null; then
+  export TERRAFORM_COMMAND=terraform
+elif command -v tofu  &> /dev/null; then
+  export TERRAFORM_COMMAND=tofu
+else
+  error_exit "Command not found: terraform or tofu"
+fi     
 
 infra_as_code_plan() {
   cd $PROJECT_DIR/src/terraform    
@@ -9,9 +18,35 @@ infra_as_code_plan() {
     if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ]; then
       sed "s/XX_TERRAFORM_STATE_URL_XX/$TF_VAR_terraform_state_url/g" terraform.template.tf > terraform/terraform.tf
     fi  
-    terraform init -no-color
-    terraform plan
+    $TERRAFORM_COMMAND init -no-color -upgrade
+    $TERRAFORM_COMMAND plan
   fi
+}
+
+# Before to run the build check the some resource with unique name in the tenancy does not exists already
+infra_as_code_precheck() {
+  echo "-- Precheck"
+  cd $PROJECT_DIR/src/terraform 
+  $TERRAFORM_COMMAND init -no-color -upgrade  
+  $TERRAFORM_COMMAND plan -json -out=$TARGET_DIR/tfplan.out > /dev/null
+  # Buckets
+  LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfplan.out | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .name'`
+  for BUCKET_NAME in $LIST_BUCKETS; do
+    echo "Precheck if bucket $BUCKET_NAME exists"
+    BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace 2> /dev/null | jq -r .data.name`
+    if [ "$BUCKET_NAME" == "$BUCKET_CHECK" ]; then
+       echo "PRECHECK ERROR: Bucket $BUCKET_NAME exists already in this tenancy."
+       echo
+       echo "Solution: There is probably another installation on this tenancy with the same prefix."
+       echo "If you want to create a new installation, "
+       echo "- edit the file env.sh"
+       echo "- put a unique prefix in TF_VAR_PREFIX. Ex:"
+       echo  
+       echo "export TF_VAR_PREFIX=xxx123"
+       echo  
+       error_exit
+    fi
+  done
 }
 
 infra_as_code_apply() {
@@ -24,8 +59,8 @@ infra_as_code_apply() {
     if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ]; then
       sed "s/XX_TERRAFORM_STATE_URL_XX/$TF_VAR_terraform_state_url/g" terraform.template.tf > terraform/terraform.tf
     fi  
-    terraform init -no-color -upgrade
-    terraform apply $@
+    $TERRAFORM_COMMAND init -no-color -upgrade
+    $TERRAFORM_COMMAND apply $@
     exit_on_error
   fi
 }
@@ -35,8 +70,8 @@ infra_as_code_destroy() {
   if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
     resource_manager_destroy
   else
-    terraform init -upgrade
-    terraform destroy $@
+    $TERRAFORM_COMMAND init -upgrade
+    $TERRAFORM_COMMAND destroy $@
   fi
 }
 

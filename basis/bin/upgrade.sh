@@ -92,16 +92,16 @@ export LINE_OCI_STARTER_VERSION=`grep "export OCI_STARTER_VERSION" env.sh`
 title "Upgrade directory"
 mkdir not_used
 mv src not_used
-echo "Saved upgrade/src to upgrade/not_used/src"
+echo "Saved $UPGRADE_DIR/src to $UPGRADE_DIR/not_used/src"
 
 mv env.sh not_used
-echo "Saved upgrade/env.sh to upgrade/not_used/env.sh"
+echo "Saved $UPGRADE_DIR/env.sh to $UPGRADE_DIR/not_used/env.sh"
 
 cp -r ../src .
-echo "Replaced the upgrade/src directory by src"
+echo "Replaced the $UPGRADE_DIR/src directory by src"
 
 cp ../env.sh .
-echo "Replaced the upgrade/env.sh directory by env.sh"
+echo "Replaced the $UPGRADE_DIR/env.sh directory by env.sh"
 
 # Remove lines in env.sh
 title "Removing unneeded lines in env.sh"
@@ -153,6 +153,12 @@ if [ -f ../build.sh ]; then
   echo './starter.sh build $@' > build.sh
   echo './starter.sh destroy $@' > destroy.sh
   chmod 755 *.sh
+fi
+
+# Repository.tf
+if [ ! -f src/terraform/repository.tf ]; then
+  cp not_used/src/terraform/repository.tf src/terraform/.
+  echo "Container Repository in compartment: copied the new file repository.tf"
 fi
 
 echo "Done. New version in directory upgrade"

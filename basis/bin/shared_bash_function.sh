@@ -56,7 +56,7 @@ build_function() {
   fn update context oracle.compartment-id ${TF_VAR_compartment_ocid}
   fn update context api-url https://functions.${TF_VAR_region}.oraclecloud.com
   fn update context registry ${DOCKER_PREFIX}
-  # Set pipefail to get the error despite pip to tee
+  # Set pipefail to get the error despite pipe to tee
   set -o pipefail
   fn build -v | tee $TARGET_DIR/fn_build.log
   exit_on_error
@@ -214,6 +214,32 @@ find_availabilty_domain_for_shape() {
   done
   echo "Error shape $1 not found" 
   exit 1
+}
+
+# Guess the shape E6/E5/E4
+guess_available_shape() {
+  if [ -f $TARGET_DIR/shape.json ]; then  
+    export TF_VAR_instance_shape=`cat $TARGET_DIR/shape.json`
+    echo "Reading shape from $TARGET_DIR/shape.json ($TF_VAR_instance_shape)"
+  else
+    echo "Searching for compute shape..."  
+    i=1
+    for ad in `oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r ".data[].name"` 
+    do
+        oci compute shape list --compartment-id=$TF_VAR_tenancy_ocid --availability-domain $ad > $TARGET_DIR/shapes.json
+        for s in VM.Standard.E6.Flex VM.Standard.E5.Flex VM.Standard.E4.Flex; do
+        TEST=`cat $TARGET_DIR/shapes.json | jq ".data[] | select( .shape==\"$s\" )"`
+        if [[ "$TEST" != "" ]]; then
+            echo "Found Shape $s in $ad"
+            export TF_VAR_instance_shape=$s
+            echo $TF_VAR_instance_shape > $TARGET_DIR/shape.json
+            return 0
+        fi
+        done  
+        i=$((i+1))
+    done
+    error_exit "Error no shape not found" 
+  fi
 }
 
 # Get User Details (username and OCID)
@@ -391,6 +417,18 @@ livelabs_green_button() {
     # fi
 
   fi
+}
+
+lunalab() {
+  if grep -q 'export TF_VAR_compartment_ocid="__TO_FILL__"' $PROJECT_DIR/env.sh; then    
+    if [ $USER = "luna.user" ]; then
+        echo "LunaLab - Luna User detected"
+    else
+        return
+    fi    
+    export TF_VAR_compartment_ocid=$OCI_COMPARTMENT_OCID
+    export TF_VAR_instance_shape="VM.Standard.E5.Flex"
+  fi 
 }
 
 create_deployment_in_apigw() {
