@@ -265,9 +265,11 @@ get_user_details() {
       fi
     else 
       echo "From Resource Manager detected"
-      echo $TF_VAR_ssh_public_key > $TARGET_DIR/ssh_key_starter.pub
-      echo $TF_VAR_ssh_private_key > $TARGET_DIR/ssh_key_starter      
       export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
+      echo $TF_VAR_ssh_public_key > ${TF_VAR_ssh_private_path}.pub
+      echo $TF_VAR_ssh_private_key > $TF_VAR_ssh_private_path
+      chmod 600 ${TF_VAR_ssh_private_path}.pub
+      chmod 600 $TF_VAR_ssh_private_path
     fi
   elif [ -f $HOME/.oci/config ]; then
     ## Get the [DEFAULT] config
