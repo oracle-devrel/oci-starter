@@ -26,7 +26,6 @@ module "terraform_module" {
   tenancy_ocid = var.tenancy_ocid
   compartment_ocid = var.compartment_ocid
   region = var.region
-  user_ocid = var.current_user_ocid
 
   namespace = data.external.env.result.namespace
   ssh_public_key = data.external.env.result.ssh_public_key
@@ -57,7 +56,6 @@ module "terraform_after_build_module" {
   tenancy_ocid = var.tenancy_ocid
   compartment_ocid = var.compartment_ocid
   region = var.region
-  user_ocid = var.current_user_ocid
 
   namespace = data.external.env2.result.namespace
   ssh_public_key = data.external.env2.result.ssh_public_key
