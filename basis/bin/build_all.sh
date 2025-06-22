@@ -109,11 +109,11 @@ after_build() {
 . starter.sh env -no-auto
 title "OCI Starter - Build"
 
-if [ "$1" == "BEFORE_TERRAFORM" ]; then
+if [ "$1" == "--before_terraform" ]; then
   before_terraform
-elif [ "$1" == "BUILD_DEPLOY" ]; then
+elif [ "$1" == "--build_deploy" ]; then
   build_deploy
-elif [ "$1" == "AFTER_BUILD" ]; then
+elif [ "$1" == "--after_build" ]; then
   after_build
 else
   before_terraform
