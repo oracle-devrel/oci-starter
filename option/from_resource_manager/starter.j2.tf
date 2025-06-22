@@ -49,6 +49,7 @@ data "external" "env2" {
   ]
 }
 
+{%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
 module "terraform_after_build_module" {
   source = "./src/terraform2" # Path to your local module directory
 
@@ -61,12 +62,17 @@ module "terraform_after_build_module" {
   ssh_public_key = data.external.env2.result.ssh_public_key
   ssh_private_key = data.external.env2.result.ssh_private_key
 }
+{%- endif %}
 
 resource "null_resource" "after_build" {
   provisioner "local-exec" {
     command = "starter.sh after_build"
   }
   depends_on = [
-    module.terraform_after_build_module
+{%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
+    module.terraform2_after_build_module
+{%- else %}
+    build_deploy
+{%- endif %}
   ]
 }
