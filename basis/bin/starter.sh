@@ -77,7 +77,7 @@ elif [ "$ARG1" == "build" ]; then
     $PROJECT_DIR/src/app/build_app.sh ${@:2}
   elif [ "$ARG2" == "ui" ]; then
     $PROJECT_DIR/src/ui/build_ui.sh ${@:2}
-  elif [ "TF_VAR_infra_as_code" == "from_resource_manager" ]; then
+  elif [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
     $BIN_DIR/terraform_apply.sh 
   else
     export LOG_NAME=$TARGET_DIR/logs/build.${DATE_POSTFIX}.log
@@ -86,7 +86,7 @@ elif [ "$ARG1" == "build" ]; then
     $BIN_DIR/build_all.sh ${@:2} 2>&1 | tee $LOG_NAME
   fi    
 elif [ "$ARG1" == "destroy" ]; then
-  if [ "TF_VAR_infra_as_code" == "from_resource_manager" ]; then
+  if [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
     $BIN_DIR/terraform_destroy.sh 
   else 
     LOG_NAME=$TARGET_DIR/logs/destroy.${DATE_POSTFIX}.log
