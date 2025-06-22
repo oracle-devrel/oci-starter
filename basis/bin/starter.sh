@@ -136,7 +136,7 @@ elif [ "$ARG1" == "terraform" ]; then
     echo "Unknown command: $ARG1 $ARG2"
   fi 
 
-elif [ "$ARG1" == "rm" ]; then
+elif [ "$ARG1" == "frm" ]; then # From Resource Manager
   if [ "$ARG2" == "before_terraform" ]; then
     $BIN_DIR/build_all.sh --before_terraform
   elif [ "$ARG2" == "build_deploy" ]; then

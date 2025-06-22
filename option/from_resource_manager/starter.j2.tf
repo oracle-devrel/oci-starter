@@ -2,7 +2,7 @@
 
 resource "null_resource" "before_terraform" {
   provisioner "local-exec" {
-    command = "pwd; ls -al; ./starter.sh before_terraform"
+    command = "pwd; ls -al; ./starter.sh frm before_terraform"
   }
 }
 
@@ -31,7 +31,7 @@ module "terraform_module" {
 
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
-    command = "starter.sh build_deploy"
+    command = "starter.sh frm build_deploy"
   }
   depends_on = [
     module.terraform_module
@@ -62,7 +62,7 @@ module "terraform_after_build_module" {
 
 resource "null_resource" "after_build" {
   provisioner "local-exec" {
-    command = "starter.sh after_build"
+    command = "starter.sh frm after_build"
   }
   depends_on = [
 {%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
