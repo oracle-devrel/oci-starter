@@ -27,9 +27,9 @@ module "terraform_module" {
   compartment_ocid = var.compartment_ocid
   region = var.region
 
-  # namespace = data.external.env.result.namespace
-  # ssh_public_key = data.external.env.result.ssh_public_key
-  # ssh_private_key = data.external.env.result.ssh_private_key
+  // namespace = data.external.env.result.namespace
+  ssh_public_key = data.external.env.result.ssh_public_key
+  ssh_private_key = data.external.env.result.ssh_private_key
 }
 
 resource "null_resource" "build_deploy" {
