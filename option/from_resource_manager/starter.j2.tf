@@ -2,7 +2,7 @@
 
 resource "null_resource" "before_terraform" {
   provisioner "local-exec" {
-    command = "starter.sh before_terraform"
+    command = "pwd; ls -al; ./starter.sh before_terraform"
   }
 }
 
