@@ -70,7 +70,7 @@ module "terraform_after_build_module" {
 
 resource "null_resource" "after_build" {
   provisioner "local-exec" {
-    command = "starter.sh frm after_build"
+    command = "./starter.sh frm after_build"
   }
   depends_on = [
 {%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}

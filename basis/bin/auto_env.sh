@@ -17,7 +17,7 @@ if [[ -z "${BIN_DIR}" ]]; then
 fi
 # From Resource Manager 
 if [ -f $PROJECT_DIR/terraform.tfstate ]; then
-  ln $PROJECT_DIR/terraform.tfstate $STATE_FILE
+  ln -sf $PROJECT_DIR/terraform.tfstate $STATE_FILE
 fi
 
 # ENV.SH

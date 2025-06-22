@@ -245,22 +245,26 @@ guess_available_shape() {
 # Get User Details (username and OCID)
 get_user_details() {
   if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
-    # Cloud Shell
-    export TF_VAR_tenancy_ocid=$OCI_TENANCY
-    export TF_VAR_region=$OCI_REGION
-    # Needed for child region
-    export TF_VAR_home_region=`echo $OCI_CS_HOST_OCID | awk -F[/.] '{print $4}'`
-    if [[ "$OCI_CS_USER_OCID" == *"ocid1.saml2idp"* ]]; then
-      # Ex: ocid1.saml2idp.oc1..aaaaaaaaexfmggau73773/user@domain.com -> oracleidentitycloudservice/user@domain.com
-      # Split the string in 2 
-      IFS='/' read -r -a array <<< "$OCI_CS_USER_OCID"
-      IDP_NAME=`oci iam identity-provider get --identity-provider-id=${array[0]} | jq -r .data.name`
-      IDP_NAME_LOWER=${IDP_NAME,,}
-      export TF_VAR_username="$IDP_NAME_LOWER/${array[1]}"
-    elif [[ "$OCI_CS_USER_OCID" == *"ocid1.user"* ]]; then
-      export TF_VAR_user_ocid="$OCI_CS_USER_OCID"
+    if [ "$OCI_TENANCY" != "" ]; then 
+      # Cloud Shell
+      export TF_VAR_tenancy_ocid=$OCI_TENANCY
+      export TF_VAR_region=$OCI_REGION
+      # Needed for child region
+      export TF_VAR_home_region=`echo $OCI_CS_HOST_OCID | awk -F[/.] '{print $4}'`
+      if [[ "$OCI_CS_USER_OCID" == *"ocid1.saml2idp"* ]]; then
+        # Ex: ocid1.saml2idp.oc1..aaaaaaaaexfmggau73773/user@domain.com -> oracleidentitycloudservice/user@domain.com
+        # Split the string in 2 
+        IFS='/' read -r -a array <<< "$OCI_CS_USER_OCID"
+        IDP_NAME=`oci iam identity-provider get --identity-provider-id=${array[0]} | jq -r .data.name`
+        IDP_NAME_LOWER=${IDP_NAME,,}
+        export TF_VAR_username="$IDP_NAME_LOWER/${array[1]}"
+      elif [[ "$OCI_CS_USER_OCID" == *"ocid1.user"* ]]; then
+        export TF_VAR_user_ocid="$OCI_CS_USER_OCID"
+      else 
+        export TF_VAR_username=$OCI_CS_USER_OCID
+      fi
     else 
-      export TF_VAR_username=$OCI_CS_USER_OCID
+      echo "From Resource Manager detected"
     fi
   elif [ -f $HOME/.oci/config ]; then
     ## Get the [DEFAULT] config
