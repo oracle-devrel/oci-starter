@@ -1090,8 +1090,41 @@ jinja2_db_params = {
     }
 }
 
+def jinja2_find_terraform_output( dir ):
+    output = []
+    if not os.path.isdir(dir):
+        print(f"Error: Directory not found at '{dir}'")
+        return []
+
+    print(f"Searching for 'output \"' in files within: {dir}\n")
+
+    # Walk through the directory (including subdirectories)
+    # If you only want the top-level directory, replace os.walk with os.listdir
+    # and add os.path.isfile(full_path) check.
+    for root, _, files in os.walk(dir):
+        for filename in files:
+            # We are typically interested in .tf files for Terraform outputs
+            if not filename.endswith('.tf'):
+                continue
+
+            file_path = os.path.join(root, filename)
+            
+            with open(file_path, 'r', encoding='utf-8') as f:
+                for line_num, line in f: 
+                    # Use regex for more precise matching and to capture the name
+                    match = re.match(r'^\s*output\s+"([^"]+)"', line)
+                    if match:
+                        output_name = match.group(1)
+                        output.append( output_name )
+    return output    
+
+
 def jinja2_replace_template():
+    params['terraform_output'] = jinja2_find_terraform_output( 'src/terraform' )
     db_param = jinja2_db_params.get( params.get('db_family') )
+    # Find all outputs in terraform
+    params.terraform_output = jinja2_find_terraform_output('src/terraform')
+
     if db_param is None:  
         template_param = params
     else:   
