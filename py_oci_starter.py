@@ -1120,26 +1120,16 @@ def jinja2_find_terraform_output( dir ):
                     if match:
                         output_name = match.group(1)
                         output.append( output_name )
-                        print('- output: '+output_name, flush=True)
-
-        open('xxx', 'r', encoding='utf-8')            
+                        print('- output: '+output_name, flush=True)         
     return output    
 
 #----------------------------------------------------------------------------
-def jinja2_replace_template():
-    params['terraform_outputs'] = jinja2_find_terraform_output(output_dir +'/src/terraform')
-    db_param = jinja2_db_params.get( params.get('db_family') )
-    # Find all outputs in terraform
 
-    if db_param is None:  
-        template_param = params
-    else:   
-        template_param = {**params, **db_param}
-
+def jinja2_replace_template_prefix( prefix ):
     for subdir, dirs, files in os.walk(output_dir):
         for filename in files:    
-            if filename.find('.j2.')>0 or filename.endswith('.j2'):
-                output_file_path = os.path.join(subdir, filename.replace(".j2", ""))
+            if filename.find('.'+prefix+'.')>0 or filename.endswith('.'+prefix):
+                output_file_path = os.path.join(subdir, filename.replace("."+prefix, ""))
                 print(f"J2 - processing - {output_file_path}", flush=True)
                 if os.path.isfile(output_file_path): 
                     print(f"J2 - Skipping - destination file already exists: {output_file_path}") 
@@ -1158,6 +1148,21 @@ def jinja2_replace_template():
                 os.remove(os.path.join(subdir, filename))                
             if filename.endswith('_refresh.sh'):      
                 os.remove(os.path.join(subdir, filename))   
+
+#----------------------------------------------------------------------------
+
+def jinja2_replace_template():
+    db_param = jinja2_db_params.get( params.get('db_family') )
+    # Find all outputs in terraform
+
+    if db_param is None:  
+        template_param = params
+    else:   
+        template_param = {**params, **db_param}
+    
+    jinja2_replace_template_prefix( "j2" )
+    template_param['terraform_outputs'] = jinja2_find_terraform_output(output_dir +'/src/terraform')
+    jinja2_replace_template_prefix( "j21" )
 
 #----------------------------------------------------------------------------
 

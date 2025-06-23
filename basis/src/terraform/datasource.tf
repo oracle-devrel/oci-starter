@@ -55,9 +55,9 @@ variable idcs_domain_name { default = "Default" }
 variable idcs_url { default = "" }
 
 data "oci_identity_domains" "starter_domains" {
-    #Required
-    compartment_id = var.tenancy_ocid
-    display_name = var.idcs_domain_name
+  #Required
+  compartment_id = var.tenancy_ocid
+  display_name = var.idcs_domain_name
 }
 
 locals {
