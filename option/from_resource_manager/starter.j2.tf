@@ -37,25 +37,18 @@ module "terraform_module" {
   instance_shape = data.external.env.result.instance_shape
 }
 
-{%- for key, value in outputs.items() %}
+{%- for key, value in terraform_output.items() %}
 output "{{ key }}" {
   value       = "{{ value }}"
 }
 {%- endfor %}
 
-output "compute_ip" {
-    value = "${module.terraform_module.compute_ip}"
-}
-
-output "bastion_public_ip" {
-    value = "${module.terraform_module.bastion_public_ip}"
-}
-
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
-        export COMPUTE_IP=${module.terraform_module.compute_ip}
-        export BASTION_PUBLIC_IP=${module.terraform_module.bastion_public_ip}
+{%- for key, value in terraform_output.items() %}
+    export {{key.upper()}}=${module.terraform_module.{{key}}}
+{%- endfor %}
         cat target/terraform.tfstate
         export
         ./starter.sh frm build_deploy
