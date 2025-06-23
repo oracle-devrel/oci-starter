@@ -10,6 +10,7 @@ import os
 import shutil
 import json
 import stat
+import re
 from datetime import datetime
 from distutils.dir_util import copy_tree
 from jinja2 import Environment, FileSystemLoader
@@ -1110,7 +1111,7 @@ def jinja2_find_terraform_output( dir ):
             file_path = os.path.join(root, filename)
             
             with open(file_path, 'r', encoding='utf-8') as f:
-                for line_num, line in f: 
+                for line in f: 
                     # Use regex for more precise matching and to capture the name
                     match = re.match(r'^\s*output\s+"([^"]+)"', line)
                     if match:
