@@ -65,7 +65,7 @@ locals {
   idcs_url = try( (var.idcs_url!="")?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url, "" )
 }
 
-output idcs_url {
+output "idcs_url" {
   value = local.idcs_url
 }
 
