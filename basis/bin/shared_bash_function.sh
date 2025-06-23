@@ -175,7 +175,7 @@ get_id_from_tfstate () {
 
 get_output_from_tfstate () {
   output=output_$2
-  if[ "${!output}" != "" ]; then
+  if [ "${!output}" != "" ]; then
     export $1="${!output}"
   else 
     RESULT=`jq -r '.outputs."'$2'".value' $STATE_FILE | sed "s/ //"`
