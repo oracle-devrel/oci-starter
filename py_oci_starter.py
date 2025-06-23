@@ -1161,7 +1161,7 @@ def jinja2_replace_template():
         template_param = {**params, **db_param}
     
     jinja2_replace_template_prefix( "j2" )
-    template_param['terraform_outputs'] = jinja2_find_terraform_output(output_dir +'/src/terraform')
+    template_param.terraform_outputs = jinja2_find_terraform_output(output_dir +'/src/terraform')
     jinja2_replace_template_prefix( "j21" )
 
 #----------------------------------------------------------------------------
