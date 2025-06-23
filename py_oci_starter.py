@@ -1098,7 +1098,7 @@ def jinja2_find_terraform_output( dir ):
         print(f"Error: Directory not found at '{dir}'")
         return []
 
-    print(f"Searching for 'output \"' in files within: {dir}\n")
+    print(f"Searching for output in terraform: {dir}\n")
 
     # Walk through the directory (including subdirectories)
     # If you only want the top-level directory, replace os.walk with os.listdir
@@ -1118,12 +1118,12 @@ def jinja2_find_terraform_output( dir ):
                     if match:
                         output_name = match.group(1)
                         output.append( output_name )
-                        print('output: '+output_name, flush=True)
+                        print('- output: '+output_name, flush=True)
     return output    
 
 #----------------------------------------------------------------------------
 def jinja2_replace_template():
-    params['terraform_output'] = jinja2_find_terraform_output(output_dir +'/src/terraform')
+    params['terraform_outputs'] = jinja2_find_terraform_output(output_dir +'/src/terraform')
     db_param = jinja2_db_params.get( params.get('db_family') )
     # Find all outputs in terraform
 

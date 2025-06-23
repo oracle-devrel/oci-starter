@@ -37,7 +37,7 @@ module "terraform_module" {
   instance_shape = data.external.env.result.instance_shape
 }
 
-{%- for key, value in terraform_output.items() %}
+{%- for key in terraform_outputs %}
 output "{{ key }}" {
   value       = "{{ value }}"
 }
@@ -46,7 +46,7 @@ output "{{ key }}" {
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
-{%- for key, value in terraform_output.items() %}
+{%- for key in terraform_outputs %}
     export {{key.upper()}}=${module.terraform_module.{{key}}}
 {%- endfor %}
         cat target/terraform.tfstate
