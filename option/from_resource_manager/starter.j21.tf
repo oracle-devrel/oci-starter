@@ -47,7 +47,7 @@ resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
 {%- for key in terraform_outputs %}
-        export {{key.upper().replace('-','_')}}="${module.terraform_module.{{key}}}"
+        export output_{{key}}="${module.terraform_module.{{key}}}"
 {%- endfor %}
         cat target/terraform.tfstate
         export

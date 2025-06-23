@@ -173,9 +173,11 @@ get_id_from_tfstate () {
   set_if_not_null $1 $RESULT
 }
 
-
 get_output_from_tfstate () {
-  if [ "$1" == "" ]; then
+  output=output_$2
+  if[ "${!output}" != "" ]; then
+    export $1="${!output}"
+  else 
     RESULT=`jq -r '.outputs."'$2'".value' $STATE_FILE | sed "s/ //"`
     set_if_not_null $1 $RESULT
   fi
