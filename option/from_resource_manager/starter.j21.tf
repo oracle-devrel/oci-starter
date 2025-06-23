@@ -1,6 +1,6 @@
 # starter.tf
 
-resource "null_resource" "before_terraform4" {
+resource "null_resource" "before_terraform" {
   provisioner "local-exec" {
     command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
   }
@@ -16,14 +16,8 @@ resource "null_resource" "before_terraform4" {
 data "external" "env" {
   program = ["cat", "target/resource_manager_variables.json"]
   depends_on = [
-    null_resource.before_terraform4
+    null_resource.before_terraform
   ]
-}
-
-locals {
-  instance_shape = data.external.env.result.ssh_public_key 
-  ssh_public_key = data.external.env.result.ssh_private_key
-  ssh_private_key = data.external.env.result.instance_shape
 }
 
 module "terraform_module" {
@@ -38,9 +32,9 @@ module "terraform_module" {
   region = var.region
 
   // namespace = data.external.env.result.namespace
-  ssh_public_key = local.ssh_public_key
-  ssh_private_key = local.ssh_private_key
-  instance_shape = local.instance_shape
+  ssh_public_key = data.external.env.result.ssh_public_key
+  ssh_private_key = data.external.env.result.ssh_private_key
+  instance_shape = data.external.env.result.instance_shape
 }
 
 {%- for key in terraform_outputs %}
