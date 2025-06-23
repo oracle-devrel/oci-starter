@@ -1105,7 +1105,6 @@ def jinja2_find_terraform_output( dir ):
     # and add os.path.isfile(full_path) check.
     for root, _, files in os.walk(dir):
         for filename in files:
-            print('- filename: '+filename, flush=True)
             # We are typically interested in .tf files for Terraform outputs
             if not filename.endswith('.tf'):
                 continue
@@ -1113,7 +1112,6 @@ def jinja2_find_terraform_output( dir ):
             file_path = os.path.join(root, filename)
             
             with open(file_path, 'r', encoding='utf-8') as f:
-                print('- file_path: '+file_path, flush=True)
                 for line in f: 
                     # Use regex for more precise matching and to capture the name
                     match = re.match(r'^\s*output\s+"([^"]+)"', line)
