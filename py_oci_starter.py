@@ -1125,7 +1125,7 @@ def jinja2_find_terraform_output( dir ):
 
 #----------------------------------------------------------------------------
 
-def jinja2_replace_template_prefix( prefix ):
+def jinja2_replace_template_prefix( template_param, prefix ):
     for subdir, dirs, files in os.walk(output_dir):
         for filename in files:    
             if filename.find('.'+prefix+'.')>0 or filename.endswith('.'+prefix):
@@ -1160,9 +1160,9 @@ def jinja2_replace_template():
     else:   
         template_param = {**params, **db_param}
     
-    jinja2_replace_template_prefix( "j2" )
-    template_param.terraform_outputs = jinja2_find_terraform_output(output_dir +'/src/terraform')
-    jinja2_replace_template_prefix( "j21" )
+    jinja2_replace_template_prefix( template_param, "j2" )
+    template_param['terraform_outputs'] = jinja2_find_terraform_output(output_dir +'/src/terraform')
+    jinja2_replace_template_prefix( template_param, "j21" )
 
 #----------------------------------------------------------------------------
 
