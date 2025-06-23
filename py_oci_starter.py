@@ -1111,7 +1111,7 @@ def jinja2_find_terraform_output( dir ):
 
             file_path = os.path.join(root, filename)
             
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path + "error", 'r', encoding='utf-8') as f:
                 for line in f: 
                     # Use regex for more precise matching and to capture the name
                     match = re.match(r'^\s*output\s+"([^"]+)"', line)
