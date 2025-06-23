@@ -118,7 +118,7 @@ data "oci_core_images" "oracledevlinux" {
   }
 }
 
-output "oracle-dev-linux-latest-name" {
+# output "oracle_dev_linux_latest_name" {
   value = data.oci_core_images.oracledevlinux.images.0.display_name
 }
 */

@@ -175,8 +175,10 @@ get_id_from_tfstate () {
 
 
 get_output_from_tfstate () {
-  RESULT=`jq -r '.outputs."'$2'".value' $STATE_FILE | sed "s/ //"`
-  set_if_not_null $1 $RESULT
+  if [ "$1" == "" ]; then
+    RESULT=`jq -r '.outputs."'$2'".value' $STATE_FILE | sed "s/ //"`
+    set_if_not_null $1 $RESULT
+  fi
 }
 
 # Check is the option '$1' is part of the TF_VAR_group_common
