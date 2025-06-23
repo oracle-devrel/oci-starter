@@ -1123,7 +1123,7 @@ def jinja2_replace_template():
     params['terraform_output'] = jinja2_find_terraform_output( 'src/terraform' )
     db_param = jinja2_db_params.get( params.get('db_family') )
     # Find all outputs in terraform
-    params.terraform_output = jinja2_find_terraform_output('src/terraform')
+    params.terraform_output = jinja2_find_terraform_output(output_dir +'/src/terraform')
 
     if db_param is None:  
         template_param = params
