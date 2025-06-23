@@ -39,7 +39,7 @@ module "terraform_module" {
 
 {%- for key in terraform_outputs %}
 output "{{ key }}" {
-  value       = module.terraform_module.{{key}}
+  value = "${module.terraform_module.{{key}}}"
 }
 {%- endfor %}
 
@@ -47,7 +47,7 @@ resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
 {%- for key in terraform_outputs %}
-    export {{key.upper().replace('-','_')}}=${module.terraform_module.{{key}}}
+        export {{key.upper().replace('-','_')}}=${module.terraform_module.{{key}}}
 {%- endfor %}
         cat target/terraform.tfstate
         export
