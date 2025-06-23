@@ -19,7 +19,7 @@ if [ ! -f $KUBECONFIG ]; then
   create_kubeconfig
  
   # Deploy Latest ingress-nginx
-  kubectl create clusterrolebinding starter_clst_adm --clusterrole=cluster-admin --user=$TF_VAR_user_ocid
+  kubectl create clusterrolebinding starter_clst_adm --clusterrole=cluster-admin --user=$TF_VAR_current_user_ocid
   # LATEST_INGRESS_CONTROLLER=`curl --silent "https://api.github.com/repos/kubernetes/ingress-nginx/releases/latest" | jq -r .name`
   # echo LATEST_INGRESS_CONTROLLER=$LATEST_INGRESS_CONTROLLER
   # kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$LATEST_INGRESS_CONTROLLER/deploy/static/provider/cloud/deploy.yaml

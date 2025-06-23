@@ -259,7 +259,7 @@ get_user_details() {
         IDP_NAME_LOWER=${IDP_NAME,,}
         export TF_VAR_username="$IDP_NAME_LOWER/${array[1]}"
       elif [[ "$OCI_CS_USER_OCID" == *"ocid1.user"* ]]; then
-        export TF_VAR_user_ocid="$OCI_CS_USER_OCID"
+        export TF_VAR_current_user_ocid="$OCI_CS_USER_OCID"
       else 
         export TF_VAR_username=$OCI_CS_USER_OCID
       fi
@@ -279,14 +279,14 @@ get_user_details() {
       OCI_PRO=$OCI_CLI_PROFILE
     fi    
     sed -n -e "/\[$OCI_PRO\]/,$$p" $HOME/.oci/config > /tmp/ociconfig
-    export TF_VAR_user_ocid=`sed -n 's/user=//p' /tmp/ociconfig |head -1`
+    export TF_VAR_current_user_ocid=`sed -n 's/user=//p' /tmp/ociconfig |head -1`
     export TF_VAR_fingerprint=`sed -n 's/fingerprint=//p' /tmp/ociconfig |head -1`
     export TF_VAR_private_key_path=`sed -n 's/key_file=//p' /tmp/ociconfig |head -1`
     export TF_VAR_home_region=`sed -n 's/region=//p' /tmp/ociconfig |head -1`
     # XX maybe get region from 169.xxx ?
     export TF_VAR_region=$TF_VAR_home_region
     export TF_VAR_tenancy_ocid=`sed -n 's/tenancy=//p' /tmp/ociconfig |head -1`  
-    # echo TF_VAR_user_ocid=$TF_VAR_user_ocid
+    # echo TF_VAR_current_user_ocid=$TF_VAR_current_user_ocid
     # echo TF_VAR_fingerprint=$TF_VAR_fingerprint
     # echo TF_VAR_private_key_path=$TF_VAR_private_key_path
   elif [ "$OCI_AUTH" == "ResourcePrincipal" ]; then
@@ -297,15 +297,15 @@ get_user_details() {
     export TF_VAR_region=$OCI_RESOURCE_PRINCIPAL_REGION
   fi
 
-  # Find TF_VAR_username based on TF_VAR_user_ocid or the opposite
+  # Find TF_VAR_username based on TF_VAR_current_user_ocid or the opposite
   # In this order, else this is not reentrant. "oci iam user list" require more privileges.  
-  if [ "$TF_VAR_user_ocid" != "" ]; then
-    export TF_VAR_username=`oci iam user get --user-id $TF_VAR_user_ocid | jq -r '.data.name'`
+  if [ "$TF_VAR_current_user_ocid" != "" ]; then
+    export TF_VAR_username=`oci iam user get --user-id $TF_VAR_current_user_ocid | jq -r '.data.name'`
   elif [ "$TF_VAR_username" != "" ]; then
-    export TF_VAR_user_ocid=`oci iam user list --name $TF_VAR_username | jq -r .data[0].id`
+    export TF_VAR_current_user_ocid=`oci iam user list --name $TF_VAR_username | jq -r .data[0].id`
   fi  
   auto_echo TF_VAR_username=$TF_VAR_username
-  auto_echo TF_VAR_user_ocid=$TF_VAR_user_ocid
+  auto_echo TF_VAR_current_user_ocid=$TF_VAR_current_user_ocid
 }
 
 # Get the user interface URL

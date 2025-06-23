@@ -37,6 +37,12 @@ module "terraform_module" {
   instance_shape = data.external.env.result.instance_shape
 }
 
+{%- for key, value in outputs.items() %}
+output "{{ key }}" {
+  value       = "{{ value }}"
+}
+{%- endfor %}
+
 output "compute_ip" {
     value = "${module.terraform_module.compute_ip}"
 }

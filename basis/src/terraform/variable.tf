@@ -1,7 +1,7 @@
 variable tenancy_ocid {}
 variable region {}
 variable compartment_ocid {}
-# variable user_ocid {}
+# variable current_user_ocid {}
 variable ssh_public_key {}
 variable ssh_private_key {}
 

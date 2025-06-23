@@ -29,7 +29,7 @@ resource "oci_identity_group" "starter_jms_group" {
 
 resource "oci_identity_user_group_membership" "starter_jms_group_memb" {
   compartment_id = var.tenancy_ocid
-  user_id        = var.user_ocid
+  user_id        = var.current_user_ocid
   group_id       = oci_identity_group.starter_jms_group.id
 }
 */
