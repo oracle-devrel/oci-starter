@@ -6,7 +6,7 @@ data oci_jms_fleet starter_fleet {
   fleet_id = var.fleet_ocid
 }
 
-output fleet_ocid {
+output "fleet_ocid" {
   value=var.fleet_ocid
 }
 
@@ -118,11 +118,11 @@ resource "oci_management_agent_management_agent_install_key" "starter_install_ke
     is_unlimited = true
 }
 
-output fleet_ocid {
+output "fleet_ocid" {
   value=oci_jms_fleet.starter_fleet.id
 }
 
-output install_key_ocid {
+output "install_key_ocid" {
   value=oci_management_agent_management_agent_install_key.starter_install_key.id
 }
 {%- endif %}   

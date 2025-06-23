@@ -18,7 +18,7 @@ provider "oci" {
   tenancy_ocid = var.tenancy_ocid
   region       = var.region
 
-  #user_ocid        = var.user_ocid
+  #user_ocid        = var.current_user_ocid
   #fingerprint      = var.fingerprint
   #private_key_path = var.private_key_path
 }
@@ -228,6 +228,6 @@ locals {
   devops_git_url = "https://${local.encoded_oci_username}:${local.encoded_auth_token}@devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.ocir_namespace}/projects/${oci_devops_project.starter_devops_project.name}/repositories/${oci_devops_repository.starter_devops_repository.name}"
 }
 
-output devops_git_url {
+output "devops_git_url" {
   value=local.devops_git_url
 }
