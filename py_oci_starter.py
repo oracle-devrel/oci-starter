@@ -1120,13 +1120,11 @@ def jinja2_find_in_terraform( name, dir ):
                     # Use regex for more precise matching and to capture the name
                     match = re.match(r"^(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{", line)
                     if match:
+                        print('-  '+match.group(2), flush=True)                          
                         if match.group(1) == 'output':
-                            name = match.group(2)
-                            outputs.append(name)
+                            outputs.append(match.group(2))
                         elif match.group(1) == 'variable':
-                            name = match.group(2)
-                            variables.append(name)
-                        print('-  '+name, flush=True)      
+                            variables.append(match.group(2))
 
     return outputs, variables
 
@@ -1183,8 +1181,7 @@ def jinja2_replace_template():
         template_param = {**params, **db_param}
     
     jinja2_replace_template_prefix( template_param, "j2" )
-    template_param['terraform_outputs'] = jinja2_find_terraform_output(output_dir +'/src/terraform')
-    template_param['terraform_variables'] = jinja2_find_terraform_output(output_dir +'/src/terraform')
+    template_param['terraform_outputs'], template_param['terraform_variables']  = jinja2_find_in_terraform(output_dir +'/src/terraform')
     jinja2_replace_template_prefix( template_param, "j21" )
 
 #----------------------------------------------------------------------------
