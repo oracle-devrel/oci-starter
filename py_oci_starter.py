@@ -1092,17 +1092,19 @@ jinja2_db_params = {
 }
 
 #----------------------------------------------------------------------------
-def jinja2_find_terraform_output( dir ):
-    output = []
+def jinja2_find_in_terraform( dir ):
     if not os.path.isdir(dir):
         print(f"Error: Directory not found at '{dir}'")
         return []
 
-    print(f"Searching for output in terraform: {dir}\n")
+    print(f"Searching for variable and output in terraform (.tf files): {dir}\n")
 
     # Walk through the directory (including subdirectories)
     # If you only want the top-level directory, replace os.walk with os.listdir
     # and add os.path.isfile(full_path) check.
+    outputs = []
+    variables = []
+
     for root, _, files in os.walk(dir):
         for filename in files:
             # We are typically interested in .tf files for Terraform outputs
@@ -1111,15 +1113,18 @@ def jinja2_find_terraform_output( dir ):
 
             file_path = os.path.join(root, filename)
             
+            text = ""
             with open(file_path, 'r', encoding='utf-8') as f:
-                for line in f: 
-                    # Use regex for more precise matching and to capture the name
-                    match = re.match(r'^\s*output\s+"([^"]+)"', line)
-                    if match:
-                        output_name = match.group(1)
-                        output.append( output_name )
-                        print('- output: '+output_name, flush=True)         
-    return output    
+                text = f.read()
+            pattern = r"(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{"
+            matches = re.findall(pattern, text)
+            for block_type, name in matches:
+                if block_type == "output":
+                    outputs.append(name)
+                elif block_type == "variable":
+                    variables.append(name)
+
+    return outputs, variables
 
 #----------------------------------------------------------------------------
 
@@ -1159,7 +1164,7 @@ def jinja2_replace_template():
         template_param = {**params, **db_param}
     
     jinja2_replace_template_prefix( template_param, "j2" )
-    template_param['terraform_outputs'] = jinja2_find_terraform_output(output_dir +'/src/terraform')
+    template_param['terraform_outputs'], template_param['terraform_variables'] = jinja2_find_terraform(output_dir +'/src/terraform')
     jinja2_replace_template_prefix( template_param, "j21" )
 
 #----------------------------------------------------------------------------

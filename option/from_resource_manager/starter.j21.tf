@@ -22,19 +22,14 @@ data "external" "env" {
 
 module "terraform_module" {
   source = "./src/terraform" # Path to your local module directory
+  # tenancy_ocid = var.tenancy_ocid
+  # compartment_ocid = var.compartment_ocid
+  # region = var.region
 
-  // tenancy_ocid = data.external.env2.result.tenancy_ocid
-  // region = data.external.env2.result.region
-  // compartment_ocid = data.external.env2.result.compartment_ocid
-
-  tenancy_ocid = var.tenancy_ocid
-  compartment_ocid = var.compartment_ocid
-  region = var.region
-
-  // namespace = data.external.env.result.namespace
-  ssh_public_key = data.external.env.result.ssh_public_key
-  ssh_private_key = data.external.env.result.ssh_private_key
-  instance_shape = data.external.env.result.instance_shape
+  // pass all the variable defined in src/terraform. If the value is not defined, it will use the default value in the module.
+{%- for key in terraform_variables %}
+  {{key}} = try(data.external.env.result.{{key}}, null)
+{%- endfor %}
 }
 
 {%- for key in terraform_outputs %}
