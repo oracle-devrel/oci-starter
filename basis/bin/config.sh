@@ -220,14 +220,14 @@ if declare -p | grep -q "__TO_FILL__"; then
     title "Config - Vault"       
     export REQUEST="Create a new vault ? (<No> will ask for the ocid of an existing one) ?"
     if accept_request; then  
-      read_ocid TF_VAR_vault_ocid "Vault" ocid1.vault
-      read_ocid TF_VAR_vault_key_ocid "Vault" ocid1.key
-    else
       # Comment the 2 lines. The vault will be created.
       sed -i "s/^export TF_VAR_vault_ocid/# export TF_VAR_vault_ocid/" $PROJECT_DIR/env.sh     
       sed -i "s/^export TF_VAR_vault_key_ocid/# export TF_VAR_vault_key_ocid/" $PROJECT_DIR/env.sh     
       unset TF_VAR_vault_ocid
       unset TF_VAR_vault_key_ocid
+    else
+      read_ocid TF_VAR_vault_ocid "Vault" ocid1.vault
+      read_ocid TF_VAR_vault_key_ocid "Vault" ocid1.key
     fi     
   fi    
 
