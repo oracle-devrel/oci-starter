@@ -1092,7 +1092,7 @@ jinja2_db_params = {
 }
 
 #----------------------------------------------------------------------------
-def jinja2_find_in_terraform( name, dir ):
+def jinja2_find_in_terraform( dir ):
     if not os.path.isdir(dir):
         print(f"Error: Directory not found at '{dir}'")
         return []
