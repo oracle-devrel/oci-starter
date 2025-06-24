@@ -1116,7 +1116,7 @@ def jinja2_find_in_terraform( dir ):
             text = ""
             with open(file_path, 'r', encoding='utf-8') as f:
                 text = f.read()
-            pattern = r"(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{"
+            pattern = r"^\s*(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{"
             matches = re.findall(pattern, text)
             for block_type, name in matches:
                 if block_type == "output":
