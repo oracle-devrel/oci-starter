@@ -434,13 +434,12 @@ livelabs_green_button() {
 
 lunalab() {
   if grep -q 'export TF_VAR_compartment_ocid="__TO_FILL__"' $PROJECT_DIR/env.sh; then    
-    if [ $USER = "luna.user" ]; then
-        echo "LunaLab - Luna User detected"
-    else
-        return
+    if [ "$USER" == "luna.user" ]; then
+      echo "LunaLab - Luna User detected"
+      export TF_VAR_compartment_ocid=$OCI_COMPARTMENT_OCID
+      export TF_VAR_instance_shape="VM.Standard.E5.Flex"
+      export TF_VAR_no_policy="true"      
     fi    
-    export TF_VAR_compartment_ocid=$OCI_COMPARTMENT_OCID
-    export TF_VAR_instance_shape="VM.Standard.E5.Flex"
   fi 
 }
 
