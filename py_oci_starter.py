@@ -1092,12 +1092,12 @@ jinja2_db_params = {
 }
 
 #----------------------------------------------------------------------------
-def jinja2_find_in_terraform( dir ):
+def jinja2_find_in_terraform( name, dir ):
     if not os.path.isdir(dir):
         print(f"Error: Directory not found at '{dir}'")
         return []
 
-    print(f"Searching for variable and output in terraform (.tf files): {dir}\n")
+    print(f"Searching for output in terraform: {dir}\n")
 
     # Walk through the directory (including subdirectories)
     # If you only want the top-level directory, replace os.walk with os.listdir
@@ -1116,15 +1116,34 @@ def jinja2_find_in_terraform( dir ):
             text = ""
             with open(file_path, 'r', encoding='utf-8') as f:
                 text = f.read()
-            pattern = r"^\s*(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{"
-            matches = re.findall(pattern, text)
-            for block_type, name in matches:
-                if block_type == "output":
-                    outputs.append(name)
-                elif block_type == "variable":
-                    variables.append(name)
+                for line in f: 
+                    # Use regex for more precise matching and to capture the name
+                    match = re.match(r"^(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{", line)
+                    if match:
+                        if match.group(1) == 'output':
+                            name = match.group(2)
+                            outputs.append(name)
+                        elif match.group(1) == 'variable':
+                            name = match.group(2)
+                            variables.append(name)
+                        print('-  '+name, flush=True)      
 
     return outputs, variables
+
+
+    pattern = r"(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{"
+
+    # re.findall with a pattern containing capturing groups returns a list of tuples.
+    # Each tuple contains the captured strings for each group.
+    # For example, ("output", "my_output_name_1")
+    matches = re.findall(pattern, text)
+
+    for block_type, name in matches:
+        if block_type == "output":
+            outputs.append(name)
+        elif block_type == "variable":
+            variables.append(name)                           
+    return output    
 
 #----------------------------------------------------------------------------
 
@@ -1164,7 +1183,8 @@ def jinja2_replace_template():
         template_param = {**params, **db_param}
     
     jinja2_replace_template_prefix( template_param, "j2" )
-    template_param['terraform_outputs'], template_param['terraform_variables'] = jinja2_find_in_terraform(output_dir +'/src/terraform')
+    template_param['terraform_outputs'] = jinja2_find_terraform_output(output_dir +'/src/terraform')
+    template_param['terraform_variables'] = jinja2_find_terraform_output(output_dir +'/src/terraform')
     jinja2_replace_template_prefix( template_param, "j21" )
 
 #----------------------------------------------------------------------------
