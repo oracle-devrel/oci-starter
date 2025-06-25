@@ -103,9 +103,6 @@ after_build() {
   if [ -f $PROJECT_DIR/src/after_build.sh ]; then
     $PROJECT_DIR/src/after_build.sh
   fi
-
-  title "Done"
-  $BIN_DIR/done.sh
 }
 
 . starter.sh env -no-auto
@@ -117,17 +114,16 @@ elif [ "$1" == "--build_deploy" ]; then
   build_deploy
 elif [ "$1" == "--after_build" ]; then
   after_build
-elif [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then  
-  # Running ./starter.sh build to create a resource manager stack, apply it in resource manager (for test-suite for example)
-  before_terraform
-  terraform $1
-  title "Done"
-  $BIN_DIR/done.sh
 else
   before_terraform
   terraform $1
-  build_deploy
-  terraform2 
-  after_build
+  # Running ./starter.sh build to create a resource manager stack, apply it in resource manager (for test-suite for example)
+  if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ]; then
+    build_deploy
+    terraform2 
+    after_build
+  fi
+  title "Done"
+  $BIN_DIR/done.sh
 fi
 
