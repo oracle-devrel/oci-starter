@@ -46,7 +46,7 @@ variable group_name { default="" }
 variable log_group_ocid  { default="" }
 
 # Certificate
-variable "certificate_ocid" { default = "" }
+variable "certificate_ocid" { default=null }
 
 locals {
   group_name = var.group_name == "" ? "none" : var.group_name
@@ -60,10 +60,10 @@ locals {
   }
   
   # Landing Zone
-  lz_web_cmp_ocid = var.lz_web_cmp_ocid == "" ? var.compartment_ocid : var.lz_web_cmp_ocid
-  lz_app_cmp_ocid = var.lz_app_cmp_ocid == "" ? var.compartment_ocid : var.lz_app_cmp_ocid
-  lz_db_cmp_ocid = var.lz_db_cmp_ocid == "" ? var.compartment_ocid : var.lz_db_cmp_ocid
-  lz_serv_cmp_ocid = var.lz_serv_cmp_ocid == "" ? var.compartment_ocid : var.lz_serv_cmp_ocid
-  lz_network_cmp_ocid = var.lz_network_cmp_ocid == "" ? var.compartment_ocid : var.lz_network_cmp_ocid
-  lz_security_cmp_ocid = var.lz_security_cmp_ocid == "" ? var.compartment_ocid : var.lz_security_cmp_ocid
+  lz_web_cmp_ocid = var.lz_web_cmp_ocid == "" || var.lz_web_cmp_ocid == null ? var.compartment_ocid : var.lz_web_cmp_ocid
+  lz_app_cmp_ocid = var.lz_app_cmp_ocid == "" || var.lz_app_cmp_ocid == null ? var.compartment_ocid : var.lz_app_cmp_ocid
+  lz_db_cmp_ocid = var.lz_db_cmp_ocid == "" || var.lz_db_cmp_ocid == null  ? var.compartment_ocid : var.lz_db_cmp_ocid
+  lz_serv_cmp_ocid = var.lz_serv_cmp_ocid == "" || var.lz_serv_cmp_ocid == null  ? var.compartment_ocid : var.lz_serv_cmp_ocid
+  lz_network_cmp_ocid = var.lz_network_cmp_ocid == "" || var.lz_network_cmp_ocid == null ? var.compartment_ocid : var.lz_network_cmp_ocid
+  lz_security_cmp_ocid = var.lz_security_cmp_ocid == "" || var.lz_security_cmp_ocid == null ? var.compartment_ocid : var.lz_security_cmp_ocid
 }
