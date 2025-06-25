@@ -143,8 +143,7 @@ exit_on_error() {
   if [ $RESULT -eq 0 ]; then
     echo "Success"
   else
-    echo
-    echo "EXIT ON ERROR - HISTORY"
+    title "EXIT ON ERROR - HISTORY"
     history 2
     error_exit "Command Failed (RESULT=$RESULT)"
   fi  
