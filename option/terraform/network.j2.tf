@@ -16,10 +16,10 @@
 {%- endif %}
 
 # Existing VCN and Subnets
-# variable "vcn_ocid" {}
-# variable "web_subnet_ocid" {}
-# variable "app_subnet_ocid" {}
-# variable "db_subnet_ocid" {}
+variable "vcn_ocid" {}
+variable "web_subnet_ocid" {}
+variable "app_subnet_ocid" {}
+variable "db_subnet_ocid" {}
 
 data "oci_core_vcn" "starter_vcn" {
   vcn_id = var.vcn_ocid
