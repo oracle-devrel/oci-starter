@@ -3,16 +3,12 @@ locals {
   openid_client_secret = oci_identity_domains_app.starter_confidential_app.client_secret
 }
 
-variable "vault_ocid" {
-  default = ""
-}
+variable "vault_ocid" {}
 
-variable "vault_key_ocid" {
-  default = ""
-}
+variable "vault_key_ocid" {}
 
 resource "oci_kms_vault" "starter_vault" {
-  count = var.vault_ocid=="" ? 1 : 0  
+  count = var.vault_ocid==null ? 1 : 0  
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-vault"
   vault_type     = "DEFAULT"
@@ -24,7 +20,7 @@ data "oci_kms_vault" "starter_vault" {
 
 resource "oci_kms_key" "starter_key" {
   #Required
-  count = var.vault_key_ocid=="" ? 1 : 0  
+  count = var.vault_key_ocid==null ? 1 : 0  
   compartment_id      = local.lz_app_cmp_ocid
   display_name        = "${var.prefix}-key"
   management_endpoint = data.oci_kms_vault.starter_vault.management_endpoint
@@ -43,7 +39,7 @@ data "oci_kms_key" "starter_key" {
 
 locals {
   apigw_hostname = oci_apigateway_gateway.starter_apigw.hostname
-  vault_ocid = var.vault_ocid=="" ? oci_kms_vault.starter_vault[0].id : var.vault_ocid 
+  vault_ocid = var.vault_ocid==null ? oci_kms_vault.starter_vault[0].id : var.vault_ocid 
   vault_key_ocid = var.vault_key_ocid=="" ? oci_kms_key.starter_key[0].id : var.vault_key_ocid 
 }
 
