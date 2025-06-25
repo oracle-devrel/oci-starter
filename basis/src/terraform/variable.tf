@@ -32,7 +32,7 @@ variable lz_security_cmp_ocid { default="" }
 variable username { default="" }
 
 # Availability Domain
-variable availability_domain_number { default = 1 }
+variable availability_domain_number { default = "1" }
 
 # BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED
 variable license_model {
