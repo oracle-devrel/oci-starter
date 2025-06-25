@@ -1095,7 +1095,7 @@ jinja2_db_params = {
 def jinja2_find_in_terraform( dir ):
     if not os.path.isdir(dir):
         print(f"Error: Directory not found at '{dir}'")
-        return []
+        return [], []
 
     print(f"Searching for output in terraform: {dir}\n")
 
@@ -1125,21 +1125,6 @@ def jinja2_find_in_terraform( dir ):
                             variables.append(match.group(2))
 
     return outputs, variables
-
-
-    pattern = r"(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{"
-
-    # re.findall with a pattern containing capturing groups returns a list of tuples.
-    # Each tuple contains the captured strings for each group.
-    # For example, ("output", "my_output_name_1")
-    matches = re.findall(pattern, text)
-
-    for block_type, name in matches:
-        if block_type == "output":
-            outputs.append(name)
-        elif block_type == "variable":
-            variables.append(name)                           
-    return output    
 
 #----------------------------------------------------------------------------
 
