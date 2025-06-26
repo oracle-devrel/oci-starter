@@ -1,6 +1,6 @@
-variable "dns_zone_name" { default="" }
-variable "dns_name" { default="" }
-variable "dns_ip" { default="" }
+variable "dns_zone_name" { default=null }
+variable "dns_name" { default=null }
+variable "dns_ip" { default=null }
 
 locals {
 {%- if deploy_type == "public_compute" and tls != "existing_ocid" %}  

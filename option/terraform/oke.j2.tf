@@ -76,7 +76,6 @@ output "image" {
     value = data.oci_core_images.shape_specific_images
 }
 
-
 #----------------------------------------------------------------------------
 # SECURITY LISTS
 

@@ -4,9 +4,9 @@ locals {
 
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
 {%- if tls is defined %}
-  count = (var.docker_image_ui == "" || var.certificate_ocid == "") ? 0 : 1
+  count = (var.docker_image_ui == null || var.certificate_ocid == null) ? 0 : 1
 {%- else %}   
-  count = var.docker_image_ui == "" ? 0 : 1
+  count = var.docker_image_ui == null ? 0 : 1
 {%- endif %}   
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-apigw-deployment"
