@@ -42,8 +42,14 @@ locals {
 {%- endif %}   
 
 // API Management - Tags
-variable git_url { default = "" }
-variable build_src { default = "" }
+variable git_url { 
+  default = "" 
+  nullable = false
+}
+variable build_src { 
+  default = "" 
+  nullable = false
+}
 
 locals {
   api_git_tags = {

@@ -15,6 +15,10 @@ fi
 if [[ -z "${BIN_DIR}" ]]; then
   export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 fi
+# From Resource Manager 
+if [ -f $PROJECT_DIR/terraform.tfstate ]; then
+  ln -sf $PROJECT_DIR/terraform.tfstate $STATE_FILE
+fi
 
 # ENV.SH
 . $PROJECT_DIR/env.sh
@@ -140,9 +144,9 @@ else
 
   # SSH keys
   if [ "$TF_VAR_ssh_private_path" == "" ] && [ -f $TARGET_DIR/ssh_key_starter ]; then 
+    export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
     export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
     export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)
-    export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
   fi
 
   # Echo

@@ -9,6 +9,8 @@ elif command -v tofu  &> /dev/null; then
 else
   error_exit "Command not found: terraform or tofu"
 fi     
+export VAR_FILE_PATH=$TARGET_DIR/resource_manager_variables.json
+export ZIP_FILE_PATH=$TARGET_DIR/resource_manager_$TF_VAR_prefix.zip
 
 infra_as_code_plan() {
   cd $PROJECT_DIR/src/terraform    
@@ -55,6 +57,11 @@ infra_as_code_apply() {
     resource_manager_create_or_update
     resource_manager_apply
     exit_on_error
+  elif [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
+    cd $PROJECT_DIR
+    resource_manager_create_or_update
+    resource_manager_apply
+    exit_on_error
   else
     if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ]; then
       sed "s/XX_TERRAFORM_STATE_URL_XX/$TF_VAR_terraform_state_url/g" terraform.template.tf > terraform/terraform.tf
@@ -87,11 +94,21 @@ rs_echo() {
   echo "Resource Manager: $1"
 }
 
+resource_manager_json () {
+  # Transforms the variables in a JSON format
+  # This is a complex way to get them. But it works for multi line variables like TF_VAR_private_key
+  excluded=$(env | sed -n 's/^\([A-Z_a-z][0-9A-Z_a-z]*\)=.*/\1/p' | grep -v 'TF_VAR_')
+  # Nasty WA trick for OCI Stack and OCI Devops (not a proper fix)
+  excluded="$excluded maven.home OLDPWD"
+  sh -c 'unset $1; export -p' sh "$excluded" > $TARGET_DIR/tf_var.sh 2>/dev/null
+
+  echo -n "{" > $VAR_FILE_PATH
+  cat $TARGET_DIR/tf_var.sh | sed "s/export TF_VAR_/\"/g" | sed "s/=\"/\": \"/g" | sed ':a;N;$!ba;s/\"\n/\", /g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/$/}/'>> $VAR_FILE_PATH    
+}
+
+# Used in both infra_as_code = resource_manager and from_resource_manager
 resource_manager_create_or_update() {
   rs_echo "Create Stack"
-
-  ZIP_FILE_PATH=$TARGET_DIR/resource_manager_$TF_VAR_prefix.zip
-  VAR_FILE_PATH=$TARGET_DIR/resource_manager_variables.json
   if [ -f $TARGET_DIR/resource_manager_stackid ]; then
      echo "Stack exists already ( file target/resource_manager_stackid found )"
      mv $ZIP_FILE_PATH $ZIP_FILE_PATH.$DATE_POSTFIX
@@ -101,17 +118,13 @@ resource_manager_create_or_update() {
   if [ -f $ZIP_FILE_PATH ]; then
     rm $ZIP_FILE_PATH
   fi  
-  zip -r $ZIP_FILE_PATH * -x "*.sh"
+  if [ -f "src/terraform/.terraform" ]; then
+    # Created during pre-check
+    rm "src/terraform/.terraform/*"
+  fi 
+  zip -r $ZIP_FILE_PATH * -x "target/*" -x "src/terraform/.terraform/*"
 
-  # Transforms the variables in a JSON format
-  # This is a complex way to get them. But it works for multi line variables like TF_VAR_private_key
-  excluded=$(env | sed -n 's/^\([A-Z_a-z][0-9A-Z_a-z]*\)=.*/\1/p' | grep -v 'TF_VAR_')
-  sh -c 'unset $1; export -p' sh "$excluded" > $TARGET_DIR/tf_var.sh
-  # Nasty WA trick for OCI Devops (not a proper fix)
-  sed -i "s/export maven.home//" $TARGET_DIR/tf_var.sh
-
-  echo -n "{" > $VAR_FILE_PATH
-  cat $TARGET_DIR/tf_var.sh | sed "s/export TF_VAR_/\"/g" | sed "s/=\"/\": \"/g" | sed ':a;N;$!ba;s/\"\n/\", /g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/$/}/'>> $VAR_FILE_PATH
+  resource_manager_json
 
   if [ -f $TARGET_DIR/resource_manager_stackid ]; then
     if cmp -s $ZIP_FILE_PATH $ZIP_FILE_PATH.$DATE_POSTFIX; then
@@ -152,7 +165,7 @@ resource_manager_apply() {
 
   rs_echo "Create Apply Job"
   # Max 2000 secs wait time (1200 secs is sometimes too short for OKE+DB)
-  CREATED_APPLY_JOB_ID=$(oci resource-manager job create-apply-job --stack-id $STACK_ID --execution-plan-strategy=AUTO_APPROVED --wait-for-state SUCCEEDED --wait-for-state FAILED --max-wait-seconds 2000 --query 'data.id' --raw-output)
+  CREATED_APPLY_JOB_ID=$(oci resource-manager job create-apply-job --stack-id $STACK_ID --execution-plan-strategy=AUTO_APPROVED --wait-for-state SUCCEEDED --wait-for-state FAILED --wait-for-state CANCELED --max-wait-seconds 3000 --query 'data.id' --raw-output)
   echo "Created Apply Job Id: ${CREATED_APPLY_JOB_ID}"
 
   rs_echo "Get job"
@@ -166,6 +179,8 @@ resource_manager_apply() {
   # Check the result of the destroy JOB and stop deletion if required
   if [ "$STATUS" != "SUCCEEDED" ]; then
     rs_echo "ERROR: Status ($STATUS) is not SUCCEEDED"
+
+    cat $TARGET_DIR/tf_apply.log | jq -r .data
     exit 1 # Exit with error
   fi  
 }

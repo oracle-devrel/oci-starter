@@ -2,7 +2,7 @@
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 variable home_region {
-  default=""
+  default=null
 }
 
 data "oci_identity_availability_domains" "ADs" {
@@ -51,21 +51,24 @@ data "oci_core_images" "node_pool_images" {
 }
 
 # Identity Domain
-variable idcs_domain_name { default = "Default" }
-variable idcs_url { default = "" }
+variable idcs_domain_name { 
+  default = "Default" 
+  nullable = false
+}
+variable idcs_url { default = null }
 
 data "oci_identity_domains" "starter_domains" {
-    #Required
-    compartment_id = var.tenancy_ocid
-    display_name = var.idcs_domain_name
+  #Required
+  compartment_id = var.tenancy_ocid
+  display_name = var.idcs_domain_name
 }
 
 locals {
   # Try: LiveLabs has no access to IDCS
-  idcs_url = try( (var.idcs_url!="")?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url, "" )
+  idcs_url = try( (var.idcs_url!=null)?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url, "" )
 }
 
-output idcs_url {
+output "idcs_url" {
   value = local.idcs_url
 }
 
@@ -118,7 +121,7 @@ data "oci_core_images" "oracledevlinux" {
   }
 }
 
-output "oracle-dev-linux-latest-name" {
+# output "oracle_dev_linux_latest_name" {
   value = data.oci_core_images.oracledevlinux.images.0.display_name
 }
 */

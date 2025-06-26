@@ -53,15 +53,15 @@ locals {
 {%- endif %}
 
 {%- if group_name is not defined %}
-variable "fn_image" { default = "" }
-variable "fn_db_url" { default = "" }
+variable "fn_image" { default = null }
+variable "fn_db_url" { default = null }
 {%- if db_type == "nosql" %} 
 variable nosql_endpoint {}
 {%- endif %} 
 
 resource "oci_functions_function" "starter_fn_function" {
   #Required
-  count          = var.fn_image == "" ? 0 : 1
+  count          = var.fn_image == null ? 0 : 1
   application_id = local.fnapp_ocid
   display_name   = "${var.prefix}-fn-function"
   image          = var.fn_image

@@ -10,6 +10,7 @@ import os
 import shutil
 import json
 import stat
+import re
 from datetime import datetime
 from distutils.dir_util import copy_tree
 from jinja2 import Environment, FileSystemLoader
@@ -113,7 +114,7 @@ allowed_values = {
     '-ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
     '-db_type': {'atp', 'autonomous', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
     '-license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
-    '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager'},
+    '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager','from_resource_manager'},
     '-mode': {CLI, GIT, ZIP},
     '-shape': {'amd','freetier_amd','ampere','arm'},
     '-db_install': {'default', 'kubernetes'},
@@ -742,6 +743,8 @@ def create_dir_shared():
         print("resource_manager")
     elif params.get('infra_as_code') == "terraform_object_storage":
         output_copy_tree("option/infra_as_code/terraform_object_storage", "src/terraform")
+    elif params.get('infra_as_code') == "from_resource_manager":
+        output_copy_tree("option/from_resource_manager", ".")
     else:
         output_copy_tree("option/infra_as_code/terraform_local", "src/terraform")
 
@@ -1088,17 +1091,48 @@ jinja2_db_params = {
     }
 }
 
-def jinja2_replace_template():
-    db_param = jinja2_db_params.get( params.get('db_family') )
-    if db_param is None:  
-        template_param = params
-    else:   
-        template_param = {**params, **db_param}
+#----------------------------------------------------------------------------
+def jinja2_find_in_terraform( dir ):
+    if not os.path.isdir(dir):
+        print(f"Error: Directory not found at '{dir}'")
+        return [], []
 
+    print(f"Searching for output in terraform: {dir}\n")
+
+    # Walk through the directory (including subdirectories)
+    # If you only want the top-level directory, replace os.walk with os.listdir
+    # and add os.path.isfile(full_path) check.
+    outputs = []
+    variables = []
+
+    for root, _, files in os.walk(dir):
+        for filename in files:
+            # We are typically interested in .tf files for Terraform outputs
+            if not filename.endswith('.tf'):
+                continue
+
+            file_path = os.path.join(root, filename)
+            print('---   '+file_path, flush=True)
+            with open(file_path, 'r', encoding='utf-8') as f:
+                for line in f: 
+                    # Use regex for more precise matching and to capture the name
+                    match = re.match(r"^(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{", line)
+                    if match:
+                        print('-  '+match.group(2), flush=True)                          
+                        if match.group(1) == 'output':
+                            outputs.append(match.group(2))
+                        elif match.group(1) == 'variable':
+                            variables.append(match.group(2))
+
+    return outputs, variables
+
+#----------------------------------------------------------------------------
+
+def jinja2_replace_template_prefix( template_param, prefix ):
     for subdir, dirs, files in os.walk(output_dir):
         for filename in files:    
-            if filename.find('.j2.')>0 or filename.endswith('.j2'):
-                output_file_path = os.path.join(subdir, filename.replace(".j2", ""))
+            if filename.find('.'+prefix+'.')>0 or filename.endswith('.'+prefix):
+                output_file_path = os.path.join(subdir, filename.replace("."+prefix, ""))
                 print(f"J2 - processing - {output_file_path}", flush=True)
                 if os.path.isfile(output_file_path): 
                     print(f"J2 - Skipping - destination file already exists: {output_file_path}") 
@@ -1117,6 +1151,21 @@ def jinja2_replace_template():
                 os.remove(os.path.join(subdir, filename))                
             if filename.endswith('_refresh.sh'):      
                 os.remove(os.path.join(subdir, filename))   
+
+#----------------------------------------------------------------------------
+
+def jinja2_replace_template():
+    db_param = jinja2_db_params.get( params.get('db_family') )
+    # Find all outputs in terraform
+
+    if db_param is None:  
+        template_param = params
+    else:   
+        template_param = {**params, **db_param}
+    
+    jinja2_replace_template_prefix( template_param, "j2" )
+    template_param['terraform_outputs'], template_param['terraform_variables']  = jinja2_find_in_terraform(output_dir +'/src/terraform')
+    jinja2_replace_template_prefix( template_param, "j21" )
 
 #----------------------------------------------------------------------------
 

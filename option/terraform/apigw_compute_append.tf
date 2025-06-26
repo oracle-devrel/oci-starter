@@ -118,7 +118,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment_app" {
   freeform_tags = local.api_tags
 }   
 
-
+ 
 {%- else %}
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
   compartment_id = local.lz_app_cmp_ocid
@@ -204,7 +204,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
 
 /*
 resource oci_logging_log starter_apigw_deployment_execution {
-  count = var.log_group_ocid == "" ? 0 : 1
+  count = var.log_group_ocid == null ? 0 : 1
   log_group_id = var.log_group_ocid
   configuration {
     compartment_id = local.lz_app_cmp_ocid
@@ -223,7 +223,7 @@ resource oci_logging_log starter_apigw_deployment_execution {
 }
 
 resource oci_logging_log starter_apigw_deployment_access {
-  count = var.log_group_ocid == "" ? 0 : 1
+  count = var.log_group_ocid == null ? 0 : 1
   log_group_id = var.log_group_ocid
   configuration {
     compartment_id = local.lz_app_cmp_ocid

@@ -6,7 +6,7 @@ data oci_jms_fleet starter_fleet {
   fleet_id = var.fleet_ocid
 }
 
-output fleet_ocid {
+output "fleet_ocid" {
   value=var.fleet_ocid
 }
 
@@ -29,7 +29,7 @@ resource "oci_identity_group" "starter_jms_group" {
 
 resource "oci_identity_user_group_membership" "starter_jms_group_memb" {
   compartment_id = var.tenancy_ocid
-  user_id        = var.user_ocid
+  user_id        = var.current_user_ocid
   group_id       = oci_identity_group.starter_jms_group.id
 }
 */
@@ -118,11 +118,11 @@ resource "oci_management_agent_management_agent_install_key" "starter_install_ke
     is_unlimited = true
 }
 
-output fleet_ocid {
+output "fleet_ocid" {
   value=oci_jms_fleet.starter_fleet.id
 }
 
-output install_key_ocid {
+output "install_key_ocid" {
   value=oci_management_agent_management_agent_install_key.starter_install_key.id
 }
 {%- endif %}   

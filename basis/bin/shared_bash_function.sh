@@ -143,8 +143,7 @@ exit_on_error() {
   if [ $RESULT -eq 0 ]; then
     echo "Success"
   else
-    echo
-    echo "EXIT ON ERROR - HISTORY"
+    title "EXIT ON ERROR - HISTORY"
     history 2
     error_exit "Command Failed (RESULT=$RESULT)"
   fi  
@@ -173,10 +172,14 @@ get_id_from_tfstate () {
   set_if_not_null $1 $RESULT
 }
 
-
 get_output_from_tfstate () {
-  RESULT=`jq -r '.outputs."'$2'".value' $STATE_FILE | sed "s/ //"`
-  set_if_not_null $1 $RESULT
+  output=output_$2
+  if [ "${!output}" != "" ]; then
+    export $1="${!output}"
+  else 
+    RESULT=`jq -r '.outputs."'$2'".value' $STATE_FILE | sed "s/ //"`
+    set_if_not_null $1 $RESULT
+  fi
 }
 
 # Check is the option '$1' is part of the TF_VAR_group_common
@@ -245,22 +248,31 @@ guess_available_shape() {
 # Get User Details (username and OCID)
 get_user_details() {
   if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
-    # Cloud Shell
-    export TF_VAR_tenancy_ocid=$OCI_TENANCY
-    export TF_VAR_region=$OCI_REGION
-    # Needed for child region
-    export TF_VAR_home_region=`echo $OCI_CS_HOST_OCID | awk -F[/.] '{print $4}'`
-    if [[ "$OCI_CS_USER_OCID" == *"ocid1.saml2idp"* ]]; then
-      # Ex: ocid1.saml2idp.oc1..aaaaaaaaexfmggau73773/user@domain.com -> oracleidentitycloudservice/user@domain.com
-      # Split the string in 2 
-      IFS='/' read -r -a array <<< "$OCI_CS_USER_OCID"
-      IDP_NAME=`oci iam identity-provider get --identity-provider-id=${array[0]} | jq -r .data.name`
-      IDP_NAME_LOWER=${IDP_NAME,,}
-      export TF_VAR_username="$IDP_NAME_LOWER/${array[1]}"
-    elif [[ "$OCI_CS_USER_OCID" == *"ocid1.user"* ]]; then
-      export TF_VAR_user_ocid="$OCI_CS_USER_OCID"
+    if [ "$OCI_TENANCY" != "" ]; then 
+      # Cloud Shell
+      export TF_VAR_tenancy_ocid=$OCI_TENANCY
+      export TF_VAR_region=$OCI_REGION
+      # Needed for child region
+      export TF_VAR_home_region=`echo $OCI_CS_HOST_OCID | awk -F[/.] '{print $4}'`
+      if [[ "$OCI_CS_USER_OCID" == *"ocid1.saml2idp"* ]]; then
+        # Ex: ocid1.saml2idp.oc1..aaaaaaaaexfmggau73773/user@domain.com -> oracleidentitycloudservice/user@domain.com
+        # Split the string in 2 
+        IFS='/' read -r -a array <<< "$OCI_CS_USER_OCID"
+        IDP_NAME=`oci iam identity-provider get --identity-provider-id=${array[0]} | jq -r .data.name`
+        IDP_NAME_LOWER=${IDP_NAME,,}
+        export TF_VAR_username="$IDP_NAME_LOWER/${array[1]}"
+      elif [[ "$OCI_CS_USER_OCID" == *"ocid1.user"* ]]; then
+        export TF_VAR_current_user_ocid="$OCI_CS_USER_OCID"
+      else 
+        export TF_VAR_username=$OCI_CS_USER_OCID
+      fi
     else 
-      export TF_VAR_username=$OCI_CS_USER_OCID
+      echo "From Resource Manager detected"
+      export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
+      echo "$TF_VAR_ssh_public_key" > ${TF_VAR_ssh_private_path}.pub
+      echo "$TF_VAR_ssh_private_key" > $TF_VAR_ssh_private_path
+      chmod 600 ${TF_VAR_ssh_private_path}.pub
+      chmod 600 $TF_VAR_ssh_private_path
     fi
   elif [ -f $HOME/.oci/config ]; then
     ## Get the [DEFAULT] config
@@ -270,14 +282,14 @@ get_user_details() {
       OCI_PRO=$OCI_CLI_PROFILE
     fi    
     sed -n -e "/\[$OCI_PRO\]/,$$p" $HOME/.oci/config > /tmp/ociconfig
-    export TF_VAR_user_ocid=`sed -n 's/user=//p' /tmp/ociconfig |head -1`
+    export TF_VAR_current_user_ocid=`sed -n 's/user=//p' /tmp/ociconfig |head -1`
     export TF_VAR_fingerprint=`sed -n 's/fingerprint=//p' /tmp/ociconfig |head -1`
     export TF_VAR_private_key_path=`sed -n 's/key_file=//p' /tmp/ociconfig |head -1`
     export TF_VAR_home_region=`sed -n 's/region=//p' /tmp/ociconfig |head -1`
     # XX maybe get region from 169.xxx ?
     export TF_VAR_region=$TF_VAR_home_region
     export TF_VAR_tenancy_ocid=`sed -n 's/tenancy=//p' /tmp/ociconfig |head -1`  
-    # echo TF_VAR_user_ocid=$TF_VAR_user_ocid
+    # echo TF_VAR_current_user_ocid=$TF_VAR_current_user_ocid
     # echo TF_VAR_fingerprint=$TF_VAR_fingerprint
     # echo TF_VAR_private_key_path=$TF_VAR_private_key_path
   elif [ "$OCI_AUTH" == "ResourcePrincipal" ]; then
@@ -288,15 +300,15 @@ get_user_details() {
     export TF_VAR_region=$OCI_RESOURCE_PRINCIPAL_REGION
   fi
 
-  # Find TF_VAR_username based on TF_VAR_user_ocid or the opposite
+  # Find TF_VAR_username based on TF_VAR_current_user_ocid or the opposite
   # In this order, else this is not reentrant. "oci iam user list" require more privileges.  
-  if [ "$TF_VAR_user_ocid" != "" ]; then
-    export TF_VAR_username=`oci iam user get --user-id $TF_VAR_user_ocid | jq -r '.data.name'`
+  if [ "$TF_VAR_current_user_ocid" != "" ]; then
+    export TF_VAR_username=`oci iam user get --user-id $TF_VAR_current_user_ocid | jq -r '.data.name'`
   elif [ "$TF_VAR_username" != "" ]; then
-    export TF_VAR_user_ocid=`oci iam user list --name $TF_VAR_username | jq -r .data[0].id`
+    export TF_VAR_current_user_ocid=`oci iam user list --name $TF_VAR_username | jq -r .data[0].id`
   fi  
   auto_echo TF_VAR_username=$TF_VAR_username
-  auto_echo TF_VAR_user_ocid=$TF_VAR_user_ocid
+  auto_echo TF_VAR_current_user_ocid=$TF_VAR_current_user_ocid
 }
 
 # Get the user interface URL
@@ -421,13 +433,12 @@ livelabs_green_button() {
 
 lunalab() {
   if grep -q 'export TF_VAR_compartment_ocid="__TO_FILL__"' $PROJECT_DIR/env.sh; then    
-    if [ $USER = "luna.user" ]; then
-        echo "LunaLab - Luna User detected"
-    else
-        return
+    if [ "$USER" == "luna.user" ]; then
+      echo "LunaLab - Luna User detected"
+      export TF_VAR_compartment_ocid=$OCI_COMPARTMENT_OCID
+      export TF_VAR_instance_shape="VM.Standard.E5.Flex"
+      export TF_VAR_no_policy="true"      
     fi    
-    export TF_VAR_compartment_ocid=$OCI_COMPARTMENT_OCID
-    export TF_VAR_instance_shape="VM.Standard.E5.Flex"
   fi 
 }
 

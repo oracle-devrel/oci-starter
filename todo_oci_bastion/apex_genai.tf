@@ -1,7 +1,7 @@
 #-- IDCS_URL ----------------------------------------------------------
 /*
-variable idcs_domain_name { default = "Default" }
-variable idcs_url { default = "" }
+# variable idcs_domain_name { default = "Default" }
+# variable idcs_url { default = "" }
 
 data "oci_identity_domains" "starter_domains" {
     #Required
@@ -16,7 +16,7 @@ locals {
 #-- Object Storage ----------------------------------------------------------
 
 # Object Storage
-variable "namespace" {}
+# variable "namespace" {}
 
 resource "oci_objectstorage_bucket" "starter_bucket" {
   compartment_id = local.lz_serv_cmp_ocid

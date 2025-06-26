@@ -1,8 +1,8 @@
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
 {%- if tls is defined %}
-  count = (var.fn_image == "" || var.certificate_ocid == "") ? 0 : 1
+  count = (var.fn_image == null || var.certificate_ocid == null) ? 0 : 1
 {%- else %}   
-  count          = var.fn_image == "" ? 0 : 1
+  count          = var.fn_image == null ? 0 : 1
 {%- endif %}   
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-apigw-deployment"

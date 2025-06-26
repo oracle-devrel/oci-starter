@@ -1,7 +1,7 @@
-variable compute_ready { default = "" }
+variable compute_ready { default = null }
 
 resource "oci_core_image" "custom_image" {
-  count          = var.compute_ready == "" ? 0 : 1
+  count          = var.compute_ready == null ? 0 : 1
   compartment_id = local.lz_app_cmp_ocid
   instance_id    = oci_core_instance.starter_compute.id
   launch_mode = "NATIVE"
@@ -52,7 +52,7 @@ resource "oci_load_balancer_listener" "starter_pool_lb_listener" {
 
 
 resource "oci_core_instance_configuration" "starter_instance_configuration" {
-  count          = var.compute_ready == "" ? 0 : 1
+  count          = var.compute_ready == null ? 0 : 1
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-instance-config"
 
@@ -107,7 +107,7 @@ resource "oci_core_instance_configuration" "starter_instance_configuration" {
 }
 
 resource "oci_core_instance_pool" "starter_instance_pool" {
-  count          = var.compute_ready == "" ? 0 : 1
+  count          = var.compute_ready == null ? 0 : 1
   compartment_id = local.lz_app_cmp_ocid
   instance_configuration_id = oci_core_instance_configuration.starter_instance_configuration[0].id
   size = 2
@@ -134,14 +134,14 @@ resource "oci_core_instance_pool" "starter_instance_pool" {
 }
 
 data "oci_core_instance_pool_instances" "starter_instance_pool_instances_datasource" {
-  count            = var.compute_ready == "" ? 0 : 1  
+  count            = var.compute_ready == null ? 0 : 1  
   compartment_id   = local.lz_app_cmp_ocid
   instance_pool_id = oci_core_instance_pool.starter_instance_pool[0].id
 }
 
 # Usage of singular instance datasources to show the public_ips, private_ips, and hostname_labels for the instances in the pool
 data "oci_core_instance" "starter_instance_pool_instance_singular_datasource" {
-  count       = var.compute_ready == "" ? 0 : 2
+  count       = var.compute_ready == null ? 0 : 2
   instance_id = data.oci_core_instance_pool_instances.starter_instance_pool_instances_datasource[0].instances[count.index]["id"]
 }
 

@@ -11,10 +11,10 @@ data "oci_database_pluggable_database" "starter_pluggable_database" {
 variable "db_ocid" {}
 
 # OCID of the COMPARTMENT of the DBSYSTEM (usecase where it is <> Landing Zone DB Compartment )
-variable "db_compartment_ocid" { default="" }
+variable "db_compartment_ocid" { default=null }
 
 locals {
-  db_compartment_ocid = var.db_compartment_ocid == "" ? local.lz_db_cmp_ocid : var.db_compartment_ocid
+  db_compartment_ocid = var.db_compartment_ocid == null ? local.lz_db_cmp_ocid : var.db_compartment_ocid
   db_ocid = var.db_ocid
 }
 
