@@ -36,7 +36,7 @@ resource "oci_identity_policy" "oke_tls_policy" {
 {%- else %}  
 resource "oci_dns_rrset" "starter_rrset" {
     # XXXX Advanced case with DNS not in OCI XXXX ?
-    count = var.dns_zone_name=="" ? 0 : 1
+    count = var.dns_zone_name==null ? 0 : 1
 
     #Required
     zone_name_or_id = var.dns_zone_name
@@ -46,7 +46,7 @@ resource "oci_dns_rrset" "starter_rrset" {
     items {
         #Required
         domain = var.dns_name
-        rdata = var.dns_ip=="" ? local.dns_ip : var.dns_ip
+        rdata = var.dns_ip==null ? local.dns_ip : var.dns_ip
         rtype = "A"
         ttl = 300
     }

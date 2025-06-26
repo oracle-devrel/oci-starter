@@ -1,17 +1,12 @@
-variable docker_image_ui {
-    default=""
-}
-
-variable docker_image_app {
-    default=""
-}
+variable docker_image_ui { default=null }
+variable docker_image_app { default=null }
 
 {%- if db_type == "nosql" %} 
 variable nosql_endpoint {}
 {%- endif %} 
 
 resource oci_container_instances_container_instance starter_container_instance {
-  count = var.docker_image_ui == "" ? 0 : 1
+  count = var.docker_image_ui == null ? 0 : 1
   availability_domain = data.oci_identity_availability_domain.ad.name
   compartment_id      = local.lz_app_cmp_ocid  
   container_restart_policy = "ALWAYS"
