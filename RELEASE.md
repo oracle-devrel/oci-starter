@@ -114,4 +114,17 @@ Date 21-June-2025
     - allow now to have several start_xxx.sh in the app directory. For ex to have 1 python, 1 java and 1 node service in the same directory.
     - app contains now, init.sh, start_xxx.sh and restart.sh (new)
 
-    
+## 3.10
+
+### infra_as_code=from_resource_manager
+Goal is to run the oci-starter directory as a resource manager stack.
+- changed the default of unset terraform variable from "" to null
+- with infra_as_code=from_resource_manager, create dynamically starter.tf file and schema.yaml in the root directory
+- added ./starter.sh rm xxx to run part of the build_all from resource_manager
+- ./starter.sh build from cloud shell create a resource manager.zip file with the whole directory and execute it in resource manager.
+- renamed var.user_ocid to var.current_user_ocid to have the same naming than resource manager
+
+### Other
+- added vault_ocid settings in config.sh
+- lunalab fix
+

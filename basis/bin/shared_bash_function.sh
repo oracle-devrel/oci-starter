@@ -424,10 +424,8 @@ livelabs_green_button() {
     fi  
     
     # LiveLabs support only E4 Shapes
-    # if grep -q '# export TF_VAR_instance_shape=VM.Standard.E4.Flex' $PROJECT_DIR/env.sh; then
-    #   sed -i "s&# export TF_VAR_instance_shape=&export TF_VAR_instance_shape=&" $PROJECT_DIR/env.sh
-    # fi
-
+    sed -i '/export TF_VAR_compartment_ocid=/a\export TF_VAR_instance_shape="VM.Standard.E4.Flex"' $PROJECT_DIR/env.sh
+    export TF_VAR_instance_shape=VM.Standard.E4.Flex
   fi
 }
 
