@@ -1,0 +1,107 @@
+title: "OCI Starter: From Resource Manager {{ prefix }} "
+stackDescription: "Resource Manager stack created by OCI Starter " 
+description: "Stack will deploy the component used in the OCI Starter project" 
+schemaVersion: 1.1.0
+version: "20221004"
+locale: "en"
+
+#################
+# Variable Groups
+#################
+variableGroups:
+- title: General Configuration
+  visible: false
+  variables:
+  - tenancy_ocid
+  - compartment_ocid
+  - region
+  - current_user_ocid
+
+- title: Starter Project
+  visible: true  
+  variables:
+  - prefix
+  - compartment_id
+
+- title: Application
+  visible: true  
+  variables:  
+  - language
+  - deploy_type  
+  - java_framework
+  - java_vm
+  - java_version
+
+- title: User Interface
+  visible: true  
+  variables:
+  - ui_type
+
+- title: Deployment
+  visible: true  
+  variables:
+  - kubernetes_strategy
+  - oke_strategy
+  - oke_ocid
+
+- title: Network
+  visible: true  
+  variables:
+  - vcn_strategy
+  - vcn_ocid
+  - subnet_ocid
+
+- title: "Database"
+  visible: true
+  variables:
+  - db_type
+  - db_existing_strategy
+  - atp_ocid
+  - db_ocid
+  - mysql_ocid
+  - db_user
+  - db_password
+
+- title: Security
+  visible: true  
+  variables:
+  - oci_username
+  - vault_strategy
+  - vault_ocid
+  - secret_strategy
+  - vault_secret_authtoken_ocid
+  - oci_token  
+
+#################
+# Output Groups
+#################
+
+######################
+# Variable Definitions
+######################
+
+variables:
+
+  prefix:
+    type: string
+    title: Resource Name Prefix
+    description: The names of all compute and network resources will begin with this prefix. It can only contain letters or numbers and must begin with a letter.
+    required: true
+
+{%- for param in env_params %}
+  {{ param }}:
+    {%- if param in ["compartment_id"] %}
+    type: oci:identity:compartment:id
+    {%- else %}
+    type: string
+    {%- endif %}
+    title: {{ param }} title
+    description: {{ param }} description
+    required: true
+    default: {{ params[param ]}}
+
+{%- endfor %}
+
+
+
+

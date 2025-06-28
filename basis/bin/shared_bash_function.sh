@@ -434,8 +434,11 @@ lunalab() {
     if [ "$USER" == "luna.user" ]; then
       echo "LunaLab - Luna User detected"
       export TF_VAR_compartment_ocid=$OCI_COMPARTMENT_OCID
+      sed -i "s&export TF_VAR_compartment_ocid=\"__TO_FILL__\"&export TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh      
       export TF_VAR_instance_shape="VM.Standard.E5.Flex"
+      sed -i '/export TF_VAR_compartment_ocid=/a\export TF_VAR_instance_shape="VM.Standard.E5.Flex"' $PROJECT_DIR/env.sh      
       export TF_VAR_no_policy="true"      
+      sed -i '/export TF_VAR_compartment_ocid=/a\export TF_VAR_no_policy="true"' $PROJECT_DIR/env.sh      
     fi    
   fi 
 }
