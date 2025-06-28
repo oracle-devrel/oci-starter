@@ -1,5 +1,10 @@
 # --- Network ---
 {%- if vcn_ocid is defined %}
+# Existing VCN and Subnets
+variable "vcn_ocid" {}
+variable "web_subnet_ocid" {}
+variable "app_subnet_ocid" {}
+variable "db_subnet_ocid" {}
 {%- else %}
 /* 
 # To use a existing Landing Zone, add these variables in env.sh
@@ -19,12 +24,6 @@
 # variable "web_subnet_ocid" {}
 # variable "app_subnet_ocid" {}
 # variable "db_subnet_ocid" {}
-{%- else %}
-# Existing VCN and Subnets
-variable "vcn_ocid" {}
-variable "web_subnet_ocid" {}
-variable "app_subnet_ocid" {}
-variable "db_subnet_ocid" {}
 {%- endif %}
 
 data "oci_core_vcn" "starter_vcn" {
