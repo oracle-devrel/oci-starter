@@ -39,7 +39,7 @@ variables:
 
 {%- for param in env_params %}
   {{ param }}:
-    {%- if param in ["compartment_id"] %}
+    {%- if param in ["compartment_ocid"] %}
     type: oci:identity:compartment:id
     {%- else %}
     type: string
