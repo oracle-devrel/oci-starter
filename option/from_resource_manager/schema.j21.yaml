@@ -47,7 +47,7 @@ variables:
     title: {{ param }} title
     description: {{ param }} description
     required: true
-    default: {{ params[param ]}}
+    default: {{ params[param]}}
 
 {%- endfor %}
 

@@ -1168,6 +1168,7 @@ def jinja2_replace_template():
     # for schema.yaml.j21
     template_param['env_param'] = env_param_list()
     template_param['params'] = params
+    print( template_param, flush=True) 
     jinja2_replace_template_prefix( template_param, "j21" )
 
 #----------------------------------------------------------------------------
