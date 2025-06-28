@@ -10,67 +10,16 @@ locale: "en"
 #################
 variableGroups:
 - title: General Configuration
-  visible: false
+  visible: true
   variables:
-  - tenancy_ocid
-  - compartment_ocid
-  - region
   - current_user_ocid
 
 - title: Starter Project
   visible: true  
   variables:
-  - prefix
-  - compartment_id
-
-- title: Application
-  visible: true  
-  variables:  
-  - language
-  - deploy_type  
-  - java_framework
-  - java_vm
-  - java_version
-
-- title: User Interface
-  visible: true  
-  variables:
-  - ui_type
-
-- title: Deployment
-  visible: true  
-  variables:
-  - kubernetes_strategy
-  - oke_strategy
-  - oke_ocid
-
-- title: Network
-  visible: true  
-  variables:
-  - vcn_strategy
-  - vcn_ocid
-  - subnet_ocid
-
-- title: "Database"
-  visible: true
-  variables:
-  - db_type
-  - db_existing_strategy
-  - atp_ocid
-  - db_ocid
-  - mysql_ocid
-  - db_user
-  - db_password
-
-- title: Security
-  visible: true  
-  variables:
-  - oci_username
-  - vault_strategy
-  - vault_ocid
-  - secret_strategy
-  - vault_secret_authtoken_ocid
-  - oci_token  
+{%- for param in env_params %}
+  - {{ param }}
+{%- endfor %}
 
 #################
 # Output Groups
