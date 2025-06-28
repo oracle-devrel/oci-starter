@@ -1166,7 +1166,7 @@ def jinja2_replace_template():
     jinja2_replace_template_prefix( template_param, "j2" )
     template_param['terraform_outputs'], template_param['terraform_variables'] = jinja2_find_in_terraform(output_dir +'/src/terraform')
     # for schema.yaml.j21
-    template_param['env_param'] = env_param_list()
+    template_param['env_params'] = env_param_list()
     template_param['params'] = params
     print( template_param, flush=True) 
     jinja2_replace_template_prefix( template_param, "j21" )
