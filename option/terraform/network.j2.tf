@@ -13,13 +13,19 @@
 # export TF_VAR_lz_web_subnet_ocid="XXXX"')
 # export TF_VAR_lz_app_subnet_ocid="XXXX"')
 # export TF_VAR_lz_db_subnet_ocid="XXXX"')
-{%- endif %}
-
+#
+# Existing VCN and Subnets
+# variable "vcn_ocid" {}
+# variable "web_subnet_ocid" {}
+# variable "app_subnet_ocid" {}
+# variable "db_subnet_ocid" {}
+{%- else %}
 # Existing VCN and Subnets
 variable "vcn_ocid" {}
 variable "web_subnet_ocid" {}
 variable "app_subnet_ocid" {}
 variable "db_subnet_ocid" {}
+{%- endif %}
 
 data "oci_core_vcn" "starter_vcn" {
   vcn_id = var.vcn_ocid
