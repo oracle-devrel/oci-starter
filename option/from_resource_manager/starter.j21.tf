@@ -3,7 +3,7 @@
 ## VARIABLES
 
 {%- for param in env_params %}
-variable "{{ param }}" {}
+variable "{{ param }}" { default = null }
 {%- endfor %}
 
 ## BEFORE TERRAFORM
