@@ -63,7 +63,7 @@ module "terraform_module" {
                  "idcs_url",
                  "db_user",
                  "db_password" ] %}
-  {{key}} = var.{{key}}
+  {{key}} = try( var.{{key}}, null )
 {%- else %}
   {{key}} = try(data.external.env.result.{{key}}, null)
 {%- endif %}
