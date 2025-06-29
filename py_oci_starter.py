@@ -1167,6 +1167,11 @@ def jinja2_replace_template():
     template_param['terraform_outputs'], template_param['terraform_variables'] = jinja2_find_in_terraform(output_dir +'/src/terraform')
     # for schema.yaml.j21
     template_param['env_params'] = env_param_list()
+    template_param['env_params'].append('prefix')
+    template_param['env_params'].append('tenancy_ocid')
+    template_param['env_params'].append('compartment_ocid')
+    template_param['env_params'].append('region')
+    template_param['env_params'].append('current_user_ocid')
     template_param['params'] = params
     print( template_param, flush=True) 
     jinja2_replace_template_prefix( template_param, "j21" )
