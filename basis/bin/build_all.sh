@@ -114,6 +114,8 @@ elif [ "$1" == "--build_deploy" ]; then
   build_deploy
 elif [ "$1" == "--after_build" ]; then
   after_build
+  title "Done"
+  $BIN_DIR/done.sh  
 else
   before_terraform
   terraform $1
