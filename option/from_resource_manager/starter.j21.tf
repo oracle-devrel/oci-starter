@@ -1,5 +1,12 @@
 # starter.tf
 
+## VARIABLES
+
+{%- for param in env_params %}
+variable "{{ param }}" {}
+{%- endfor %}
+
+## BEFORE TERRAFORM
 resource "null_resource" "before_terraform" {
   provisioner "local-exec" {
     command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
@@ -28,7 +35,11 @@ module "terraform_module" {
 
   // Pass all the variable defined in src/terraform. If the value is not defined, it will use the default value in the module.
 {%- for key in terraform_variables %}
+{%- if key in env_param %}
+  {{key}} = var.{{key}}
+{%- else %}
   {{key}} = try(data.external.env.result.{{key}}, null)
+{%- endif %}
 {%- endfor %}
 }
 
