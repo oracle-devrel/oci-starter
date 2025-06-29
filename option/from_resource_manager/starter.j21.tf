@@ -37,6 +37,15 @@ module "terraform_module" {
 {%- for key in terraform_variables %}
 {%- if key in env_params %}
   {{key}} = var.{{key}}
+{%- elif key in ["lz_web_cmp_ocid", 
+                 "lz_app_cmp_ocid", 
+                 "lz_db_cmp_ocid",
+                 "lz_serv_cmp_ocid", 
+                 "lz_network_cmp_ocid", 
+                 "lz_security_cmp_ocid",
+                 "instance_ocpus", 
+                 "instance_shape_config_memory_in_gbs" ] %}
+  {{key}} = var.{{key}}
 {%- else %}
   {{key}} = try(data.external.env.result.{{key}}, null)
 {%- endif %}
