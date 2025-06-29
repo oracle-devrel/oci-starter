@@ -1171,7 +1171,6 @@ def jinja2_replace_template():
     template_param['env_params'] = env_param_list()
     template_param['env_params'].append('prefix')
     template_param['env_params'].append('tenancy_ocid')
-    template_param['env_params'].append('compartment_ocid')
     template_param['env_params'].append('region')
     template_param['env_params'].append('current_user_ocid')
     template_param['params'] = params

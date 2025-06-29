@@ -7,24 +7,24 @@ variable "{{ param }}" {}
 {%- endfor %}
 
 ## BEFORE TERRAFORM
-resource "null_resource" "before_terraform" {
-  provisioner "local-exec" {
-    command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
-  }
-  provisioner "local-exec" {
-    when = destroy
-    command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
-  }  
-  triggers = {
-    always_run = "${timestamp()}"
-  }  
-}
+# resource "null_resource" "before_terraform" {
+#  provisioner "local-exec" {
+#    command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
+#  }
+#  provisioner "local-exec" {
+#    when = destroy
+#    command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
+#  }  
+#  triggers = {
+#    always_run = "${timestamp()}"
+#  }  
+#}
 
 data "external" "env" {
-  program = ["cat", "target/resource_manager_variables.json"]
-  depends_on = [
-    null_resource.before_terraform
-  ]
+  program = ["bash", "-c", "./starter.sh frm before_terraform 1>&2; cat target/resource_manager_variables.json"]
+#  depends_on = [
+#    null_resource.before_terraform
+#  ]
 }
 
 module "terraform_module" {
