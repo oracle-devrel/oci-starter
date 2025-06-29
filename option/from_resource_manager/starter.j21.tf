@@ -6,8 +6,10 @@
 variable "{{ param }}" { default = null }
 {%- endfor %}
 {%- for key in terraform_variables %}
-{%- if !(key in env_params) %}
+{%- if key in env_params %}
+{%- else %}
 variable "{{ key }}" { default = null }
+{%- endif %}
 {%- endfor %}
 
 ## BEFORE TERRAFORM
