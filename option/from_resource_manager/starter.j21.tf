@@ -35,7 +35,7 @@ module "terraform_module" {
 
   # Pass all the variable defined in src/terraform. If the value is not defined, it will use the default value in the module.
 {%- for key in terraform_variables %}
-{%- if key in env_param %}
+{%- if key in env_params %}
   {{key}} = var.{{key}}
 {%- else %}
   {{key}} = try(data.external.env.result.{{key}}, null)
