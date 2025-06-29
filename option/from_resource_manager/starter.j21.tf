@@ -5,6 +5,10 @@
 {%- for param in env_params %}
 variable "{{ param }}" { default = null }
 {%- endfor %}
+{%- for key in terraform_variables %}
+{%- if key in env_params %}
+variable "{{ key }}" { default = null }
+{%- endfor %}
 
 ## BEFORE TERRAFORM
 # resource "null_resource" "before_terraform" {
