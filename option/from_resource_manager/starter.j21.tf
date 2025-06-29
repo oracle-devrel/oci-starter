@@ -32,8 +32,18 @@ module "terraform_module" {
   # tenancy_ocid = var.tenancy_ocid
   # compartment_ocid = var.compartment_ocid
   # region = var.region
-
   # Pass all the variable defined in src/terraform. If the value is not defined, it will use the default value in the module.
+  # Issues: 
+  # - ssh_public_key
+  # - ssh_private_key - Solution Cloud Init... starts then wait
+  #                   - Upload some files to an object storage
+  #                   - Down them and execute them (*)
+  # - instance_shape  - use data to find out what shape is available ?? 
+  #                   - no way to detect Luna nor LiveLabs... 
+  # - availability_domain_number -  issue for free compute shape
+  # - db_password     - todo check the complexity in ./starter.sh rm before_terraform
+  # - certificate_ocid - XXX in shared_bash - retrieved in different way based on the scenario...
+  # - home_region - XXX in shared_bash
 {%- for key in terraform_variables %}
 {%- if key in env_params %}
   {{key}} = var.{{key}}
@@ -43,8 +53,16 @@ module "terraform_module" {
                  "lz_serv_cmp_ocid", 
                  "lz_network_cmp_ocid", 
                  "lz_security_cmp_ocid",
+                 "log_group_ocid",                 
                  "instance_ocpus", 
-                 "instance_shape_config_memory_in_gbs" ] %}
+                 "instance_shape_config_memory_in_gbs",
+                 "java_version",
+                 "java_framework",
+                 "group_name",
+                 "idcs_domain_name",
+                 "idcs_url",
+                 "db_user",
+                 "db_password" ] %}
   {{key}} = var.{{key}}
 {%- else %}
   {{key}} = try(data.external.env.result.{{key}}, null)
