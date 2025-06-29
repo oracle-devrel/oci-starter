@@ -33,7 +33,7 @@ module "terraform_module" {
   # compartment_ocid = var.compartment_ocid
   # region = var.region
 
-  // Pass all the variable defined in src/terraform. If the value is not defined, it will use the default value in the module.
+  # Pass all the variable defined in src/terraform. If the value is not defined, it will use the default value in the module.
 {%- for key in terraform_variables %}
 {%- if key in env_param %}
   {{key}} = var.{{key}}
