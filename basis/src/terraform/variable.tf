@@ -16,6 +16,8 @@ variable language {
   default = "java" 
   nullable = false
 }
+
+# Java Version
 variable java_version { 
   default = "21"
   nullable = false
