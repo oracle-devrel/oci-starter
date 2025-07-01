@@ -1,8 +1,3 @@
-# Home Region
-variable home_region {
-  default=null
-}
-
 # Gets home and current regions
 data "oci_identity_tenancy" "tenant_details" {
   tenancy_id = var.tenancy_ocid

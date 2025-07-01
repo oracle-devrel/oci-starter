@@ -21,6 +21,12 @@ variable java_version {
   nullable = false
 }
 
+# Home Region
+variable home_region {
+  default=null
+}
+
+# Database user
 variable db_user { default=null }
 variable db_password{ default=null }
 
