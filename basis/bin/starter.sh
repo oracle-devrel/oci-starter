@@ -140,13 +140,16 @@ elif [ "$ARG1" == "frm" ]; then # From Resource Manager
   . $BIN_DIR/shared_bash_function.sh
 
   if [ "$ARG2" == "before_terraform" ]; then
-    $BIN_DIR/build_all.sh --before_terraform
+    export LOG_NAME=$TARGET_DIR/frm_before_terraform.log
+    $BIN_DIR/build_all.sh --before_terraform | tee $LOG_NAME
     exit_on_error    
   elif [ "$ARG2" == "build_deploy" ]; then
-    $BIN_DIR/build_all.sh --build_deploy
+    export LOG_NAME=$TARGET_DIR/frm_build_deploy.log  
+    $BIN_DIR/build_all.sh --build_deploy | tee $LOG_NAME
     exit_on_error
   elif [ "$ARG2" == "after_build" ]; then
-    $BIN_DIR/build_all.sh --after_build
+    export LOG_NAME=$TARGET_DIR/frm_after_build.log    
+    $BIN_DIR/build_all.sh --after_build | tee $LOG_NAME
     exit_on_error
   fi    
   . shared_infra_as_code.sh

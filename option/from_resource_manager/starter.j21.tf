@@ -13,26 +13,31 @@ variable "{{ key }}" { default = null }
 {%- endfor %}
 
 ## BEFORE TERRAFORM
-# resource "null_resource" "before_terraform" {
-#  provisioner "local-exec" {
-#    command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
-#  }
-#  provisioner "local-exec" {
-#    when = destroy
-#    command = "pwd; ./starter.sh frm before_terraform; ls -al target; export; echo '----BEFORE ----'; cat target/resource_manager_variables.json; echo '----AFTER ----'; "
-#  }  
-#  triggers = {
-#    always_run = "${timestamp()}"
-#  }  
-#}
-
+# Phase: PLAN
+# Todo: criteria to check
+# - plan, then apply means that it gets executed twice
+# - no error raised if plan then apply is executed
+# - no ssh password lost or db password reset if plan, apply, plan is done
+#   - if no other way, store the settings in an Object Storage or in Vault.
+# - if an error happens, the log is visible in the RM logs
+# - if no error happens, the log is visible in the RM logs (check if TRACE is needed ??)
 data "external" "env" {
   program = ["bash", "-c", "./starter.sh frm before_terraform 1>&2; cat target/resource_manager_variables.json"]
-#  depends_on = [
-#    null_resource.before_terraform
-#  ]
 }
 
+resource "null_resource" "log_frm_before_terraform" {
+  provisioner "local-exec" {
+    command = <<-EOT
+        cat target/frm_before_terraform.log
+        EOT
+  }
+  depends_on = [
+    data.external.env.build_deploy
+  ]   
+}
+
+# TERRAFORM 
+# Phase: APPLY
 module "terraform_module" {
   source = "./src/terraform" # Path to your local module directory
   # tenancy_ocid = var.tenancy_ocid
@@ -74,14 +79,23 @@ module "terraform_module" {
   {{key}} = try(data.external.env.result.{{key}}, null)
 {%- endif %}
 {%- endfor %}
+
+  depends_on = [
+    null_resource.log_frm_before_terraform
+  ]   
 }
 
+## OUTPUT
+# Output in Resource Manager all the OUTPUTs of the module
 {%- for key in terraform_outputs %}
 output "{{ key }}" {
   value = "${module.terraform_module.{{key}}}"
 }
+
 {%- endfor %}
 
+## BUILD
+# call ./starter.sh frm build_deploy
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
@@ -104,7 +118,16 @@ resource "null_resource" "build_deploy" {
 
 {%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
 
-data "external" "env2" {
+## TERRAFORM_PART2
+# In case like instance_pool, oke, function, container_instance, ...
+# A second terraform module need to be called to finish the installation. Ex:
+# - instance_pool: from the image of the compute of part1, build the instance pool with several compute and a LN
+# - container_instance, function: from docker container of build_deploy, build the real container_instance
+# Todo:
+# - oke: xxxx
+# - check all count= in *.tf
+# - is there a need for a part3 ?
+data "external" "env_part2" {
   program = ["cat", "target/resource_manager_variables.json"]
   depends_on = [
     null_resource.build_deploy
@@ -118,12 +141,20 @@ module "terraform_after_build_module" {
   compartment_ocid = var.compartment_ocid
   region = var.region
 
-  namespace = data.external.env2.result.namespace
-  ssh_public_key = data.external.env2.result.ssh_public_key
-  ssh_private_key = data.external.env2.result.ssh_private_key
+  namespace = data.external.env_part2.result.namespace
+  ssh_public_key = data.external.env_part2.result.ssh_public_key
+  ssh_private_key = data.external.env_part2.result.ssh_private_key
 }
 {%- endif %}
 
+## AFTER_BUILD
+# Post terraform
+# - ./starter.sh frm after_build
+# - run done.sh
+# - run custom src/after_done.sh
+# Todo:
+# - Run always_run really needed ?
+# - How to taint a resource in resource manager  
 resource "null_resource" "after_build" {
   provisioner "local-exec" {
     command = "cat target/terraform.tfstate; export; ./starter.sh frm after_build"
