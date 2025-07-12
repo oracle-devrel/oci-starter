@@ -167,7 +167,15 @@ resource "null_resource" "after_build" {
 {%- endif %}
   ]
 
+  provisioner "local-exec" {
+      when = destroy    
+      command = <<-EOT
+        ./starter.sh destroy --from_resource_manager
+        EOT
+  }
+
   triggers = {
     always_run = "${timestamp()}"
   }    
 }
+

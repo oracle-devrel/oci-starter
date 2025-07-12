@@ -12,7 +12,7 @@ title "OCI Starter - Destroy"
 echo 
 echo "Warning: This will destroy all the resources created by Terraform."
 echo 
-if [ "$1" != "--auto-approve" ]; then
+if [ "$1" != "--auto-approve" ] || [ "$1" == "--from_resource_manager" ]; then
   read -p "Do you want to proceed? (yes/no) " yn
 
   case $yn in 
@@ -81,17 +81,19 @@ do
   cleanBucket $BUCKET_NAME
 done;
 
-title "Terraform Destroy"
-$BIN_DIR/terraform_destroy.sh --auto-approve -no-color
-exit_on_error
+if [ "$1" != "--from_resource_manager" ]; then
+  title "Terraform Destroy"
+  $BIN_DIR/terraform_destroy.sh --auto-approve -no-color
+  exit_on_error
 
-export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
-if [ "$TF_RESOURCE" == "0" ]; then
-  echo "Empty state file - cleaning up .terraform"
-  rm -Rf $PROJECT_DIR/src/terraform/.terraform
-  rm -Rf $PROJECT_DIR/src/terraform/.terraform.lock.hcl
-  export DESTROY_DATE=`date '+%Y%m%d-%H%M%S'`
-  mv $TARGET_DIR $TARGET_DIR.$DESTROY_DATE
+  export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
+  if [ "$TF_RESOURCE" == "0" ]; then
+    echo "Empty state file - cleaning up .terraform"
+    rm -Rf $PROJECT_DIR/src/terraform/.terraform
+    rm -Rf $PROJECT_DIR/src/terraform/.terraform.lock.hcl
+    export DESTROY_DATE=`date '+%Y%m%d-%H%M%S'`
+    mv $TARGET_DIR $TARGET_DIR.$DESTROY_DATE
+  fi
+
+  echo "Destroy time: ${SECONDS} secs"
 fi
-
-echo "Destroy time: ${SECONDS} secs"
