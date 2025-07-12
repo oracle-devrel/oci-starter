@@ -74,7 +74,7 @@ infra_as_code_apply() {
 
 infra_as_code_destroy() {
   cd $PROJECT_DIR/src/terraform    
-  if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
+  if [ "$TF_VAR_infra_as_code" == "resource_manager" ] || [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
     resource_manager_destroy
   else
     $TERRAFORM_COMMAND init -upgrade
