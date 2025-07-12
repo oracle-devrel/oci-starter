@@ -81,7 +81,7 @@ do
   cleanBucket $BUCKET_NAME
 done;
 
-if [ "$1" != "--from_resource_manager" ]; then
+if [ "$1" != "--called_by_resource_manager" ]; then
   title "Terraform Destroy"
   $BIN_DIR/terraform_destroy.sh --auto-approve -no-color
   exit_on_error

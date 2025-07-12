@@ -173,8 +173,8 @@ resource_manager_apply() {
   
   oci resource-manager job get-job-logs-content --job-id $CREATED_APPLY_JOB_ID > $TARGET_DIR/tf_apply.log
   rs_echo "Apply Log"
-  cat $TARGET_DIR/tf_apply.log
-
+  cat $TARGET_DIR/tf_apply.log | jq -r .data
+  
   rs_echo "Get stack state"
   oci resource-manager stack get-stack-tf-state --stack-id $STACK_ID --file $TARGET_DIR/terraform.tfstate
 
@@ -182,7 +182,6 @@ resource_manager_apply() {
   if [ "$STATUS" != "SUCCEEDED" ]; then
     rs_echo "ERROR: Status ($STATUS) is not SUCCEEDED"
 
-    cat $TARGET_DIR/tf_apply.log | jq -r .data
     exit 1 # Exit with error
   fi  
 }

@@ -86,7 +86,10 @@ elif [ "$ARG1" == "build" ]; then
     $BIN_DIR/build_all.sh ${@:2} 2>&1 | tee $LOG_NAME
   fi    
 elif [ "$ARG1" == "destroy" ]; then
-  if [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
+  if [ "$TF_VAR_infra_as_code" == "from_resource_manager" ] && [ "$2" != "--called_by_resource_manager" ]; then
+    # ./starter.sh called from Command Line 
+    # + TF_VAR_infra_as_code=from_resource_manager
+    # 
     $BIN_DIR/terraform_destroy.sh 
   else 
     LOG_NAME=$TARGET_DIR/logs/destroy.${DATE_POSTFIX}.log

@@ -170,7 +170,7 @@ resource "null_resource" "after_build" {
   provisioner "local-exec" {
       when = destroy    
       command = <<-EOT
-        ./starter.sh destroy --from_resource_manager
+        ./starter.sh destroy --called_by_resource_manager
         EOT
   }
 
