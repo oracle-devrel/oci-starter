@@ -197,6 +197,8 @@ resource_manager_destroy() {
   STATUS=$(oci resource-manager job get --job-id $CREATED_DESTROY_JOB_ID  --query 'data."lifecycle-state"' --raw-output)
 
   oci resource-manager job get-job-logs-content --job-id $CREATED_DESTROY_JOB_ID | tee > $TARGET_DIR/tf_destroy.log
+  rs_echo "Destroy Log"
+  cat $TARGET_DIR/tf_destroy.log | jq -r .data
 
   # Check the result of the destroy JOB and stop deletion if required
   if [ "$STATUS" != "SUCCEEDED" ]; then
