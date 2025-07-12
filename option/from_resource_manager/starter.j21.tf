@@ -21,7 +21,7 @@ variable "{{ key }}" { default = null }
 #   - if no other way, store the settings in an Object Storage or in Vault.
 # - if an error happens, the log is visible in the RM logs
 # - if no error happens, the log is visible in the RM logs (check if TRACE is needed ??)
-data "external" "env" {
+data "external" "before_terraform" {
   program = ["bash", "-c", "./starter.sh frm before_terraform 1>&2; cat target/resource_manager_variables.json"]
 }
 
