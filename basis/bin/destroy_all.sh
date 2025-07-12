@@ -12,7 +12,7 @@ title "OCI Starter - Destroy"
 echo 
 echo "Warning: This will destroy all the resources created by Terraform."
 echo 
-if [ "$1" != "--auto-approve" ] || [ "$1" == "--from_resource_manager" ]; then
+if [ "$1" != "--auto-approve" ] && [ "$1" != "--called_by_resource_manager" ]; then
   read -p "Do you want to proceed? (yes/no) " yn
 
   case $yn in 

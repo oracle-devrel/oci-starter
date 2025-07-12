@@ -87,9 +87,10 @@ elif [ "$ARG1" == "build" ]; then
   fi    
 elif [ "$ARG1" == "destroy" ]; then
   if [ "$TF_VAR_infra_as_code" == "from_resource_manager" ] && [ "$2" != "--called_by_resource_manager" ]; then
-    # ./starter.sh called from Command Line 
-    # + TF_VAR_infra_as_code=from_resource_manager
-    # 
+    # ./starter.sh destroy 
+    # - with terraform stack in resource_manager (=from_resource_manager)
+    # - called from Command Line 
+    # - and not called by the resource_manager
     $BIN_DIR/terraform_destroy.sh 
   else 
     LOG_NAME=$TARGET_DIR/logs/destroy.${DATE_POSTFIX}.log
