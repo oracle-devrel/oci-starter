@@ -32,7 +32,7 @@ resource "null_resource" "log_frm_before_terraform" {
         EOT
   }
   depends_on = [
-    data.external.env.build_deploy
+    data.external.env
   ]   
 }
 
