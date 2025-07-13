@@ -127,6 +127,7 @@ resource "null_resource" "build_deploy" {
 # - oke: xxxx
 # - check all count= in *.tf
 # - is there a need for a part3 ?
+
 data "external" "env_part2" {
   program = ["cat", "target/resource_manager_variables.json"]
   depends_on = [
@@ -134,16 +135,37 @@ data "external" "env_part2" {
   ]
 }
 
-module "terraform_after_build_module" {
-  source = "./src/terraform2" # Path to your local module directory
+module "terraform_part2" {
+  source = "./src/terraform_part2" # Path to your local module directory
 
-  tenancy_ocid = var.tenancy_ocid
-  compartment_ocid = var.compartment_ocid
-  region = var.region
+{%- for key in terraform_variables %}
+{%- if key in env_params %}
+  {{key}} = var.{{key}}
+{%- elif key in ["lz_web_cmp_ocid", 
+                 "lz_app_cmp_ocid", 
+                 "lz_db_cmp_ocid",
+                 "lz_serv_cmp_ocid", 
+                 "lz_network_cmp_ocid", 
+                 "lz_security_cmp_ocid",
+                 "log_group_ocid",                 
+                 "instance_ocpus", 
+                 "instance_shape_config_memory_in_gbs",
+                 "java_version",
+                 "java_framework",
+                 "group_name",
+                 "idcs_domain_name",
+                 "idcs_url",
+                 "db_user",
+                 "db_password" ] %}
+  {{key}} = try( var.{{key}}, null )
+{%- else %}
+  {{key}} = try(data.external.env_part2.result.{{key}}, null)
+{%- endif %}
+{%- endfor %}
 
-  namespace = data.external.env_part2.result.namespace
-  ssh_public_key = data.external.env_part2.result.ssh_public_key
-  ssh_private_key = data.external.env_part2.result.ssh_private_key
+  depends_on = [
+    data.external.env_part2
+  ]   
 }
 {%- endif %}
 
@@ -161,7 +183,7 @@ resource "null_resource" "after_build" {
   }
   depends_on = [
 {%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
-    module.terraform2_after_build_module
+    module.terraform_part2
 {%- else %}
     null_resource.build_deploy
 {%- endif %}

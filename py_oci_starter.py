@@ -670,6 +670,17 @@ def cp_terraform_existing( param_name, file1, file2=None, file3=None):
     if file3 is not None:
         append_file( output_dir + "/src/terraform/"+file_name, "option/terraform/"+file3 )
 
+def cp_terraform_part2(file1, file2=None, file3=None):
+    print("cp_terraform_part2 " + file1)
+    shutil.copy2("option/terraform_part2/"+file1, output_dir + "/src/terraform_part2")
+
+    # Append a second file
+    if file2 is not None:
+        append_file( output_dir + "/src/terraform_part2/"+file1, "option/terraform_part2/"+file2 )
+
+    # Append a third file
+    if file3 is not None:
+        append_file( output_dir + "/src/terraform_part2/"+file1, "option/terraform_part2/"+file3 )
 
 def output_copy_tree(src, target):
     copy_tree(src, output_dir + os.sep + target)
@@ -876,12 +887,13 @@ def create_output_dir():
 
         elif params.get('deploy_type') == "function":
             cp_terraform_existing("fnapp_ocid", "function.j2.tf")
+            cp_terraform_part2("function_part2.j2.tf")
             if 'fnapp_ocid' not in params:
                 cp_terraform("log_group.tf")
             if params['language'] == "ords":
                 apigw_append = "apigw_fn_ords_append.tf"
             else:
-                apigw_append = "apigw_fn_append.tf"
+                cp_terraform_part2("apigw_fn_part2.tf")
             cp_terraform_existing("apigw_ocid", "apigw.j2.tf", apigw_append)
 
         elif params.get('deploy_type') in [ 'public_compute', 'private_compute', 'instance_pool' ]:
