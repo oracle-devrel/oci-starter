@@ -690,7 +690,9 @@ def output_move(src, target):
     shutil.move(output_dir + os.sep + src, output_dir + os.sep + target)
 
 def output_mkdir(src):
-    os.mkdir(output_dir+ os.sep + src)
+    file_path = output_dir+ os.sep + src
+    if not os.path.exists(file_path):
+       os.mkdir(file_path)
 
 def output_remove(src):
     os.remove(output_dir + os.sep + src)
