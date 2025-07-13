@@ -672,6 +672,7 @@ def cp_terraform_existing( param_name, file1, file2=None, file3=None):
 
 def cp_terraform_part2(file1, file2=None, file3=None):
     print("cp_terraform_part2 " + file1)
+    output_mkdir("src/terraform_part2")
     shutil.copy2("option/terraform_part2/"+file1, output_dir + "/src/terraform_part2")
 
     # Append a second file
