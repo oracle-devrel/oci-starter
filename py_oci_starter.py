@@ -893,6 +893,7 @@ def create_output_dir():
             if params['language'] == "ords":
                 apigw_append = "apigw_fn_ords_append.tf"
             else:
+                apigw_append = None
                 cp_terraform_part2("apigw_fn_part2.tf")
             cp_terraform_existing("apigw_ocid", "apigw.j2.tf", apigw_append)
 
