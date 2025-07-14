@@ -1,12 +1,49 @@
+variable prefix {}
+variable fn_image {}
+variable fnapp_ocid{}
+
+resource "oci_functions_function" "starter_fn_function" {
+  #Required
+  application_id = var.fnapp_ocid
+  display_name   = "${var.prefix}-fn-function"
+  image          = var.fn_image
+  memory_in_mbs  = "2048"
+  config = {
+    {%- if language == "java" %} 
+    JDBC_URL      = var.fn_db_url,
+    {%- else %}     
+    DB_URL      = var.fn_db_url,
+    {%- endif %}     
+    DB_USER     = var.db_user,
+    DB_PASSWORD = var.db_password,
+    {%- if db_type == "nosql" %} 
+    TF_VAR_compartment_ocid = var.compartment_ocid,
+    TF_VAR_nosql_endpoint = var.nosql_endpoint,
+    {%- endif %}     
+  }
+  #Optional
+  timeout_in_seconds = "300"
+  trace_config {
+    is_enabled = true
+  }
+
+  freeform_tags = var.freeform_tags
+/*
+  # To start faster
+  provisioned_concurrency_config {
+    strategy = "CONSTANT"
+    count = 40
+  }
+*/    
+}
+
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
 {%- if tls is defined %}
-  count = (var.fn_image == null || var.certificate_ocid == null) ? 0 : 1
-{%- else %}   
-  count          = var.fn_image == null ? 0 : 1
+  count = (var.certificate_ocid == null) ? 0 : 1
 {%- endif %}   
-  compartment_id = local.lz_app_cmp_ocid
+  compartment_id = var.lz_app_cmp_ocid
   display_name   = "${var.prefix}-apigw-deployment"
-  gateway_id     = local.apigw_ocid
+  gateway_id     = var.apigw_ocid
   path_prefix    = "/${var.prefix}"
   specification {
     logging_policies {
@@ -40,7 +77,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
       methods = [ "ANY" ]
       backend {
         type = "HTTP_BACKEND"
-        url    = "${local.bucket_url}/index.html"
+        url    = "${var.bucket_url}/index.html"
         connect_timeout_in_seconds = 10
         read_timeout_in_seconds = 30
         send_timeout_in_seconds = 30
@@ -51,9 +88,9 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
       methods = [ "ANY" ]
       backend {
         type = "HTTP_BACKEND"
-        url    = "${local.bucket_url}/$${request.path[pathname]}"
+        url    = "${var.bucket_url}/$${request.path[pathname]}"
       }
     }
   }
-  freeform_tags = local.api_tags
+  freeform_tags = var.api_tags
 }

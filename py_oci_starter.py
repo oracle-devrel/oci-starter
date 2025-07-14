@@ -670,19 +670,6 @@ def cp_terraform_existing( param_name, file1, file2=None, file3=None):
     if file3 is not None:
         append_file( output_dir + "/src/terraform/"+file_name, "option/terraform/"+file3 )
 
-def cp_terraform_part2(file1, file2=None, file3=None):
-    print("cp_terraform_part2 " + file1)
-    output_mkdir("src/terraform_part2")
-    shutil.copy2("option/terraform_part2/"+file1, output_dir + "/src/terraform_part2")
-
-    # Append a second file
-    if file2 is not None:
-        append_file( output_dir + "/src/terraform_part2/"+file1, "option/terraform_part2/"+file2 )
-
-    # Append a third file
-    if file3 is not None:
-        append_file( output_dir + "/src/terraform_part2/"+file1, "option/terraform_part2/"+file3 )
-
 def output_copy_tree(src, target):
     copy_tree(src, output_dir + os.sep + target)
 
@@ -890,14 +877,13 @@ def create_output_dir():
 
         elif params.get('deploy_type') == "function":
             cp_terraform_existing("fnapp_ocid", "function.j2.tf")
-            cp_terraform_part2("function_part2.j2.tf")
+            cp_terraform("function_part2.j2.tf")
             if 'fnapp_ocid' not in params:
                 cp_terraform("log_group.tf")
             if params['language'] == "ords":
                 apigw_append = "apigw_fn_ords_append.tf"
             else:
                 apigw_append = None
-                cp_terraform_part2("apigw_fn_part2.j2.tf")
             cp_terraform_existing("apigw_ocid", "apigw.j2.tf", apigw_append)
 
         elif params.get('deploy_type') in [ 'public_compute', 'private_compute', 'instance_pool' ]:
@@ -905,7 +891,7 @@ def create_output_dir():
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
             if params.get('deploy_type') == 'instance_pool':
-                cp_terraform("instance_pool.j2.tf") 
+                cp_terraform("instance_pool_part2.j2.tf") 
             elif params.get('tls') == 'existing_dir':
                 if params.get('deploy_type') == 'public_compute':
                     output_copy_tree("option/tls/compute_existing_dir", "src/tls")
@@ -920,7 +906,7 @@ def create_output_dir():
                 cp_terraform_apigw("apigw_compute_append.tf")
 
         elif params.get('deploy_type') == "container_instance":
-            cp_terraform("container_instance.j2.tf")
+            cp_terraform("container_instance_part2.j2.tf")
             if 'group_common' not in params:
                 cp_terraform("container_instance_policy.tf")
 
@@ -931,7 +917,7 @@ def create_output_dir():
     if params.get('tls'):
         cp_terraform("tls.j2.tf")
         if params.get('deploy_type') == 'kubernetes' and params.get('tls') != 'new_http_01':
-            cp_terraform_apigw("apigw_kubernetes_tls_append.tf")   
+            cp_terraform_apigw("apigw_kubernetes_tls_part2.tf")   
 
     if os.path.exists(output_dir + "/src/app/openapi_spec_append.yaml"):
         append_file( output_dir + "/src/app/openapi_spec.yaml", output_dir + "/src/app/openapi_spec_append.yaml")
@@ -1121,6 +1107,8 @@ def jinja2_find_in_terraform( dir ):
     # and add os.path.isfile(full_path) check.
     outputs = []
     variables = []
+    resources = []
+    resources_part2 = []    
 
     for root, _, files in os.walk(dir):
         for filename in files:
@@ -1133,15 +1121,20 @@ def jinja2_find_in_terraform( dir ):
             with open(file_path, 'r', encoding='utf-8') as f:
                 for line in f: 
                     # Use regex for more precise matching and to capture the name
-                    match = re.match(r"^(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{", line)
+                    match = re.match(r"^(variable|output|resource)\s+\"?([a-zA-Z0-9_-\.]+)\"?\s*\{", line)
                     if match:
                         print('-  '+match.group(2), flush=True)                          
                         if match.group(1) == 'output':
                             outputs.append(match.group(2))
                         elif match.group(1) == 'variable':
                             variables.append(match.group(2))
+                        elif match.group(1) == 'resource':
+                            if file_path.index("_part2")>0:
+                                resources_part2.append(match.group(2))
+                            else:
+                                resources.append(match.group(2))
 
-    return outputs, variables
+    return outputs, variables, resources, resources_part2
 
 #----------------------------------------------------------------------------
 
@@ -1182,7 +1175,7 @@ def jinja2_replace_template():
      
     jinja2_replace_template_prefix( template_param, "j2" )
     
-    template_param['terraform_outputs'], template_param['terraform_variables'] = jinja2_find_in_terraform(output_dir +'/src/terraform')
+    template_param['terraform_outputs'], template_param['terraform_variables'], template_param['terraform_resources'], template_param['terraform_resources_part2'] = jinja2_find_in_terraform(output_dir +'/src/terraform')
     # for schema.yaml.j21
     template_param['env_params'] = env_param_list()
     template_param['env_params'].append('prefix')

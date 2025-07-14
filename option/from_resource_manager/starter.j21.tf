@@ -94,81 +94,6 @@ output "{{ key }}" {
 
 {%- endfor %}
 
-## BUILD
-# call ./starter.sh frm build_deploy
-resource "null_resource" "build_deploy" {
-  provisioner "local-exec" {
-    command = <<-EOT
-{%- for key in terraform_outputs %}
-        export output_{{key}}="${module.terraform_module.{{key}}}"
-{%- endfor %}
-        cat target/terraform.tfstate
-        export
-        ./starter.sh frm build_deploy
-        EOT
-  }
-  depends_on = [
-    module.terraform_module
-  ]
-
-  triggers = {
-    always_run = "${timestamp()}"
-  }    
-}
-
-{%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
-
-## TERRAFORM_PART2
-# In case like instance_pool, oke, function, container_instance, ...
-# A second terraform module need to be called to finish the installation. Ex:
-# - instance_pool: from the image of the compute of part1, build the instance pool with several compute and a LN
-# - container_instance, function: from docker container of build_deploy, build the real container_instance
-# Todo:
-# - oke: xxxx
-# - check all count= in *.tf
-# - is there a need for a part3 ?
-
-data "external" "env_part2" {
-  program = ["cat", "target/resource_manager_variables.json"]
-  depends_on = [
-    null_resource.build_deploy
-  ]
-}
-
-module "terraform_part2" {
-  source = "./src/terraform_part2" # Path to your local module directory
-
-{%- for key in terraform_variables %}
-{%- if key in env_params %}
-  {{key}} = var.{{key}}
-{%- elif key in ["lz_web_cmp_ocid", 
-                 "lz_app_cmp_ocid", 
-                 "lz_db_cmp_ocid",
-                 "lz_serv_cmp_ocid", 
-                 "lz_network_cmp_ocid", 
-                 "lz_security_cmp_ocid",
-                 "log_group_ocid",                 
-                 "instance_ocpus", 
-                 "instance_shape_config_memory_in_gbs",
-                 "java_version",
-                 "java_framework",
-                 "group_name",
-                 "idcs_domain_name",
-                 "idcs_url",
-                 "db_user",
-                 "db_password" ] %}
-  {{key}} = try( var.{{key}}, null )
-{%- else %}
-  {{key}} = try(data.external.env_part2.result.{{key}}, null)
-{%- endif %}
-{%- endfor %}
-
-  depends_on = [
-    data.external.env_part2
-  ]   
-}
-{%- endif %}
-
 ## AFTER_BUILD
 # Post terraform
 # - ./starter.sh frm after_build
@@ -182,11 +107,7 @@ resource "null_resource" "after_build" {
     command = "cat target/terraform.tfstate; export; ./starter.sh frm after_build"
   }
   depends_on = [
-{%- if deploy_type in ["instance_pool", "oke", "function", "container_instance"] %}
-    module.terraform_part2
-{%- else %}
-    null_resource.build_deploy
-{%- endif %}
+    module.terraform_module
   ]
 
   provisioner "local-exec" {
