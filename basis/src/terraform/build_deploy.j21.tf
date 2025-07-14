@@ -1,5 +1,4 @@
-## BUILD
-# call ./starter.sh frm build_deploy
+## BUILD_DEPLOY
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
@@ -17,8 +16,8 @@ resource "null_resource" "build_deploy" {
 }
 
 {%- if terraform_resources_part2|length>0 %}
-
-## TERRAFORM_PART2
+# PART2
+#
 # In case like instance_pool, oke, function, container_instance, ...
 # More terraform resources need to be created after build_deploy.
 data "external" "env_part2" {
