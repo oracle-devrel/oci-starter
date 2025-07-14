@@ -1123,16 +1123,21 @@ def jinja2_find_in_terraform( dir ):
                     # Use regex for more precise matching and to capture the name
                     match = re.match(r"^(variable|output|resource)\s+\"?([a-zA-Z0-9_ -]+)\"?\s*\{", line)
                     if match:
-                        print('-  '+match.group(2), flush=True)                          
+                        print('- '+match.group(2), flush=True)                          
                         if match.group(1) == 'output':
                             outputs.append(match.group(2))
                         elif match.group(1) == 'variable':
                             variables.append(match.group(2))
-                        elif match.group(1) == 'resource':
-                            if "_part2" in filename:
-                                resources_part2.append(match.group(2))
-                            else:
-                                resources.append(match.group(2))
+
+                    match = re.match(r"^resource\s+\"?([a-zA-Z0-9_-]+\"?\s*\"?[a-zA-Z0-9_-]+)\"?\s*\{", line)
+                    if match:
+                        name = match.group(1).replace('"', '')
+                        print('+ '+name, flush=True)                          
+                        if "_part2" in filename:
+                            resources_part2.append(name)
+                        else:
+                            resources.append(name)
+        
 
     return outputs, variables, resources, resources_part2
 
