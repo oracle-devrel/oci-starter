@@ -1121,7 +1121,7 @@ def jinja2_find_in_terraform( dir ):
             with open(file_path, 'r', encoding='utf-8') as f:
                 for line in f: 
                     # Use regex for more precise matching and to capture the name
-                    match = re.match(r"^(variable|output|resource)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{", line)
+                    match = re.match(r"^(variable|output|resource)\s+\"?([a-zA-Z0-9_-.]+)\"?\s*\{", line)
                     if match:
                         print('-  '+match.group(2), flush=True)                          
                         if match.group(1) == 'output':
