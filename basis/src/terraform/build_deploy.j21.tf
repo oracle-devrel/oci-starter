@@ -15,11 +15,13 @@ resource "null_resource" "build_deploy" {
   ]
 }
 
+
 {%- if terraform_resources_part2|length>0 %}
 # PART2
 #
 # In case like instance_pool, oke, function, container_instance, ...
 # More terraform resources need to be created after build_deploy.
+# Reread the env viables
 data "external" "env_part2" {
   program = ["cat", "target/resource_manager_variables.json"]
   depends_on = [
