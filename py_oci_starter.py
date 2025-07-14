@@ -1129,7 +1129,7 @@ def jinja2_find_in_terraform( dir ):
                         elif match.group(1) == 'variable':
                             variables.append(match.group(2))
                         elif match.group(1) == 'resource':
-                            if filename.index("_part2")>0:
+                            if "_part2" in filename:
                                 resources_part2.append(match.group(2))
                             else:
                                 resources.append(match.group(2))
