@@ -1131,8 +1131,8 @@ def jinja2_find_in_terraform( dir ):
 
                     match = re.match(r"^resource\s+\"?([a-zA-Z0-9_-]+\"?\s*\"?[a-zA-Z0-9_-]+)\"?\s*\{", line)
                     if match:
-                        name = match.group(1).replace('"', '')
-                        name = match.group(1).replace(' ', '.')
+                        name = match.group(1)
+                        name = name.replace('"', '').replace(' ', '.')
                         print('+ '+name, flush=True)                          
                         if "_part2" in filename:
                             resources_part2.append(name)
