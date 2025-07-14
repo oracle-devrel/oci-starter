@@ -12,6 +12,7 @@ resource "null_resource" "build_deploy" {
   depends_on = [
 {%- for key in terraform_resources %}
     "{{key}}",
+{%- endfor %}    
   ]
 }
 
@@ -19,7 +20,7 @@ resource "null_resource" "build_deploy" {
 
 ## TERRAFORM_PART2
 # In case like instance_pool, oke, function, container_instance, ...
-# A second terraform module need to be called to finish the installation.
+# More terraform resources need to be created after build_deploy.
 data "external" "env_part2" {
   program = ["cat", "target/resource_manager_variables.json"]
   depends_on = [
