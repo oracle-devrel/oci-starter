@@ -16,7 +16,7 @@ resource "null_resource" "build_deploy" {
   ]
 }
 
-{%- if terraform_resources_part2.length>0 %}
+{%- if terraform_resources_part2|length>0 %}
 
 ## TERRAFORM_PART2
 # In case like instance_pool, oke, function, container_instance, ...
