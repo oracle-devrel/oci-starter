@@ -1,21 +1,5 @@
 # starter.tf
 
-# HOME REGION
-locals {
-  region_map = {
-    for r in data.oci_identity_regions.regions.regions :
-    r.key => r.name
-  } 
-  # XXXXX ISSUE WITH CHILD REGION - BAD work-around - Works only from home region
-  home_region = try( lookup( local.region_map, data.oci_identity_tenancy.tenant_details.home_region_key ), var.region ) )
-}
-
-# Provider Home Region
-provider "oci" {
-  alias  = "home"
-  region = local.home_region
-}
-
 ## VARIABLES
 
 {%- for param in env_params %}
