@@ -30,19 +30,13 @@ data "external" "env_part2" {
 {%- endif %}
 
 ## AFTER_BUILD
-# Post terraform
-# - ./starter.sh frm after_build
-# - run done.sh
-# - run custom src/after_done.sh
-# Todo:
-# - Run always_run really needed ?
-# - How to taint a resource in resource manager  
+# Last action at the end of the build
 resource "null_resource" "after_build" {
   provisioner "local-exec" {
     command = "cat target/terraform.tfstate; export; ./starter.sh frm after_build"
   }
   depends_on = [
-    module.terraform_module
+    module.build_deploy
 {%- for key in terraform_resources_part2 %}
     {{key}},
 {%- endfor %}      
