@@ -36,7 +36,7 @@ resource "null_resource" "after_build" {
     command = "cat target/terraform.tfstate; export; ./starter.sh frm after_build"
   }
   depends_on = [
-    module.build_deploy
+    null_resource.build_deploy
 {%- for key in terraform_resources_part2 %}
     {{key}},
 {%- endfor %}      
