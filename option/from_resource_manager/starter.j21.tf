@@ -94,31 +94,4 @@ output "{{ key }}" {
 
 {%- endfor %}
 
-## AFTER_BUILD
-# Post terraform
-# - ./starter.sh frm after_build
-# - run done.sh
-# - run custom src/after_done.sh
-# Todo:
-# - Run always_run really needed ?
-# - How to taint a resource in resource manager  
-resource "null_resource" "after_build" {
-  provisioner "local-exec" {
-    command = "cat target/terraform.tfstate; export; ./starter.sh frm after_build"
-  }
-  depends_on = [
-    module.terraform_module
-  ]
-
-  provisioner "local-exec" {
-      when = destroy    
-      command = <<-EOT
-        ./starter.sh destroy --called_by_resource_manager
-        EOT
-  }
-
-  triggers = {
-    always_run = "${timestamp()}"
-  }    
-}
 
