@@ -1,12 +1,13 @@
-variable prefix {}
-variable fn_image {}
-variable fnapp_ocid{}
+locals {
+  fn_image=data.external.env_part2.fn_image
+}
 
 resource "oci_functions_function" "starter_fn_function" {
   #Required
-  application_id = var.fnapp_ocid
+  count          = local.fn_image == null ? 0 : 1
+  application_id = local.fnapp_ocid
   display_name   = "${var.prefix}-fn-function"
-  image          = var.fn_image
+  image          = local.fn_image
   memory_in_mbs  = "2048"
   config = {
     {%- if language == "java" %} 
@@ -27,7 +28,7 @@ resource "oci_functions_function" "starter_fn_function" {
     is_enabled = true
   }
 
-  freeform_tags = var.freeform_tags
+  freeform_tags = local.freeform_tags
 /*
   # To start faster
   provisioned_concurrency_config {
@@ -39,11 +40,13 @@ resource "oci_functions_function" "starter_fn_function" {
 
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
 {%- if tls is defined %}
-  count = (var.certificate_ocid == null) ? 0 : 1
+  count = (local.fn_image == null || var.certificate_ocid == null) ? 0 : 1
+{%- else %}   
+  count          = local.fn_image == null ? 0 : 1
 {%- endif %}   
-  compartment_id = var.lz_app_cmp_ocid
+  compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-apigw-deployment"
-  gateway_id     = var.apigw_ocid
+  gateway_id     = local.apigw_ocid
   path_prefix    = "/${var.prefix}"
   specification {
     logging_policies {
@@ -77,7 +80,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
       methods = [ "ANY" ]
       backend {
         type = "HTTP_BACKEND"
-        url    = "${var.bucket_url}/index.html"
+        url    = "${local.bucket_url}/index.html"
         connect_timeout_in_seconds = 10
         read_timeout_in_seconds = 30
         send_timeout_in_seconds = 30
@@ -88,9 +91,9 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
       methods = [ "ANY" ]
       backend {
         type = "HTTP_BACKEND"
-        url    = "${var.bucket_url}/$${request.path[pathname]}"
+        url    = "${local.bucket_url}/$${request.path[pathname]}"
       }
     }
   }
-  freeform_tags = var.api_tags
+  freeform_tags = local.api_tags
 }
