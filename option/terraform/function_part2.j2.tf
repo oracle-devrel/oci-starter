@@ -4,7 +4,6 @@ locals {
 
 resource "oci_functions_function" "starter_fn_function" {
   #Required
-  count          = local.fn_image == null ? 0 : 1
   application_id = local.fnapp_ocid
   display_name   = "${var.prefix}-fn-function"
   image          = local.fn_image
@@ -36,13 +35,12 @@ resource "oci_functions_function" "starter_fn_function" {
     count = 40
   }
 */    
+   depends_on = [ "local.fn_image" ]
 }
 
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
 {%- if tls is defined %}
   count = (local.fn_image == null || var.certificate_ocid == null) ? 0 : 1
-{%- else %}   
-  count          = local.fn_image == null ? 0 : 1
 {%- endif %}   
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-apigw-deployment"
@@ -96,4 +94,6 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
     }
   }
   freeform_tags = local.api_tags
+
+  depends_on = [ "local.fn_image" ]
 }
