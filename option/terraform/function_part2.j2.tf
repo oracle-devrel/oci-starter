@@ -1,5 +1,5 @@
 locals {
-  fn_image=data.external.env_part2.fn_image
+  fn_image=data.external.env_part2.result.fn_image
 }
 
 resource "oci_functions_function" "starter_fn_function" {
