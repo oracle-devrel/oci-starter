@@ -42,7 +42,7 @@ unset MISMATCH_PLATFORM
 if [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
     # Resource Manager run on ARM processor. So, docker is in ARM mode too...
-    TF_VAR_instance_shape = "VM.Standard.A1.Flex"
+    export TF_VAR_instance_shape="VM.Standard.A1.Flex"
   fi
 elif [ "$TF_VAR_instance_shape" == "VM.Standard.A1.Flex" ]; then
   if [ `arch` != "aarch64" ]; then
