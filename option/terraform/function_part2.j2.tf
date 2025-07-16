@@ -35,7 +35,7 @@ resource "oci_functions_function" "starter_fn_function" {
     count = 40
   }
 */    
-   depends_on = [ "local.fn_image" ]
+   depends_on = [ local.fn_image ]
 }
 
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
@@ -95,5 +95,5 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
   }
   freeform_tags = local.api_tags
 
-  depends_on = [ "local.fn_image" ]
+  depends_on = [ local.fn_image ]
 }
