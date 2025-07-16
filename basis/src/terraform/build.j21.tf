@@ -1,5 +1,5 @@
 ## BUILD_DEPLOY
-data "external" "env" {
+data "external" "env_part2" {
   program = ["bash", "-c", "./starter.sh frm build_deploy 1>&2; cat target/resource_manager_variables.json"]
   depends_on = [
 {%- for key in terraform_resources %}
@@ -14,9 +14,11 @@ resource "null_resource" "log_frm_build_deploy" {
         cat target/frm_build_deploy.log
         EOT
   }
-  depends_on = [
-    data.external.env
-  ]   
+  depends_on = [ data.external.env_part2 ]   
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }    
 }
 
 ## AFTER_BUILD
