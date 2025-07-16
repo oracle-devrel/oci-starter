@@ -107,7 +107,7 @@ resource_manager_json () {
 }
 
 # Used in both infra_as_code = resource_manager and from_resource_manager
-resource_manager_create_or_update() {
+resource_manager_create_or_update() {   
   rs_echo "Create Stack"
   if [ -f $TARGET_DIR/resource_manager_stackid ]; then
      echo "Stack exists already ( file target/resource_manager_stackid found )"
@@ -161,8 +161,13 @@ resource_manager_plan() {
 }
 
 resource_manager_apply() {
-  resource_manager_get_stack 
+  if [ "$CALLED_FROM_RESOURCE_MANAGER" = "TRUE" ]; then 
+     resource_manager_json
+     return
+  fi
 
+  resource_manager_get_stack 
+  
   rs_echo "Create Apply Job"
   # Max 2000 secs wait time (1200 secs is sometimes too short for OKE+DB)
   CREATED_APPLY_JOB_ID=$(oci resource-manager job create-apply-job --stack-id $STACK_ID --execution-plan-strategy=AUTO_APPROVED --wait-for-state SUCCEEDED --wait-for-state FAILED --wait-for-state CANCELED --max-wait-seconds 3000 --query 'data.id' --raw-output)

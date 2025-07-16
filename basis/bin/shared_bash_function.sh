@@ -270,6 +270,7 @@ get_user_details() {
       fi
     else 
       echo "From Resource Manager detected"
+      export CALLED_FROM_RESOURCE_MANAGER="TRUE"
       export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
       echo "$TF_VAR_ssh_public_key" > ${TF_VAR_ssh_private_path}.pub
       echo "$TF_VAR_ssh_private_key" > $TF_VAR_ssh_private_path
