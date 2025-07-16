@@ -16,9 +16,7 @@ resource "oci_functions_application" "starter_fn_application" {
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-fn-application"
   subnet_ids     = [data.oci_core_subnet.starter_app_subnet.id]
-  {%- if shape == "ampere" %}
-  shape          = "GENERIC_ARM"   
-  {%- endif %}
+  shape          = regex(var.instance_shape,"VM\.Standard\.A.\.Flex") ? "GENERIC_ARM" : "GENERIC_X86"
 
   image_policy_config {
     #Required
