@@ -3,8 +3,8 @@ resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
         pwd
-        cat target/terraform.tfstate
-        export
+        # cat target/terraform.tfstate
+        # export
         ./starter.sh frm build_deploy
         cat target/resource_manager_variables.json
         EOT
