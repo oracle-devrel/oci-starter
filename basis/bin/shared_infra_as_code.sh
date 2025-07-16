@@ -161,7 +161,7 @@ resource_manager_plan() {
 }
 
 resource_manager_apply() {
-  if [ "$CALLED_FROM_RESOURCE_MANAGER" = "TRUE" ]; then 
+  if [ "$CALLED_FROM_RESOURCE_MANAGER" != "" ]; then 
      resource_manager_json
      return
   fi
