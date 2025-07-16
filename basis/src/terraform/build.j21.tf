@@ -6,7 +6,7 @@ resource "null_resource" "build_deploy" {
         cat target/terraform.tfstate
         export
         ./starter.sh frm build_deploy
-        cat", "target/resource_manager_variables.json
+        cat target/resource_manager_variables.json
         EOT
   }
   depends_on = [
