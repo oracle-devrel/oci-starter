@@ -67,8 +67,6 @@ build_deploy() {
 
   # Deploy
   title "Deploy $TF_VAR_deploy_type"
-  echo "BUILD_ALL2 XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"  
-
   if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then
     $BIN_DIR/deploy_compute.sh
     exit_on_error
@@ -82,7 +80,6 @@ build_deploy() {
     $BIN_DIR/ci_deploy.sh
     exit_on_error
   fi
-  echo "BUILD_ALL3 XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"  
 }
 
 terraform2() {
@@ -114,7 +111,6 @@ title "OCI Starter - Build"
 if [ "$1" == "--before_terraform" ]; then
   before_terraform
 elif [ "$1" == "--build_deploy" ]; then
-  echo "BUILD_ALL1 XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"  
   build_deploy
 elif [ "$1" == "--after_build" ]; then
   after_build
@@ -132,6 +128,4 @@ else
   title "Done"
   $BIN_DIR/done.sh
 fi
-echo "BUILD_ALL4 XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"  
-
 

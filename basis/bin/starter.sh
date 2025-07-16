@@ -157,6 +157,7 @@ elif [ "$ARG1" == "frm" ]; then # From Resource Manager
     exit_on_error
   fi    
   . shared_infra_as_code.sh
+  . ./starter.sh env
   resource_manager_json
 
 elif [ "$ARG1" == "start" ]; then
