@@ -29,7 +29,7 @@ resource "null_resource" "after_build" {
 {%- for key in terraform_resources_part2 %}
     {{key}},
 {%- endfor %}   
-    null_resource.build_deploy   
+    null_resource.log_frm_build_deploy   
   ]
 
   provisioner "local-exec" {
