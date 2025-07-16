@@ -53,7 +53,10 @@ infra_as_code_precheck() {
 
 infra_as_code_apply() {
   cd $PROJECT_DIR/src/terraform  
-  if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
+  if [ "$CALLED_FROM_RESOURCE_MANAGER" != "" ]; then 
+    # Called from resource manager
+    resource_manager_json 
+  elif [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
     resource_manager_create_or_update
     resource_manager_apply
     exit_on_error
@@ -161,11 +164,6 @@ resource_manager_plan() {
 }
 
 resource_manager_apply() {
-  if [ "$CALLED_FROM_RESOURCE_MANAGER" != "" ]; then 
-     resource_manager_json
-     return
-  fi
-
   resource_manager_get_stack 
   
   rs_echo "Create Apply Job"
