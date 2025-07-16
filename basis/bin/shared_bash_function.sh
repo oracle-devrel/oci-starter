@@ -81,6 +81,7 @@ build_function() {
   # Run env.sh to get function image 
   cd $PROJECT_DIR
   . starter.sh env 
+  echo "XXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"
   $BIN_DIR/terraform_apply.sh --auto-approve
 }
 

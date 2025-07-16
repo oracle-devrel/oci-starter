@@ -98,7 +98,7 @@ rs_echo() {
 }
 
 resource_manager_json () {
-  rs_echo "Create VAR_FILE_PATH"  
+  rs_echo "Create $VAR_FILE_PATH"  
   # Transforms the variables in a JSON format
   # This is a complex way to get them. But it works for multi line variables like TF_VAR_private_key
   excluded=$(env | sed -n 's/^\([A-Z_a-z][0-9A-Z_a-z]*\)=.*/\1/p' | grep -v 'TF_VAR_')
