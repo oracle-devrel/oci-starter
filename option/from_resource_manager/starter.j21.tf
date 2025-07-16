@@ -80,6 +80,10 @@ module "terraform_module" {
 {%- endif %}
 {%- endfor %}
 
+  providers = {
+    oci.home = oci.home
+  }
+
   depends_on = [
     null_resource.log_frm_before_terraform
   ]   
