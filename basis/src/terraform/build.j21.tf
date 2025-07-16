@@ -7,8 +7,6 @@ resource "null_resource" "build_deploy" {
         export
         ./starter.sh frm build_deploy
         cat target/resource_manager_variables.json
-        echo "target/fn_image.txt"
-        cat target/fn_image.txt
         EOT
   }
   depends_on = [
