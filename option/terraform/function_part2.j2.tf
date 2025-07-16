@@ -61,7 +61,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
       methods = [ "ANY" ]
       backend {
         type = "ORACLE_FUNCTIONS_BACKEND"
-        function_id   = oci_functions_function.starter_fn_function[0].id
+        function_id   = oci_functions_function.starter_fn_function.id
       }
     }    
     routes {
