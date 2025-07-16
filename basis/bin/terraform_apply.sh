@@ -5,8 +5,6 @@ if [ "$PROJECT_DIR" == "" ]; then
 fi  
 cd $PROJECT_DIR
 
-echo "XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"
-
 . starter.sh env -silent
 . $BIN_DIR/shared_infra_as_code.sh
 cd $PROJECT_DIR/src/terraform
@@ -22,8 +20,6 @@ else
   fi
   export TERRAFORM_FLAG="--auto-approve"
 fi
-
-echo "XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"
 
 infra_as_code_apply $TERRAFORM_FLAG $@
 exit_on_error

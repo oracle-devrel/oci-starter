@@ -99,6 +99,9 @@ rs_echo() {
 
 resource_manager_json () {
   rs_echo "Create $VAR_FILE_PATH"  
+  echo "XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"  
+  export
+
   # Transforms the variables in a JSON format
   # This is a complex way to get them. But it works for multi line variables like TF_VAR_private_key
   excluded=$(env | sed -n 's/^\([A-Z_a-z][0-9A-Z_a-z]*\)=.*/\1/p' | grep -v 'TF_VAR_')
@@ -107,7 +110,11 @@ resource_manager_json () {
   sh -c 'unset $1; export -p' sh "$excluded" > $TARGET_DIR/tf_var.sh 2>/dev/null
 
   echo -n "{" > $VAR_FILE_PATH
-  cat $TARGET_DIR/tf_var.sh | sed "s/export TF_VAR_/\"/g" | sed "s/=\"/\": \"/g" | sed ':a;N;$!ba;s/\"\n/\", /g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/$/}/'>> $VAR_FILE_PATH    
+  cat $TARGET_DIR/tf_var.sh | sed "s/export TF_VAR_/\"/g" | sed "s/=\"/\": \"/g" | sed ':a;N;$!ba;s/\"\n/\", /g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/$/}/'>> $VAR_FILE_PATH  
+
+  echo "XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"  
+  export
+  cat $VAR_FILE_PATH | jq .
 }
 
 # Used in both infra_as_code = resource_manager and from_resource_manager
