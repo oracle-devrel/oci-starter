@@ -146,7 +146,7 @@ exit_on_error() {
     echo "Success"
   else
     title "EXIT ON ERROR - HISTORY"
-    history 2
+    history 2 | cut -c1-256
     error_exit "Command Failed (RESULT=$RESULT)"
   fi  
 }
