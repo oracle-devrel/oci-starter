@@ -52,6 +52,8 @@ infra_as_code_precheck() {
 }
 
 infra_as_code_apply() {
+  echo "infra_as_code_apply XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"  
+
   cd $PROJECT_DIR/src/terraform  
   if [ "$CALLED_FROM_RESOURCE_MANAGER" != "" ]; then 
     # Called from resource manager
@@ -99,8 +101,7 @@ rs_echo() {
 
 resource_manager_json () {
   rs_echo "Create $VAR_FILE_PATH"  
-  echo "XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"  
-  export
+  echo "resource_manager_json XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"  
 
   # Transforms the variables in a JSON format
   # This is a complex way to get them. But it works for multi line variables like TF_VAR_private_key
@@ -111,10 +112,6 @@ resource_manager_json () {
 
   echo -n "{" > $VAR_FILE_PATH
   cat $TARGET_DIR/tf_var.sh | sed "s/export TF_VAR_/\"/g" | sed "s/=\"/\": \"/g" | sed ':a;N;$!ba;s/\"\n/\", /g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/$/}/'>> $VAR_FILE_PATH  
-
-  echo "XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"  
-  export
-  cat $VAR_FILE_PATH | jq .
 }
 
 # Used in both infra_as_code = resource_manager and from_resource_manager

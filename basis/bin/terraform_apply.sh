@@ -21,5 +21,7 @@ else
   export TERRAFORM_FLAG="--auto-approve"
 fi
 
+ echo "terraform_apply XXXXXXXXX TF_VAR_fn_image=$TF_VAR_fn_image"  
+
 infra_as_code_apply $TERRAFORM_FLAG $@
 exit_on_error
