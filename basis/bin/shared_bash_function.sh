@@ -77,11 +77,13 @@ build_function() {
      exit 1
   fi 
 
-  # First create the Function using terraform
-  # Run env.sh to get function image 
-  cd $PROJECT_DIR
-  . starter.sh env 
-  $BIN_DIR/terraform_apply.sh --auto-approve
+  if [ "$CALLED_FROM_RESOURCE_MANAGER" == "" ]; then
+    # First create the Function using terraform
+    # Run env.sh to get function image 
+    cd $PROJECT_DIR
+    . starter.sh env 
+    $BIN_DIR/terraform_apply.sh --auto-approve
+  fi
 }
 
 # Create KUBECONFIG file
