@@ -51,13 +51,6 @@ resource "null_resource" "after_build" {
     null_resource.build_deploy
   ]
 
-  provisioner "local-exec" {
-      when = destroy    
-      command = <<-EOT
-        ./starter.sh destroy --called_by_resource_manager
-        EOT
-  }
-
   triggers = {
     always_run = "${timestamp()}"
   }    
@@ -66,7 +59,7 @@ resource "null_resource" "after_build" {
 # BEFORE_DESTROY
 resource "null_resource" "before_destroy" {
   provisioner "local-exec" {
-      when = destroy    
+      when = destroy
       command = <<-EOT
         ./starter.sh destroy --called_by_resource_manager
         EOT
