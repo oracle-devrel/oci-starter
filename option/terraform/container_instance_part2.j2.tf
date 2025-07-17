@@ -1,17 +1,21 @@
-variable docker_image_ui { default=null }
-variable docker_image_app { default=null }
+locals {
+  docker_image_ui=data.external.env_part2.result.docker_image_ui
+  docker_image_app=data.external.env_part2.result.docker_image_app
+}
 
 {%- if db_type == "nosql" %} 
 variable nosql_endpoint {}
 {%- endif %} 
 
 resource oci_container_instances_container_instance starter_container_instance {
+  depends_on = [ local.docker_image_ui ]
+
   availability_domain = data.oci_identity_availability_domain.ad.name
   compartment_id      = local.lz_app_cmp_ocid  
   container_restart_policy = "ALWAYS"
   containers {
     display_name = "app"
-    image_url = var.docker_image_app
+    image_url = local.docker_image_app
     is_resource_principal_disabled = "false"
     environment_variables = {
       {%- if db_type != "none" %} 
@@ -29,7 +33,7 @@ resource oci_container_instances_container_instance starter_container_instance {
   }
   containers {
     display_name = "ui"
-    image_url = var.docker_image_ui
+    image_url = local.docker_image_ui
     is_resource_principal_disabled = "false"
   }  
   display_name = "${var.prefix}-ci"
@@ -47,8 +51,6 @@ resource oci_container_instances_container_instance starter_container_instance {
     subnet_id              = data.oci_core_subnet.starter_app_subnet.id
   }
   freeform_tags = local.freeform_tags    
-
-   depends_on = [ var.docker_image_ui ]
 }
 
 locals {
