@@ -1,14 +1,3 @@
-terraform {
-  required_providers {
-    oci = {
-      source = "hashicorp/oci"
-      configuration_aliases = [
-        oci.home
-      ]
-    }
-  }
-}
-
 variable tenancy_ocid {}
 variable region {}
 variable compartment_ocid {}
