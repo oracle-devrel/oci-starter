@@ -6,7 +6,7 @@ resource "null_resource" "build_deploy" {
         # cat target/terraform.tfstate
         # export
         ./starter.sh frm build_deploy
-        cat target/resource_manager_variables.json
+        # cat target/resource_manager_variables.json
         EOT
   }
   depends_on = [
@@ -38,7 +38,11 @@ data "external" "env_part2" {
 # Last action at the end of the build
 resource "null_resource" "after_build" {
   provisioner "local-exec" {
-    command = "cat target/terraform.tfstate; export; ./starter.sh frm after_build"
+    command = <<-EOT
+        # cat target/terraform.tfstate
+        # export
+        ./starter.sh frm after_build"
+        EOT
   }
   depends_on = [
 {%- for key in terraform_resources_part2 %}
