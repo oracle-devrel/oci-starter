@@ -912,7 +912,7 @@ def create_output_dir():
 
             # output_mkdir src/container_instance
             output_copy_tree("option/container_instance", "bin")
-            cp_terraform_apigw("apigw_ci_append.tf")          
+            cp_terraform_apigw(None)          
 
     if params.get('tls'):
         cp_terraform("tls.j2.tf")
