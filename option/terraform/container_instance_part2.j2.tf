@@ -47,10 +47,12 @@ resource oci_container_instances_container_instance starter_container_instance {
     subnet_id              = data.oci_core_subnet.starter_app_subnet.id
   }
   freeform_tags = local.freeform_tags    
+
+   depends_on = [ var.docker_image_ui ]
 }
 
 locals {
-  apigw_dest_private_ip = try(oci_container_instances_container_instance.starter_container_instance[0].vnics[0].private_ip, "")
+  apigw_dest_private_ip = try(oci_container_instances_container_instance.starter_container_instance.vnics[0].private_ip, "")
 }
 
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
