@@ -14,9 +14,7 @@ locals {
   oke_shape = startswith(var.instance_shape, "VM.Standard.A") ? "VM.Standard.A1.Flex" : "VM.Standard3.Flex"
 }
 
-variable "node_pool_size" {
-  default = 1
-}
+variable "node_pool_size" {}
 
 variable "cluster_options_persistent_volume_config_defined_tags_value" {
   default = "value"
@@ -436,7 +434,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
       #optional
       fault_domains = ["FAULT-DOMAIN-1", "FAULT-DOMAIN-3"]
     }
-    size = var.node_pool_size
+    size = var.node_pool_size==null ? 1 : var.node_pool_size 
 
     # node_pool_pod_network_option_details {
     #   cni_type = "OCI_VCN_IP_NATIVE"

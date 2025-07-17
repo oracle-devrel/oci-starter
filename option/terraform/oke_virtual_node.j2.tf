@@ -14,9 +14,7 @@ locals {
   oke_shape = startswith(var.instance_shape, "VM.Standard.A") ? "Pod.Standard.A1.Flex" : "Pod.Standard.E4.Flex"
 }
 
-variable "node_pool_size" {
-  default = 1
-}
+variable "node_pool_size" {}
 
 variable "cluster_options_persistent_volume_config_defined_tags_value" {
   default = "value"
@@ -426,7 +424,7 @@ resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
 		shape = local.oke_shape
 		subnet_id = "${oci_core_subnet.starter_nodepool_subnet.id}"
 	}
-	size = var.node_pool_size
+	size = var.node_pool_size==null ? 1 : var.node_pool_size 
 }
 
 #----------------------------------------------------------------------------
