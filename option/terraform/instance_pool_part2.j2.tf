@@ -104,7 +104,7 @@ data "oci_core_instance_pool_instances" "starter_instance_pool_instances_datasou
 
 # Usage of singular instance datasources to show the public_ips, private_ips, and hostname_labels for the instances in the pool
 data "oci_core_instance" "starter_instance_pool_instance_singular_datasource" {
-  count       = var.compute_ready == null ? 0 : 2
+  count = 2
   instance_id = data.oci_core_instance_pool_instances.starter_instance_pool_instances_datasource.instances[count.index]["id"]
 }
 
