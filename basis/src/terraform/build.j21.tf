@@ -62,3 +62,20 @@ resource "null_resource" "after_build" {
     always_run = "${timestamp()}"
   }    
 }
+
+# BEFORE_DESTROY
+resource "null_resource" "before_destroy" {
+  provisioner "local-exec" {
+      when = destroy    
+      command = <<-EOT
+        ./starter.sh destroy --called_by_resource_manager
+        EOT
+  }
+
+  depends_on = [
+{%- for key in terraform_resources_part2 %}
+    {{key}},
+{%- endfor %}      
+    null_resource.build_deploy
+  ]
+}
