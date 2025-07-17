@@ -41,7 +41,7 @@ resource "null_resource" "after_build" {
     command = <<-EOT
         # cat target/terraform.tfstate
         # export
-        ./starter.sh frm after_build"
+        ./starter.sh frm after_build
         EOT
   }
   depends_on = [
