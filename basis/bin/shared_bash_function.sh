@@ -271,7 +271,7 @@ get_user_details() {
         export TF_VAR_username=$OCI_CS_USER_OCID
       fi
     else 
-      echo "From Resource Manager detected"
+      echo "Called From Resource Manager"
       export CALLED_FROM_RESOURCE_MANAGER="TRUE"
       export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
       echo "$TF_VAR_ssh_public_key" > ${TF_VAR_ssh_private_path}.pub

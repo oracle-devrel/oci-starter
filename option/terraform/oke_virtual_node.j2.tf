@@ -10,12 +10,8 @@ locals {
 #----------------------------------------------------------------------------
 # VARIABLES
 
-variable "oke_shape" {
-  {%- if shape == "ampere" %}
-  default = "Pod.Standard.A1.Flex"
-  {%- else %}
-  default = "Pod.Standard.E4.Flex"
-  {%- endif %}
+locals {
+  oke_shape = startswith(var.instance_shape, "VM.Standard.A") ? "Pod.Standard.A1.Flex" : "Pod.Standard.E4.Flex"
 }
 
 variable "node_pool_size" {
@@ -63,7 +59,7 @@ data "oci_identity_availability_domain" "ad2" {
 data "oci_core_images" "shape_specific_images" {
   #Required
   compartment_id = var.tenancy_ocid
-  shape     = var.oke_shape
+  shape     = local.oke_shape
 }
 
 locals {
@@ -427,7 +423,7 @@ resource "oci_containerengine_virtual_node_pool" "starter_virtual_node_pool" {
         fault_domain=["FAULT-DOMAIN-1"]
 	}
 	pod_configuration {
-		shape = var.oke_shape
+		shape = local.oke_shape
 		subnet_id = "${oci_core_subnet.starter_nodepool_subnet.id}"
 	}
 	size = var.node_pool_size
@@ -456,21 +452,21 @@ resource "oci_identity_policy" "starter_oke_policy" {
 
 /*
 # Database Operator
-resource oci_containerengine_addon starter_oke_addon_dboperator {
+# resource oci_containerengine_addon starter_oke_addon_dboperator {
   addon_name                       = "OracleDatabaseOperator"
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
   remove_addon_resources_on_delete = "true"
 }
 
 # WebLogic Operator
-resource oci_containerengine_addon starter_oke_addon_wlsoperator {
+# resource oci_containerengine_addon starter_oke_addon_wlsoperator {
   addon_name                       = "WeblogicKubernetesOperator"
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
   remove_addon_resources_on_delete = "true"
 }
 
 # CertManager
-resource oci_containerengine_addon starter_oke_addon_certmanager {
+# resource oci_containerengine_addon starter_oke_addon_certmanager {
   addon_name                       = "CertManager"
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
   remove_addon_resources_on_delete = "true"
@@ -481,7 +477,7 @@ resource oci_containerengine_addon starter_oke_addon_certmanager {
 # OUTPUTS
 
 /*
-output "node_pool" {
+# output "node_pool" {
   value = {
     id                 = oci_containerengine_node_pool.starter_virtual_node_pool.id
     kubernetes_version = oci_containerengine_node_pool.starter_virtual_node_pool.kubernetes_version

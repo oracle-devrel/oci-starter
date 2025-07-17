@@ -10,13 +10,8 @@ locals {
 #----------------------------------------------------------------------------
 # VARIABLES
 
-variable "oke_shape" {
-  {%- if shape == "ampere" %}
-  default = "VM.Standard.A1.Flex"
-  {%- else %}
-  # default = "VM.Standard.AMD.Generic"
-  default = "VM.Standard3.Flex"
-  {%- endif %}
+locals {
+  oke_shape = startswith(var.instance_shape, "VM.Standard.A") ? "VM.Standard.A1.Flex" : "VM.Standard3.Flex"
 }
 
 variable "node_pool_size" {
@@ -60,7 +55,7 @@ data "oci_identity_availability_domain" "ad2" {
 data "oci_core_images" "shape_specific_images" {
   #Required
   compartment_id = var.tenancy_ocid
-  shape     = var.oke_shape
+  shape     = local.oke_shape
 }
 
 locals {
@@ -420,7 +415,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
   compartment_id     = local.lz_app_cmp_ocid
   kubernetes_version = data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions[length(data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions)-1]
   name               = "${var.prefix}-pool"
-  node_shape         = var.oke_shape
+  node_shape         = local.oke_shape
   node_shape_config {
     memory_in_gbs = "32"
     ocpus = "1"
