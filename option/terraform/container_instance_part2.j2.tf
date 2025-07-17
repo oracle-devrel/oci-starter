@@ -34,11 +34,7 @@ resource oci_container_instances_container_instance starter_container_instance {
   }  
   display_name = "${var.prefix}-ci"
   graceful_shutdown_timeout_in_seconds = "0"
-  {%- if shape == "ampere" %}
-  shape                                = "CI.Standard.A1.Flex"
-  {%- else %}
-  shape                                = "CI.Standard.E4.Flex"
-  {%- endif %}  
+  shape = startswith(var.instance_shape, "VM.Standard.A") ? "CI.Standard.A1.Flex" : "CI.Standard.E4.Flex"  
   shape_config {
     memory_in_gbs = "4"
     ocpus         = "1"
