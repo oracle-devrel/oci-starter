@@ -20,58 +20,64 @@ if [ ! -f $KUBECONFIG ]; then
  
   # Deploy Latest ingress-nginx
   kubectl create clusterrolebinding starter_clst_adm --clusterrole=cluster-admin --user=$TF_VAR_current_user_ocid
-  # LATEST_INGRESS_CONTROLLER=`curl --silent "https://api.github.com/repos/kubernetes/ingress-nginx/releases/latest" | jq -r .name`
-  # echo LATEST_INGRESS_CONTROLLER=$LATEST_INGRESS_CONTROLLER
-  # kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$LATEST_INGRESS_CONTROLLER/deploy/static/provider/cloud/deploy.yaml
-  if [ "$TF_VAR_tls" == "new_http_01" ]; then
-    helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
-    --namespace ingress-nginx \
-    --create-namespace \
-    --set controller.enableExternalDNS=true 
-    wait_ingress
+  if [ $? -eq 0 ]; then
+    echo "OKE Deploy: Role Binding created"  
+    # LATEST_INGRESS_CONTROLLER=`curl --silent "https://api.github.com/repos/kubernetes/ingress-nginx/releases/latest" | jq -r .name`
+    # echo LATEST_INGRESS_CONTROLLER=$LATEST_INGRESS_CONTROLLER
+    # kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$LATEST_INGRESS_CONTROLLER/deploy/static/provider/cloud/deploy.yaml
+    if [ "$TF_VAR_tls" == "new_http_01" ]; then
+      helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
+      --namespace ingress-nginx \
+      --create-namespace \
+      --set controller.enableExternalDNS=true 
+      wait_ingress
 
-    # ccm-letsencrypt-prod.yaml
-    sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-prod.yaml > $TARGET_DIR/ccm-letsencrypt-prod.yaml
-    kubectl apply -f $TARGET_DIR/ccm-letsencrypt-prod.yaml --timeout=600s
-    sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-staging.yaml > $TARGET_DIR/ccm-letsencrypt-staging.yaml
-    kubectl apply -f $TARGET_DIR/ccm-letsencrypt-staging.yaml
+      # ccm-letsencrypt-prod.yaml
+      sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-prod.yaml > $TARGET_DIR/ccm-letsencrypt-prod.yaml
+      kubectl apply -f $TARGET_DIR/ccm-letsencrypt-prod.yaml --timeout=600s
+      sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-staging.yaml > $TARGET_DIR/ccm-letsencrypt-staging.yaml
+      kubectl apply -f $TARGET_DIR/ccm-letsencrypt-staging.yaml
 
-    # external-dns-config.yaml
-    sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns-config.yaml > $TARGET_DIR/external-dns-config.tmp
-    sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns-config.tmp > $TARGET_DIR/external-dns-config.yaml
-    kubectl create secret generic external-dns-config --from-file=$TARGET_DIR/external-dns-config.yaml
+      # external-dns-config.yaml
+      sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns-config.yaml > $TARGET_DIR/external-dns-config.tmp
+      sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns-config.tmp > $TARGET_DIR/external-dns-config.yaml
+      kubectl create secret generic external-dns-config --from-file=$TARGET_DIR/external-dns-config.yaml
 
-    # external-dns.yaml
-    sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns.yaml > $TARGET_DIR/external-dns.tmp
-    sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns.tmp > $TARGET_DIR/external-dns.yaml
-    kubectl apply -f $TARGET_DIR/external-dns.yaml
-  else
-    helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
-    --namespace ingress-nginx \
-    --create-namespace 
-    wait_ingress
-  fi
-  
-  # Wait for the ingress external IP
-  TF_VAR_ingress_ip=""
-  while [ -z $TF_VAR_ingress_ip ]; do
-    echo "Waiting for Ingress IP..."
-    TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
-    if [ -z "$TF_VAR_ingress_ip" ]; then
-      sleep 10
+      # external-dns.yaml
+      sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns.yaml > $TARGET_DIR/external-dns.tmp
+      sed "s&##REGION##&${TF_VAR_region}&" $TARGET_DIR/external-dns.tmp > $TARGET_DIR/external-dns.yaml
+      kubectl apply -f $TARGET_DIR/external-dns.yaml
+    else
+      helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
+      --namespace ingress-nginx \
+      --create-namespace 
+      wait_ingress
     fi
-  done
+    
+    # Wait for the ingress external IP
+    TF_VAR_ingress_ip=""
+    while [ -z $TF_VAR_ingress_ip ]; do
+      echo "Waiting for Ingress IP..."
+      TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
+      if [ -z "$TF_VAR_ingress_ip" ]; then
+        sleep 10
+      fi
+    done
 
-  date
-  kubectl get all -n ingress-nginx
-  sleep 5
-  echo "Ingress ready: $TF_VAR_ingress_ip"
+    date
+    kubectl get all -n ingress-nginx
+    sleep 5
+    echo "Ingress ready: $TF_VAR_ingress_ip"
 
-  # Create secrets
-  kubectl create secret docker-registry ocirsecret --docker-server=$TF_VAR_ocir --docker-username="$TF_VAR_namespace/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
-  # XXXX - This should be by date 
-  kubectl delete secret ${TF_VAR_prefix}-db-secret  --ignore-not-found=true
-  kubectl create secret generic ${TF_VAR_prefix}-db-secret --from-literal=db_user=$TF_VAR_db_user --from-literal=db_password=$TF_VAR_db_password --from-literal=db_url=$DB_URL --from-literal=jdbc_url=$JDBC_URL --from-literal=TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid --from-literal=TF_VAR_nosql_endpoint=$TF_VAR_nosql_endpoint
+    # Create secrets
+    echo XXXXXXXXXX kubectl create secret docker-registry ocirsecret --docker-server=$TF_VAR_ocir --docker-username="$TF_VAR_namespace/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
+    kubectl create secret docker-registry ocirsecret --docker-server=$TF_VAR_ocir --docker-username="$TF_VAR_namespace/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
+    # XXXX - This should be by date 
+    kubectl delete secret ${TF_VAR_prefix}-db-secret  --ignore-not-found=true
+    kubectl create secret generic ${TF_VAR_prefix}-db-secret --from-literal=db_user=$TF_VAR_db_user --from-literal=db_password=$TF_VAR_db_password --from-literal=db_url=$DB_URL --from-literal=jdbc_url=$JDBC_URL --from-literal=TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid --from-literal=TF_VAR_nosql_endpoint=$TF_VAR_nosql_endpoint
+  else
+    echo "OKE Deploy: Skipping creation of ingress and secrets" 
+  fi  
 fi
 
 # Using & as separator

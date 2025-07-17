@@ -65,10 +65,6 @@ locals {
   image_id = data.oci_core_images.oraclelinux.images.0.id
 }
   
-output "image" {
-    value = data.oci_core_images.shape_specific_images
-}
-
 #----------------------------------------------------------------------------
 # SECURITY LISTS
 
