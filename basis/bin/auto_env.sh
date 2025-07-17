@@ -75,6 +75,7 @@ if [ "$MISMATCH_PLATFORM" != "" ]; then
   exit 1
 fi
 
+
 # Enable BASH history for Stack Trace.
 # - Do not store in HISTFILE 
 # - Do not use it when env.sh is called from bash directly.

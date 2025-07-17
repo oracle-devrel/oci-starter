@@ -345,6 +345,9 @@ get_ui_url() {
       export UI_URL=https://${TF_VAR_dns_name}
     fi
   elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
+    if [ ! -f $KUBECONFIG ]; then
+      create_kubeconfig  
+    fi 
     export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
     export UI_URL=http://${TF_VAR_ingress_ip}/${TF_VAR_prefix}
     if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_dns_name" != "" ]; then
