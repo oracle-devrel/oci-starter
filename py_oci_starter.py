@@ -891,6 +891,7 @@ def create_output_dir():
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
             if params.get('deploy_type') == 'instance_pool':
+                cp_terraform("instance_pool.j2.tf") 
                 cp_terraform("instance_pool_part2.j2.tf") 
             elif params.get('tls') == 'existing_dir':
                 if params.get('deploy_type') == 'public_compute':
