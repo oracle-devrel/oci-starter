@@ -1,3 +1,5 @@
+variable project_dir { default="." }
+
 ## BUILD_DEPLOY
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
@@ -68,10 +70,7 @@ resource "null_resource" "before_destroy" {
         EOT
   }
 
-  depends_on = [
-{%- for key in terraform_resources_part2 %}
-    {{key}},
-{%- endfor %}      
-    null_resource.build_deploy
+  depends_on = [  
+    null_resource.after_build
   ]
 }

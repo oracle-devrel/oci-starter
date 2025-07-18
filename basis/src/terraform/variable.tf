@@ -4,7 +4,6 @@ variable compartment_ocid {}
 # variable current_user_ocid {}
 variable ssh_public_key {}
 variable ssh_private_key {}
-variable project_dir { default="." }
 
 # Prefix
 variable prefix { 
