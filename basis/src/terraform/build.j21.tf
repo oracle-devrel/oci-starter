@@ -65,7 +65,9 @@ resource "null_resource" "before_destroy" {
   provisioner "local-exec" {
       when = destroy
       command = <<-EOT
-        cd ${var.project_dir}         
+        if [ ! -f starter.sh ]; then 
+          cd ../..
+        fi
         ./starter.sh destroy --called_by_resource_manager
         EOT
   }
