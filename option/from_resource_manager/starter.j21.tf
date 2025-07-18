@@ -74,7 +74,9 @@ module "terraform_module" {
                  "idcs_url",
                  "db_user",
                  "db_password" ] %}
-  {{key}} = try( var.{{key}}, null )
+  {{key}} = try( var.{{key}}, null )  
+{%- elif key =="project_dir" %}
+  project_dir = "../.."
 {%- else %}
   {{key}} = try(data.external.env.result.{{key}}, null)
 {%- endif %}

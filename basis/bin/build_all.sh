@@ -120,12 +120,12 @@ else
   before_terraform
   terraform $1
   # Running ./starter.sh build to create a resource manager stack, apply it in resource manager (for test-suite for example)
-  if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ]; then
-    build_deploy
-    terraform2 
-    after_build
-  fi
+  #  build_deploy
+  #  terraform2 
+  #  after_build
+  # XXXXX Done is already runned from terraform... Should not call after_done.sh twice..... XXXXXX
   title "Done"
   $BIN_DIR/done.sh
+
 fi
 

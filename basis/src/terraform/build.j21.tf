@@ -2,6 +2,7 @@
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
+        cd ${project_dir}
         pwd
         # cat target/terraform.tfstate
         # export
@@ -27,7 +28,7 @@ resource "null_resource" "build_deploy" {
 # More terraform resources need to be created after build_deploy.
 # Reread the env viables
 data "external" "env_part2" {
-  program = ["cat", "target/resource_manager_variables.json"]
+  program = ["cat", "${project_dir}/target/resource_manager_variables.json"]
   depends_on = [
     null_resource.build_deploy
   ]
@@ -39,6 +40,7 @@ data "external" "env_part2" {
 resource "null_resource" "after_build" {
   provisioner "local-exec" {
     command = <<-EOT
+        cd ${project_dir}    
         # cat target/terraform.tfstate
         # export
         ./starter.sh frm after_build
@@ -61,6 +63,7 @@ resource "null_resource" "before_destroy" {
   provisioner "local-exec" {
       when = destroy
       command = <<-EOT
+        cd ${project_dir}      
         ./starter.sh destroy --called_by_resource_manager
         EOT
   }
