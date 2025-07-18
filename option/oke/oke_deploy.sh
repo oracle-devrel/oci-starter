@@ -70,15 +70,19 @@ if [ ! -f $KUBECONFIG ]; then
     echo "Ingress ready: $TF_VAR_ingress_ip"
 
     # Create secrets
-    echo XXXXXXXXXX kubectl create secret docker-registry ocirsecret --docker-server=$TF_VAR_ocir --docker-username="$TF_VAR_namespace/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
-    kubectl create secret docker-registry ocirsecret --docker-server=$TF_VAR_ocir --docker-username="$TF_VAR_namespace/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
-    # XXXX - This should be by date 
     kubectl delete secret ${TF_VAR_prefix}-db-secret  --ignore-not-found=true
     kubectl create secret generic ${TF_VAR_prefix}-db-secret --from-literal=db_user=$TF_VAR_db_user --from-literal=db_password=$TF_VAR_db_password --from-literal=db_url=$DB_URL --from-literal=jdbc_url=$JDBC_URL --from-literal=TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid --from-literal=TF_VAR_nosql_endpoint=$TF_VAR_nosql_endpoint
   else
     echo "OKE Deploy: Skipping creation of ingress and secrets" 
   fi  
 fi
+
+# The auth_token is valid only for 1 hour... 
+if [ "$TF_VAR_auth_token" == "" ]; then
+  export TF_VAR_auth_token=`oci raw-request --region $TF_VAR_region --http-method GET --target-uri "https://${TF_VAR_ocir}/20180419/docker/token | jq -r .data.token`
+fi  
+kubectl delete secret ocirsecret  --ignore-not-found=true
+kubectl create secret docker-registry ocirsecret --docker-server=$TF_VAR_ocir --docker-username="$TF_VAR_namespace/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
 
 # Using & as separator
 sed "s&##DOCKER_PREFIX##&${DOCKER_PREFIX}&" src/app/app.yaml > $TARGET_DIR/app.yaml
