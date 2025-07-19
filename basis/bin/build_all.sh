@@ -67,7 +67,7 @@ terraform() {
 
 #   # Deploy
 #   title "Deploy $TF_VAR_deploy_type"
-#   if is_deploy_compute then
+#   if is_deploy_compute; then
 #     $BIN_DIR/deploy_compute.sh
 #     exit_on_error
 #   elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
