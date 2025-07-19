@@ -77,6 +77,7 @@ loop_resource oci_datascience_notebook_session
 loop_resource oci_integration_integration_instance
 loop_resource oci_mysql_mysql_db_system
 loop_resource oci_oda_oda_instance
+loop_resource oci_containerengine_cluster
 
 # loop_resource oci_objectstorage_bucket
 
