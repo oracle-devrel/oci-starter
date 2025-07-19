@@ -32,7 +32,7 @@ elif [ ! -z "$UI_URL" ]; then
     export APIGW_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}  
     echo - API Gateway URL : $APIGW_URL/app/dept 
   fi
-  if [ "$TF_VAR_language" == "java" ] && [ "$TF_VAR_java_framework" == "springboot" ] && [ "$TF_VAR_ui_type" == "html" ] && [ "$TF_VAR_db_node_count" == "2" ]; then
+  if [ "$TF_VAR_language" == "java" ] && [ "$TF_VAR_java_framework" == "springboot" ] && [ "$TF_VAR_ui_type" == "html" ] && [ "$TF_VAR_db_subtype" == "rac" ]; then
     echo - RAC Page        : $UI_URL/rac.html
   fi
   if [ "$TF_VAR_language" == "apex" ]; then

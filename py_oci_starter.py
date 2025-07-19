@@ -159,7 +159,7 @@ def save_params():
 
 def db_rules():
     if params.get('db_type') == 'rac':
-        params['db_node_count'] = "2" 
+        params['db_subtype'] = "rac" 
 
     params['db_type'] = longhand(
         'db_type', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database', 'pdb': 'pluggable'})
@@ -692,12 +692,8 @@ def cp_dir_src_db(db_family):
     output_copy_tree("option/src/db/"+db_family, "src/db")
 
 def output_replace_db_node_count():
-    if params.get('db_node_count')!="2":
-       output_replace('##db_node_count##', "1", "src/terraform/dbsystem.j2.tf")
-       output_replace('##db_edition##', "ENTERPRISE_EDITION", "src/terraform/dbsystem.j2.tf")
-       output_replace('##storage_management##', "LVM", "src/terraform/dbsystem.j2.tf")
-       output_replace('##cpu_core_count##', "1", "src/terraform/dbsystem.j2.tf")
-    else:
+    if params.get('db_subtype')=="rac":
+       # RAC
        output_replace('##db_node_count##', "2", "src/terraform/dbsystem.j2.tf")
        output_replace('##db_edition##', "ENTERPRISE_EDITION_EXTREME_PERFORMANCE", "src/terraform/dbsystem.j2.tf")
        output_replace('##storage_management##', "ASM", "src/terraform/dbsystem.j2.tf")
@@ -708,6 +704,12 @@ def output_replace_db_node_count():
            output_copy_tree("option/src/app/java_springboot_rac", "src/app")
        if params['ui_type'] == "html":
            output_copy_tree("option/src/ui/html_rac", "src/ui" )    
+    else:
+       # Normal Database
+       output_replace('##db_node_count##', "1", "src/terraform/dbsystem.j2.tf")
+       output_replace('##db_edition##', "ENTERPRISE_EDITION", "src/terraform/dbsystem.j2.tf")
+       output_replace('##storage_management##', "LVM", "src/terraform/dbsystem.j2.tf")
+       output_replace('##cpu_core_count##', "1", "src/terraform/dbsystem.j2.tf")
 
 # Copy the terraform for APIGW
 def cp_terraform_apigw(append_tf):

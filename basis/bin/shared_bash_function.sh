@@ -319,7 +319,7 @@ get_user_details() {
 # Get the user interface URL
 get_ui_url() {
   if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ] ; then
-    if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_tls" == "existing_ocid" ]; then
+    if [ "$TF_VAR_dns_name" != "" ] && [ "$TF_VAR_tls" == "existing_ocid" ]; then
       # xx APEX ? xx
       export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
     else 
