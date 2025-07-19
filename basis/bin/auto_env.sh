@@ -235,6 +235,8 @@ fi
 
 #-- POST terraform ----------------------------------------------------------
 if [ -f $STATE_FILE ]; then
+  echo "Reading $STATE_FILE"
+  
   # OBJECT_STORAGE_URL
   export OBJECT_STORAGE_URL=https://objectstorage.${TF_VAR_region}.oraclecloud.com
 
