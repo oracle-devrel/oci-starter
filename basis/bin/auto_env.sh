@@ -236,7 +236,7 @@ fi
 #-- POST terraform ----------------------------------------------------------
 if [ -f $STATE_FILE ]; then
   echo "Reading $STATE_FILE"
-  
+
   # OBJECT_STORAGE_URL
   export OBJECT_STORAGE_URL=https://objectstorage.${TF_VAR_region}.oraclecloud.com
 
@@ -296,6 +296,7 @@ if [ -f $STATE_FILE ]; then
 
   # Compute
   get_output_from_tfstate "COMPUTE_IP" "compute_ip"
+  echo "XXXX COMPUTE_IP=$COMPUTE_IP"
   
   # Bastion 
   get_output_from_tfstate "BASTION_IP" "bastion_public_ip"
