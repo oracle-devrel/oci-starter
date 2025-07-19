@@ -63,6 +63,7 @@ resource "null_resource" "build_deploy" {
   depends_on = [
 {%- for key in terraform_resources %}
     {{key}},
+    output.bastion_ip
 {%- endfor %}    
   ]
 
