@@ -195,7 +195,7 @@ def language_rules():
 def kubernetes_rules():
     if 'deploy_type' in params:
       params['deploy_type'] = longhand('deploy_type', {'oke': 'kubernetes', 'ci': 'container_instance'})
-
+    print( "xxxxxx" + params['deploy_type']  )
 
 def vcn_rules():
     if 'subnet_ocid' in params:
@@ -1103,7 +1103,7 @@ def jinja2_find_in_terraform( dir ):
         print(f"Error: Directory not found at '{dir}'")
         return [], []
 
-    print(f"Searching for output in terraform: {dir}\n")
+    print(f"Searching for output/variable/resource in terraform: {dir}\n")
 
     # Walk through the directory (including subdirectories)
     # If you only want the top-level directory, replace os.walk with os.listdir
@@ -1120,13 +1120,13 @@ def jinja2_find_in_terraform( dir ):
                 continue
 
             file_path = os.path.join(root, filename)
-            print('-- File :   '+file_path, flush=True)
+            print('---- File :   '+file_path, flush=True)
             with open(file_path, 'r', encoding='utf-8') as f:
                 for line in f: 
                     # Use regex for more precise matching and to capture the name
                     match = re.match(r"^(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{", line)
                     if match:
-                        print('- '+match.group(1)+' '+match.group(2), flush=True)                          
+                        print(''+match.group(1)+' '+match.group(2), flush=True)                          
                         if match.group(1) == 'output':
                             outputs.append(match.group(2))
                         elif match.group(1) == 'variable':
@@ -1139,10 +1139,10 @@ def jinja2_find_in_terraform( dir ):
                         resource_type = name.split(".")[0]
                         if resource_type not in ["random_string","null_resource","oci_core_vcn","oci_core_internet_gateway","oci_core_default_route_table","oci_core_subnet","oci_core_security_list","oci_core_nat_gateway","oci_core_service_gateway","oci_core_route_table"]: 
                             if "_part2" in filename:
-                                print(' - resource '+name, flush=True)                          
+                                print('resource '+name, flush=True)                          
                                 resources_part2.append(name)
                             else:
-                                print(' - resource (part2) '+name, flush=True)                          
+                                print('resource (part2) '+name, flush=True)                          
                                 resources.append(name)
         
 
