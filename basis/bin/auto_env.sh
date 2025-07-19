@@ -296,8 +296,7 @@ if [ -f $STATE_FILE ]; then
 
   # Compute
   get_output_from_tfstate "COMPUTE_IP" "compute_ip"
-  echo "XXXX COMPUTE_IP=$COMPUTE_IP"
-  
+
   # Bastion 
   get_output_from_tfstate "BASTION_IP" "bastion_public_ip"
 

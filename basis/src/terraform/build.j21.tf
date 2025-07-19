@@ -4,6 +4,7 @@ variable project_dir { default="../.." }
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
+        sleep 5
         cd ${var.project_dir}
         pwd
         # cat target/terraform.tfstate
