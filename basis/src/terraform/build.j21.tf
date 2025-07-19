@@ -5,9 +5,10 @@ resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
         sleep 5
-        cp target/terraform.tfstate target/terraform.build_deploy
         cd ${var.project_dir}
         pwd
+        ls -al target
+        cp target/terraform.tfstate target/terraform.build_deploy
         # cat target/terraform.tfstate
         # export
         # ./starter.sh frm build_deploy        
