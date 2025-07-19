@@ -53,6 +53,7 @@ resource "null_resource" "build_deploy" {
             $BIN_DIR/ci_deploy.sh
             exit_on_error
         fi
+        . starter.sh frm
         # cat target/resource_manager_variables.json
         EOT
   }

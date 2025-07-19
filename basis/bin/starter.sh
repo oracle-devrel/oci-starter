@@ -135,7 +135,7 @@ elif [ "$ARG1" == "terraform" ]; then
   elif [ "$ARG2" == "apply" ]; then
     $BIN_DIR/terraform_apply.sh ${@:3}
   elif [ "$ARG2" == "destroy" ]; then
-    $BIN_DIR/terraform_destroy.sh ${@:3}
+    $BIN_DIR/terraform_destroy.sh ${@:3}  
   else 
     echo "Unknown command: $ARG1 $ARG2"
   fi 
