@@ -141,7 +141,6 @@ elif [ "$ARG1" == "terraform" ]; then
   fi 
 
 elif [ "$ARG1" == "frm" ]; then # From Resource Manager
-  sleep 5
   . $BIN_DIR/shared_bash_function.sh
 
   if [ "$ARG2" == "before_terraform" ]; then
