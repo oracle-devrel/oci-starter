@@ -220,8 +220,12 @@ resource "oci_bastion_session" "starter_bastion_session" {
   display_name = "${var.prefix}-bastion-session"
 }
 
+locals {
+  tf_local_bastion_command = oci_bastion_session.starter_bastion_session.ssh_metadata.command
+}
+
 output "bastion_command" {
-  value = oci_bastion_session.starter_bastion_session.ssh_metadata.command
+  value = local.tf_local_bastion_command
 }
 
 //---- Load Balancer -------------------------------------------------------
