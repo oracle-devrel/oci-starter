@@ -1045,17 +1045,7 @@ def create_group_common_dir():
 
     # Container Instance Common
     cp_terraform("container_instance_policy.tf")
-
-    allfiles = os.listdir(output_dir)
-    allfiles.remove('README.md')
-    # Create a group directory
-    output_mkdir('group_common')
-    # iterate on all files to move them to 'group_common'
-    for f in allfiles:
-        os.rename(output_dir + os.sep + f, output_dir + os.sep + 'group_common' + os.sep + f)
-
-    output_copy_tree("option/group", ".")
-    
+   
 #----------------------------------------------------------------------------
 
 jinja2_db_params = {
@@ -1249,6 +1239,14 @@ output_dir_orig = output_dir
 if 'group_name' in params:
     create_group_common_dir()
     jinja2_replace_template()
+    # Iterate on all files to move them to 'group_common'
+    allfiles = os.listdir(output_dir)
+    allfiles.remove('README.md')
+    # Create a group directory
+    output_mkdir('group_common')
+    for f in allfiles:
+        os.rename(output_dir + os.sep + f, output_dir + os.sep + 'group_common' + os.sep + f)
+    output_copy_tree("option/group", ".")    
 
 # Add parameters to the creation if the project is to be used with a group
 if 'group_common' in params:
