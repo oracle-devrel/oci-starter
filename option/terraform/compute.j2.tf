@@ -82,5 +82,5 @@ locals {
 }
 
 output "compute_ip" {
-  value = local.compute_private_ip
+  value = local.tf_local_compute_ip
 }
