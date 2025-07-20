@@ -1134,7 +1134,7 @@ def jinja2_find_in_terraform( dir ):
                             else:
                                 print('resource '+name, flush=True)
                                 resources.append(name)
-                    match = re.match(r"^\s+tf_local_([a-zA-Z0-9_-])+\s+\=", line)
+                    match = re.match(r"^\s+tf_local_([a-zA-Z0-9_-])+\s+==", line)
                     if match:
                         name = match.group(1)
                         print(line, flush=True)
