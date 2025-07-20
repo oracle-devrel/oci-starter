@@ -4,11 +4,14 @@ variable project_dir { default="../.." }
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
-        sleep 5
+        {%- for key in terraform_locals %}
+        export TF_LOCAL_{{key}}=${local.tf_local_{{key}}}
+        {%- endif %}        
+        {{key}} = var.{{key}}
+        {%- endfor %}      
         cd ${var.project_dir}
         pwd
         ls -al target
-        cp target/terraform.tfstate target/terraform.build_deploy
         # cat target/terraform.tfstate
         # export
         ./starter.sh frm build_deploy        

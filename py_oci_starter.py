@@ -1101,6 +1101,7 @@ def jinja2_find_in_terraform( dir ):
     variables = []
     resources = []
     resources_part2 = []    
+    locals = []
 
     for root, _, files in os.walk(dir):
         for filename in files:
@@ -1133,11 +1134,12 @@ def jinja2_find_in_terraform( dir ):
                             else:
                                 print('resource'+name, flush=True)                          
                                 resources.append(name)
-        
+                    match = re.match(r"^\s+ (tf_local?([a-zA-Z0-9_-])+\s*\=", line)
+                    if match:
+                        name = match.group(1)
+                        locals.append(name)
 
-
-
-    return outputs, variables, resources, resources_part2
+    return outputs, variables, resources, resources_part2, locals
 
 #----------------------------------------------------------------------------
 
@@ -1178,7 +1180,7 @@ def jinja2_replace_template():
      
     jinja2_replace_template_prefix( template_param, "j2" )
     
-    template_param['terraform_outputs'], template_param['terraform_variables'], template_param['terraform_resources'], template_param['terraform_resources_part2'] = jinja2_find_in_terraform(output_dir +'/src/terraform')
+    template_param['terraform_outputs'], template_param['terraform_variables'], template_param['terraform_resources'], template_param['terraform_resources_part2'], template_param['locals'] = jinja2_find_in_terraform(output_dir +'/src/terraform')
     # for schema.yaml.j21
     template_param['env_params'] = env_param_list()
     template_param['env_params'].append('prefix')
