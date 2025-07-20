@@ -1132,11 +1132,12 @@ def jinja2_find_in_terraform( dir ):
                                 print('resource (part2) '+name, flush=True)
                                 resources_part2.append(name)
                             else:
-                                print('resource'+name, flush=True)
+                                print('resource '+name, flush=True)
                                 resources.append(name)
                     match = re.match(r"^\s+tf_local_([a-zA-Z0-9_-])+\s+=", line)
                     if match:
                         name = match.group(1)
+                        print(line, flush=True)
                         print('local '+name, flush=True)
                         locals.append(name)
 
