@@ -1140,7 +1140,8 @@ def jinja2_find_in_terraform( dir ):
                         print('local tf_local_'+name, flush=True)
                         locals.append(name)
 
-    return sorted(outputs), sorted(variables), sorted(resources), sorted(resources_part2), sorted(locals)
+    return outputs, variables, resources, resources_part2, locals
+#   return sorted(outputs), sorted(variables), sorted(resources), sorted(resources_part2), sorted(locals)
 
 #----------------------------------------------------------------------------
 
