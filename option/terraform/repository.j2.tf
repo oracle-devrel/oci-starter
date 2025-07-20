@@ -31,5 +31,5 @@ resource "oci_artifacts_container_repository" "starter_repo_ui" {
 {%- endif %}
 
 locals  {
-  tf_local_container_prefix = random_string.container_prefix.result
+  local_container_prefix = random_string.container_prefix.result
 }

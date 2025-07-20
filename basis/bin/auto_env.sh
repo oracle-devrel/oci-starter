@@ -257,7 +257,7 @@ if [ -f $STATE_FILE ]; then
 
   # Docker
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
-    export DOCKER_PREFIX_NO_OCIR=${TF_LOCAL_container_prefix}
+    export DOCKER_PREFIX_NO_OCIR=${CONTAINER_PREFIX}
     export DOCKER_PREFIX=${TF_VAR_ocir}/${TF_VAR_namespace}/${DOCKER_PREFIX_NO_OCIR}
     auto_echo DOCKER_PREFIX=$DOCKER_PREFIX
   fi
@@ -315,14 +315,13 @@ if [ -f $STATE_FILE ]; then
     export BASTION_PROXY_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p $BASTION_USER_HOST"
   fi
 
-  # JDBC_URL
-  get_output_from_tfstate "JDBC_URL" "jdbc_url"
-  get_output_from_tfstate "DB_URL" "db_url"
+    # JDBC_URL
+    get_output_from_tfstate "JDBC_URL" "jdbc_url"
+    get_output_from_tfstate "DB_URL" "db_url"
 
-
-  if [ "$TF_VAR_db_type" == "autonomous" ] || [ "$TF_VAR_db_type" == "database" ] ; then
-    get_output_from_tfstate "ORDS_URL" "ords_url"
-  fi
+    if [ "$TF_VAR_db_type" == "autonomous" ] || [ "$TF_VAR_db_type" == "database" ] ; then
+      get_output_from_tfstate "ORDS_URL" "ords_url"
+    fi
 
   if [ "$TF_VAR_db_type" == "database" ]; then
     get_attribute_from_tfstate "DB_NODE_IP" "starter_node_vnic" "private_ip_address"

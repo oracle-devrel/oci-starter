@@ -6,7 +6,7 @@ locals {
 {%- if deploy_type == "public_compute" and tls != "existing_ocid" %}  
   dns_ip = local.compute_public_ip
 {%- elif deploy_type == "instance_pool" %}  
-  dns_ip = local.instance_pool_lb_ip
+  dns_ip = local.local_instance_pool_lb_ip
 {%- elif deploy_type == "kubernetes" and tls == "new_http_01" %}
 # No Locals
 {%- else %}  
@@ -29,7 +29,7 @@ resource "oci_identity_policy" "oke_tls_policy" {
   statements = [
     # "Allow any-user to manage dns in compartment id ${var.compartment_ocid} where instance.compartment.id='${var.compartment_ocid}'",
     "Allow any-user to manage dns in compartment id ${var.compartment_ocid}",
-    "Allow any-user to manage dns in compartment id ${var.compartment_ocid} where all {request.principal.type='workload',request.principal.cluster_id='${local.oke_ocid}',request.principal.service_account='external-dns'}"
+    "Allow any-user to manage dns in compartment id ${var.compartment_ocid} where all {request.principal.type='workload',request.principal.cluster_id='${local.local_oke_ocid}',request.principal.service_account='external-dns'}"
   ]
 }
 {%- endif %}

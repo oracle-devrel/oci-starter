@@ -48,11 +48,11 @@ data "oci_identity_domains" "starter_domains" {
 
 locals {
   # Try: LiveLabs has no access to IDCS
-  idcs_url = try( (var.idcs_url!=null)?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url, "" )
+  local_idcs_url = try( (var.idcs_url!=null)?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url, "" )
 }
 
 output "idcs_url" {
-  value = local.idcs_url
+  value = local.local_idcs_url
 }
 
 # OCI Services

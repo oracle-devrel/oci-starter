@@ -45,11 +45,11 @@ resource "oci_bastion_session" "starter_bastion_session" {
 }
 
 locals {
-  tf_local_bastion_command = oci_bastion_session.starter_bastion_session.ssh_metadata.command
+  local_bastion_command = oci_bastion_session.starter_bastion_session.ssh_metadata.command
 }
 
 output "bastion_command" {
-  value = local.tf_local_bastion_command
+  value = local.local_bastion_command
 }
 
 {%- else %}

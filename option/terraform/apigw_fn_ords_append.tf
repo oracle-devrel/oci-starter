@@ -19,7 +19,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
       methods = [ "ANY" ]
       backend {
         type = "HTTP_BACKEND"
-        url   = format("%s/starter/module/dept", local.tf_local_ords_url)
+        url   = format("%s/starter/module/dept", local.local_ords_url)
       }
     }    
     routes {

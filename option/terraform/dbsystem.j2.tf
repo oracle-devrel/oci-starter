@@ -110,14 +110,14 @@ data "oci_core_vnic" "starter_node_vnic" {
 locals {
   # TNS Connect String (Description....)
   db_host = "todo"
-  tf_local_db_url = data.oci_database_pluggable_databases.starter_pdbs.pluggable_databases.0.connection_strings.0.pdb_ip_default
-  tf_local_jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
-  tf_local_ords_url = format("http://%s:8080/ords", data.oci_core_vnic.starter_node_vnic.private_ip_address )
+  local_db_url = data.oci_database_pluggable_databases.starter_pdbs.pluggable_databases.0.connection_strings.0.pdb_ip_default
+  local_jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
+  local_ords_url = format("http://%s:8080/ords", data.oci_core_vnic.starter_node_vnic.private_ip_address )
 }
 
 # APEX (installed manually)
 output "ords_url" {
-  value = local.tf_local_ords_url
+  value = local.local_ords_url
 }
 {%- endif %}  
 

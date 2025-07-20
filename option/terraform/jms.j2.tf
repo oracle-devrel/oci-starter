@@ -118,11 +118,14 @@ resource "oci_management_agent_management_agent_install_key" "starter_install_ke
     is_unlimited = true
 }
 
+locals {
+  local_fleet_ocid=oci_jms_fleet.starter_fleet.id
+  local_install_key_ocid=oci_management_agent_management_agent_install_key.starter_install_key.id
+
 output "fleet_ocid" {
-  value=oci_jms_fleet.starter_fleet.id
-}
+  value=local.local_fleet_ocid
 
 output "install_key_ocid" {
-  value=oci_management_agent_management_agent_install_key.starter_install_key.id
+  value=local.local_install_key_ocid
 }
 {%- endif %}   

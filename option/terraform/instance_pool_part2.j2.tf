@@ -121,9 +121,9 @@ output "pooled_instances_hostname_labels" {
 }
 
 locals {
-  instance_pool_lb_ip = oci_load_balancer.starter_pool_lb.ip_address_details[0].ip_address
+  local_instance_pool_lb_ip = oci_load_balancer.starter_pool_lb.ip_address_details[0].ip_address
 }
 
 output "instance_pool_lb_ip" {
-  value = local.instance_pool_lb_ip
+  value = local.local_instance_pool_lb_ip
 }

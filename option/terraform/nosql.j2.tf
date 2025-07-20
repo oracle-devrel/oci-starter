@@ -24,7 +24,7 @@ resource "oci_nosql_table" "starter_nosql_table" {
 
 resource "oci_identity_domains_dynamic_resource_group" "starter_nosql_dyngroup" {
   provider       = oci.home  
-  idcs_endpoint  = local.idcs_url  
+  idcs_endpoint  = local.local_idcs_url  
   display_name   = "${var.prefix}-nosql-dyngroup"
   matching_rule  = "ANY {instance.compartment.id = '${var.compartment_ocid}', ALL {resource.type = 'fnfunc', resource.compartment.id ='${var.compartment_ocid}'}, ALL {resource.type = 'computecontainerinstance', resource.compartment.id ='${var.compartment_ocid}' }}"
   schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
@@ -48,7 +48,7 @@ resource "oci_identity_policy" "starter_nosql_policy" {
 {%- if group_name is not defined %}
 locals {
     db_host = "none"
-    db_url = "none"
-    tf_local_jdbc_url = "none"
+    local_db_url = "none"
+    local_jdbc_url = "none"
 }
 {%- endif %}  

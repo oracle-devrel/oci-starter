@@ -78,9 +78,9 @@ data "oci_core_instance" "starter_compute" {
 locals {
   compute_ocid = data.oci_core_instance.starter_compute.id
   compute_public_ip = data.oci_core_instance.starter_compute.public_ip
-  tf_local_compute_ip = data.oci_core_instance.starter_compute.private_ip
+  local_compute_ip = data.oci_core_instance.starter_compute.private_ip
 }
 
 output "compute_ip" {
-  value = local.tf_local_compute_ip
+  value = local.local_compute_ip
 }

@@ -713,9 +713,9 @@ def output_replace_db_node_count():
 # Copy the terraform for APIGW
 def cp_terraform_apigw(append_tf):
     if params['language'] == "ords":
-        app_url = "${local.tf_local_ords_url}/starter/module/$${request.path[pathname]}"
+        app_url = "${local.local_ords_url}/starter/module/$${request.path[pathname]}"
     elif params['language'] == "apex":
-        app_url = "${local.tf_local_ords_url}/r/app_dept/dept/$${request.path[pathname]}"
+        app_url = "${local.local_ords_url}/r/app_dept/dept/$${request.path[pathname]}"
     elif params['language'] == "java" and params['java_framework'] == "tomcat":
         app_url = "http://${local.apigw_dest_private_ip}:8080/starter-1.0/$${request.path[pathname]}"
     else:
@@ -1134,10 +1134,10 @@ def jinja2_find_in_terraform( dir ):
                             else:
                                 print('resource '+name, flush=True)
                                 resources.append(name)
-                    match = re.match(r"^\s+tf_local_([a-zA-Z0-9_-]+)\s+=", line)
+                    match = re.match(r"^\s+local_([a-zA-Z0-9_-]+)\s+=", line)
                     if match:
                         name = match.group(1)
-                        print('local tf_local_'+name, flush=True)
+                        print('local local_'+name, flush=True)
                         locals.append(name)
 
     return outputs, variables, resources, resources_part2, locals

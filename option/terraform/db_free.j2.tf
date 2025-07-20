@@ -1,7 +1,7 @@
 # DB23c Free in OCI Compute
 {%- if deploy_type == "public_compute" %}
 locals {
-  db_free_ip = oci_core_instance.starter_compute.private_ip
+  local_db_free_ip = oci_core_instance.starter_compute.private_ip
 }
 
 {%- else %}  
@@ -57,16 +57,16 @@ resource "oci_core_instance" "starter_db_free" {
 }
 
 locals {
-  db_free_ip = oci_core_instance.starter_db_free.private_ip
+  local_db_free_ip = oci_core_instance.starter_db_free.private_ip
 }
 {%- endif %}  
 
 locals {
-  db_url = format("%s:1521/FREEPDB1", local.db_free_ip)
   db_host = "todo"
-  tf_local_jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
+  local_db_url = format("%s:1521/FREEPDB1", local.local_db_free_ip)
+  local_jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
 }
 
 output "db_free_ip" {
-   value = local.db_free_ip
+   value = local.local_db_free_ip
 }

@@ -21,7 +21,7 @@ if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
   # There are 2 issues with Work-arounds
   # (1) OracleDialect constructor in reflect-config.json 
   # (2) env var JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL is not detected (Helidon bug logged) 
-  sed -i "s&##TF_LOCAL_jdbc_url##&$JDBC_URL&" src/main/resources/META-INF/microprofile-config.properties
+  sed -i "s&##JDBC_URL##&$JDBC_URL&" src/main/resources/META-INF/microprofile-config.properties
 fi
 
 if is_deploy_compute; then

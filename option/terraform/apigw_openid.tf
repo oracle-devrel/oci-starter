@@ -86,7 +86,7 @@ resource "oci_identity_domains_app" "starter_confidential_app" {
   delegated_service_names = [
   ]
   display_name = "${var.prefix}-confidential-app"
-  idcs_endpoint = "${local.idcs_url}"
+  idcs_endpoint = "${local.local_idcs_url}"
   is_alias_app      = "false"
   is_enterprise_app = "false"
   is_kerberos_realm = "false"

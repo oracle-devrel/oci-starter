@@ -122,7 +122,7 @@ replace_db_user_password_in_file() {
   if [ -f $CONFIG_FILE ]; then 
     sed -i "s/##DB_USER##/$TF_VAR_db_user/" $CONFIG_FILE
     sed -i "s/##DB_PASSWORD##/$TF_VAR_db_password/" $CONFIG_FILE
-    sed -i "s%##JDBC_URL##%$TF_LOCAL_jdbc_url%" $CONFIG_FILE
+    sed -i "s%##JDBC_URL##%$JDBC_URL%" $CONFIG_FILE
   fi
 }  
 
@@ -177,10 +177,9 @@ get_id_from_tfstate () {
 }
 
 get_output_from_tfstate () {
-  output=TF_LOCAL_$2
+  output=$1
   if [ "${!output}" != "" ]; then
-    echo "XXXXXX get_output_from_tfstate TF_LOCAL_$2=${!output}"
-    export $1="${!output}"
+    echo "XXXXXX get_output_from_tfstate $1=${!output}"
   else 
     RESULT=`jq -r '.outputs."'$2'".value' $STATE_FILE | sed "s/ //"`
     set_if_not_null $1 $RESULT
