@@ -11,7 +11,9 @@ echo "Build done"
 
 if [ -f $PROJECT_DIR/src/after_done.sh ]; then
   # Unset UI_URL in after_done to remove the standard output
-  . $PROJECT_DIR/src/after_done.sh
+  if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ] || [ "$CALLED_FROM_RESOURCE_MANAGER" != "" ]; then
+    . $PROJECT_DIR/src/after_done.sh
+  fi
 elif [ ! -z "$UI_URL" ]; then
   if [ "$TF_VAR_ui_type" != "api" ]; then
     echo - User Interface: $UI_URL/
