@@ -152,6 +152,19 @@ loop_compute_other() {
   OPTION_DB=atp
   OPTION_INFRA_AS_CODE=resource_manager
   build_option   
+
+  # From Resource Manager
+  OPTION_INFRA_AS_CODE=from_resource_manager
+  OPTION_DEPLOY=public_compute
+  build_option   
+  OPTION_DEPLOY=private_compute
+  build_option   
+  OPTION_DEPLOY=container_instance
+  build_option   
+  OPTION_DEPLOY=function
+  build_option   
+  OPTION_DEPLOY=oke
+  build_option   
   OPTION_INFRA_AS_CODE=terraform_local
 
   # Pluggable DB 
