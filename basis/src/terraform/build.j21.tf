@@ -3,7 +3,11 @@ variable project_dir { default="../.." }
 ## BUILD_DEPLOY
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
-    command = <<-EOT    
+    command = <<-EOT
+        cd 
+        {%- for key in terraform_locals %}
+        export TF_LOCAL_{{key}}=${local.tf_local_{{key}}}
+        {%- endfor %}      
         cd ${var.project_dir}
         pwd
         ls -al target
