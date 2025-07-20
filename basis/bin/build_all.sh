@@ -32,60 +32,60 @@ terraform() {
   exit_on_error
 }
 
-# build_deploy() {
-#   . starter.sh env
-#   # Run config command on the DB directly (ex RAC)
-#   if [ -f $BIN_DIR/deploy_db_node.sh ]; then
-#     title "Deploy DB Node"
-#     $BIN_DIR/deploy_db_node.sh
-#   fi 
+build_deploy() {
+  . starter.sh env
+  # Run config command on the DB directly (ex RAC)
+  if [ -f $BIN_DIR/deploy_db_node.sh ]; then
+    title "Deploy DB Node"
+    $BIN_DIR/deploy_db_node.sh
+  fi 
 
-#   # Build the DB tables (via Bastion)
-#   if [ -d src/db ]; then
-#     title "Deploy Bastion"
-#     $BIN_DIR/deploy_bastion.sh
-#   fi  
+  # Build the DB tables (via Bastion)
+  if [ -d src/db ]; then
+    title "Deploy Bastion"
+    $BIN_DIR/deploy_bastion.sh
+  fi  
 
-#   # Init target/compute
-#   if is_deploy_compute; then
-#     mkdir -p target/compute
-#     cp -r src/compute target/compute/.
-#   fi
+  # Init target/compute
+  if is_deploy_compute; then
+    mkdir -p target/compute
+    cp -r src/compute target/compute/.
+  fi
 
-#   # Build all app* directories
-#   for APP_DIR in `app_dir_list`; do
-#     title "Build App $APP_DIR"
-#     src/${APP_DIR}/build_app.sh
-#     exit_on_error
-#   done
+  # Build all app* directories
+  for APP_DIR in `app_dir_list`; do
+    title "Build App $APP_DIR"
+    src/${APP_DIR}/build_app.sh
+    exit_on_error
+  done
 
-#   if [ -f src/ui/build_ui.sh ]; then
-#     title "Build UI"
-#     src/ui/build_ui.sh 
-#     exit_on_error
-#   fi
+  if [ -f src/ui/build_ui.sh ]; then
+    title "Build UI"
+    src/ui/build_ui.sh 
+    exit_on_error
+  fi
 
-#   # Deploy
-#   title "Deploy $TF_VAR_deploy_type"
-#   if is_deploy_compute; then
-#     $BIN_DIR/deploy_compute.sh
-#     exit_on_error
-#   elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
-#     $BIN_DIR/oke_deploy.sh
-#     exit_on_error
-#   elif [ "$TF_VAR_deploy_type" == "container_instance" ]; then
-#     $BIN_DIR/ci_deploy.sh
-#     exit_on_error
-#   fi
-# }
+  # Deploy
+  title "Deploy $TF_VAR_deploy_type"
+  if is_deploy_compute; then
+    $BIN_DIR/deploy_compute.sh
+    exit_on_error
+  elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
+    $BIN_DIR/oke_deploy.sh
+    exit_on_error
+  elif [ "$TF_VAR_deploy_type" == "container_instance" ]; then
+    $BIN_DIR/ci_deploy.sh
+    exit_on_error
+  fi
+}
 
-# terraform2() {
-#   if [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
-#     export TF_VAR_compute_ready="true"
-#     $BIN_DIR/terraform_apply.sh --auto-approve -no-color
-#     exit_on_error
-#   fi
-# }
+terraform2() {
+  if [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
+    export TF_VAR_compute_ready="true"
+    $BIN_DIR/terraform_apply.sh --auto-approve -no-color
+    exit_on_error
+  fi
+}
 
 after_build() {
   . starter.sh env    
