@@ -11,8 +11,9 @@ resource "null_resource" "build_deploy" {
         cp target/terraform.tfstate target/terraform.build_deploy
         # cat target/terraform.tfstate
         # export
-        # ./starter.sh frm build_deploy        
-        . starter.sh env
+        ./starter.sh frm build_deploy        
+        exit 0
+        . /starter.sh env
         # Run config command on the DB directly (ex RAC)
         if [ -f $BIN_DIR/deploy_db_node.sh ]; then
             title "Deploy DB Node"
