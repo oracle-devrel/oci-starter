@@ -86,7 +86,7 @@ default_options = {
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
                       '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid', '-psql_ocid', '-opensearch_ocid', '-nosql_ocid',
                       '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token', '-tls',
-                      '-subnet_ocid','-web_subnet_ocid','-app_subnet_ocid','-db_subnet_ocid','-shape','-db_install', 
+                      '-subnet_ocid','-web_subnet_ocid','-app_subnet_ocid','-db_subnet_ocid','-shape','-db_install',
                       '-ui', '-deploy', '-database', '-license']
 
 # hidden_options - allowed but not advertised
@@ -159,7 +159,7 @@ def save_params():
 
 def db_rules():
     if params.get('db_type') == 'rac':
-        params['db_subtype'] = "rac" 
+        params['db_subtype'] = "rac"
 
     params['db_type'] = longhand(
         'db_type', {'atp': 'autonomous', 'dbsystem': 'database', 'rac': 'database', 'pdb': 'pluggable'})
@@ -174,13 +174,13 @@ def db_rules():
             error(f'Pluggable Database needs an existing DB_OCID or PDB_OCID')
     if params.get('db_user') == None:
         default_users = {'autonomous': 'admin', 'database': 'system', 'db_free': 'system',
-                         'pluggable': 'system',  'mysql': 'root', 'psql': 'postgres', 'opensearch': '', 'nosql': '', 
+                         'pluggable': 'system',  'mysql': 'root', 'psql': 'postgres', 'opensearch': '', 'nosql': '',
                          'none': ''}
         params['db_user'] = default_users[params['db_type']]
     if params.get('db_type')=='none':
-        params.pop('db_user')     
-        params.pop('db_password')     
-     
+        params.pop('db_user')
+        params.pop('db_password')
+
 
 def language_rules():
     if params.get('language') != 'java' or params.get('deploy_type') == 'function':
@@ -206,8 +206,8 @@ def vcn_rules():
         error('-subnet_ocid or required for -vcn_ocid')
     elif 'vcn_ocid' not in params and 'web_subnet_ocid' in params:
         error('-vcn_ocid required for -subnet_ocid')
-    
- 
+
+
 def ui_rules():
     params['ui_type'] = longhand('ui_type', {'reactjs': 'ReactJS'})
     if params.get('ui_type') == 'jsp':
@@ -249,14 +249,14 @@ def group_common_rules():
         if params.get('group_common')=='none':
             params.pop('group_common')
         else:
-            global a_group_common 
+            global a_group_common
             a_group_common=params.get('group_common').split(',')
 
 
 def shape_rules():
     if 'shape' in params:
         if params['shape']=='arm':
-            params['shape'] = 'ampere' 
+            params['shape'] = 'ampere'
         if params.get('shape')=='freetier_amd':
             params['instance_shape'] = 'VM.Standard.E2.1.Micro'
             params['instance_shape_config_memory_in_gbs'] = 1
@@ -330,15 +330,15 @@ starter.sh
    -db_ocid (optional)
    -db_password (mandatory)
    -db_user (default admin)
-   -deploy (mandatory) public_compute | compute | kubernetes | function | container_instance 
+   -deploy (mandatory) public_compute | compute | kubernetes | function | container_instance
    -fnapp_ocid (optional)
-   -group_common (optional) atp | database | mysql | psql | opensearch | nosql | fnapp | apigw | oke | jms 
+   -group_common (optional) atp | database | mysql | psql | opensearch | nosql | fnapp | apigw | oke | jms
    -group_name (optional)
    -java_framework (default helidon | springboot | tomcat)
    -java_version (default 21 | 17 | 11 | 8)
-   -java_vm (default jdk | graalvm)  
-   -kubernetes (default oke | docker) 
-   -language (mandatory) java | node | python | dotnet | ords 
+   -java_vm (default jdk | graalvm)
+   -kubernetes (default oke | docker)
+   -language (mandatory) java | node | python | dotnet | ords
    -license (default included | byol )
    -mysql_ocid (optional)
    -psql_ocid (optional)
@@ -351,7 +351,7 @@ starter.sh
    -db_subnet_ocid (optional)
    -shape (optional freetier)
    -security (optional openid)
-   -ui (default html | reactjs | jet | angular | none) 
+   -ui (default html | reactjs | jet | angular | none)
    -vcn_ocid (optional)
    -output_dir (optional)
 
@@ -416,12 +416,12 @@ def git_params():
 def readme_contents():
     if 'group_name' in params:
         contents = ['''## OCI-Starter - Common Resources
-                    
-### License
-                    
-Check LICENSE file (Apache 2.0)                    
 
-### Usage 
+### License
+
+Check LICENSE file (Apache 2.0)
+
+### Usage
 
 ### Commands
 - build_group.sh   : Build first the Common Resources (group_common), then other directories
@@ -438,14 +438,14 @@ Check LICENSE file (Apache 2.0)
 
 ### After Build
 - group_common_env.sh : File created during the build and imported in each application
-- app1                : Directory with an application using "group_common_env.sh" 
+- app1                : Directory with an application using "group_common_env.sh"
 - app2                : ...
 ...
     '''
                 ]
     else:
         contents = ['''## OCI-Starter
-### Usage 
+### Usage
 
 ### Commands
 - starter.sh         : Show the menu
@@ -453,11 +453,11 @@ Check LICENSE file (Apache 2.0)
 - starter.sh build   : Build the whole program: Run Terraform, Configure the DB, Build the App, Build the UI
 - starter.sh destroy : Destroy the objects created by Terraform
 - starter.sh env     : Set the env variables in BASH Shell
-                    
+
 ### Directories
 - src           : Sources files
-    - app       : Source of the Backend Application 
-    - ui        : Source of the User Interface 
+    - app       : Source of the Backend Application
+    - ui        : Source of the User Interface
     - db        : SQL files of the database
     - terraform : Terraform scripts'''
                 ]
@@ -486,7 +486,7 @@ Check LICENSE file (Apache 2.0)
     if 'group_name' in params:
         contents.append("  # Build first the group common resources (group_common), then other directories")
         contents.append(f"  cd {params['group_name']}")
-        contents.append("  ./build_group.sh")       
+        contents.append("  ./build_group.sh")
     else:
         contents.append(f"  cd {params['prefix']}")
         contents.append("  ./starter.sh")
@@ -505,11 +505,11 @@ def env_param_list():
     else:
         exclude.append('group_common')
     if is_param_default_value('infra_as_code'):
-        exclude.append('infra_as_code')        
+        exclude.append('infra_as_code')
     if is_param_default_value('security'):
-        exclude.append('security')        
+        exclude.append('security')
     if 'oke_ocid' not in params:
-        exclude.append('oke_type')        
+        exclude.append('oke_type')
 
     print(exclude)
     for x in exclude:
@@ -541,20 +541,20 @@ def env_sh_contents():
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
     contents.append('')
     if params.get('compartment_ocid') == None:
-        contents.append('export TF_VAR_compartment_ocid="__TO_FILL__"')       
+        contents.append('export TF_VAR_compartment_ocid="__TO_FILL__"')
     for s in group_common_contents:
         contents.append(s)
 
     contents.append('')
     contents.append("if [ -f $HOME/.oci_starter_profile ]; then")
     contents.append("  . $HOME/.oci_starter_profile")
-    contents.append("fi")      
-    # contents.append("else")      
+    contents.append("fi")
+    # contents.append("else")
     # contents.append('')
     # contents.append('  # API Management')
     # contents.append('  # export APIM_HOST=xxxx-xxx.adb.region.oraclecloudapps.com')
     # contents.append('')
-    # if params.get('instance_shape') == None:   
+    # if params.get('instance_shape') == None:
     #    contents.append('  # Compute Shape')
     #    contents.append('  # export TF_VAR_instance_shape=VM.Standard.E4.Flex')
     # contents.append('')
@@ -640,7 +640,7 @@ def append_file(file1, file2):
     f1.write('\n\n')
     f1.write(f2.read())
     f1.close()
-    f2.close()                
+    f2.close()
 
 def cp_terraform(file1, file2=None, file3=None):
     print("cp_terraform " + file1)
@@ -685,7 +685,7 @@ def output_remove(src):
 
 def output_rm_tree(src):
     shutil.rmtree(output_dir + os.sep + src)
- 
+
 def cp_dir_src_db(db_family):
     print("cp_dir_src_db "+db_family)
     output_copy_tree("option/src/db/"+db_family, "src/db")
@@ -702,7 +702,7 @@ def output_replace_db_node_count():
        if params['language'] == "java" and params['java_framework'] == "springboot":
            output_copy_tree("option/src/app/java_springboot_rac", "src/app")
        if params['ui_type'] == "html":
-           output_copy_tree("option/src/ui/html_rac", "src/ui" )    
+           output_copy_tree("option/src/ui/html_rac", "src/ui" )
     else:
        # Normal Database
        output_replace('##db_node_count##', "1", "src/terraform/dbsystem.j2.tf")
@@ -719,7 +719,7 @@ def cp_terraform_apigw(append_tf):
     elif params['language'] == "java" and params['java_framework'] == "tomcat":
         app_url = "http://${local.apigw_dest_private_ip}:8080/starter-1.0/$${request.path[pathname]}"
     else:
-        app_url = "http://${local.apigw_dest_private_ip}:8080/$${request.path[pathname]}" 
+        app_url = "http://${local.apigw_dest_private_ip}:8080/$${request.path[pathname]}"
 
     security_tf = None
     if params.get('security') == "openid":
@@ -729,7 +729,7 @@ def cp_terraform_apigw(append_tf):
     if 'apigw_ocid' in params:
         output_replace('##APP_URL##', app_url,"src/terraform/apigw_existing.j2.tf")
     else:
-        output_replace('##APP_URL##', app_url, "src/terraform/apigw.j2.tf")    
+        output_replace('##APP_URL##', app_url, "src/terraform/apigw.j2.tf")
 
 #----------------------------------------------------------------------------
 # Create Directory (shared for group_common and output)
@@ -755,7 +755,7 @@ def create_dir_shared():
     cp_terraform_existing("vcn_ocid", "network.j2.tf")
 
     # -- Bastion ------------------------------------------------------------
-    # Currently limited to provision the database ? 
+    # Currently limited to provision the database ?
     # XXXX In the future maybe as build machine ?
     if params.get('deploy_type') in [ 'public_compute', 'private_compute', 'instance_pool' ] or 'bastion_ocid' in params or params.get('db_type')!='none':
         cp_terraform_existing("bastion_ocid", "bastion.j2.tf")
@@ -792,13 +792,13 @@ def create_output_dir():
         elif params['db_type'] == "none":
             db_family = "none"
             db_family_type = "other"
-        params['db_family'] = db_family    
+        params['db_family'] = db_family
         params['db_family_type'] = db_family_type
 
         # Function Common
         if params.get('deploy_type') == "function":
             output_copy_tree("option/src/app/fn/fn_common", "src/app")
-         
+
         # Generic version for Oracle DB
         if os.path.exists("option/src/app/"+app):
             output_copy_tree("option/src/app/"+app, "src/app")
@@ -834,11 +834,11 @@ def create_output_dir():
     if params.get('ui_type') == "none":
         print("No UI")
         output_rm_tree("src/ui")
-    elif params.get('ui_type') == "api": 
+    elif params.get('ui_type') == "api":
         print("API Only")
-        output_rm_tree("src/ui")   
+        output_rm_tree("src/ui")
         if params.get('deploy_type') in [ 'public_compute', 'private_compute', 'instance_pool' ]:
-            cp_terraform_apigw("apigw_compute_append.tf")          
+            cp_terraform_apigw("apigw_compute_append.tf")
     else:
         ui_lower = params.get('ui_type').lower()
         output_copy_tree("option/src/ui/"+ui_lower, "src/ui")
@@ -892,17 +892,17 @@ def create_output_dir():
             output_mkdir("src/compute")
             output_copy_tree("option/compute", "src/compute")
             if params.get('deploy_type') == 'instance_pool':
-                cp_terraform("instance_pool.j2.tf") 
-                cp_terraform("instance_pool_part2.j2.tf") 
+                cp_terraform("instance_pool.j2.tf")
+                cp_terraform("instance_pool_part2.j2.tf")
             elif params.get('tls') == 'existing_dir':
                 if params.get('deploy_type') == 'public_compute':
                     output_copy_tree("option/tls/compute_existing_dir", "src/tls")
-                else: 
-                    cp_terraform_apigw("apigw_compute_append.tf")                             
+                else:
+                    cp_terraform_apigw("apigw_compute_append.tf")
             elif params.get('tls') == 'new_http_01':
                 output_copy_tree("option/tls/new_http_01", "src/tls")
             elif params.get('tls') == 'existing_ocid':
-                cp_terraform_apigw("apigw_compute_append.tf")   
+                cp_terraform_apigw("apigw_compute_append.tf")
             # Compute in app_subnet uses an APIGW in web_subnet
             if params.get('deploy_type') == 'private_compute':
                 cp_terraform_apigw("apigw_compute_append.tf")
@@ -914,19 +914,19 @@ def create_output_dir():
 
             # output_mkdir src/container_instance
             output_copy_tree("option/container_instance", "bin")
-            cp_terraform_apigw(None)          
+            cp_terraform_apigw(None)
 
     if params.get('tls'):
         cp_terraform("tls.j2.tf")
         if params.get('deploy_type') == 'kubernetes' and params.get('tls') != 'new_http_01':
-            cp_terraform_apigw("apigw_kubernetes_tls_part2.tf")   
+            cp_terraform_apigw("apigw_kubernetes_tls_part2.tf")
 
     if os.path.exists(output_dir + "/src/app/openapi_spec_append.yaml"):
         append_file( output_dir + "/src/app/openapi_spec.yaml", output_dir + "/src/app/openapi_spec_append.yaml")
         os.remove( output_dir + "/src/app/openapi_spec_append.yaml" )
 
     if params.get('deploy_type') in ["kubernetes","container_instance","function"]:
-        cp_terraform("repository.j2.tf") 
+        cp_terraform("repository.j2.tf")
 
     # -- Database ----------------------------------------------------------------
     if params.get('db_type') != "none":
@@ -942,7 +942,7 @@ def create_output_dir():
             if 'db_ocid' not in params:
                 output_replace_db_node_count()
             if params.get('language') == 'apex':
-                output_copy_tree("option/src/db/apex", ".")                
+                output_copy_tree("option/src/db/apex", ".")
 
         if params.get('db_type') == "pluggable":
             cp_terraform_existing("pdb_ocid", "dbsystem_pluggable.j2.tf")
@@ -954,9 +954,9 @@ def create_output_dir():
 
         if params.get('db_type') == "mysql":
             if params.get('deploy_type') == "public_compute":
-               cp_terraform("mysql_public_compute.tf")   
-               output_copy_tree("option/src/db/mysql_public_compute", "src/db")  
-               output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")       
+               cp_terraform("mysql_public_compute.tf")
+               output_copy_tree("option/src/db/mysql_public_compute", "src/db")
+               output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
             else:
                 cp_terraform_existing("mysql_ocid", "mysql.j2.tf")
 
@@ -975,8 +975,8 @@ def create_output_dir():
         for f in allfiles:
             src_path = os.path.join("src/app/db", f)
             dst_path = os.path.join("src/db", f)
-            output_move(src_path, dst_path) 
-        os.rmdir(output_dir + "/src/app/db")         
+            output_move(src_path, dst_path)
+        os.rmdir(output_dir + "/src/app/db")
 
 
 #----------------------------------------------------------------------------
@@ -1003,7 +1003,7 @@ def create_group_common_dir():
     if "db_free" in a_group_common:
         cp_terraform("db_free.j2.tf")
         output_copy_tree("option/src/db/db_free", "src/db")
-        output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")            
+        output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
 
     if "mysql" in a_group_common:
         cp_terraform_existing("mysql_ocid", "mysql.j2.tf")
@@ -1045,11 +1045,11 @@ def create_group_common_dir():
 
     # Container Instance Common
     cp_terraform("container_instance_policy.tf")
-   
+
 #----------------------------------------------------------------------------
 
 jinja2_db_params = {
-    "oracle": { 
+    "oracle": {
         "pomGroupId": "com.oracle.database.jdbc",
         "pomArtifactId": "ojdbc8",
         "pomVersion": "21.11.0.0",
@@ -1057,21 +1057,21 @@ jinja2_db_params = {
         "dbName": "Oracle",
 
     },
-    "mysql": { 
+    "mysql": {
         "pomGroupId": "mysql",
         "pomArtifactId": "mysql-connector-java",
         "pomVersion": "8.0.31",
         "jdbcDriverClassName": "com.mysql.cj.jdbc.Driver",
         "dbName": "MySQL"
     },
-    "psql": { 
+    "psql": {
         "pomGroupId": "org.postgresql",
         "pomArtifactId": "postgresql",
         "pomVersion": "42.7.0",
         "jdbcDriverClassName": "org.postgresql.Driver",
         "dbName": "PostgreSQL"
     },
-    "opensearch": { 
+    "opensearch": {
         "pomGroupId": "org.opensearch.driver",
         "pomArtifactId": "opensearch-sql-jdbc",
         "pomVersion": "1.4.0.1",
@@ -1100,7 +1100,7 @@ def jinja2_find_in_terraform( dir ):
     outputs = []
     variables = []
     resources = []
-    resources_part2 = []    
+    resources_part2 = []
     locals = []
 
     for root, _, files in os.walk(dir):
@@ -1112,11 +1112,11 @@ def jinja2_find_in_terraform( dir ):
             file_path = os.path.join(root, filename)
             print('---- File :   '+file_path, flush=True)
             with open(file_path, 'r', encoding='utf-8') as f:
-                for line in f: 
+                for line in f:
                     # Use regex for more precise matching and to capture the name
                     match = re.match(r"^(variable|output)\s+\"?([a-zA-Z0-9_-]+)\"?\s*\{", line)
                     if match:
-                        print(''+match.group(1)+' '+match.group(2), flush=True)                          
+                        print(''+match.group(1)+' '+match.group(2), flush=True)
                         if match.group(1) == 'output':
                             outputs.append(match.group(2))
                         elif match.group(1) == 'variable':
@@ -1127,17 +1127,17 @@ def jinja2_find_in_terraform( dir ):
                         name = match.group(1)
                         name = name.replace('"', '').replace(' ', '.')
                         resource_type = name.split(".")[0]
-                        if resource_type not in ["random_string","null_resource","oci_core_vcn","oci_core_internet_gateway","oci_core_default_route_table","oci_core_subnet","oci_core_security_list","oci_core_nat_gateway","oci_core_service_gateway","oci_core_route_table"]: 
+                        if resource_type not in ["random_string","null_resource","oci_core_vcn","oci_core_internet_gateway","oci_core_default_route_table","oci_core_subnet","oci_core_security_list","oci_core_nat_gateway","oci_core_service_gateway","oci_core_route_table"]:
                             if "_part2" in filename:
-                                print('resource (part2) '+name, flush=True)                          
+                                print('resource (part2) '+name, flush=True)
                                 resources_part2.append(name)
                             else:
-                                print('resource'+name, flush=True)                          
+                                print('resource'+name, flush=True)
                                 resources.append(name)
                     match = re.match(r"^\s+ (tf_local?([a-zA-Z0-9_-])+\s*\=", line)
                     if match:
                         name = match.group(1)
-                        print('local '+name, flush=True)        
+                        print('local '+name, flush=True)
                         locals.append(name)
 
     return outputs, variables, resources, resources_part2, locals
@@ -1146,12 +1146,12 @@ def jinja2_find_in_terraform( dir ):
 
 def jinja2_replace_template_prefix( template_param, prefix ):
     for subdir, dirs, files in os.walk(output_dir):
-        for filename in files:    
+        for filename in files:
             if filename.find('.'+prefix+'.')>0 or filename.endswith('.'+prefix):
                 output_file_path = os.path.join(subdir, filename.replace("."+prefix, ""))
                 print(f"J2 - processing - {output_file_path}", flush=True)
-                if os.path.isfile(output_file_path): 
-                    print(f"J2 - Skipping - destination file already exists: {output_file_path}") 
+                if os.path.isfile(output_file_path):
+                    print(f"J2 - Skipping - destination file already exists: {output_file_path}")
                 else:
                     environment = Environment(loader=FileSystemLoader([subdir,"option/src/j2_macro"]))
                     template = environment.get_template(filename)
@@ -1163,10 +1163,10 @@ def jinja2_replace_template_prefix( template_param, prefix ):
                     # Give executable to .sh files
                     if filename.endswith('.sh'):
                         st = os.stat(output_file_path)
-                        os.chmod(output_file_path, st.st_mode | stat.S_IEXEC)        
-                os.remove(os.path.join(subdir, filename))                
-            if filename.endswith('_refresh.sh'):      
-                os.remove(os.path.join(subdir, filename))   
+                        os.chmod(output_file_path, st.st_mode | stat.S_IEXEC)
+                os.remove(os.path.join(subdir, filename))
+            if filename.endswith('_refresh.sh'):
+                os.remove(os.path.join(subdir, filename))
 
 #----------------------------------------------------------------------------
 
@@ -1174,13 +1174,13 @@ def jinja2_replace_template():
     db_param = jinja2_db_params.get( params.get('db_family') )
     # Find all outputs in terraform
 
-    if db_param is None:  
+    if db_param is None:
         template_param = params
-    else:   
+    else:
         template_param = {**params, **db_param}
-     
+
     jinja2_replace_template_prefix( template_param, "j2" )
-    
+
     template_param['terraform_outputs'], template_param['terraform_variables'], template_param['terraform_resources'], template_param['terraform_resources_part2'], template_param['locals'] = jinja2_find_in_terraform(output_dir +'/src/terraform')
     # for schema.yaml.j21
     template_param['env_params'] = env_param_list()
@@ -1189,7 +1189,7 @@ def jinja2_replace_template():
     template_param['env_params'].append('region')
     template_param['env_params'].append('current_user_ocid')
     template_param['params'] = params
-    print( template_param, flush=True) 
+    print( template_param, flush=True)
 
     jinja2_replace_template_prefix( template_param, "j21" )
 
@@ -1207,7 +1207,7 @@ illegal_params = check_values()
 dash_params={f'-{k}': v for k, v in params.items()}
 if 'group_name' in params:
   missing_params = missing_parameters(dash_params.keys(), mandatory_options(GROUP))
-else:  
+else:
   missing_params = missing_parameters(dash_params.keys(), mandatory_options(mode))
 
 if len(unknown_params) > 0 or len(illegal_params) > 0 or len(missing_params) > 0:
@@ -1249,13 +1249,13 @@ if 'group_name' in params:
     output_mkdir('group_common')
     for f in allfiles:
         os.rename(output_dir + os.sep + f, output_dir + os.sep + 'group_common' + os.sep + f)
-    output_copy_tree("option/group", ".")    
+    output_copy_tree("option/group", ".")
 
 # Add parameters to the creation if the project is to be used with a group
 if 'group_common' in params:
     # For a new group, create the first application in a subdir
     if 'group_name' in params:
-        del params['group_name']    
+        del params['group_name']
         output_dir = output_dir + os.sep + params['prefix']
     # The application will use the Common Resources created by group_name above.
     # del params['group_common']
