@@ -195,7 +195,6 @@ def language_rules():
 def kubernetes_rules():
     if 'deploy_type' in params:
       params['deploy_type'] = longhand('deploy_type', {'oke': 'kubernetes', 'ci': 'container_instance'})
-    print( "xxxxxx" + params['deploy_type']  )
 
 def vcn_rules():
     if 'subnet_ocid' in params:
