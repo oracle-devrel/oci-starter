@@ -6,8 +6,6 @@ resource "null_resource" "build_deploy" {
     command = <<-EOT
         {%- for key in terraform_locals %}
         export TF_LOCAL_{{key}}=${local.tf_local_{{key}}}
-        {%- endif %}        
-        {{key}} = var.{{key}}
         {%- endfor %}      
         cd ${var.project_dir}
         pwd
