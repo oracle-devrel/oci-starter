@@ -48,7 +48,7 @@ locals {
     db_port = "5432"
     db_url = local.db_host
     // jdbc:postgresql://localhost:5432/postgres
-    jdbc_url = format("jdbc:postgresql://%s:%s/postgres", local.db_host, local.db_port )
+    tf_local_jdbc_url = format("jdbc:postgresql://%s:%s/postgres", local.db_host, local.db_port )
 }
 {%- endif %}  
 

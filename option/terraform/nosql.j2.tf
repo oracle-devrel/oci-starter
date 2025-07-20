@@ -49,6 +49,6 @@ resource "oci_identity_policy" "starter_nosql_policy" {
 locals {
     db_host = "none"
     db_url = "none"
-    jdbc_url = "none"
+    tf_local_jdbc_url = "none"
 }
 {%- endif %}  

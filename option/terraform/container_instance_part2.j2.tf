@@ -20,10 +20,10 @@ resource oci_container_instances_container_instance starter_container_instance {
     environment_variables = {
       {%- if db_type != "none" %} 
       "DB_URL" = local.db_url,
-      "JDBC_URL" = local.jdbc_url,
+      "JDBC_URL" = local.tf_local_jdbc_url,
       "DB_USER" = var.db_user,
       "DB_PASSWORD" = var.db_password,
-      "JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL" = local.jdbc_url
+      "JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL" = local.tf_local_jdbc_url
       {%- endif %} 
       {%- if db_type == "nosql" %} 
       "TF_VAR_compartment_ocid" = var.compartment_ocid,

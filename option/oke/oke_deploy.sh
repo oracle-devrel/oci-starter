@@ -71,7 +71,7 @@ if [ ! -f $KUBECONFIG ]; then
 
     # Create secrets
     kubectl delete secret ${TF_VAR_prefix}-db-secret  --ignore-not-found=true
-    kubectl create secret generic ${TF_VAR_prefix}-db-secret --from-literal=db_user=$TF_VAR_db_user --from-literal=db_password=$TF_VAR_db_password --from-literal=db_url=$DB_URL --from-literal=jdbc_url=$JDBC_URL --from-literal=TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid --from-literal=TF_VAR_nosql_endpoint=$TF_VAR_nosql_endpoint
+    kubectl create secret generic ${TF_VAR_prefix}-db-secret --from-literal=db_user=$TF_VAR_db_user --from-literal=db_password=$TF_VAR_db_password --from-literal=db_url=$DB_URL --from-literal=jdbc_url=$TF_LOCAL_jdbc_url --from-literal=TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid --from-literal=TF_VAR_nosql_endpoint=$TF_VAR_nosql_endpoint
   else
     echo "OKE Deploy: Skipping creation of ingress and secrets" 
   fi  
@@ -99,7 +99,7 @@ if [ "$TF_VAR_tls" == "new_http_01" ]; then
 fi
 
 # If present, replace the ORDS URL
-if [ "$ORDS_URL" != "" ]; then
+if [ "$TF_LOCAL_ords_url" != "" ]; then
   ORDS_HOST=`basename $(dirname $ORDS_URL)`
   sed -i "s&##ORDS_HOST##&$ORDS_HOST&" $TARGET_DIR/app.yaml
   sed -i "s&##ORDS_HOST##&$ORDS_HOST&" $TARGET_DIR/ingress-app.yaml

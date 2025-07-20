@@ -713,9 +713,9 @@ def output_replace_db_node_count():
 # Copy the terraform for APIGW
 def cp_terraform_apigw(append_tf):
     if params['language'] == "ords":
-        app_url = "${local.ords_url}/starter/module/$${request.path[pathname]}"
+        app_url = "${local.tf_local_ords_url}/starter/module/$${request.path[pathname]}"
     elif params['language'] == "apex":
-        app_url = "${local.ords_url}/r/app_dept/dept/$${request.path[pathname]}"
+        app_url = "${local.tf_local_ords_url}/r/app_dept/dept/$${request.path[pathname]}"
     elif params['language'] == "java" and params['java_framework'] == "tomcat":
         app_url = "http://${local.apigw_dest_private_ip}:8080/starter-1.0/$${request.path[pathname]}"
     else:

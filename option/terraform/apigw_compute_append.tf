@@ -1,7 +1,7 @@
 
 {%- if language == "apex" %}
 locals {
-  db_root_url = replace(local.ords_url, "/ords", "" )
+  db_root_url = replace(local.tf_local_ords_url, "/ords", "" )
 }
 {%- else %}
 # Used for APIGW and TAGS

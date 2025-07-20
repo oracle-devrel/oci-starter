@@ -12,8 +12,8 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $BIN_DIR/build_common.sh
 
 if is_deploy_compute; then
-  sed "s&##ORDS_URL##&$ORDS_URL&" nginx_app.locations > ../../target/compute/compute/nginx_app.locations
-  ORDS_HOST=`basename $(dirname $ORDS_URL)`
+  sed "s&##ORDS_URL##&$TF_LOCAL_ords_url&" nginx_app.locations > ../../target/compute/compute/nginx_app.locations
+  ORDS_HOST=`basename $(dirname $TF_LOCAL_ords_url)`
   sed -i "s&##ORDS_HOST##&$ORDS_HOST&" ../../target/compute/compute/nginx_app.locations
   mkdir -p ../../target/compute/$APP_DIR
   cp -r src/* ../../target/compute/$APP_DIR/.

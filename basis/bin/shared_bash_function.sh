@@ -122,7 +122,7 @@ replace_db_user_password_in_file() {
   if [ -f $CONFIG_FILE ]; then 
     sed -i "s/##DB_USER##/$TF_VAR_db_user/" $CONFIG_FILE
     sed -i "s/##DB_PASSWORD##/$TF_VAR_db_password/" $CONFIG_FILE
-    sed -i "s%##JDBC_URL##%$JDBC_URL%" $CONFIG_FILE
+    sed -i "s%##JDBC_URL##%$TF_LOCAL_jdbc_url%" $CONFIG_FILE
   fi
 }  
 
