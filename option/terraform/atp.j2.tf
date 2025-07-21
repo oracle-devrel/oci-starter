@@ -49,7 +49,7 @@ locals {
   # Get index for 'name' equal to "Dan"
   index_profile = index(local.list_profiles, "TCPS/MEDIUM")
   local_db_url = replace(data.oci_database_autonomous_database.starter_atp.connection_strings[0].profiles[local.index_profile].value, " ", "")
-  local_jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
+  local_jdbc_url = format("jdbc:oracle:thin:@%s", local.local_db_url)
   # Create List of 'name' values from source objet list
   local_ords_url = replace(data.oci_database_autonomous_database.starter_atp.connection_urls[0].apex_url, "ords/apex", "ords" )
 }
