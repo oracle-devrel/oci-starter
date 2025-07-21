@@ -5,7 +5,7 @@ resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
 {%- for key in terraform_locals %}
-        export {{key.upper()}}=${local.local_{{key}}}
+        export {{key.upper()}}="${local.local_{{key}}}"
 {%- endfor %}      
         cd ${var.project_dir}
         pwd
