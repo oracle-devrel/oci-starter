@@ -92,6 +92,9 @@ data "external" "env_part2" {
 resource "null_resource" "after_build" {
   provisioner "local-exec" {
     command = <<-EOT
+{%- for key in terraform_locals %}
+        export {{key.upper()}}="${local.local_{{key}}}"
+{%- endfor %}      
         cd ${var.project_dir}    
         # cat target/terraform.tfstate
         # export
