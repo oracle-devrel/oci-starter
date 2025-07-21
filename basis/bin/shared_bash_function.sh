@@ -119,7 +119,7 @@ ocir_docker_push () {
 replace_db_user_password_in_file() {
   # Replace DB_USER DB_PASSWORD
   CONFIG_FILE=$1
-  if [ -f $CONFIG_FILE ]; then 
+  if [ -f $CONFIG_FILE ]; then 
     sed -i "s/##DB_USER##/$TF_VAR_db_user/" $CONFIG_FILE
     sed -i "s/##DB_PASSWORD##/$TF_VAR_db_password/" $CONFIG_FILE
     sed -i "s%##JDBC_URL##%$JDBC_URL%" $CONFIG_FILE
