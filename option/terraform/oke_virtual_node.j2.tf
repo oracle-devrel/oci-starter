@@ -14,7 +14,7 @@ locals {
   oke_shape = startswith(var.instance_shape, "VM.Standard.A") ? "Pod.Standard.A1.Flex" : "Pod.Standard.E4.Flex"
 }
 
-variable "node_pool_size" {}
+variable "node_pool_size" { default=null }
 
 variable "cluster_options_persistent_volume_config_defined_tags_value" {
   default = "value"

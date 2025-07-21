@@ -14,7 +14,7 @@ locals {
   oke_shape = startswith(var.instance_shape, "VM.Standard.A") ? "VM.Standard.A1.Flex" : "VM.Standard3.Flex"
 }
 
-variable "node_pool_size" {}
+variable "node_pool_size" { default=null }
 
 variable "cluster_options_persistent_volume_config_defined_tags_value" {
   default = "value"
