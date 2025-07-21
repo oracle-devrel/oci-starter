@@ -111,7 +111,7 @@ locals {
   # TNS Connect String (Description....)
   db_host = "todo"
   local_db_url = data.oci_database_pluggable_databases.starter_pdbs.pluggable_databases.0.connection_strings.0.pdb_ip_default
-  local_jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
+  local_jdbc_url = format("jdbc:oracle:thin:@%s", local.local_db_url)
   local_ords_url = format("http://%s:8080/ords", data.oci_core_vnic.starter_node_vnic.private_ip_address )
 }
 

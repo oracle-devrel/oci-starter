@@ -19,7 +19,7 @@ resource oci_container_instances_container_instance starter_container_instance {
     is_resource_principal_disabled = "false"
     environment_variables = {
       {%- if db_type != "none" %} 
-      "DB_URL" = local.db_url,
+      "DB_URL" = local.local_db_url,
       "JDBC_URL" = local.local_jdbc_url,
       "DB_USER" = var.db_user,
       "DB_PASSWORD" = var.db_password,

@@ -64,7 +64,7 @@ locals {
 locals {
   db_host = "todo"
   local_db_url = format("%s:1521/FREEPDB1", local.local_db_free_ip)
-  local_jdbc_url = format("jdbc:oracle:thin:@%s", local.db_url)
+  local_jdbc_url = format("jdbc:oracle:thin:@%s", local.local_db_url)
 }
 
 output "db_free_ip" {

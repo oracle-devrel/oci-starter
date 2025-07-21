@@ -58,10 +58,10 @@ data "oci_opensearch_opensearch_cluster" "starter_opensearch" {
 {%- if group_name is not defined %}
 locals {
   # TNS Connect String (Description....)
+  db_host = data.oci_opensearch_opensearch_cluster.starter_opensearch.opensearch_fqdn
   db_port = "9200"
-  local_db_url = data.oci_opensearch_opensearch_cluster.starter_opensearch.opensearch_fqdn
-  local_jdbc_url = format("jdbc:opensearch://https://%s:9200/?hostnameVerification=false", local.db_url)
-  db_host = local.db_url
+  local_db_url = local.db_host
+  local_jdbc_url = format("jdbc:opensearch://https://%s:9200/?hostnameVerification=false", local.local_db_url)
 }
 {%- endif %}  
 
