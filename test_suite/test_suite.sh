@@ -154,18 +154,18 @@ loop_compute_other() {
   build_option   
 
   # From Resource Manager
-  OPTION_INFRA_AS_CODE=from_resource_manager
-  OPTION_DEPLOY=public_compute
-  build_option   
-  OPTION_DEPLOY=private_compute
-  build_option   
-  OPTION_DEPLOY=container_instance
-  build_option   
-  OPTION_DEPLOY=function
-  build_option   
-  OPTION_DEPLOY=oke
-  build_option   
-  OPTION_INFRA_AS_CODE=terraform_local
+#   OPTION_INFRA_AS_CODE=from_resource_manager
+#   OPTION_DEPLOY=public_compute
+#   build_option   
+#   OPTION_DEPLOY=private_compute
+#   build_option   
+#   OPTION_DEPLOY=container_instance
+#   build_option   
+#   OPTION_DEPLOY=function
+#   build_option   
+#   OPTION_DEPLOY=oke
+#   build_option   
+#   OPTION_INFRA_AS_CODE=terraform_local
 
   # Pluggable DB 
   OPTION_DB=pdb
