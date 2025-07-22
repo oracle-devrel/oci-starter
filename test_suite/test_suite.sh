@@ -152,6 +152,7 @@ loop_compute_other() {
   OPTION_DB=atp
   OPTION_INFRA_AS_CODE=resource_manager
   build_option   
+  OPTION_INFRA_AS_CODE=terraform_local
 
   # From Resource Manager
 #   OPTION_INFRA_AS_CODE=from_resource_manager
