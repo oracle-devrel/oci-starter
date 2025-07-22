@@ -219,6 +219,8 @@ build_option() {
     fi
   fi
     
+  add_inprogress_rerun
+
   # Prevent to have undeleted resource when rerunning the test_suite
   if [ -d $TEST_DIR/target ]; then
      cd $TEST_DIR
@@ -230,9 +232,6 @@ build_option() {
     echo "ERROR: $TEST_HOME/group_common_env.sh not found"
     exit 1
   fi 
-
-  add_inprogress_rerun
-
 
   # Avoid 2 parallel creations of code
   while [ -f $TEST_HOME/oci_starter_busy ]; do
