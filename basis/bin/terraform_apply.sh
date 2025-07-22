@@ -23,4 +23,4 @@ else
 fi
 
 infra_as_code_apply $TERRAFORM_FLAG $@
-exit_on_error
+exit_on_error "infra_as_code_apply"

@@ -37,26 +37,26 @@ resource "null_resource" "build_deploy" {
         for APP_DIR in `app_dir_list`; do
             title "Build App $APP_DIR"
             src/$APP_DIR/build_app.sh
-            exit_on_error
+            exit_on_error "Build App"
         done
 
         if [ -f src/ui/build_ui.sh ]; then
             title "Build UI"
             src/ui/build_ui.sh 
-            exit_on_error
+            exit_on_error "Build UI"
         fi
 
         # Deploy
         title "Deploy $TF_VAR_deploy_type"
         if is_deploy_compute; then
             $BIN_DIR/deploy_compute.sh
-            exit_on_error
+            exit_on_error "Deploy $TF_VAR_deploy_type"
         elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
             $BIN_DIR/oke_deploy.sh
-            exit_on_error
+            exit_on_error "Deploy $TF_VAR_deploy_type"
         elif [ "$TF_VAR_deploy_type" == "container_instance" ]; then
             $BIN_DIR/ci_deploy.sh
-            exit_on_error
+            exit_on_error "Deploy $TF_VAR_deploy_type"
         fi
         . starter.sh frm
         # cat target/resource_manager_variables.json

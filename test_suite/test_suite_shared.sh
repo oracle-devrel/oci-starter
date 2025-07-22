@@ -23,10 +23,11 @@ export nocolorarg=1
 exit_on_error() {
   RESULT=$?
   if [ $RESULT -eq 0 ]; then
-    echo "Success"
+    echo "Success - $1"
   else
-    echo "Failed (RESULT=$RESULT)"
-    exit $RESULT
+    title "EXIT ON ERROR - HISTORY - $1 "
+    history 2 | cut -c1-256
+    error_exit "Command Failed (RESULT=$RESULT)"
   fi  
 }
 
@@ -380,13 +381,13 @@ pre_test_suite() {
 
   cd $TEST_HOME/oci-starter
   ./oci_starter.sh -group_name $GROUP_NAME -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN -shape $SHAPE_GROUP
-  exit_on_error
+  exit_on_error "oci_starter.sh"
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
   echo "# Test Suite use 2 nodes to avoid error: Too Many Pods (110 pods/node K8s limit)" >> env.sh
   echo "export TF_VAR_node_pool_size=2" >> env.sh
   ./starter.sh build --auto-approve
-  exit_on_error
+  exit_on_error "starter.sh build"
   date
   echo "CSV_DATE,OPTION_DEPLOY,OPTION_LANG,OPTION_JAVA_FRAMEWORK,OPTION_JAVA_VM,OPTION_DB,OPTION_DB_INSTALL,OPTION_UI,OPTION_SHAPE,CSV_NAME,CSV_HTML_OK,CSV_JSON_OK,CSV_BUILD_SECOND,CSV_DESTROY_SECOND,CSV_RUN100_OK,CSV_RUN100_SECOND" > $TEST_HOME/result.csv 
 }

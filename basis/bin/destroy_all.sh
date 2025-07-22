@@ -52,7 +52,7 @@ disableConfidentialApp() {
   # Remove trailing /
   IDCS_URL=${IDCS_URL::-1}
   oci identity-domains app-status-changer put --force --active false --app-status-changer-id $CONFIDENTIAL_APP_OCID --schemas '["urn:ietf:params:scim:schemas:oracle:idcs:AppStatusChanger"]' --endpoint $IDCS_URL  --force
-  exit_on_error
+  exit_on_error "disableConfidentialApp"
 }
 for CONFIDENTIAL_APP_OCID in `cat $STATE_FILE | jq -r '.resources[] | select(.type=="oci_identity_domains_app") | .instances[].attributes.id'`;
 do
@@ -84,7 +84,7 @@ done;
 if [ "$1" != "--called_by_resource_manager" ]; then
   title "Terraform Destroy"
   $BIN_DIR/terraform_destroy.sh --auto-approve -no-color
-  exit_on_error
+  exit_on_error "terraform_destroy.sh"
 
   export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
   if [ "$TF_RESOURCE" == "0" ]; then

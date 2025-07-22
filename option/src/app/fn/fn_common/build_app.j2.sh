@@ -21,5 +21,5 @@ build_function $JDBC_URL
 {%- else %}
 build_function $DB_URL
 {%- endif %}
-exit_on_error
+exit_on_error "build_function"
 
