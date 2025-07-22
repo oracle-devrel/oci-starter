@@ -126,6 +126,5 @@ else
   # XXXXX Done is already runned from terraform... Should not call after_done.sh twice..... XXXXXX
   title "Done"
   $BIN_DIR/done.sh
-
 fi
 

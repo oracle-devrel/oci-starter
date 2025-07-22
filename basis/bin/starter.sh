@@ -115,11 +115,11 @@ elif [ "$ARG1" == "rebuild" ]; then
   LOG_NAME=$TARGET_DIR/logs/destroy.${DATE_POSTFIX}.log
   ln -sf $LOG_NAME $TARGET_DIR/destroy.log
   $BIN_DIR/destroy_all.sh ${@:2} 2>&1 | tee $LOG_NAME
-  exit_on_error
+  exit_on_error "destroy_all.sh"
   
   # Pull
   git pull
-  exit_on_error
+  exit_on_error "git pull"
   
   # Cleanup target dir
   rm -Rf $TARGET_DIR
@@ -146,15 +146,15 @@ elif [ "$ARG1" == "frm" ]; then # From Resource Manager
   if [ "$ARG2" == "before_terraform" ]; then
     export LOG_NAME=$TARGET_DIR/frm_before_terraform.log
     $BIN_DIR/build_all.sh --before_terraform | tee $LOG_NAME
-    exit_on_error    
+    exit_on_error "build_all.sh --before_terraform"
   elif [ "$ARG2" == "build_deploy" ]; then
     export LOG_NAME=$TARGET_DIR/frm_build_deploy.log  
     $BIN_DIR/build_all.sh --build_deploy | tee $LOG_NAME
-    exit_on_error
+    exit_on_error "build_all.sh --build_deploy"
   elif [ "$ARG2" == "after_build" ]; then
     export LOG_NAME=$TARGET_DIR/frm_after_build.log    
     $BIN_DIR/build_all.sh --after_build | tee $LOG_NAME
-    exit_on_error
+    exit_on_error "build_all.sh --after_build"
   fi    
   . shared_infra_as_code.sh
   . ./starter.sh env
