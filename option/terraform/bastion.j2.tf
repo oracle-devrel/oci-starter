@@ -108,9 +108,9 @@ data "oci_core_instance" "starter_bastion" {
 {%- endif %}
 
 locals {
-  local_bastion_public_ip = data.oci_core_instance.starter_bastion.public_ip
+  local_bastion_ip = data.oci_core_instance.starter_bastion.public_ip
 }
 
 output "bastion_public_ip" {
-  value = local.local_bastion_public_ip
+  value = local.local_bastion_ip
 }
