@@ -8,8 +8,8 @@ resource "null_resource" "build_deploy" {
         export {{key.upper()}}="${local.local_{{key}}}"
 {%- endfor %}      
         cd ${var.project_dir}
-        pwd
-        ls -al target
+        # pwd
+        # ls -al target
         # cat target/terraform.tfstate
         # export
         ./starter.sh frm build_deploy
@@ -49,8 +49,6 @@ resource "null_resource" "after_build" {
         export {{key.upper()}}="${local.local_{{key}}}"
 {%- endfor %}      
         cd ${var.project_dir}    
-        # cat target/terraform.tfstate
-        # export
         ./starter.sh frm after_build
         EOT
   }
