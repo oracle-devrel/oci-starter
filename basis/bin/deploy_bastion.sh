@@ -9,9 +9,9 @@ cd $PROJECT_DIR
 function scp_bastion() {
   if command -v rsync &> /dev/null; then
     # Using RSYNC allow to reapply the same command several times easily. 
-    rsync -av -e "ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path" src/db opc@$BASTION_PUBLIC_IP:.
+    rsync -av -e "ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path" src/db opc@$BASTION_IP:.
   else
-    scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path src/db opc@$BASTION_PUBLIC_IP:/home/opc/.
+    scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path src/db opc@$BASTION_IP:/home/opc/.
   fi
 }
 
@@ -30,4 +30,4 @@ while [ true ]; do
 done
 
 ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$BASTION_IP "export DB_USER=\"$TF_VAR_db_user\";export DB_PASSWORD=\"$TF_VAR_db_password\";export DB_URL=\"$DB_URL\"; bash db/db_init.sh 2>&1 | tee -a db/db_init.log"
-exit_on_error "Deploy Bastion - ssh"
+exit_on_error "Deploy Bastion -"
