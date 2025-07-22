@@ -19,6 +19,8 @@ fi
 if [ -f $PROJECT_DIR/terraform.tfstate ]; then
   ln -sf $PROJECT_DIR/terraform.tfstate $STATE_FILE
 fi
+# Set pipefail to get the error despite pipe to tee
+set -o pipefail
 
 # ENV.SH
 . $PROJECT_DIR/env.sh

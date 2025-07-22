@@ -57,7 +57,7 @@ build_function() {
   fn update context api-url https://functions.${TF_VAR_region}.oraclecloud.com
   fn update context registry ${DOCKER_PREFIX}
   # Set pipefail to get the error despite pipe to tee
-  set -o pipefail
+  # set -o pipefail
   fn build -v | tee $TARGET_DIR/fn_build.log
   exit_on_error
 
