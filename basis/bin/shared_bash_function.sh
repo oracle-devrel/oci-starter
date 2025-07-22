@@ -46,7 +46,7 @@ build_ui() {
 
 docker_login() {
   oci raw-request --region $TF_VAR_region --http-method GET --target-uri "https://${TF_VAR_ocir}/20180419/docker/token" | jq -r .data.token | docker login -u BEARER_TOKEN --password-stdin ${TF_VAR_ocir}
-  exit_on_error
+  exit_on_error "Docker Login"
 }
 
 build_function() {
@@ -59,7 +59,7 @@ build_function() {
   # Set pipefail to get the error despite pipe to tee
   set -o pipefail
   fn build -v | tee $TARGET_DIR/fn_build.log
-  exit_on_error
+  exit_on_error "build_function - fn build"
 
   if grep --quiet "built successfully" $TARGET_DIR/fn_build.log; then
      fn bump
@@ -68,7 +68,7 @@ build_function() {
      docker_login
      oci artifacts container repository create --compartment-id $TF_VAR_compartment_ocid --display-name ${TF_VAR_fn_image} 2>/dev/null
      docker push $TF_VAR_fn_image
-     exit_on_error
+     exit_on_error "build_function - docker push"
      # Store the image name and DB_URL in files
      echo $TF_VAR_fn_image > $TARGET_DIR/fn_image.txt
      echo "$1" > $TARGET_DIR/fn_db_url.txt
@@ -102,7 +102,7 @@ ocir_docker_push () {
     docker tag ${TF_VAR_prefix}-app ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
     oci artifacts container repository create --compartment-id $TF_VAR_compartment_ocid --display-name ${DOCKER_PREFIX_NO_OCIR}/${TF_VAR_prefix}-app 2>/dev/null
     docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest
-    exit_on_error
+    exit_on_error "docker push APP"
     echo "${DOCKER_PREFIX}/${TF_VAR_prefix}-app:latest" > $TARGET_DIR/docker_image_app.txt
   fi
 
@@ -111,7 +111,7 @@ ocir_docker_push () {
     docker tag ${TF_VAR_prefix}-ui ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
     oci artifacts container repository create --compartment-id $TF_VAR_compartment_ocid --display-name ${DOCKER_PREFIX_NO_OCIR}/${TF_VAR_prefix}-ui 2>/dev/null
     docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
-    exit_on_error
+    exit_on_error "docker push UI"
     echo "${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest" > $TARGET_DIR/docker_image_ui.txt
   fi
 }
@@ -145,9 +145,9 @@ error_exit() {
 exit_on_error() {
   RESULT=$?
   if [ $RESULT -eq 0 ]; then
-    echo "Success $1"
+    echo "Success - $1"
   else
-    title "EXIT ON ERROR - HISTORY $1"
+    title "EXIT ON ERROR - HISTORY - $1 "
     history 2 | cut -c1-256
     error_exit "Command Failed (RESULT=$RESULT)"
   fi  
@@ -566,7 +566,7 @@ certificate_create() {
   else
     oci certs-mgmt certificate update-certificate-by-importing-config-details --certificate-id=$TF_VAR_certificate_ocid --cert-chain-pem="$CERT_CHAIN" --certificate-pem="$CERT_CERT"  --private-key-pem="$CERT_PRIVKEY" --wait-for-state ACTIVE --wait-for-state FAILED
   fi
-  exit_on_error
+  exit_on_error "oci certs-mgmt"
   TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[0].id`
 }
 
@@ -589,7 +589,7 @@ certificate_dir_before_terraform() {
   elif [ "$TF_VAR_tls" == "new_dns_01" ]; then
     # Create a new certificate via DNS-01
     $BIN_DIR/tls_dns_create.sh 
-    exit_on_error
+    exit_on_error "tls_dns_create"
     export TF_VAR_certificate_dir=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
   fi
 
@@ -635,7 +635,7 @@ certificate_post_deploy() {
     # Set the TF_VAR_ingress_ip
     get_ui_url 
     $BIN_DIR/terraform_apply.sh --auto-approve -no-color
-    exit_on_error
+    exit_on_error "certificate_post_deploy - terraform apply"
   fi  
 }
 

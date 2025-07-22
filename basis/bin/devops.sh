@@ -33,7 +33,7 @@ if [ "$1" == "build" ]; then
 
   terraform init -no-color -upgrade
   terraform apply --auto-approve
-  exit_on_error
+  exit_on_error "Devops - terraform apply"
 
   export STATE_FILE=$TARGET_DIR/devops.tfstate
   get_output_from_tfstate "DEVOPS_GIT_URL" "devops_git_url"
@@ -59,6 +59,6 @@ elif [ "$1" == "destroy" ]; then
 
   terraform init -no-color -upgrade
   terraform destroy --auto-approve
-  exit_on_error
+  exit_on_error "Devops - terraform destroy"
 
 fi

@@ -66,19 +66,19 @@ infra_as_code_apply() {
   elif [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
     resource_manager_create_or_update
     resource_manager_apply
-    exit_on_error
+    exit_on_error "infra_as_code_apply - rm"
   elif [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
     cd $PROJECT_DIR
     resource_manager_create_or_update
     resource_manager_apply
-    exit_on_error
+    exit_on_error "infra_as_code_apply - frm"
   else
     if [ "$TF_VAR_infra_as_code" == "terraform_object_storage" ]; then
       sed "s/XX_TERRAFORM_STATE_URL_XX/$TF_VAR_terraform_state_url/g" terraform.template.tf > terraform/terraform.tf
     fi  
     $TERRAFORM_COMMAND init -no-color -upgrade
     $TERRAFORM_COMMAND apply $@
-    exit_on_error
+    exit_on_error "infra_as_code_apply - other"
   fi
 }
 
