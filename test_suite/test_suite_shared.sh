@@ -187,6 +187,8 @@ build_option() {
   fi  
   if [ "$OPTION_INFRA_AS_CODE" == "resource_manager" ]; then
     NAME=${NAME}-rm
+  elif [ "$OPTION_INFRA_AS_CODE" == "from_resource_manager" ]; then
+    NAME=${NAME}-frm
   fi  
   NAME=${NAME/_/-}
   NAME=${NAME/_/-}
