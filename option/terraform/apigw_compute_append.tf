@@ -203,7 +203,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
 {%- endif %}      
 
 /*
-resource oci_logging_log starter_apigw_deployment_execution {
+# resource oci_logging_log starter_apigw_deployment_execution {
   count = var.log_group_ocid == null ? 0 : 1
   log_group_id = var.log_group_ocid
   configuration {
@@ -222,7 +222,7 @@ resource oci_logging_log starter_apigw_deployment_execution {
   retention_duration = "30"
 }
 
-resource oci_logging_log starter_apigw_deployment_access {
+# resource oci_logging_log starter_apigw_deployment_access {
   count = var.log_group_ocid == null ? 0 : 1
   log_group_id = var.log_group_ocid
   configuration {
