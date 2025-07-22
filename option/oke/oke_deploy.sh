@@ -68,14 +68,14 @@ if [ ! -f $KUBECONFIG ]; then
     kubectl get all -n ingress-nginx
     sleep 5
     echo "Ingress ready: $TF_VAR_ingress_ip"
-
-    # Create secrets
-    kubectl delete secret ${TF_VAR_prefix}-db-secret  --ignore-not-found=true
-    kubectl create secret generic ${TF_VAR_prefix}-db-secret --from-literal=db_user=$TF_VAR_db_user --from-literal=db_password=$TF_VAR_db_password --from-literal=db_url=$DB_URL --from-literal=jdbc_url=$JDBC_URL --from-literal=TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid --from-literal=TF_VAR_nosql_endpoint=$TF_VAR_nosql_endpoint
   else
-    echo "OKE Deploy: Skipping creation of ingress and secrets" 
+    echo "OKE Deploy: Skipping creation of ingress" 
   fi  
 fi
+
+# Create secrets
+kubectl delete secret ${TF_VAR_prefix}-db-secret  --ignore-not-found=true
+kubectl create secret generic ${TF_VAR_prefix}-db-secret --from-literal=db_user=$TF_VAR_db_user --from-literal=db_password=$TF_VAR_db_password --from-literal=db_url=$DB_URL --from-literal=jdbc_url=$JDBC_URL --from-literal=TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid --from-literal=TF_VAR_nosql_endpoint=$TF_VAR_nosql_endpoint
 
 kubectl delete secret ocirsecret  --ignore-not-found=true
 if [ "$TF_VAR_auth_token" == "" ]; then
