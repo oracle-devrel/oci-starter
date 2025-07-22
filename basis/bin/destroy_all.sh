@@ -8,40 +8,6 @@ SECONDS=0
 
 # Call the script with --auto-approve to destroy without prompt
 . starter.sh env -no-auto
-title "OCI Starter - Destroy"
-echo 
-echo "Warning: This will destroy all the resources created by Terraform."
-echo 
-if [ "$1" != "--auto-approve" ] && [ "$1" != "--called_by_resource_manager" ]; then
-  read -p "Do you want to proceed? (yes/no) " yn
-
-  case $yn in 
-  	yes ) echo Deleting;;
-	no ) echo Exiting...;
-		exit 1;;
-	* ) echo Invalid response;
-		exit 1;;
-  esac
-fi
-
-. starter.sh env
-
-# Check if there is something to destroy.
-if [ -f $STATE_FILE ]; then
-  export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
-  if [ "$TF_RESOURCE" == "0" ]; then
-    echo "No resource in terraform state file. Nothing to destroy."
-    exit 0
-  fi
-else
-  echo "File $STATE_FILE does not exist. Nothing to destroy."
-  exit 0
-fi
-
-# before_destroy.sh
-if [ -f src/before_destroy.sh ]; then
-  src/before_destroy.sh
-fi
 
 # Confidential APP
 disableConfidentialApp() {
@@ -54,16 +20,6 @@ disableConfidentialApp() {
   oci identity-domains app-status-changer put --force --active false --app-status-changer-id $CONFIDENTIAL_APP_OCID --schemas '["urn:ietf:params:scim:schemas:oracle:idcs:AppStatusChanger"]' --endpoint $IDCS_URL  --force
   exit_on_error "disableConfidentialApp"
 }
-for CONFIDENTIAL_APP_OCID in `cat $STATE_FILE | jq -r '.resources[] | select(.type=="oci_identity_domains_app") | .instances[].attributes.id'`;
-do
-   disableConfidentialApp $CONFIDENTIAL_APP_OCID
-done;
-
-# OKE
-if [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
-  title "OKE Destroy"
-  $BIN_DIR/oke_destroy.sh --auto-approve
-fi
 
 # Buckets
 cleanBucket() {
@@ -76,10 +32,59 @@ cleanBucket() {
     echo "No Object storage $BUCKET_NAME"
   fi  
 }
-for BUCKET_NAME in `cat $STATE_FILE | jq -r '.resources[] | select(.type=="oci_objectstorage_bucket") | .instances[].attributes.name'`;
-do
-  cleanBucket $BUCKET_NAME
-done;
+
+if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ]; then
+
+  # Check if there is something to destroy.
+  title "OCI Starter - Destroy"
+  echo 
+  echo "Warning: This will destroy all the resources created by Terraform."
+  echo 
+  if [ "$1" != "--auto-approve" ] && [ "$1" != "--called_by_resource_manager" ]; then
+    read -p "Do you want to proceed? (yes/no) " yn
+    case $yn in 
+      yes ) echo Deleting;;
+      no ) echo Exiting...;
+           exit 1;;
+      * ) echo Invalid response;
+          exit 1;;
+    esac
+  fi
+  . starter.sh env
+
+  # Check if there is something to destroy.
+  if [ -f $STATE_FILE ]; then
+    export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
+    if [ "$TF_RESOURCE" == "0" ]; then
+        echo "No resource in terraform state file. Nothing to destroy."
+        exit 0
+    fi
+  else
+    echo "File $STATE_FILE does not exist. Nothing to destroy."
+    exit 0
+  fi
+
+  # before_destroy.sh
+  if [ -f src/before_destroy.sh ]; then
+    src/before_destroy.sh
+  fi
+
+  for CONFIDENTIAL_APP_OCID in `cat $STATE_FILE | jq -r '.resources[] | select(.type=="oci_identity_domains_app") | .instances[].attributes.id'`;
+  do
+    disableConfidentialApp $CONFIDENTIAL_APP_OCID
+  done;
+
+    # OKE
+  if [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
+    title "OKE Destroy"
+    $BIN_DIR/oke_destroy.sh --auto-approve
+  fi
+
+  for BUCKET_NAME in `cat $STATE_FILE | jq -r '.resources[] | select(.type=="oci_objectstorage_bucket") | .instances[].attributes.name'`;
+  do
+    cleanBucket $BUCKET_NAME
+  done;
+fi
 
 if [ "$1" != "--called_by_resource_manager" ]; then
   title "Terraform Destroy"
