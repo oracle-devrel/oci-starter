@@ -6,7 +6,7 @@ locals {
 {%- else %}
 # Used for APIGW and TAGS
 locals {
-  apigw_dest_private_ip = local.compute_private_ip
+  apigw_dest_private_ip = local.local_compute_private_ip
 }
 {%- endif %}
 
