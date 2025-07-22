@@ -12,7 +12,9 @@ resource "null_resource" "build_deploy" {
         ls -al target
         # cat target/terraform.tfstate
         # export
+        . /starter.sh env
         ./starter.sh frm build_deploy        
+        exit_on_error "starter.sh frm build_deploy "
         exit 0
         . /starter.sh env
         # Run config command on the DB directly (ex RAC)
