@@ -730,6 +730,7 @@ def cp_terraform_apigw(append_tf):
         output_replace('##APP_URL##', app_url,"src/terraform/apigw_existing.j2.tf")
     else:
         output_replace('##APP_URL##', app_url, "src/terraform/apigw.j2.tf")
+    output_replace('##APP_URL##', app_url,"src/terraform/container_instance_part2.j2.tf")
 
 #----------------------------------------------------------------------------
 # Create Directory (shared for group_common and output)
