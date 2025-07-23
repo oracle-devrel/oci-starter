@@ -6,7 +6,7 @@ resource "null_resource" "build_deploy" {
     command = <<-EOT
 {%- for key in terraform_locals %}
         export {{key.upper()}}="${local.local_{{key}}}"
-{%- endfor %}      
+{%- endfor %}     
         cd ${var.project_dir}
         # pwd
         # ls -al target
@@ -47,7 +47,7 @@ resource "null_resource" "after_build" {
     command = <<-EOT
 {%- for key in terraform_locals %}
         export {{key.upper()}}="${local.local_{{key}}}"
-{%- endfor %}      
+{%- endfor %}     
         cd ${var.project_dir}    
         ./starter.sh frm after_build
         EOT

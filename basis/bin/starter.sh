@@ -143,7 +143,8 @@ elif [ "$ARG1" == "terraform" ]; then
 elif [ "$ARG1" == "frm" ]; then # From Resource Manager
   . $BIN_DIR/shared_bash_function.sh
   set -o pipefail
-  
+  export CALLED_FROM_RESOURCE_MANAGER="TRUE"      
+
   if [ "$ARG2" == "before_terraform" ]; then
     export LOG_NAME=$TARGET_DIR/frm_before_terraform.log
     $BIN_DIR/build_all.sh --before_terraform | tee $LOG_NAME
