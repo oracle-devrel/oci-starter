@@ -10,9 +10,9 @@ resource "oci_functions_function" "starter_fn_function" {
   memory_in_mbs  = "2048"
   config = {
     {%- if language == "java" %} 
-    JDBC_URL      = var.fn_db_url,
+    JDBC_URL      = local.local_jdbc_url,
     {%- else %}     
-    DB_URL      = var.fn_db_url,
+    DB_URL      = local.local_db_url,
     {%- endif %}     
     DB_USER     = var.db_user,
     DB_PASSWORD = var.db_password,

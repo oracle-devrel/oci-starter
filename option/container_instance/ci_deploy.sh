@@ -10,7 +10,7 @@ cd $PROJECT_DIR
 # Call build_common to push the ${TF_VAR_prefix}-app:latest and ui:latest to OCIR Docker registry
 ocir_docker_push
 
-if [ "$CALLED_FROM_RESOURCE_MANAGER" == "" ]; then
+if [ "$CALLED_BY_TERRAFORM" == "" ]; then
   # Run terraform a second time
   cd $PROJECT_DIR
   . starter.sh env 

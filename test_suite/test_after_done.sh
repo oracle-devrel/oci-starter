@@ -2,7 +2,9 @@
 if [ ! -z "$UI_URL" ]; then
   # Check the URL if running in the test_suite
   if [ ! -z "$TEST_NAME" ]; then
-    echo $UI_URL > /tmp/ui_url.txt
+    export TMP_PATH="/tmp/$TF_VAR_prefix"
+    mkdir -p $TMP_PATH 
+    echo $UI_URL > $TMP_PATH/ui_url.txt
     
     if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
       kubectl wait --for=condition=ready pod ${TF_VAR_prefix}-app
@@ -15,11 +17,11 @@ if [ ! -z "$UI_URL" ]; then
     x=1
     while [ $x -le 20 ]
     do
-      if [ -f "/tmp/cookie.txt" ]; then
-        rm /tmp/cookie.txt
+      if [ -f "$TMP_PATH/cookie.txt" ]; then
+        rm $TMP_PATH/cookie.txt
       fi  
-      curl $UI_URL/app/dept -b /tmp/cookie.txt -c /tmp/cookie.txt -L -D /tmp/result_json.log > /tmp/result.json
-      if grep -q -i "deptno" /tmp/result.json; then
+      curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_json.log > $TMP_PATH/result.json
+      if grep -q -i "deptno" $TMP_PATH/result.json; then
         echo "----- OK ----- deptno detected in $UI_URL/app/dept"
        	break
       fi
@@ -27,17 +29,17 @@ if [ ! -z "$UI_URL" ]; then
       x=$(( $x + 1 ))
     done
     if [ "$TF_VAR_ui_type" != "api" ]; then
-      if [ -f "/tmp/cookie.txt" ]; then
-        rm /tmp/cookie.txt
+      if [ -f "$TMP_PATH/cookie.txt" ]; then
+        rm $TMP_PATH/cookie.txt
       fi  
-      curl $UI_URL/ -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_html.log > /tmp/result.html
+      curl $UI_URL/ -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_html.log > $TMP_PATH/result.html
     else 
-      echo "OCI Starter" > /tmp/result.html
+      echo "OCI Starter" > $TMP_PATH/result.html
     fi  
-    if [ -f "/tmp/cookie.txt" ]; then
-      rm /tmp/cookie.txt
+    if [ -f "$TMP_PATH/cookie.txt" ]; then
+      rm $TMP_PATH/cookie.txt
     fi  
-    curl $UI_URL/app/info -b /tmp/cookie.txt -c /tmp/cookie.txt -L --retry 5 --retry-max-time 20 -D /tmp/result_info.log > /tmp/result.info
+    curl $UI_URL/app/info -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_info.log > $TMP_PATH/result.info
 
     if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then
       # Get the compute logs
@@ -48,10 +50,11 @@ if [ ! -z "$UI_URL" ]; then
       scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/app/*.log target/.
       if [ "$TF_VAR_language" == "java" ]; then
         if [ "$TF_VAR_java_framework" == "tomcat" ]; then
-            ssh -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP "sudo cp -r /opt/tomcat/logs /tmp/tomcat_logs; sudo chown -R opc /tmp/tomcat_logs"
-            scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/tmp/tomcat_logs target/.
+            ssh -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP "sudo cp -r /opt/tomcat/logs $TMP_PATH/tomcat_logs; sudo chown -R opc $TMP_PATH/tomcat_logs"
+            scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:$TMP_PATH/tomcat_logs target/.
         fi
       fi
-    fi 
+    fi
+    rm -Rf $TMP_PATH 
   fi
 fi

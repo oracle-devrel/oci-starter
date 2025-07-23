@@ -52,7 +52,6 @@ locals {
 
 {%- if group_name is not defined %}
 variable "fn_image" { default = null }
-variable "fn_db_url" { default = null }
 {%- if db_type == "nosql" %} 
 variable nosql_endpoint {}
 {%- endif %} 

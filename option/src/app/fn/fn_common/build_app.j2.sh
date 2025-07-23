@@ -14,12 +14,10 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # Deploy with terraform
 # Then Work-around: terraforms is not able to create a APIGW with dynamic multiple backends
-{%- if language == "java" %}
-build_function $JDBC_URL
-{%- elif language == "ords" %}
+{%- if language == "ords" %}
 # ORDS: OCI Function is not used. Nothing to do
 {%- else %}
-build_function $DB_URL
+build_function
 {%- endif %}
 exit_on_error "build_function"
 

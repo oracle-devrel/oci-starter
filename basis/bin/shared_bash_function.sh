@@ -77,7 +77,7 @@ build_function() {
      exit 1
   fi 
 
-  if [ "$CALLED_FROM_RESOURCE_MANAGER" == "" ]; then
+  if [ "$CALLED_BY_TERRAFORM" == "" ]; then
     # First create the Function using terraform
     # Run env.sh to get function image 
     cd $PROJECT_DIR
@@ -273,7 +273,7 @@ get_user_details() {
       fi
     else 
       echo "Called From Resource Manager"
-      export CALLED_FROM_RESOURCE_MANAGER="TRUE"
+      export CALLED_BY_TERRAFORM="TRUE"
       export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
       echo "$TF_VAR_ssh_public_key" > ${TF_VAR_ssh_private_path}.pub
       echo "$TF_VAR_ssh_private_key" > $TF_VAR_ssh_private_path
