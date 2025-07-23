@@ -276,8 +276,6 @@ if [ -f $STATE_FILE ]; then
     if [ -f $TARGET_DIR/fn_image.txt ]; then
       export TF_VAR_fn_image=`cat $TARGET_DIR/fn_image.txt`
       auto_echo TF_VAR_fn_image=$TF_VAR_fn_image
-      export TF_VAR_fn_db_url=`cat $TARGET_DIR/fn_db_url.txt`
-      auto_echo TF_VAR_fn_db_url=$TF_VAR_fn_db_url
     fi   
   fi
 

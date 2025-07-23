@@ -90,7 +90,7 @@ build_test () {
     else
       echo -e "${COLOR_RED}RESULT HTML: ***** BAD ******${COLOR_NONE}"
     fi
-    if grep -q -i "deptno"$TMP_PATH/result.json; then
+    if grep -q -i "deptno" $TMP_PATH/result.json; then
       echo -e "${COLOR_GREEN}RESULT JSON: OK${COLOR_NONE}                "`cat $TMP_PATH/result.json` | cut -c 1-100  
       CSV_JSON_OK=1
     else
