@@ -58,6 +58,7 @@ infra_as_code_precheck() {
 }
 
 infra_as_code_apply() {
+  echo "XXXXXXX <infra_as_code_apply> $CALLED_FROM_RESOURCE_MANAGER"  
   cd $PROJECT_DIR/src/terraform  
   if [ "$CALLED_FROM_RESOURCE_MANAGER" != "" ]; then 
     # Called from resource manager

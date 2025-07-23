@@ -83,6 +83,7 @@ build_function() {
     cd $PROJECT_DIR
     . starter.sh env 
     $BIN_DIR/terraform_apply.sh --auto-approve
+    exit_on_error "build_function - terraform apply"
   fi
 }
 
