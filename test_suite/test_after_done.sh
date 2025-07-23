@@ -3,6 +3,7 @@ if [ ! -z "$UI_URL" ]; then
   # Check the URL if running in the test_suite
   if [ ! -z "$TEST_NAME" ]; then
     export TMP_PATH="/tmp/$TF_VAR_prefix"
+    rm -Rf $TMP_PATH     
     mkdir -p $TMP_PATH 
     echo $UI_URL > $TMP_PATH/ui_url.txt
     
@@ -55,6 +56,5 @@ if [ ! -z "$UI_URL" ]; then
         fi
       fi
     fi
-    rm -Rf $TMP_PATH 
   fi
 fi
