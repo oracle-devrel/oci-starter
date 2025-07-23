@@ -45,12 +45,12 @@ start_test() {
 # Speed test of 100 calls 
 test_run_100() {
   START=$(date +%s.%N)
-  UI_URL=`cat /tmp/ui_url.txt`
+  UI_URL=`cat $TMP_PATH/ui_url.txt`
   x=0 
   while [ $x -lt 100 ]
     do
-      curl $UI_URL/app/dept -s -D /tmp/speed_json.log > /tmp/speed.json
-      if grep -q -i "deptno" /tmp/speed.json; then
+      curl $UI_URL/app/dept -s -D $TMP_PATH/speed_json.log > $TMP_PATH/speed.json
+      if grep -q -i "deptno" $TMP_PATH/speed.json; then
          CSV_RUN100_OK=$(( $CSV_RUN100_OK + 1 ))
       fi
       x=$(( $x + 1 ))
