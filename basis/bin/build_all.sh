@@ -44,7 +44,7 @@ build_deploy() {
   # Build the DB tables (via Bastion)
   if [ -d src/db ]; then
     title "Deploy Bastion"
-    $BIN_DIR/deploy_bastion.sh
+    $BIN_DIR/deploy_bastion.sh.sh
     exit_on_error "Deploy Bastion"   
   fi  
 

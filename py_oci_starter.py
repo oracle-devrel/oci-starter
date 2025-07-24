@@ -869,8 +869,6 @@ def create_output_dir():
                 output_move("src/terraform/oke_virtual_node.j2.tf", "src/terraform/oke.j2.tf")
             output_mkdir("src/oke")
             output_copy_tree("option/oke", "src/oke")
-            output_move("src/oke/oke_deploy.sh", "bin/oke_deploy.sh")
-            output_move("src/oke/oke_destroy.sh", "bin/oke_destroy.sh")
 
             output_replace('##PREFIX##', params["prefix"], "src/app/app.yaml")
             output_replace('##PREFIX##', params["prefix"], "src/ui/ui.yaml")
@@ -914,7 +912,6 @@ def create_output_dir():
                 cp_terraform("container_instance_policy.tf")
 
             # output_mkdir src/container_instance
-            output_copy_tree("option/container_instance", "bin")
             cp_terraform_apigw(None)
 
     if params.get('tls'):
@@ -1021,7 +1018,7 @@ def create_group_common_dir():
     if 'oke' in a_group_common:
         cp_terraform_existing("oke_ocid", "oke.j2.tf")
         if 'oke_ocid' not in params:
-            shutil.copy2("option/oke/oke_destroy.sh", output_dir +"/bin")
+            shutil.copy2("option/oke/destroy_oke.sh", output_dir +"/bin")
 
     if 'fnapp' in a_group_common:
         cp_terraform_existing("fnapp_ocid", "function.j2.tf")

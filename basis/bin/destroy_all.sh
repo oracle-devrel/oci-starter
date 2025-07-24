@@ -77,7 +77,7 @@ if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ]; then
     # OKE
   if [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     title "OKE Destroy"
-    $BIN_DIR/oke_destroy.sh --auto-approve
+    $BIN_DIR/destroy_oke.sh --auto-approve
   fi
 
   for BUCKET_NAME in `cat $STATE_FILE | jq -r '.resources[] | select(.type=="oci_objectstorage_bucket") | .instances[].attributes.name'`;
