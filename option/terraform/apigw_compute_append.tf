@@ -67,7 +67,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment_i" {
         header_transformations {
           set_headers {
             items {
-              name = "Host"
+              name = "Host",
               values = ["$${request.headers[Host]}"]
             }
           }
