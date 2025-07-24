@@ -119,7 +119,7 @@ elif [ "$ARG1" == "rebuild" ]; then
   exit_on_error "destroy_all.sh"
   
   # Double check
-  if [ -f $TARGET_DIR ]
+  if [ -f $TARGET_DIR ]; then
     error_exit "target dir is still there..."
   fi
 
