@@ -37,7 +37,7 @@ resource "null_resource" "build_deploy" {
         # Build all app* directories
         for APP_DIR in `app_dir_list`; do
             title "Build App $APP_DIR"
-            src/${APP_DIR}/build_app.sh
+            src/$APP_DIR/build_app.sh
             exit_on_error "Build App $APP_DIR"
         done
 
