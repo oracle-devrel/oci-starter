@@ -21,7 +21,11 @@ if [ ! -z "$UI_URL" ]; then
       if [ -f "$TMP_PATH/cookie.txt" ]; then
         rm $TMP_PATH/cookie.txt
       fi  
-      curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_json.log > $TMP_PATH/result.json
+      if [ "$TF_VAR_language" == "apex" ]; then
+        wget $UI_URL/app/dept -o $TMP_PATH/result_json.log -O $TMP_PATH/result.json
+      else
+        curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_json.log > $TMP_PATH/result.json
+      fi      
       if grep -q -i "deptno" $TMP_PATH/result.json; then
         echo "----- OK ----- deptno detected in $UI_URL/app/dept"
        	break
@@ -29,7 +33,7 @@ if [ ! -z "$UI_URL" ]; then
       sleep 5  
       x=$(( $x + 1 ))
     done
-    if [ "$TF_VAR_ui_type" != "api" ]; then
+    if [ "$TF_VAR_ui_type" != "api" ] && [ "$TF_VAR_language" != "apex" ]; then
       if [ -f "$TMP_PATH/cookie.txt" ]; then
         rm $TMP_PATH/cookie.txt
       fi  
@@ -40,7 +44,11 @@ if [ ! -z "$UI_URL" ]; then
     if [ -f "$TMP_PATH/cookie.txt" ]; then
       rm $TMP_PATH/cookie.txt
     fi  
-    curl $UI_URL/app/info -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_info.log > $TMP_PATH/result.info
+    if [ "$TF_VAR_language" == "apex" ]; then
+      wget $UI_URL/app/info -o $TMP_PATH/result_info.log -O $TMP_PATH/result.info
+    else
+      curl $UI_URL/app/info -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_info.log > $TMP_PATH/result.info
+    fi      
 
     if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then
       # Get the compute logs
