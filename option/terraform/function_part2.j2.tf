@@ -9,6 +9,7 @@ resource "oci_functions_function" "starter_fn_function" {
   image          = local.fn_image
   memory_in_mbs  = "2048"
   config = {
+    {%- if db_family != "none" %}
     {%- if language == "java" %} 
     JDBC_URL      = local.local_jdbc_url,
     {%- else %}     
@@ -16,6 +17,7 @@ resource "oci_functions_function" "starter_fn_function" {
     {%- endif %}     
     DB_USER     = var.db_user,
     DB_PASSWORD = var.db_password,
+    {%- endif %}     
     {%- if db_type == "nosql" %} 
     TF_VAR_compartment_ocid = var.compartment_ocid,
     TF_VAR_nosql_endpoint = var.nosql_endpoint,
