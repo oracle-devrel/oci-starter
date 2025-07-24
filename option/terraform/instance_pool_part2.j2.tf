@@ -108,17 +108,17 @@ data "oci_core_instance" "starter_instance_pool_instance_singular_datasource" {
   instance_id = data.oci_core_instance_pool_instances.starter_instance_pool_instances_datasource.instances[count.index]["id"]
 }
 
-output "pooled_instances_private_ips" {
-  value = [data.oci_core_instance.starter_instance_pool_instance_singular_datasource.*.private_ip]
-}
+# output "pooled_instances_private_ips" {
+#   value = [data.oci_core_instance.starter_instance_pool_instance_singular_datasource.*.private_ip]
+# }
 
-output "pooled_instances_public_ips" {
-  value = [data.oci_core_instance.starter_instance_pool_instance_singular_datasource.*.public_ip]
-}
+# output "pooled_instances_public_ips" {
+#   value = [data.oci_core_instance.starter_instance_pool_instance_singular_datasource.*.public_ip]
+# }
 
-output "pooled_instances_hostname_labels" {
-  value = [data.oci_core_instance.starter_instance_pool_instance_singular_datasource.*.hostname_label]
-}
+# output "pooled_instances_hostname_labels" {
+#   value = [data.oci_core_instance.starter_instance_pool_instance_singular_datasource.*.hostname_label]
+# }
 
 locals {
   local_instance_pool_lb_ip = oci_load_balancer.starter_pool_lb.ip_address_details[0].ip_address

@@ -71,7 +71,6 @@ build_function() {
      exit_on_error "build_function - docker push"
      # Store the image name and DB_URL in files
      echo $TF_VAR_fn_image > $TARGET_DIR/fn_image.txt
-     echo "$1" > $TARGET_DIR/fn_db_url.txt
   else 
      echo "build_function - built successfully not found"
      exit 1

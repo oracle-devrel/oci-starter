@@ -16,6 +16,7 @@ fi
 export TARGET_DIR=$PROJECT_DIR/target
 mkdir -p $TARGET_DIR/logs
 DATE_POSTFIX=`date '+%Y%m%d-%H%M%S'`
+set -o pipefail
 
 export ARG1=$1
 export ARG2=$2
@@ -117,12 +118,16 @@ elif [ "$ARG1" == "rebuild" ]; then
   $BIN_DIR/destroy_all.sh ${@:2} 2>&1 | tee $LOG_NAME
   exit_on_error "destroy_all.sh"
   
+  # Double check
+  if [ -f $TARGET_DIR ]
+    error_exit "target dir is still there..."
+  fi
+
   # Pull
   git pull
   exit_on_error "git pull"
   
   # Cleanup target dir
-  rm -Rf $TARGET_DIR
   mkdir -p $TARGET_DIR/logs
 
   # Build
@@ -142,7 +147,6 @@ elif [ "$ARG1" == "terraform" ]; then
 
 elif [ "$ARG1" == "frm" ]; then # From Resource Manager
   . $BIN_DIR/shared_bash_function.sh
-  set -o pipefail
   export CALLED_BY_TERRAFORM="TRUE"      
 
   if [ "$ARG2" == "before_terraform" ]; then
