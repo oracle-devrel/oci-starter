@@ -1,12 +1,12 @@
 
 {%- if language == "apex" %}
 locals {
-  db_root_url = replace(local.local_ords_url, "/ords", "" )
+  db_root_url = replace(local.ords_url, "/ords", "" )
 }
 {%- else %}
 # Used for APIGW and TAGS
 locals {
-  apigw_dest_private_ip = local.local_compute_ip
+  apigw_dest_private_ip = local.compute_private_ip
 }
 {%- endif %}
 
@@ -70,6 +70,10 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment_i" {
               name = "Host"
               values = ["$${request.headers[Host]}"]
             }
+            items {
+              name = "X-Forwarded-Proto"
+              values = ["https"]
+            }
           }
         }
       }
@@ -103,8 +107,16 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment_app" {
               values = ["$${request.headers[Host]}"]
             }
           }
-        }
-      }        
+        },
+        header_transformations {
+          set_headers {
+            items {
+              name = "X-Forwarded-Proto"
+              values = ["https"]
+            }
+          }
+        }        
+      }
     }
   }
   freeform_tags = local.api_tags
@@ -154,7 +166,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
             // Discover the OAuth2/OpenID configuration from an RFC8414
             // metadata endpoint (https://www.rfc-editor.org/rfc/rfc8414)
             type = "DISCOVERY_URI"
-            uri = "${local.local_idcs_url}.well-known/openid-configuration"
+            uri = "${local.idcs_url}.well-known/openid-configuration"
           }
           client_details {
             // Specify the OAuth client id and secret to use with the
@@ -195,7 +207,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
 {%- endif %}      
 
 /*
-# resource oci_logging_log starter_apigw_deployment_execution {
+resource oci_logging_log starter_apigw_deployment_execution {
   count = var.log_group_ocid == null ? 0 : 1
   log_group_id = var.log_group_ocid
   configuration {
@@ -214,7 +226,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
   retention_duration = "30"
 }
 
-# resource oci_logging_log starter_apigw_deployment_access {
+resource oci_logging_log starter_apigw_deployment_access {
   count = var.log_group_ocid == null ? 0 : 1
   log_group_id = var.log_group_ocid
   configuration {
