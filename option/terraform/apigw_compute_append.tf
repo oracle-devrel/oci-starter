@@ -103,16 +103,16 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment_app" {
               values = ["$${request.headers[Host]}"]
             }
           }
-        },
-        header_transformations {
-          set_headers {
-            items {
-              name = "X-Forwarded-Proto"
-              values = ["https"]
-            }
-          }
-        }        
-      }
+        }
+    #     header_transformations {
+    #       set_headers {
+    #         items {
+    #           name = "X-Forwarded-Proto"
+    #           values = ["https"]
+    #         }
+    #       }
+    #     }        
+    #   }
     }
   }
   freeform_tags = local.api_tags
