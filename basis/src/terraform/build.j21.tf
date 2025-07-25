@@ -12,7 +12,52 @@ resource "null_resource" "build_deploy" {
         # ls -al target
         # cat target/terraform.tfstate
         # export
-        ./starter.sh frm build_deploy
+        . starter.sh env
+        # Run config command on the DB directly (ex RAC)
+        if [ -f $BIN_DIR/deploy_db_node.sh ]; then
+            title "Deploy DB Node"
+            $BIN_DIR/deploy_db_node.sh
+            exit_on_error "Deploy DB Node"
+        fi 
+
+        # Build the DB tables (via Bastion)
+        if [ -d src/db ]; then
+            title "Deploy Bastion"
+            $BIN_DIR/deploy_bastion.sh
+            exit_on_error "Deploy Bastion"   
+        fi  
+
+        # Init target/compute
+        if is_deploy_compute; then
+            mkdir -p target/compute
+            cp -r src/compute target/compute/.
+        fi
+
+        # Build all app* directories
+        for APP_DIR in `app_dir_list`; do
+            title "Build App $APP_DIR"
+            src/${APP_DIR}/build_app.sh
+            exit_on_error "Build App $APP_DIR"
+        done
+
+        if [ -f src/ui/build_ui.sh ]; then
+            title "Build UI"
+            src/ui/build_ui.sh 
+            exit_on_error "Build UI"
+        fi
+
+        # Deploy
+        title "Deploy $TF_VAR_deploy_type"
+        if is_deploy_compute; then
+            $BIN_DIR/deploy_compute.sh
+            exit_on_error "Deploy $TF_VAR_deploy_type"
+        elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
+            $BIN_DIR/oke_deploy.sh
+            exit_on_error "Deploy $TF_VAR_deploy_type"
+        elif [ "$TF_VAR_deploy_type" == "container_instance" ]; then
+            $BIN_DIR/ci_deploy.sh
+            exit_on_error "Deploy $TF_VAR_deploy_type"
+        fi
         EOT
   }
   depends_on = [
@@ -49,7 +94,20 @@ resource "null_resource" "after_build" {
         export {{key.upper()}}="${local.local_{{key}}}"
 {%- endfor %}     
         cd ${var.project_dir}    
-        ./starter.sh frm after_build
+        . starter.sh env    
+        if [ "$TF_VAR_tls" != "" ]; then
+            title "Certificate - Post Deploy"
+            certificate_post_deploy 
+        fi
+
+        $BIN_DIR/add_api_portal.sh
+
+        # Custom code after build
+        if [ -f $PROJECT_DIR/src/after_build.sh ]; then
+            $PROJECT_DIR/src/after_build.sh
+        fi
+        title "Done"
+        $BIN_DIR/done.sh          
         EOT
   }
   depends_on = [
