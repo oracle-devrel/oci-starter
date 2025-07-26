@@ -6,6 +6,7 @@ fi
 cd $PROJECT_DIR
 . starter.sh env -silent
 
+title "Deploy Database Free"
 # Do not rely on DB_NODE_IP in case of group with DATABASE and DB_FREE like the testsuite
 get_output_from_tfstate "DB_FREE_IP" "db_free_ip"
 scp_via_bastion src/db/db_node_init.sh opc@$DB_FREE_IP:/tmp/.
