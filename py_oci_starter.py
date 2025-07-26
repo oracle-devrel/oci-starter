@@ -698,7 +698,6 @@ def output_replace_db_node_count():
        output_replace('##storage_management##', "ASM", "src/terraform/dbsystem.j2.tf")
        output_replace('##cpu_core_count##', "4", "src/terraform/dbsystem.j2.tf")
        output_copy_tree("option/src/db/rac", "src/db")
-       output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
        if params['language'] == "java" and params['java_framework'] == "springboot":
            output_copy_tree("option/src/app/java_springboot_rac", "src/app")
        if params['ui_type'] == "html":
@@ -948,13 +947,11 @@ def create_output_dir():
         if params.get('db_type') == "db_free":
             cp_terraform("db_free.j2.tf")
             output_copy_tree("option/src/db/db_free", "src/db")
-            output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
 
         if params.get('db_type') == "mysql":
             if params.get('deploy_type') == "public_compute":
                cp_terraform("mysql_public_compute.tf")
                output_copy_tree("option/src/db/mysql_public_compute", "src/db")
-               output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
             else:
                 cp_terraform_existing("mysql_ocid", "mysql.j2.tf")
 
@@ -1001,7 +998,6 @@ def create_group_common_dir():
     if "db_free" in a_group_common:
         cp_terraform("db_free.j2.tf")
         output_copy_tree("option/src/db/db_free", "src/db")
-        output_move("src/db/deploy_db_node.sh", "bin/deploy_db_node.sh")
 
     if "mysql" in a_group_common:
         cp_terraform_existing("mysql_ocid", "mysql.j2.tf")

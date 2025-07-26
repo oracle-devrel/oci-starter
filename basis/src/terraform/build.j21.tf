@@ -14,11 +14,19 @@ resource "null_resource" "build_deploy" {
         # export
         . starter.sh env
         # Run config command on the DB directly (ex RAC)
-        if [ -f $BIN_DIR/deploy_db_node.sh ]; then
-            title "Deploy DB Node"
-            $BIN_DIR/deploy_db_node.sh
-            exit_on_error "Deploy DB Node"
-        fi 
+{%- if db_subtype == "rac" }
+        $BIN_DIR/db/deploy_rac.sh
+        exit_on_error "Deploy RAC"
+{%- elif db_type == "db_free" } 
+        $BIN_DIR/db/deploy_db_free.sh
+        exit_on_error "Deploy DB Free"
+{%- elif db_type == "mysql" and deploy_type == "public_compute" } 
+        $BIN_DIR/db/deploy_mysql_public_compute.sh
+        exit_on_error "Deploy MySQL Public Compute"
+{%- elif db_type == "database" and language == "apex" } 
+        $BIN_DIR/db/deploy_apex_database.sh
+        exit_on_error "Deploy APEX Database"
+{%- endif %}
 
         # Build the DB tables (via Bastion)
         if [ -d src/db ]; then
