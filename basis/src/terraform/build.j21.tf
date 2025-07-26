@@ -14,16 +14,16 @@ resource "null_resource" "build_deploy" {
         # export
         . starter.sh env
         # Run config command on the DB directly (ex RAC)
-{%- if db_subtype == "rac" }
+{%- if db_subtype == "rac" %}
         src/db/deploy_rac.sh
         exit_on_error "Deploy RAC"
-{%- elif db_type == "db_free" } 
+{%- elif db_type == "db_free" %} 
         src/db/deploy_db_free.sh
         exit_on_error "Deploy DB Free"
-{%- elif db_type == "mysql" and deploy_type == "public_compute" } 
+{%- elif db_type == "mysql" and deploy_type == "public_compute" %} 
         src/db/deploy_mysql_public_compute.sh
         exit_on_error "Deploy MySQL Public Compute"
-{%- elif db_type == "database" and language == "apex" } 
+{%- elif db_type == "database" and language == "apex" %} 
         src/db/deploy_apex_database.sh
         exit_on_error "Deploy APEX Database"
 {%- endif %}
