@@ -12,7 +12,7 @@ resource "null_resource" "build_deploy" {
         # ls -al target
         # cat target/terraform.tfstate
         # export
-        . starter.sh env
+        . ./starter.sh env
         # Run config command on the DB directly (ex RAC)
 {%- if db_subtype == "rac" %}
         src/db/deploy_rac.sh
@@ -102,7 +102,7 @@ resource "null_resource" "after_build" {
         export {{key.upper()}}="${local.local_{{key}}}"
 {%- endfor %}     
         cd ${var.project_dir}    
-        . starter.sh env    
+        . ./starter.sh env    
         if [ "$TF_VAR_tls" != "" ]; then
             title "Certificate - Post Deploy"
             certificate_post_deploy 
