@@ -75,12 +75,11 @@ module "terraform_module" {
                  "db_user",
                  "db_password" ] %}
   {{key}} = try( var.{{key}}, null )  
-{%- elif key =="project_dir" %}
-  project_dir = "."
 {%- else %}
   {{key}} = try(data.external.env.result.{{key}}, null)
 {%- endif %}
 {%- endfor %}
+  project_dir = "."
 
   providers = {
     oci.home = oci.home
