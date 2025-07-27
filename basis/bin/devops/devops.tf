@@ -3,7 +3,7 @@ variable region {}
 variable compartment_ocid {}
 variable prefix { default = "starter" }
 variable username {}
-variable auth_token {}
+variable auth_token { sensitive   = true }
 
 #############################################################################
 terraform {
