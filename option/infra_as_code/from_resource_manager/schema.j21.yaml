@@ -31,12 +31,6 @@ variableGroups:
 
 variables:
 
-  prefix:
-    type: string
-    title: Resource Name Prefix
-    description: The names of all compute and network resources will begin with this prefix. It can only contain letters or numbers and must begin with a letter.
-    required: true
-
 {%- for param in env_params %}
   {{ param }}:
     {%- if param in ["compartment_ocid"] %}
