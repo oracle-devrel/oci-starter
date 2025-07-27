@@ -496,7 +496,7 @@ def is_param_default_value(name):
     return params.get(name) == default_options.get('-'+name)
 
 def env_param_list():
-    env_params = list(params.keys())
+    env_params = sorted(list(params.keys()))
     exclude = ['mode', 'zip', 'prefix', 'shape', 'params', 'output_dir']
     if params.get('language') != 'java' or 'group_name' in params:
         exclude.extend(['java_vm', 'java_framework', 'java_version'])

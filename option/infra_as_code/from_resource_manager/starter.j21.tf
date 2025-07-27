@@ -1,10 +1,11 @@
 # starter.tf
 
-## VARIABLES
-
+## Env Variables
 {%- for param in env_params %}
 variable "{{ param }}" { default = null }
 {%- endfor %}
+
+## Terraform Variables
 {%- for key in terraform_variables %}
 {%- if key in env_params %}
 {%- else %}
