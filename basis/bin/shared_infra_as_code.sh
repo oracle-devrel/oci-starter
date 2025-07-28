@@ -63,7 +63,7 @@ infra_as_code_apply() {
   if [ "$CALLED_BY_TERRAFORM" != "" ]; then 
     # Called from resource manager
     echo "WARNING: infra_as_code_apply"
-    resource_manager_json 
+    resource_manager_variables_json 
   elif [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
     resource_manager_create_or_update
     resource_manager_apply
@@ -105,7 +105,7 @@ rs_echo() {
   echo "Resource Manager: $1"
 }
 
-resource_manager_json () {
+resource_manager_variables_json () {
   rs_echo "Create $VAR_FILE_PATH"  
   # Transforms the variables in a JSON format
   # This is a complex way to get them. But it works for multi line variables like TF_VAR_private_key
@@ -136,7 +136,7 @@ resource_manager_create_or_update() {
   fi 
   zip -r $ZIP_FILE_PATH * -x "target/*" -x "src/terraform/.terraform/*"
 
-  resource_manager_json
+  resource_manager_variables_json
 
   if [ -f $TARGET_DIR/resource_manager_stackid ]; then
     if cmp -s $ZIP_FILE_PATH $ZIP_FILE_PATH.$DATE_POSTFIX; then

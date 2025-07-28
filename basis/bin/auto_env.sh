@@ -116,7 +116,7 @@ if ! command -v jq &> /dev/null; then
 fi
 
 #-- PRE terraform ----------------------------------------------------------
-if [ "$OCI_STARTER_VARIABLES_SET" == "$OCI_STARTER_CREATION_DATE" ]; then
+if [ "$OCI_STARTER_VARIABLES_SET" == "$TF_VAR_prefix" ]; then
   echo "Variables already set"
 else
   #-- Check internet connection ---------------------------------------------
@@ -133,7 +133,7 @@ else
     echo "---------------------------------------------------------------------"
   fi
 
-  export OCI_STARTER_VARIABLES_SET=$OCI_STARTER_CREATION_DATE
+  export OCI_STARTER_VARIABLES_SET=$TF_VAR_prefix
   get_user_details
 
   # Availability Domain for FreeTier E2.1 Micro

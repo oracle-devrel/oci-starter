@@ -156,7 +156,7 @@ elif [ "$ARG1" == "frm" ]; then # From Resource Manager
   fi    
   . shared_infra_as_code.sh
   . ./starter.sh env
-  resource_manager_json
+  resource_manager_variables_json
 
 elif [ "$ARG1" == "start" ]; then
     $BIN_DIR/start_stop.sh start $ARG1 $ARG2

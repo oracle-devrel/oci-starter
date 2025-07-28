@@ -523,27 +523,43 @@ def env_sh_contents():
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
     contents = ['#!/bin/bash']
     contents.append('# Environment Variables')
+    tfvars= ['# Environment Variables']
+
     if 'group_name' in params:
         prefix = params["group_name"]
         contents.append(f'export TF_VAR_group_name="{prefix}"')
+        tfvars.append(f'group_name="{prefix}"')
     else:
         prefix = params["prefix"]
     contents.append(f'export TF_VAR_prefix="{prefix}"')
     contents.append('')
+    tfvars.append(f'prefix="{prefix}"')
+    tfvars.append('')
 
     group_common_contents = []
+    group_common_tfvars = []
     for param in env_params:
         if param.endswith("_ocid") or param in ["db_password", "auth_token", "license"]:
             tf_var_comment(group_common_contents, param)
             group_common_contents.append(f'export {get_tf_var(param)}="{params[param]}"')
+
+            tf_var_comment(group_common_tfvars, param)
+            group_common_tfvars.append(f'{param}="{params[param]}"')
         else:
             tf_var_comment(contents, param)
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
+            tf_var_comment(tfvars, param)
+            tfvars.append(f'{param}="{params[param]}"')
     contents.append('')
+    tfvars.append('')    
+
     if params.get('compartment_ocid') == None:
         contents.append('export TF_VAR_compartment_ocid="__TO_FILL__"')
+        tfvars.append('compartment_ocid="__TO_FILL__"')
     for s in group_common_contents:
         contents.append(s)
+    for s in group_common_tfvars:
+        tfvars.append(s)
 
     contents.append('')
     contents.append("if [ -f $HOME/.oci_starter_profile ]; then")
@@ -573,7 +589,7 @@ def env_sh_contents():
     contents.append(f'export OCI_STARTER_VERSION=3.7')
     contents.append(f'export OCI_STARTER_PARAMS="{params["params"]}"')
     contents.append('')
-    return contents
+    return contents, tfvars
 
 
 def tf_var_comment(contents, param):
@@ -595,10 +611,12 @@ def tf_var_comment(contents, param):
 
 
 def write_env_sh():
+    env_sh, env_tfvars = env_sh_contents();
     output_path = output_dir + os.sep + 'env.sh'
-    file_output(output_path, env_sh_contents())
+    file_output(output_path, env_sh())
     os.chmod(output_path, 0o755)
-
+    output_path = output_dir + os.sep + 'env.auto.tfvars'
+    file_output(output_path, env_sh())
 
 def write_readme():
     output_path = output_dir + os.sep + 'README.md'
