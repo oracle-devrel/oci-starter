@@ -1208,6 +1208,8 @@ def jinja2_replace_template():
     print( template_param, flush=True)
 
     jinja2_replace_template_prefix( template_param, "j21" )
+    if params.get('infra_as_code') == "from_resource_manager":
+        shutil.move(output_dir+"/src/terraform/*", output_dir)    
 
 #----------------------------------------------------------------------------
 
