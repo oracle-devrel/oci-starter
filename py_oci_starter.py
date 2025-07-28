@@ -613,10 +613,10 @@ def tf_var_comment(contents, param):
 def write_env_sh():
     env_sh, env_tfvars = env_sh_contents();
     output_path = output_dir + os.sep + 'env.sh'
-    file_output(output_path, env_sh())
+    file_output(output_path, env_sh)
     os.chmod(output_path, 0o755)
     output_path = output_dir + os.sep + 'env.auto.tfvars'
-    file_output(output_path, env_sh())
+    file_output(output_path, env_tfvars)
 
 def write_readme():
     output_path = output_dir + os.sep + 'README.md'
