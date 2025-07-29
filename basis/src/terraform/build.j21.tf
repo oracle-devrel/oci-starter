@@ -1,4 +1,4 @@
-variable project_dir { default="../.." }
+variable project_dir { default="." }
 
 ## BUILD_DEPLOY
 resource "null_resource" "build_deploy" {
