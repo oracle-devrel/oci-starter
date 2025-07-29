@@ -57,8 +57,6 @@ if [ -z "$TF_VAR_nosql_ocid" ]; then
    get_id_from_tfstate "TF_VAR_nosql_ocid" "starter_nosql_table" 
 fi   
 
-get_output_from_tfstate "TF_VAR_oke_ocid" "oke_ocid"
-
 if [ -z "$TF_VAR_apigw_ocid" ]; then
   get_id_from_tfstate "TF_VAR_apigw_ocid" "starter_apigw"
 fi   

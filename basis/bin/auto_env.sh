@@ -293,14 +293,14 @@ if [ -f $STATE_FILE ]; then
     fi
   fi
 
-  # Compute
-  get_output_from_tfstate "COMPUTE_IP" "compute_ip"
+  # export all OUTPUTS of the terraform file
+  cat target/terraform.tfstate | jq .outputs | jq -r 'keys_unsorted[] as $key | "export \($key | ascii_upcase)=\"\(.[$key].value)\""' | while IFS= read -r line; do 
+    echo "$line"
+    eval "$line" 
+  done
 
-  # Bastion 
-  get_output_from_tfstate "BASTION_IP" "bastion_public_ip"
 
   # Check if there is a BASTION SERVICE with a BASTION COMMAND
-  get_output_from_tfstate "BASTION_COMMAND" "bastion_command"
   if [ "$BASTION_COMMAND" == "" ]; then
     if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
       # Ideally BASTION_PROXY_COMMAND should be not used. But passing a empty value does not work...
@@ -315,23 +315,12 @@ if [ -f $STATE_FILE ]; then
     export BASTION_PROXY_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p $BASTION_USER_HOST"
   fi
 
-    # JDBC_URL
-    get_output_from_tfstate "JDBC_URL" "jdbc_url"
-    get_output_from_tfstate "DB_URL" "db_url"
-
-    if [ "$TF_VAR_db_type" == "autonomous" ] || [ "$TF_VAR_db_type" == "database" ] ; then
-      get_output_from_tfstate "ORDS_URL" "ords_url"
-    fi
-
   if [ "$TF_VAR_db_type" == "database" ]; then
     get_attribute_from_tfstate "DB_NODE_IP" "starter_node_vnic" "private_ip_address"
-  elif [ "$TF_VAR_db_type" == "db_free" ]; then
-    get_output_from_tfstate "DB_NODE_IP" "db_free_ip"
   fi
 
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     # OKE
-    get_output_from_tfstate "OKE_OCID" "oke_ocid"
     if [ -f $KUBECONFIG ]; then
       export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
       export INGRESS_LB_OCID=`oci lb load-balancer list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[] | select(.["ip-addresses"][0]["ip-address"]=="'$TF_VAR_ingress_ip'") | .id'`  
@@ -341,8 +330,6 @@ if [ -f $STATE_FILE ]; then
   # JMS
   if [ -f $PROJECT_DIR/src/terraform/jms.tf ]; then 
     if [ ! -f $TARGET_DIR/jms_agent_deploy.sh ]; then
-      get_output_from_tfstate "FLEET_OCID" "fleet_ocid"
-      get_output_from_tfstate "INSTALL_KEY_OCID" "install_key_ocid"
        # JMS requires a "jms" tag namespace / tag "fleet_ocid" (that is unique and should not be deleted by terraform destroy) 
       TAG_NAMESPACE_OCID=`oci iam tag-namespace list --compartment-id=$TF_VAR_tenancy_ocid | jq -r '.data[] | select(.name=="jms") | .id'`
       if [ "$TAG_NAMESPACE_OCID" == "" ]; then

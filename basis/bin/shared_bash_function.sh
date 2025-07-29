@@ -338,7 +338,6 @@ get_ui_url() {
       fi
     fi  
   elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
-    get_output_from_tfstate INSTANCE_POOL_LB_IP instance_pool_lb_ip 
     export UI_URL=http://${INSTANCE_POOL_LB_IP}
     if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
       export UI_HTTP=$UI_URL

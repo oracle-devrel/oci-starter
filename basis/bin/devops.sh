@@ -36,7 +36,6 @@ if [ "$1" == "build" ]; then
   exit_on_error "Devops - terraform apply"
 
   export STATE_FILE=$TARGET_DIR/devops.tfstate
-  get_output_from_tfstate "DEVOPS_GIT_URL" "devops_git_url"
 
   # Clone the directory in the devops git repository
   GIT_TMP_DIR=/tmp/ocistarter_git
