@@ -90,32 +90,30 @@ data "oci_core_images" "oraclelinux" {
   }
 }
 
-/*
-# Oracle-Linux-Cloud-Developer-8.5-2022.05.22-0
-# Oracle-Linux-Cloud-Developer-8.5-aarch64-2022.05.22-0
-data "oci_core_images" "oracledevlinux" {
-  compartment_id = var.tenancy_ocid
-  operating_system = "Oracle Linux Cloud Developer"
-  operating_system_version = "8"
-  filter {
-    name = "display_name"
-    values = [local.regex_dev_linux]
-    regex = true
-  }
-}
+# # Oracle-Linux-Cloud-Developer-8.5-2022.05.22-0
+# # Oracle-Linux-Cloud-Developer-8.5-aarch64-2022.05.22-0
+# data "oci_core_images" "oracledevlinux" {
+#   compartment_id = var.tenancy_ocid
+#   operating_system = "Oracle Linux Cloud Developer"
+#   operating_system_version = "8"
+#   filter {
+#     name = "display_name"
+#     values = [local.regex_dev_linux]
+#     regex = true
+#   }
+# }
 
-# output "oracle_dev_linux_latest_name" {
-  value = data.oci_core_images.oracledevlinux.images.0.display_name
-}
-*/
+# # output "oracle_dev_linux_latest_name" {
+#   value = data.oci_core_images.oracledevlinux.images.0.display_name
+# }
 
-locals {
-  oracle_linux_latest_name = coalesce( try(data.oci_core_images.oraclelinux.images.0.display_name, "Oracle-Linux-8.10-2025.03.18-0" ), "Oracle-Linux-8.10-2025.03.18-0")
-}
+# locals {
+#   oracle_linux_latest_name = coalesce( try(data.oci_core_images.oraclelinux.images.0.display_name, "Oracle-Linux-8.10-2025.03.18-0" ), "Oracle-Linux-8.10-2025.03.18-0")
+# }
 
-output "oracle_linux_latest_name" {
-  value = local.oracle_linux_latest_name
-}
+# output "oracle_linux_latest_name" {
+#   value = local.oracle_linux_latest_name
+# }
 
 ## Object Storage
 data "oci_objectstorage_namespace" "ns" {
