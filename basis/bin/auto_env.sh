@@ -103,10 +103,10 @@ else
   unset SILENT_MODE
 fi 
 
-# XXXXXX TO REMOVE WHEN PY_OCI_STARTER.PY is done
-if [ -v REPOSITORY_NAME ]; then
-  return
-fi 
+# Skip if runned from OCI Devops ?
+# if [ "$REPOSITORY_NAME" != "" ]; then
+#   return
+# fi 
 
 # CONFIG.SH
 . $BIN_DIR/config.sh
@@ -173,11 +173,6 @@ else
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     export TF_VAR_email=mail@domain.com
     auto_echo TF_VAR_email=$TF_VAR_email
-    # ex: OCIR region is using the key prefix: fra.ocir.io
-    export TF_VAR_region_key=`oci iam region list --all --query "data[?name=='$TF_VAR_region']" | jq -r ".[0].key" | awk '{print tolower($0)}'`
-    auto_echo TF_VAR_region_key=$TF_VAR_region_key
-    export TF_VAR_ocir=${TF_VAR_region_key}.ocir.io
-    auto_echo TF_VAR_ocir=$TF_VAR_ocir
     export KUBECONFIG=$TARGET_DIR/kubeconfig_starter
   fi
 
@@ -260,7 +255,7 @@ if [ -f $STATE_FILE ]; then
   # Docker
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     export DOCKER_PREFIX_NO_OCIR=${CONTAINER_PREFIX}
-    export DOCKER_PREFIX=${TF_VAR_ocir}/${TF_VAR_namespace}/${DOCKER_PREFIX_NO_OCIR}
+    export DOCKER_PREFIX=${OCIR_HOST}/${TF_VAR_namespace}/${DOCKER_PREFIX_NO_OCIR}
     auto_echo DOCKER_PREFIX=$DOCKER_PREFIX
   fi
 

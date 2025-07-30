@@ -80,10 +80,10 @@ kubectl create secret generic ${TF_VAR_prefix}-db-secret --from-literal=db_user=
 kubectl delete secret ocirsecret  --ignore-not-found=true
 if [ "$TF_VAR_auth_token" == "" ]; then
   # Create a temporary docker auth_token (valid for 1 hour)... 
-  export TOKEN=`oci raw-request --region $TF_VAR_region --http-method GET --target-uri "https://${TF_VAR_ocir}/20180419/docker/token" | jq -r .data.token`
-  kubectl create secret docker-registry ocirsecret --docker-server=$TF_VAR_ocir --docker-username="BEARER_TOKEN" --docker-password="$TOKEN" --docker-email="$TF_VAR_email"
+  export TOKEN=`oci raw-request --region $TF_VAR_region --http-method GET --target-uri "https://${OCIR_HOST}/20180419/docker/token" | jq -r .data.token`
+  kubectl create secret docker-registry ocirsecret --docker-server=$OCIR_HOST --docker-username="BEARER_TOKEN" --docker-password="$TOKEN" --docker-email="$TF_VAR_email"
 else
-  kubectl create secret docker-registry ocirsecret --docker-server=$TF_VAR_ocir --docker-username="$TF_VAR_namespace/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
+  kubectl create secret docker-registry ocirsecret --docker-server=$OCIR_HOST --docker-username="$TF_VAR_namespace/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
 fi  
 
 # Using & as separator
