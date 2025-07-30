@@ -1,4 +1,8 @@
+{%- if infra_as_code == "from_resource_manager" %}
 variable project_dir { default="." }
+{%- else %}
+variable project_dir { default="../.." }
+{%- endif %}
 
 ## BUILD_DEPLOY
 resource "null_resource" "build_deploy" {
