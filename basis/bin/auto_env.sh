@@ -295,10 +295,12 @@ if [ -f $STATE_FILE ]; then
 
   # export all OUTPUTS of the terraform file
   if [ "$IDCS_URL" == "" ]; then
-    cat target/terraform.tfstate | jq .outputs | jq -r 'keys_unsorted[] as $key | "export \($key | ascii_upcase)=\"\(.[$key].value)\""' | while IFS= read -r line; do 
-        echo "$line"
-        eval "$line" 
-    done
+    LIST_OUTPUT=`cat $STATE_FILE| jq .outputs | jq -r 'keys[]'`
+    for output in $LIST_OUTPUT; do
+      value=`cat $STATE_FILE | jq -r ".outputs[\"$output\"].value"`
+      echo "export ${output^^}=\"$value\"" 
+      eval "export ${output^^}=\"$value\"" 
+    done 
   fi
 
   # Check if there is a BASTION SERVICE with a BASTION COMMAND
