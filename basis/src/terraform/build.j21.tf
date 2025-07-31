@@ -16,7 +16,7 @@ resource "null_resource" "build_deploy" {
         # ls -al target
         # cat target/terraform.tfstate
         # export
-        export CALLED_FROM_TERRAFORM="true"
+        export CALLED_BY_TERRAFORM="true"
         . ./starter.sh env
         # Run config command on the DB directly (ex RAC)
 {%- if db_subtype == "rac" %}
