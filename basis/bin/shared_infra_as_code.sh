@@ -11,8 +11,8 @@ else
 fi     
 export VAR_FILE_PATH=$TARGET_DIR/resource_manager_variables.json
 export ZIP_FILE_PATH=$TARGET_DIR/resource_manager_$TF_VAR_prefix.zip
-# export TERRAFORM_DIR=$PROJECT_DIR/src/terraform
-export TERRAFORM_DIR=$PROJECT_DIR
+export TERRAFORM_DIR=$PROJECT_DIR/src/terraform
+# export TERRAFORM_DIR=$PROJECT_DIR
 
 infra_as_code_plan() {
   cd $TERRAFORM_DIR    
