@@ -706,7 +706,7 @@ file_replace_variables() {
 }
 
 # Function to parse a .tfvars file and export TF_VAR_ variables
-parse_env_auto_tfvars() {
+export_env_auto_tfvars() {
   # Read the file line by line, ignoring comments and empty lines
   grep -vE '^\s*#|^\s*$' "$PROJECT_DIR/env.auto.tfvars" | while IFS='=' read -r key value; do
     # Remove leading/trailing whitespace from key and value

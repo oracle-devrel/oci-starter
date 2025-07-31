@@ -1206,13 +1206,13 @@ def jinja2_replace_template():
     print( template_param, flush=True)
 
     jinja2_replace_template_prefix( template_param, "j21" )
-    if params.get('infra_as_code') == "from_resource_manager":
-        # Move all the terraform files in the home directory
-        terraform_dir = output_dir+"/src/terraform"    
-        files = os.listdir(terraform_dir)
-        for file in files:
-            file_name = os.path.join(terraform_dir, file)
-            shutil.move(file_name, output_dir)        
+    # if params.get('infra_as_code') == "from_resource_manager":
+    # Move all the terraform files in the home directory
+    terraform_dir = output_dir+"/src/terraform"    
+    files = os.listdir(terraform_dir)
+    for file in files:
+        file_name = os.path.join(terraform_dir, file)
+        shutil.move(file_name, output_dir)        
 
 #----------------------------------------------------------------------------
 
