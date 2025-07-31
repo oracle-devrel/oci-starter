@@ -25,20 +25,22 @@ set -o pipefail
 # Function to parse a .tfvars file and export TF_VAR_ variables
 export_env_auto_tfvars() {
   # Read the file line by line, ignoring comments and empty lines
-  grep -vE '^\s*#|^\s*$' "$PROJECT_DIR/env.auto.tfvars" | while IFS='=' read -r key value; do
-    # Remove leading/trailing whitespace from key and value
-    key=$(echo "$key" | xargs)
-    value=$(echo "$value" | xargs)
+  while IFS='=' read -r key value; do
+    if [ "$key" != "" ]; then
+      # Remove leading/trailing whitespace from key and value
+      key=$(echo "$key" | xargs)
+      value=$(echo "$value" | xargs)
 
-    # Remove quotes from the value if present (e.g., "value" or 'value')
-    value=$(echo "$value" | sed -E "s/^['\"](.*)['\"]$/\1/")
+      # Remove quotes from the value if present (e.g., "value" or 'value')
+      value=$(echo "$value" | sed -E "s/^['\"](.*)['\"]$/\1/")
 
-    # Check if key and value are not empty
-    if [[ -n "$key" && -n "$value" ]]; then
-      export "TF_VAR_${key}"="${value}"
-      echo "Exported TF_VAR_${key}=\"${value}\""
-    fi
-  done
+      # Check if key and value are not empty
+      if [[ -n "$key" && -n "$value" ]]; then
+        export "TF_VAR_${key}"="${value}"
+        echo "Exported TF_VAR_${key}=\"${value}\""
+      fi
+    fi  
+  done < <(grep -vE '^\s*#|^\s*$' "$PROJECT_DIR/env.auto.tfvars")
 
   if [ -f $HOME/.oci_starter_profile ]; then
     . $HOME/.oci_starter_profile
