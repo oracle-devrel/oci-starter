@@ -62,6 +62,7 @@ infra_as_code_precheck() {
 infra_as_code_apply() {
   echo "XXXXXXX <infra_as_code_apply> $CALLED_BY_TERRAFORM"  
   cd $TERRAFORM_DIR  
+  pwd
   if [ "$CALLED_BY_TERRAFORM" != "" ]; then 
     # Called from resource manager
     echo "WARNING: infra_as_code_apply"
