@@ -23,7 +23,7 @@ fi
 set -o pipefail
 
 # Function to parse a .tfvars file and export TF_VAR_ variables
-export_env_auto_tfvars() {
+export_terraform_tfvars() {
   # Read the file line by line, ignoring comments and empty lines
   while IFS='=' read -r key value; do
     if [ "$key" != "" ]; then
@@ -40,7 +40,7 @@ export_env_auto_tfvars() {
         echo "Exported TF_VAR_${key}=\"${value}\""
       fi
     fi  
-  done < <(grep -vE '^\s*#|^\s*$' "$PROJECT_DIR/env.auto.tfvars")
+  done < <(grep -vE '^\s*#|^\s*$' "$PROJECT_DIR/terraform.tfvars")
 
   if [ -f $HOME/.oci_starter_profile ]; then
     . $HOME/.oci_starter_profile
@@ -49,7 +49,7 @@ export_env_auto_tfvars() {
 
 # ENV.SH
 # . $PROJECT_DIR/env.sh
-export_env_auto_tfvars
+export_terraform_tfvars
 
 # Autocomplete in bash
 _starter_completions()
