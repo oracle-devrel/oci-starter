@@ -1,6 +1,5 @@
 ## Copyright (c) 2023, Oracle and/or its affiliates. 
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
-
 terraform {
   required_providers {
     oci = {
@@ -21,16 +20,6 @@ data "oci_identity_regions" "current_region" {
     name   = "name"
     values = [var.region]
   }
-}
-
-# Gets a list of supported images based on the shape, operating_system and operating_system_version provided
-data "oci_core_images" "node_pool_images" {
-  compartment_id           = var.tenancy_ocid
-  operating_system         = "Oracle Linux"
-  operating_system_version = "7.9"
-  shape                    = "VM.Standard.E4.Flex"
-  sort_by                  = "TIMECREATED"
-  sort_order               = "DESC"
 }
 
 # Identity Domain
@@ -89,31 +78,6 @@ data "oci_core_images" "oraclelinux" {
     regex = true
   }
 }
-
-# # Oracle-Linux-Cloud-Developer-8.5-2022.05.22-0
-# # Oracle-Linux-Cloud-Developer-8.5-aarch64-2022.05.22-0
-# data "oci_core_images" "oracledevlinux" {
-#   compartment_id = var.tenancy_ocid
-#   operating_system = "Oracle Linux Cloud Developer"
-#   operating_system_version = "8"
-#   filter {
-#     name = "display_name"
-#     values = [local.regex_dev_linux]
-#     regex = true
-#   }
-# }
-
-# # output "oracle_dev_linux_latest_name" {
-#   value = data.oci_core_images.oracledevlinux.images.0.display_name
-# }
-
-# locals {
-#   oracle_linux_latest_name = coalesce( try(data.oci_core_images.oraclelinux.images.0.display_name, "Oracle-Linux-8.10-2025.03.18-0" ), "Oracle-Linux-8.10-2025.03.18-0")
-# }
-
-# output "oracle_linux_latest_name" {
-#   value = local.oracle_linux_latest_name
-# }
 
 ## Object Storage
 data "oci_objectstorage_namespace" "ns" {
