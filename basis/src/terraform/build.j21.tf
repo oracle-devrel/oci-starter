@@ -71,6 +71,7 @@ resource "null_resource" "build_deploy" {
             $BIN_DIR/ci_deploy.sh
             exit_on_error "Deploy $TF_VAR_deploy_type"
         fi
+        ./starter.sh frm
         EOT
   }
   depends_on = [
