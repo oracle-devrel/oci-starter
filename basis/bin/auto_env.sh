@@ -42,6 +42,7 @@ export_terraform_tfvars() {
       fi
     fi
   done < "$PROJECT_DIR/terraform.tfvars"
+  unset value
 
   if [ -f $HOME/.oci_starter_profile ]; then
     . $HOME/.oci_starter_profile
