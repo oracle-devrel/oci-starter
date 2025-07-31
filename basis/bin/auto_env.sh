@@ -25,22 +25,23 @@ set -o pipefail
 # Function to parse a .tfvars file and export TF_VAR_ variables
 export_terraform_tfvars() {
   # Read the file line by line, ignoring comments and empty lines
-  while IFS='=' read -r key value; do
-    if [ "$key" != "" ]; then
-      # Remove leading/trailing whitespace from key and value
-      key=$(echo "$key" | xargs)
-      value=$(echo "$value" | xargs)
-
+  while read -r line; do
+    if [[ "$line" =~ ^\s*# ]]; then
+       :
+    elif [[ "$line" =~ ^\s*$ ]]; then
+       :      
+    else
+      key="${line%%=*}"
+      value="${line#*=}"
       # Remove quotes from the value if present (e.g., "value" or 'value')
       value=$(echo "$value" | sed -E "s/^['\"](.*)['\"]$/\1/")
-
       # Check if key and value are not empty
-      if [[ -n "$key" && -n "$value" ]]; then
+      if [[ "$key" != "" && "$value" != "" ]]; then
         export "TF_VAR_${key}"="${value}"
-        echo "Exported TF_VAR_${key}=\"${value}\""
+        echo "export TF_VAR_${key}=\"${value}\""
       fi
-    fi  
-  done < <(grep -vE '^\s*#|^\s*$' "$PROJECT_DIR/terraform.tfvars")
+    fi
+  done < "$PROJECT_DIR/terraform.tfvars"
 
   if [ -f $HOME/.oci_starter_profile ]; then
     . $HOME/.oci_starter_profile
