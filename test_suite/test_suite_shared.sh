@@ -262,7 +262,7 @@ build_option() {
        -web_subnet_ocid $TF_VAR_web_subnet_ocid \
        -app_subnet_ocid $TF_VAR_app_subnet_ocid \
        -db_subnet_ocid $TF_VAR_db_subnet_ocid \
-       -oke_ocid $TF_VAR_oke_ocid \
+       -oke_ocid $OKE_OCID \
        -atp_ocid $TF_VAR_atp_ocid \
        -db_ocid $TF_VAR_db_ocid \
        -mysql_ocid $TF_VAR_mysql_ocid \
@@ -292,7 +292,7 @@ build_option() {
        -web_subnet_ocid $TF_VAR_web_subnet_ocid \
        -app_subnet_ocid $TF_VAR_app_subnet_ocid \
        -db_subnet_ocid $TF_VAR_db_subnet_ocid \
-       -oke_ocid $TF_VAR_oke_ocid \
+       -oke_ocid $OKE_OCID \
        -atp_ocid $TF_VAR_atp_ocid \
        -db_ocid $TF_VAR_db_ocid \
        -mysql_ocid $TF_VAR_mysql_ocid \

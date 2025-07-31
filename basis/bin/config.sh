@@ -236,6 +236,7 @@ if declare -p | grep -q "__TO_FILL__"; then
   read_ocid TF_VAR_web_subnet_ocid "Web Subnet" ocid1.subnet
   read_ocid TF_VAR_app_subnet_ocid "App Private Subnet" ocid1.subnet
   read_ocid TF_VAR_db_subnet_ocid "Database Private Subnet" ocid1.subnet
+  # XXXXX
   read_ocid TF_VAR_oke_ocid "Kubernetes Cluster (OKE)" ocid1.cluster
   read_ocid TF_VAR_atp_ocid "Autonomous Datababase" ocid1.autonomousdatabase
   read_ocid TF_VAR_db_ocid "Base Database" ocid1.dbsystem
