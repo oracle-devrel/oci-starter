@@ -11,9 +11,11 @@ else
 fi     
 export VAR_FILE_PATH=$TARGET_DIR/resource_manager_variables.json
 export ZIP_FILE_PATH=$TARGET_DIR/resource_manager_$TF_VAR_prefix.zip
+# export TERRAFORM_DIR=$PROJECT_DIR/src/terraform
+export TERRAFORM_DIR=$PROJECT_DIR
 
 infra_as_code_plan() {
-  cd $PROJECT_DIR/src/terraform    
+  cd $TERRAFORM_DIR    
   if [ "$TF_VAR_infra_as_code" == "resource_manager" ]; then
      resource_manager_plan
   else
@@ -28,7 +30,7 @@ infra_as_code_plan() {
 # Before to run the build check the some resource with unique name in the tenancy does not exists already
 infra_as_code_precheck() {
   echo "-- Precheck"
-  cd $PROJECT_DIR/src/terraform 
+  cd $TERRAFORM_DIR
   $TERRAFORM_COMMAND init -no-color -upgrade  
   #   XXXX BUG in terraform plan -json
   #   XXXX If there is an error in the plan phase, the code exit fully returning a error code... XXXX
@@ -59,7 +61,7 @@ infra_as_code_precheck() {
 
 infra_as_code_apply() {
   echo "XXXXXXX <infra_as_code_apply> $CALLED_BY_TERRAFORM"  
-  # cd $PROJECT_DIR/src/terraform  
+  cd $TERRAFORM_DIR  
   if [ "$CALLED_BY_TERRAFORM" != "" ]; then 
     # Called from resource manager
     echo "WARNING: infra_as_code_apply"
@@ -84,7 +86,7 @@ infra_as_code_apply() {
 }
 
 infra_as_code_destroy() {
-  cd $PROJECT_DIR/src/terraform    
+  cd $TERRAFORM_DIR    
   if [ "$TF_VAR_infra_as_code" == "resource_manager" ] || [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
     resource_manager_destroy
   else
@@ -130,11 +132,11 @@ resource_manager_create_or_update() {
   if [ -f $ZIP_FILE_PATH ]; then
     rm $ZIP_FILE_PATH
   fi  
-  if [ -f "src/terraform/.terraform" ]; then
+  if [ -f "$TERRAFORM_DIR/.terraform" ]; then
     # Created during pre-check
-    rm "src/terraform/.terraform/*"
+    rm "$TERRAFORM_DIR/.terraform/*"
   fi 
-  zip -r $ZIP_FILE_PATH * -x "target/*" -x "src/terraform/.terraform/*"
+  zip -r $ZIP_FILE_PATH * -x "target/*" -x "$TERRAFORM_DIR/.terraform/*"
 
   resource_manager_variables_json
 
