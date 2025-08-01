@@ -65,10 +65,10 @@ resource "null_resource" "build_deploy" {
             $BIN_DIR/deploy_compute.sh
             exit_on_error "Deploy $TF_VAR_deploy_type"
         elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
-            $BIN_DIR/oke_deploy.sh
+            $BIN_DIR/deploy_oke.sh
             exit_on_error "Deploy $TF_VAR_deploy_type"
         elif [ "$TF_VAR_deploy_type" == "container_instance" ]; then
-            $BIN_DIR/ci_deploy.sh
+            $BIN_DIR/deploy_ci.sh
             exit_on_error "Deploy $TF_VAR_deploy_type"
         fi
         ./starter.sh frm
