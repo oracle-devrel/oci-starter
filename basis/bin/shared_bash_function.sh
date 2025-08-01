@@ -664,10 +664,8 @@ function scp_via_bastion() {
   while [ true ]; do
     if command -v rsync &> /dev/null; then
       # Using RSYNC allow to reapply the same command several times easily. 
-      echo "rsync -av -e ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\" $1 $2"
       rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" $1 $2
     else
-      echo "scp -r -o StrictHostKeyChecking=no -oProxyCommand=$BASTION_PROXY_COMMAND $1 $2"
       scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" $1 $2
     fi  
     if [ $? -eq 0 ]; then
