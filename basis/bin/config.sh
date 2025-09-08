@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ "$PROJECT_DIR" = "" ]; then
   echo "Error: PROJECT_DIR not set. Please use starter.sh."
   exit 1
@@ -48,6 +48,12 @@ if declare -p | grep -q "__TO_FILL__"; then
       fi
     done    
   }
+
+  # Livelabs Green Button (Autodetect compartment/vcn/subnet)
+  livelabs_green_button 
+
+  # LunaLab (Autodetect compartment)
+  lunalab
 
   # PREFIX
   if [ "$TF_VAR_prefix" == "__TO_FILL__" ]; then
@@ -174,12 +180,6 @@ if declare -p | grep -q "__TO_FILL__"; then
     store_env_sh TF_VAR_api_key $TF_VAR_api_key
   fi  
 
-  # Livelabs Green Button (Autodetect compartment/vcn/subnet)
-  livelabs_green_button 
-
-  # LunaLab (Autodetect compartment)
-  lunalab
-
   # COMPARTMENT_ID
   if [ "$TF_VAR_compartment_ocid" == "__TO_FILL__" ]; then
     title "Config - Compartment"       
@@ -221,8 +221,8 @@ if declare -p | grep -q "__TO_FILL__"; then
     export REQUEST="Create a new vault ? (<No> will ask for the ocid of an existing one) ?"
     if accept_request; then  
       # Comment the 2 lines. The vault will be created.
-      sed -i "s/^export TF_VAR_vault_ocid/# export TF_VAR_vault_ocid/" $PROJECT_DIR/env.sh     
-      sed -i "s/^export TF_VAR_vault_key_ocid/# export TF_VAR_vault_key_ocid/" $PROJECT_DIR/env.sh     
+      sed -i "s/^[ ]*export TF_VAR_vault_ocid/# export TF_VAR_vault_ocid/" $PROJECT_DIR/env.sh     
+      sed -i "s/^[ ]*export TF_VAR_vault_key_ocid/# export TF_VAR_vault_key_ocid/" $PROJECT_DIR/env.sh          
       unset TF_VAR_vault_ocid
       unset TF_VAR_vault_key_ocid
     else

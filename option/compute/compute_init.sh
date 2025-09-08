@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # compute_init.sh 
 #
 # Init of a compute
@@ -18,6 +18,9 @@ echo "ARCH=$ARCH"
 # XXXXXX Since OL8, the service does not start if SELINUX=enforcing XXXXXX
 sudo setenforce 0
 sudo sed -i s/^SELINUX=.*$/SELINUX=permissive/ /etc/selinux/config
+
+# Set VI and NANO in utf8
+echo "export LC_CTYPE=en_US.UTF-8" >> $HOME/.bashrc
 
 # -- Shared Install function ------------------------------------------------
 
@@ -83,7 +86,7 @@ done
 
 # -- app/start*.sh -----------------------------------------------------------
 for APP_DIR in `ls -d app* | sort -g`; do
-  echo "#!/bin/bash" > $APP_DIR/restart.sh 
+  echo "#!/usr/bin/env bash" > $APP_DIR/restart.sh 
   chmod +x $APP_DIR/restart.sh  
   for START_SH in `ls $APP_DIR/start*.sh | sort -g`; do
     echo "-- $START_SH ---------------------------------------"

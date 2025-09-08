@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # PROJECT_DIR
 if [[ -z "${PROJECT_DIR}" ]]; then

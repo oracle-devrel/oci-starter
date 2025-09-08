@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Set project_dir and bin_dir when not called from starter.sh
 if [ "$PROJECT_DIR" == "" ]; then

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ "$PROJECT_DIR" == "" ]; then
   echo "ERROR: PROJECT_DIR undefined. Please use starter.sh upgrade"
   exit 1

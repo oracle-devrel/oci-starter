@@ -521,7 +521,7 @@ def env_sh_contents():
     env_params = env_param_list()
     print(env_params)
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
-    contents = ['#!/bin/bash']
+    contents = ['#!/usr/bin/env bash']
     contents.append('# Environment Variables')
     tfvars= ['# Environment Variables']
 

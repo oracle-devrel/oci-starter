@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Build_app.sh
 #
 # Build the group_common_env.sh file.

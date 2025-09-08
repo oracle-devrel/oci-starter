@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # - 2025-06_17 : added Tofu support for LunaLab
 set -e
 

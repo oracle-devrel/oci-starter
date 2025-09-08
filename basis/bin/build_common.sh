@@ -1,5 +1,5 @@
 # Build_common.sh
-#!/bin/bash
+#!/usr/bin/env bash
 if [[ -z "${BIN_DIR}" ]]; then
   echo "Error: BIN_DIR not set"
   exit 1
