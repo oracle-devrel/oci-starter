@@ -149,7 +149,7 @@ resource_manager_create_or_update() {
   cd target/stack
   # Add infra_as_code in terraform.tfvars
   if ! grep -q 'infra_as_code="resource_manager"' terraform.tfvars; then
-    sed -i 's/"resource_manager"/"from_resource_manager"' terraform.tfvars
+    sed -i 's/"resource_manager"/"from_resource_manager"/' terraform.tfvars
   fi
   # Move src/terraform to .
   mv src/terraform/* .
