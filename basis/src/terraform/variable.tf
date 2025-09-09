@@ -61,6 +61,7 @@ variable username { default=null }
 variable availability_domain_number { 
   default = "1"
   nullable = false
+  description="Availability Domain"
 }
 
 # BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED
@@ -68,6 +69,12 @@ variable license_model {
   default="BRING_YOUR_OWN_LICENSE"
   nullable = false
 }
+
+# Deploy Type
+variable deploy_type { default=null }
+
+# UI Type
+variable ui_type { default=null }
 
 # Group
 variable group_name { default=null }
