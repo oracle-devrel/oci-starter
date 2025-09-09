@@ -1,8 +1,6 @@
-{%- if infra_as_code == "from_resource_manager" %}
-variable project_dir { default="." }
-{%- else %}
-variable project_dir { default="../.." }
-{%- endif %}
+locals {
+  project_dir = (var.infra_as_code=="from_resource_manager")?".":"../.."
+}
 
 ## BUILD_DEPLOY
 resource "null_resource" "build_deploy" {
@@ -11,7 +9,7 @@ resource "null_resource" "build_deploy" {
 {%- for key in terraform_locals %}
         export {{key.upper()}}="${local.local_{{key}}}"
 {%- endfor %}     
-        cd ${var.project_dir}
+        cd ${local.project_dir}
         # pwd
         # ls -al target
         # cat target/terraform.tfstate
@@ -92,7 +90,7 @@ resource "null_resource" "build_deploy" {
 # More terraform resources need to be created after build_deploy.
 # Reread the env viables
 data "external" "env_part2" {
-  program = ["cat", "${var.project_dir}/target/resource_manager_variables.json"]
+  program = ["cat", "${local.project_dir}/target/resource_manager_variables.json"]
   depends_on = [
     null_resource.build_deploy
   ]
@@ -107,7 +105,7 @@ resource "null_resource" "after_build" {
 {%- for key in terraform_locals %}
         export {{key.upper()}}="${local.local_{{key}}}"
 {%- endfor %}     
-        cd ${var.project_dir}    
+        cd ${local.project_dir}    
         . ./starter.sh env    
         if [ "$TF_VAR_tls" != "" ]; then
             title "Certificate - Post Deploy"

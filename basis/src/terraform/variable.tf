@@ -78,6 +78,9 @@ variable log_group_ocid  { default=null }
 # Certificate
 variable "certificate_ocid" { default=null }
 
+# Infrastructure as code
+variable "infra_as_code" { default=null }
+
 locals {
   group_name = var.group_name == null ? "none" : var.group_name
 
