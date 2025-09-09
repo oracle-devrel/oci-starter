@@ -38,10 +38,10 @@ variables:
     {%- else %}
     type: string
     {%- endif %}
-    title: {{ param }} title
-    description: {{ param }} description
+    title: {{ title[param] }} title
+    description: ( {{ param }} )
     required: true
-    default: {{ params[param]}}
+    default: {{ params[param] }}
 
 {%- endfor %}
 

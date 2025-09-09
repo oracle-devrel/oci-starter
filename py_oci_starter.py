@@ -1202,6 +1202,22 @@ def jinja2_replace_template():
     template_param['params'] = params
     print( template_param, flush=True)
 
+    template_param['title'] = {
+        "compartment_ocid": "Compartment",
+        "db_family": "Database Family",
+        "db_family_type": "Database Family Type",
+        "db_password":"Database Password",
+        "db_type": "Database Type",
+        "db_user": "Database User",
+        "deploy_type": "Deployment Type",
+        "language": "Language",
+        "license_model": "license_model",
+        "ui_type": "User Interface Type",
+        "prefix": "Prefix",
+        "region": "Region",
+        "current_user_ocid": "User"
+    }
+
     jinja2_replace_template_prefix( template_param, "j21" )
     if params.get('infra_as_code') == "from_resource_manager":
         # Move all the terraform files in the home directory
