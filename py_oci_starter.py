@@ -1150,9 +1150,6 @@ def jinja2_find_in_terraform( dir ):
                         print('local local_'+name, flush=True)
                         locals.append(name)
 
-    # Remove 
-    variables.remove( "project_dir" )
-
     # return outputs, variables, resources, resources_part2, locals
     return sorted(outputs), sorted(variables), sorted(resources), sorted(resources_part2), sorted(locals)
 
