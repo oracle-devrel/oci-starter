@@ -142,7 +142,7 @@ resource_manager_create_or_update() {
   rm -Rf target/stack
   mkdir -p target/stack
   if command -v rsync &> /dev/null; then
-    rsync -ax --exclude target * target/stack
+    rsync -ax --exclude target . target/stack
   else
     find . -path '*/target' -prune -o -exec cp -r --parents {} target/stack \;
   fi
