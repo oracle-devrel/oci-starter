@@ -76,6 +76,9 @@ variable deploy_type { default=null }
 # UI Type
 variable ui_type { default=null }
 
+# Database Type
+variable db_type { default=null }
+
 # Group
 variable group_name { default=null }
 

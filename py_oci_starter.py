@@ -1200,7 +1200,7 @@ def jinja2_replace_template():
     template_param['env_params'].append('region')
     template_param['env_params'].append('current_user_ocid')
     template_param['params'] = params
-    print( template_param, flush=True)
+    print( template_param, flush=True )
 
     template_param['title'] = {
         "compartment_ocid": "Compartment",
@@ -1211,10 +1211,11 @@ def jinja2_replace_template():
         "db_user": "Database User",
         "deploy_type": "Deployment Type",
         "language": "Language",
-        "license_model": "license_model",
+        "license_model": "Licence Model",
         "ui_type": "User Interface Type",
         "prefix": "Prefix",
         "region": "Region",
+        "tenancy_ocid": "Tenancy",
         "current_user_ocid": "User"
     }
 
