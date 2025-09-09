@@ -148,14 +148,15 @@ resource_manager_create_or_update() {
   fi
   cd target/stack
   # Add infra_as_code in terraform.tfvars
-  if ! grep -q "infra_as_code=" terraform.tfvars; then
-    echo 'infra_as_code="from_resource_manager"' >> terraform.tfvars
+  if ! grep -q 'infra_as_code="resource_manager"' terraform.tfvars; then
+    sed -i 's/"resource_manager"/"from_resource_manager"' terraform.tfvars
   fi
   # Move src/terraform to .
   mv src/terraform/* .
   rm -Rf src/terraform/
   # Create zip
   zip -r $ZIP_FILE_PATH * -x "target/*" -x "$TERRAFORM_DIR/.terraform/*"
+  echo "Created Resource Manager Zip file - $ZIP_FILE_PATH"
   cd -
 
   resource_manager_variables_json
