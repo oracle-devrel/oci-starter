@@ -139,6 +139,7 @@ resource_manager_create_or_update() {
   fi 
   
   # Duplicate the directory in target/stack
+  cd $PROJECT_DIR
   rm -Rf target/stack
   mkdir -p target/stack
   if command -v rsync &> /dev/null; then
@@ -151,8 +152,9 @@ resource_manager_create_or_update() {
   if ! grep -q 'infra_as_code="resource_manager"' terraform.tfvars; then
     sed -i 's/"resource_manager"/"from_resource_manager"/' terraform.tfvars
   fi
-  # Move src/terraform to .
+    # Move src/terraform to .
   mv src/terraform/* .
+  rm terraform_local.tf
   rm -Rf src/terraform/
   # Create zip
   zip -r $ZIP_FILE_PATH * -x "target/*" -x "$TERRAFORM_DIR/.terraform/*"
