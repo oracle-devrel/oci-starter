@@ -9,12 +9,17 @@ locale: "en"
 # Variable Groups
 #################
 variableGroups:
-- title: General Configuration
-  visible: true
-  variables:
-  - current_user_ocid
 
 - title: Starter Project
+  visible: true  
+  variables:
+{%- for param in env_params %}
+{%- if param in ["prefix","license_model","db_password","compartment_ocid"] %}  
+  - {{ param }}
+{%- endif %}  
+{%- endfor %}
+
+- title: Static
   visible: true  
   variables:
 {%- for param in env_params %}
@@ -37,6 +42,11 @@ variables:
     type: oci:identity:compartment:id
     {%- else %}
     type: string
+    {%- endif %}
+    {%- if param="license_model"] %}
+    enum:
+      - BRING_YOUR_OWN_LICENSE
+      - LICENSE_INCLUDED
     {%- endif %}
     title: {{ title[param] }}
     description: ( {{ param }} )

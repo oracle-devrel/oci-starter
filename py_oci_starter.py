@@ -534,6 +534,7 @@ def env_sh_contents():
     contents.append(f'export TF_VAR_prefix="{prefix}"')
     contents.append('')
     tfvars.append(f'prefix="{prefix}"')
+    tfvars.append('# infra_as_code="resource_manager"')
     tfvars.append('')
 
     group_common_contents = []
@@ -562,7 +563,6 @@ def env_sh_contents():
         tfvars.append(s)
 
     tfvars.append('')
-    tfvars.append('# infra_as_code="resource_manager')
     contents.append('')
     contents.append("if [ -f $HOME/.oci_starter_profile ]; then")
     contents.append("  . $HOME/.oci_starter_profile")
