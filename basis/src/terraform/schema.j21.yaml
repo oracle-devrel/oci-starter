@@ -43,7 +43,7 @@ variables:
     {%- else %}
     type: string
     {%- endif %}
-    {%- if param="license_model"] %}
+    {%- if param=="license_model" %}
     enum:
       - BRING_YOUR_OWN_LICENSE
       - LICENSE_INCLUDED
