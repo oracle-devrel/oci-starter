@@ -137,6 +137,17 @@ resource_manager_create_or_update() {
     # Created during pre-check
     rm "$TERRAFORM_DIR/.terraform/*"
   fi 
+  rm -Rf target/stack
+  mkdir -p target/stack
+  if command -v rsync &> /dev/null; then
+    rsync -ax --exclude target * target/stack
+  else
+    find . -path '*/target' -prune -o -exec cp -r --parents {} target/stack \;
+  fi
+  cd target/stack
+  if ! grep -q "infra_as_code=" terraform.tfstate; then
+    echo 'infra_as_code="from_resource_manager"' >> terraform.tfvars
+  fi
   zip -r $ZIP_FILE_PATH * -x "target/*" -x "$TERRAFORM_DIR/.terraform/*"
 
   resource_manager_variables_json

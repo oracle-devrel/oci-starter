@@ -430,7 +430,7 @@ Check LICENSE file (Apache 2.0)
 - group_common
     - starter.sh build   : Create the Common Resources using Terraform
     - starter.sh destroy : Destroy the objects created by Terraform
-    - terraform.tfstate  : Contains the settings of the project
+    - terraform.tfvars   : Contains the settings of the project
 
 ### Directories
 - group_common/src : Sources files
@@ -473,9 +473,9 @@ Check LICENSE file (Apache 2.0)
     contents.append('\n### Next Steps:')
     if TO_FILL in params.values():
         if 'group_name' in params:
-            contents.append("- Edit the file group_common/terraform.tfstate. Some variables need to be filled:")
+            contents.append("- Edit the file group_common/terraform.tfvars. Some variables need to be filled:")
         else:
-            contents.append("- Edit the file terraform.tfstate. Some variables need to be filled:")
+            contents.append("- Edit the file terraform.tfvars. Some variables need to be filled:")
         contents.append("```")
         for param, value in params.items():
             if value == TO_FILL:
