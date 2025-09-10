@@ -41,7 +41,8 @@ if declare -p | grep -q "__TO_FILL__"; then
       read -r -p "Enter your $2 OCID (Format: $3.xxxxx): " response
       if [[ $response == $3* ]]; then
         export $1=$response
-        store_terraform_tfvars $1 ${!1}
+        without_prefix="${1#TF_VAR_}"
+        store_terraform_tfvars $without_prefix ${!1}
       else
         echo "Wrong format $response"
         echo            
@@ -84,7 +85,7 @@ if declare -p | grep -q "__TO_FILL__"; then
         fi
       done         
     fi 
-    store_terraform_tfvars TF_VAR_prefix $TF_VAR_prefix
+    store_terraform_tfvars prefix $TF_VAR_prefix
   fi
 
   # DB_PASSWORD
@@ -128,7 +129,7 @@ if declare -p | grep -q "__TO_FILL__"; then
         error_exit "The password is too short."
         fi        
     fi 
-    store_terraform_tfvars TF_VAR_db_password $TF_VAR_db_password
+    store_terraform_tfvars db_password $TF_VAR_db_password
   fi
 
   # AUTH_TOKEN
@@ -140,7 +141,7 @@ if declare -p | grep -q "__TO_FILL__"; then
       . $BIN_DIR/gen_auth_token.sh
     else 
       read -r -p "Enter your OCI Auth token (TF_VAR_auth_token) " TF_VAR_auth_token 
-      store_terraform_tfvars TF_VAR_auth_token $TF_VAR_auth_token
+      store_terraform_tfvars auth_token $TF_VAR_auth_token
     fi      
   fi
 
@@ -152,7 +153,7 @@ if declare -p | grep -q "__TO_FILL__"; then
       read -r -p "Enter BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED: " response
       if [[ $response == "BRING_YOUR_OWN_LICENSE" ]] || [[ $response == "LICENSE_INCLUDED" ]] ; then
         export TF_VAR_license_model=$response
-        store_terraform_tfvars TF_VAR_license_model $response
+        store_terraform_tfvars license_model $response
       else
         echo "Wrong value $response"
         echo            
@@ -170,14 +171,14 @@ if declare -p | grep -q "__TO_FILL__"; then
     else
       error_exit "TF_VAR_oic_appid does not end with _APPID"
     fi    
-    store_terraform_tfvars TF_VAR_oic_appid $TF_VAR_oic_appid
+    store_terraform_tfvars oic_appid $TF_VAR_oic_appid
   fi  
 
   # API_KEY
   if [ "$TF_VAR_api_key" == "__TO_FILL__" ]; then
     title "Config - API Key"     
     read -r -p "Enter the value of the API_KEY (ex: MY_long_KEY_123456) ? (TF_VAR_api_key) " TF_VAR_api_key 
-    store_terraform_tfvars TF_VAR_api_key $TF_VAR_api_key
+    store_terraform_tfvars api_key $TF_VAR_api_key
   fi  
 
   # COMPARTMENT_ID
@@ -206,7 +207,7 @@ if declare -p | grep -q "__TO_FILL__"; then
         echo "Using the existing 'oci-starter' Compartment"
       fi 
       export TF_VAR_compartment_ocid=$STARTER_OCID
-      store_terraform_tfvars TF_VAR_compartment_ocid $TF_VAR_compartment_ocid
+      store_terraform_tfvars compartment_ocid $TF_VAR_compartment_ocid
       echo            
     else
       read_ocid TF_VAR_compartment_ocid "Compartment" ocid1.compartment 
