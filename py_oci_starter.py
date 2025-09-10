@@ -523,7 +523,7 @@ def env_sh_contents():
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
     contents = ['#!/usr/bin/env bash']
     contents.append('# Environment Variables')
-    tfvars= ['# Environment Variables']
+    tfvars= ['# VARIABLES']
 
     if 'group_name' in params:
         prefix = params["group_name"]
@@ -535,32 +535,33 @@ def env_sh_contents():
     contents.append('')
     tfvars.append(f'prefix="{prefix}"')
 
-    static_contents = []
-    static_tfvars = []
+    fixed_contents = []
+    fixed_tfvars = []
     for param in env_params:
         if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model"]:
             tf_var_comment(contents, param)
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
+            tfvars.append('')
             tf_var_comment(tfvars, param)
             tfvars.append(f'{param}="{params[param]}"')
         else:
-            tf_var_comment(static_contents, param)
-            static_contents.append(f'export {get_tf_var(param)}="{params[param]}"')
+            tf_var_comment(fixed_contents, param)
+            fixed_contents.append(f'export {get_tf_var(param)}="{params[param]}"')
 
-            tf_var_comment(static_tfvars, param)
-            static_tfvars.append(f'{param}="{params[param]}"')
+            tf_var_comment(fixed_tfvars, param)
+            fixed_tfvars.append(f'{param}="{params[param]}"')
     if params.get('compartment_ocid') == None:
         contents.append('export TF_VAR_compartment_ocid="__TO_FILL__"')
         tfvars.append('compartment_ocid="__TO_FILL__"')
 
     contents.append('')
-    contents.append('# Static')   
+    contents.append('# FIXED')   
     tfvars.append('')   
-    tfvars.append('# Static')   
+    tfvars.append('# FIXED')   
 
-    for s in static_contents:
+    for s in fixed_contents:
         contents.append(s)
-    for s in static_tfvars:
+    for s in fixed_tfvars:
         tfvars.append(s)
 
     tfvars.append('')
@@ -587,7 +588,7 @@ def env_sh_contents():
     # contents.append('# export TF_VAR_lz_app_subnet_ocid="XXXX"')
     # contents.append('# export TF_VAR_lz_db_subnet_ocid="XXXX"')
     contents.append('')
-    contents.append('# Creation Details')
+    contents.append('# CREATION DETAILS')
     contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
     contents.append(f'export OCI_STARTER_VERSION=3.7')
     contents.append(f'export OCI_STARTER_PARAMS="{params["params"]}"')
@@ -606,15 +607,17 @@ def tf_var_comment(contents, param):
         'license_model': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
         'certificate_ocid': ['OCID of the OCI Certificate','If the certificate is not imported in OCI, use instead TF_VAR_certificate_dir=<directory where the certificate resides>', 'export TF_VAR_certificate_dir="__TO_FILL__"']
     }.get(param)
+       
     if comments is not None:
         b=True
         for comment in comments:
             if b:
                 b=False
-                contents.append(f'# {param} : {comment}')
+                contents.append(f'# {comment}')
             else:
                 contents.append(f'#   {comment}')
-
+    elif param.endswith("_ocid"):
+        contents.append(f'# {param.replace('_',' ').title()}')
 
 
 def write_env_sh():
