@@ -533,6 +533,8 @@ def env_sh_contents():
         prefix = params["prefix"]
     contents.append(f'export TF_VAR_prefix="{prefix}"')
     contents.append('')
+    tfvars.append('')
+    tfvars.append('# Prefix to all resources created by terraform')
     tfvars.append(f'prefix="{prefix}"')
 
     fixed_contents = []
@@ -617,7 +619,7 @@ def tf_var_comment(contents, param):
             else:
                 contents.append(f'#   {comment}')
     elif param.endswith("_ocid"):
-        comment = param.replace('_',' ').title()
+        comment = param.replace('_ocid','').replace('_',' ').title()
         contents.append(f'# {comment}')
 
 
