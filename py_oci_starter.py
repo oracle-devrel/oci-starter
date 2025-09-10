@@ -480,7 +480,7 @@ Check LICENSE file (Apache 2.0)
         for param, value in params.items():
             if value == TO_FILL:
                 contents.append(
-                    f'export {get_tf_var(param)}="{params[param]}"')
+                    f'{param}="{params[param]}"')
         contents.append("```")
     contents.append("\n- Run:")
     if 'group_name' in params:
@@ -534,32 +534,33 @@ def env_sh_contents():
     contents.append(f'export TF_VAR_prefix="{prefix}"')
     contents.append('')
     tfvars.append(f'prefix="{prefix}"')
-    tfvars.append('# infra_as_code="resource_manager"')
-    tfvars.append('')
 
-    group_common_contents = []
-    group_common_tfvars = []
+    static_contents = []
+    static_tfvars = []
     for param in env_params:
-        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license"]:
-            tf_var_comment(group_common_contents, param)
-            group_common_contents.append(f'export {get_tf_var(param)}="{params[param]}"')
-
-            tf_var_comment(group_common_tfvars, param)
-            group_common_tfvars.append(f'{param}="{params[param]}"')
-        else:
+        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model"]:
             tf_var_comment(contents, param)
             contents.append(f'export {get_tf_var(param)}="{params[param]}"')
             tf_var_comment(tfvars, param)
             tfvars.append(f'{param}="{params[param]}"')
-    contents.append('')
-    tfvars.append('')    
+        else:
+            tf_var_comment(static_contents, param)
+            static_contents.append(f'export {get_tf_var(param)}="{params[param]}"')
 
+            tf_var_comment(static_tfvars, param)
+            static_tfvars.append(f'{param}="{params[param]}"')
     if params.get('compartment_ocid') == None:
         contents.append('export TF_VAR_compartment_ocid="__TO_FILL__"')
         tfvars.append('compartment_ocid="__TO_FILL__"')
-    for s in group_common_contents:
+
+    contents.append('')
+    contents.append('# Static')   
+    tfvars.append('')   
+    tfvars.append('# Static')   
+
+    for s in static_contents:
         contents.append(s)
-    for s in group_common_tfvars:
+    for s in static_tfvars:
         tfvars.append(s)
 
     tfvars.append('')
@@ -590,7 +591,11 @@ def env_sh_contents():
     contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
     contents.append(f'export OCI_STARTER_VERSION=3.7')
     contents.append(f'export OCI_STARTER_PARAMS="{params["params"]}"')
-    contents.append('')
+    tfvars.append('# Creation Details')
+    tfvars.append(f'OCI_STARTER_CREATION_DATE={timestamp}')
+    tfvars.append(f'OCI_STARTER_VERSION=3.7')
+    tfvars.append(f'OCI_STARTER_PARAMS="{params["params"]}"')
+    tfvars.append('')
     return contents, tfvars
 
 
