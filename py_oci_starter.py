@@ -617,7 +617,8 @@ def tf_var_comment(contents, param):
             else:
                 contents.append(f'#   {comment}')
     elif param.endswith("_ocid"):
-        contents.append(f'# {param.replace('_',' ').title()}')
+        comment = param.replace('_',' ').title()
+        contents.append(f'# {comment}')
 
 
 def write_env_sh():
