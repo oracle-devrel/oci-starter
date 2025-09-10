@@ -38,7 +38,7 @@ export_terraform_tfvars() {
       # Check if key and value are not empty
       if [[ "$key" != "" && "$value" != "" ]]; then
         export "TF_VAR_${key}"="${value}"
-        echo "export TF_VAR_${key}=\"${value}\""
+        # echo "export TF_VAR_${key}=\"${value}\""
       fi
     fi
   done < "$PROJECT_DIR/terraform.tfvars"

@@ -373,7 +373,7 @@ is_deploy_compute() {
 livelabs_green_button() {
   # Lot of tests to be sure we are in an Green Button LiveLabs
   # compartment_ocid still undefined ? 
-  if grep -q 'export TF_VAR_compartment_ocid="__TO_FILL__"' $PROJECT_DIR/env.sh; then
+  if grep -q 'compartment_ocid="__TO_FILL__"' $PROJECT_DIR/terraform.tfvars; then
     # vnc_ocid still undefined ? 
     if [ "$TF_VAR_vcn_ocid" != "__TO_FILL__" ]; then
       # Variables already set
@@ -406,24 +406,24 @@ livelabs_green_button() {
     echo TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid
 
     if [ "$TF_VAR_compartment_ocid" != "" ]; then
-      sed -i "s&export TF_VAR_compartment_ocid=\"__TO_FILL__\"&export TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh
-      echo "TF_VAR_compartment_ocid stored in env.sh"
+      sed -i "s&compartment_ocid=\"__TO_FILL__\"&compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/terraform.tfvars
+      echo "TF_VAR_compartment_ocid stored in terraform.tfvars"
     fi  
 
     export TF_VAR_vcn_ocid=`oci network vcn list --compartment-id $TF_VAR_compartment_ocid | jq -c -r '.data[].id'`
     echo TF_VAR_vcn_ocid=$TF_VAR_vcn_ocid  
     if [ "$TF_VAR_vcn_ocid" != "" ]; then
-      sed -i "s&TF_VAR_vcn_ocid=\"__TO_FILL__\"&TF_VAR_vcn_ocid=\"$TF_VAR_vcn_ocid\"&" $PROJECT_DIR/env.sh
-      echo "TF_VAR_vcn_ocid stored in env.sh"
+      sed -i "s&vcn_ocid=\"__TO_FILL__\"&vcn_ocid=\"$TF_VAR_vcn_ocid\"&" $PROJECT_DIR/terraform.tfvars
+      echo "TF_VAR_vcn_ocid stored in terraform.tfvars"
     fi  
 
     export TF_VAR_subnet_ocid=`oci network subnet list --compartment-id $TF_VAR_compartment_ocid | jq -c -r '.data[].id'`
     echo TF_VAR_subnet_ocid=$TF_VAR_subnet_ocid  
     if [ "$TF_VAR_subnet_ocid" != "" ]; then
-      sed -i "s&TF_VAR_web_subnet_ocid=\"__TO_FILL__\"&TF_VAR_web_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
-      sed -i "s&TF_VAR_app_subnet_ocid=\"__TO_FILL__\"&TF_VAR_app_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
-      sed -i "s&TF_VAR_db_subnet_ocid=\"__TO_FILL__\"&TF_VAR_db_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/env.sh
-      echo "TF_VAR_subnet_ocid stored in env.sh"
+      sed -i "s&web_subnet_ocid=\"__TO_FILL__\"&web_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/terraform.tfvars
+      sed -i "s&app_subnet_ocid=\"__TO_FILL__\"&app_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/terraform.tfvars
+      sed -i "s&db_subnet_ocid=\"__TO_FILL__\"&db_subnet_ocid=\"$TF_VAR_subnet_ocid\"&" $PROJECT_DIR/terraform.tfvars
+      echo "TF_VAR_subnet_ocid stored in terraform.tfvars"
       # Set the real variables such that the first "build" works too.
       export TF_VAR_web_subnet_ocid=$TF_VAR_subnet_ocid
       export TF_VAR_app_subnet_ocid=$TF_VAR_subnet_ocid
@@ -431,7 +431,7 @@ livelabs_green_button() {
     fi  
     
     # LiveLabs support only E4 Shapes
-    sed -i '/export TF_VAR_compartment_ocid=/a\export TF_VAR_instance_shape="VM.Standard.E4.Flex"' $PROJECT_DIR/env.sh
+    sed -i '/compartment_ocid=/a\instance_shape="VM.Standard.E4.Flex"' $PROJECT_DIR/terraform.tfvars
     export TF_VAR_instance_shape=VM.Standard.E4.Flex
   fi
 }
@@ -439,14 +439,14 @@ livelabs_green_button() {
 lunalab() {
   if [ "$USER" == "luna.user" ]; then  
      export SUPPRESS_LABEL_WARNING=True  
-     if grep -q 'export TF_VAR_compartment_ocid="__TO_FILL__"' $PROJECT_DIR/env.sh; then    
+     if grep -q 'compartment_ocid="__TO_FILL__"' $PROJECT_DIR/terraform.tfvars; then    
       echo "LunaLab - Luna User detected"
       export TF_VAR_compartment_ocid=$OCI_COMPARTMENT_OCID
-      sed -i "s&export TF_VAR_compartment_ocid=\"__TO_FILL__\"&export TF_VAR_compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/env.sh      
+      sed -i "s&compartment_ocid=\"__TO_FILL__\"&compartment_ocid=\"$TF_VAR_compartment_ocid\"&" $PROJECT_DIR/terraform.tfvars     
       export TF_VAR_instance_shape="VM.Standard.E5.Flex"
-      sed -i '/export TF_VAR_compartment_ocid=/a\export TF_VAR_instance_shape="VM.Standard.E5.Flex"' $PROJECT_DIR/env.sh      
+      sed -i '/compartment_ocid=/a\instance_shape="VM.Standard.E5.Flex"' $PROJECT_DIR/terraform.tfvars     
       export TF_VAR_no_policy="true"      
-      sed -i '/export TF_VAR_compartment_ocid=/a\export TF_VAR_no_policy="true"' $PROJECT_DIR/env.sh
+      sed -i '/compartment_ocid=/a\no_policy="true"' $PROJECT_DIR/terraform.tfvars
     fi    
   fi 
 }
