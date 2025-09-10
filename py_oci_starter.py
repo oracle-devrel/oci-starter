@@ -553,6 +553,8 @@ def env_sh_contents():
             fixed_tfvars.append(f'{param}="{params[param]}"')
     if params.get('compartment_ocid') == None:
         contents.append('export TF_VAR_compartment_ocid="__TO_FILL__"')
+        tfvars.append('')
+        tfvars.append('# Compartment')
         tfvars.append('compartment_ocid="__TO_FILL__"')
 
     contents.append('')

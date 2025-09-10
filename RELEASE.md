@@ -114,7 +114,24 @@ Date 21-June-2025
     - allow now to have several start_xxx.sh in the app directory. For ex to have 1 python, 1 java and 1 node service in the same directory.
     - app contains now, init.sh, start_xxx.sh and restart.sh (new)
 
-## 3.10
+## 4.0
+Date 10-September-2025
+- In all bash file #!/bin/bash ->  #!/usr/bin/env bash (allow unsupported use of the script on MacOS...)
+- Move all the orchestration of the code in terraform. build is more or less "terraform apply" now.
+  - bin/build_all.sh is now build.tf
+  - replaced - env.sh by terraform.tfvars (that people are more used to)
+  - It is possible to ""just zip"" the directory and run it from resource manager 
+    - to do so:
+      - in terraform.tfvars, uncomment infra_as_code="resource_manager" 
+      - ./starter.sh build -> This will create a zip and deploy via resource manager
+    - Limitation: resource manager is ARM only. Due that build happen on it. The docker image are ARM based.
+                  What means that OKE and ContainerInstance and Function need to run on ARM processors.
+   - new src/terraform/schema.yaml file (Resource Manager description file) 
+   - OKE / Function: shape architecture based on Compute Shape 
+Small fix:
+  - Compute - added flag for vi edition with UTF-8
+  - Improvement of exit_on_error 
+  - Fix DotNet/NoSQL
 
 ### infra_as_code=from_resource_manager
 Goal is to run the oci-starter directory as a resource manager stack.
