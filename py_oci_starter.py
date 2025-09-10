@@ -521,9 +521,8 @@ def env_sh_contents():
     env_params = env_param_list()
     print(env_params)
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
-    contents = ['#!/usr/bin/env bash']
-    contents.append('# Environment Variables')
-    tfvars= ['# VARIABLES']
+    contents = ['#!/usr/bin/env bash','# -- Variables ---------------------------------------------']
+    tfvars= ['# -- Variables ---------------------------------------------']
 
     if 'group_name' in params:
         prefix = params["group_name"]
@@ -557,9 +556,9 @@ def env_sh_contents():
         tfvars.append('compartment_ocid="__TO_FILL__"')
 
     contents.append('')
-    contents.append('# FIXED')   
+    contents.append('# -- Fixed -------------------------------------------------')   
     tfvars.append('')   
-    tfvars.append('# FIXED')   
+    tfvars.append('# -- Fixed -------------------------------------------------')   
 
     for s in fixed_contents:
         contents.append(s)
