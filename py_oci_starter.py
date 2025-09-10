@@ -603,7 +603,7 @@ def tf_var_comment(contents, param):
     comments = {
         'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
         'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345'],
-        'license': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
+        'license_model': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
         'certificate_ocid': ['OCID of the OCI Certificate','If the certificate is not imported in OCI, use instead TF_VAR_certificate_dir=<directory where the certificate resides>', 'export TF_VAR_certificate_dir="__TO_FILL__"']
     }.get(param)
     if comments is not None:
@@ -611,7 +611,7 @@ def tf_var_comment(contents, param):
         for comment in comments:
             if b:
                 b=False
-                contents.append(f'# {get_tf_var(param)} : {comment}')
+                contents.append(f'# {param} : {comment}')
             else:
                 contents.append(f'#   {comment}')
 
