@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Add the API to the API Management Portal
 if [ "$PROJECT_DIR" = "" ]; then
   echo "Error: PROJECT_DIR not set. Please use starter.sh"

@@ -2,7 +2,7 @@
 variable "oke_ocid" {}
 
 locals {
-  oke_ocid = var.oke_ocid
+  local_oke_ocid = var.oke_ocid
 }
 
 {%- else %}  
@@ -10,18 +10,11 @@ locals {
 #----------------------------------------------------------------------------
 # VARIABLES
 
-variable "oke_shape" {
-  {%- if shape == "ampere" %}
-  default = "VM.Standard.A1.Flex"
-  {%- else %}
-  # default = "VM.Standard.AMD.Generic"
-  default = "VM.Standard3.Flex"
-  {%- endif %}
+locals {
+  oke_shape = startswith(var.instance_shape, "VM.Standard.A") ? "VM.Standard.A1.Flex" : "VM.Standard3.Flex"
 }
 
-variable "node_pool_size" {
-  default = 1
-}
+variable "node_pool_size" { default=null }
 
 variable "cluster_options_persistent_volume_config_defined_tags_value" {
   default = "value"
@@ -60,7 +53,7 @@ data "oci_identity_availability_domain" "ad2" {
 data "oci_core_images" "shape_specific_images" {
   #Required
   compartment_id = var.tenancy_ocid
-  shape     = var.oke_shape
+  shape     = local.oke_shape
 }
 
 locals {
@@ -72,10 +65,6 @@ locals {
   image_id = data.oci_core_images.oraclelinux.images.0.id
 }
   
-output "image" {
-    value = data.oci_core_images.shape_specific_images
-}
-
 #----------------------------------------------------------------------------
 # SECURITY LISTS
 
@@ -420,7 +409,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
   compartment_id     = local.lz_app_cmp_ocid
   kubernetes_version = data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions[length(data.oci_containerengine_node_pool_option.starter_node_pool_option.kubernetes_versions)-1]
   name               = "${var.prefix}-pool"
-  node_shape         = var.oke_shape
+  node_shape         = local.oke_shape
   node_shape_config {
     memory_in_gbs = "32"
     ocpus = "1"
@@ -441,7 +430,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
       #optional
       fault_domains = ["FAULT-DOMAIN-1", "FAULT-DOMAIN-3"]
     }
-    size = var.node_pool_size
+    size = var.node_pool_size==null ? 1 : var.node_pool_size 
 
     # node_pool_pod_network_option_details {
     #   cni_type = "OCI_VCN_IP_NATIVE"
@@ -458,7 +447,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
 
 /*
 # Database Operator
-resource oci_containerengine_addon starter_oke_addon_dboperator {
+# resource oci_containerengine_addon starter_oke_addon_dboperator {
   addon_name                       = "OracleDatabaseOperator"
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
   remove_addon_resources_on_delete = "true"
@@ -495,10 +484,10 @@ output "node_pool" {
 # LOCALS
 
 locals {
-  oke_ocid = oci_containerengine_cluster.starter_oke.id
+  local_oke_ocid = oci_containerengine_cluster.starter_oke.id
 }
 {%- endif %}  
 
 output "oke_ocid" {
-  value = local.oke_ocid
+  value = local.local_oke_ocid
 }

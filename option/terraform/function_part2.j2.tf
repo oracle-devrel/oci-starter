@@ -1,8 +1,48 @@
+locals {
+  fn_image=data.external.env_part2.result.fn_image
+}
+
+resource "oci_functions_function" "starter_fn_function" {
+  #Required
+  application_id = local.fnapp_ocid
+  display_name   = "${var.prefix}-fn-function"
+  image          = local.fn_image
+  memory_in_mbs  = "2048"
+  config = {
+    {%- if db_family != "none" %}
+    {%- if language == "java" %} 
+    JDBC_URL      = local.local_jdbc_url,
+    {%- else %}     
+    DB_URL      = local.local_db_url,
+    {%- endif %}     
+    DB_USER     = var.db_user,
+    DB_PASSWORD = var.db_password,
+    {%- endif %}     
+    {%- if db_type == "nosql" %} 
+    TF_VAR_compartment_ocid = var.compartment_ocid,
+    TF_VAR_nosql_endpoint = var.nosql_endpoint,
+    {%- endif %}     
+  }
+  #Optional
+  timeout_in_seconds = "300"
+  trace_config {
+    is_enabled = true
+  }
+
+  freeform_tags = local.freeform_tags
+/*
+  # To start faster
+  provisioned_concurrency_config {
+    strategy = "CONSTANT"
+    count = 40
+  }
+*/    
+   depends_on = [ local.fn_image ]
+}
+
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
 {%- if tls is defined %}
-  count = (var.fn_image == null || var.certificate_ocid == null) ? 0 : 1
-{%- else %}   
-  count          = var.fn_image == null ? 0 : 1
+  count = (local.fn_image == null || var.certificate_ocid == null) ? 0 : 1
 {%- endif %}   
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-apigw-deployment"
@@ -23,7 +63,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
       methods = [ "ANY" ]
       backend {
         type = "ORACLE_FUNCTIONS_BACKEND"
-        function_id   = oci_functions_function.starter_fn_function[0].id
+        function_id   = oci_functions_function.starter_fn_function.id
       }
     }    
     routes {
@@ -56,4 +96,6 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
     }
   }
   freeform_tags = local.api_tags
+
+  depends_on = [ local.fn_image ]
 }

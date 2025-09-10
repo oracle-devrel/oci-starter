@@ -16,11 +16,19 @@ variable language {
   default = "java" 
   nullable = false
 }
+
+# Java Version
 variable java_version { 
   default = "21"
   nullable = false
 }
 
+# Home Region
+variable home_region {
+  default=null
+}
+
+# Database user
 variable db_user { default=null }
 variable db_password{ default=null }
 
@@ -53,6 +61,7 @@ variable username { default=null }
 variable availability_domain_number { 
   default = "1"
   nullable = false
+  description="Availability Domain"
 }
 
 # BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED
@@ -60,6 +69,15 @@ variable license_model {
   default="BRING_YOUR_OWN_LICENSE"
   nullable = false
 }
+
+# Deploy Type
+variable deploy_type { default=null }
+
+# UI Type
+variable ui_type { default=null }
+
+# Database Type
+variable db_type { default=null }
 
 # Group
 variable group_name { default=null }
@@ -69,6 +87,9 @@ variable log_group_ocid  { default=null }
 
 # Certificate
 variable "certificate_ocid" { default=null }
+
+# Infrastructure as code
+variable "infra_as_code" { default=null }
 
 locals {
   group_name = var.group_name == null ? "none" : var.group_name

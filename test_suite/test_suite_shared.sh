@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 . $HOME/bin/env_oci_starter_testsuite.sh
@@ -23,10 +23,11 @@ export nocolorarg=1
 exit_on_error() {
   RESULT=$?
   if [ $RESULT -eq 0 ]; then
-    echo "Success"
+    echo "Success - $1"
   else
-    echo "Failed (RESULT=$RESULT)"
-    exit $RESULT
+    title "EXIT ON ERROR - HISTORY - $1 "
+    history 2 | cut -c1-256
+    error_exit "Command Failed (RESULT=$RESULT)"
   fi  
 }
 
@@ -44,12 +45,12 @@ start_test() {
 # Speed test of 100 calls 
 test_run_100() {
   START=$(date +%s.%N)
-  UI_URL=`cat /tmp/ui_url.txt`
+  UI_URL=`cat $TMP_PATH/ui_url.txt`
   x=0 
   while [ $x -lt 100 ]
     do
-      curl $UI_URL/app/dept -s -D /tmp/speed_json.log > /tmp/speed.json
-      if grep -q -i "deptno" /tmp/speed.json; then
+      curl $UI_URL/app/dept -s -D $TMP_PATH/speed_json.log > $TMP_PATH/speed.json
+      if grep -q -i "deptno" $TMP_PATH/speed.json; then
          CSV_RUN100_OK=$(( $CSV_RUN100_OK + 1 ))
       fi
       x=$(( $x + 1 ))
@@ -76,34 +77,35 @@ build_test () {
   CSV_JSON_OK=0
   CSV_RUN100_SECOND=0
   CSV_RUN100_OK=0
+  TMP_PATH="/tmp/$NAME"
 
   echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
-  if [ -f /tmp/result.html ]; then
-    if grep -q -i "starter" /tmp/result.html; then
+  if [ -f $TMP_PATH/result.html ]; then
+    if grep -q -i "starter" $TMP_PATH/result.html; then
       echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
       CSV_HTML_OK=1
-    elif grep -q -i "deptno" /tmp/result.html; then
+    elif grep -q -i "deptno" $TMP_PATH/result.html; then
       echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
       CSV_HTML_OK=1
     else
       echo -e "${COLOR_RED}RESULT HTML: ***** BAD ******${COLOR_NONE}"
     fi
-    if grep -q -i "deptno" /tmp/result.json; then
-      echo -e "${COLOR_GREEN}RESULT JSON: OK${COLOR_NONE}                "`cat /tmp/result.json` | cut -c 1-100  
+    if grep -q -i "deptno" $TMP_PATH/result.json; then
+      echo -e "${COLOR_GREEN}RESULT JSON: OK${COLOR_NONE}                "`cat $TMP_PATH/result.json` | cut -c 1-100  
       CSV_JSON_OK=1
     else
-      echo -e "${COLOR_RED}RESULT JSON: ***** BAD ******${COLOR_NONE}  "`cat /tmp/result.json` | cut -c 1-100 
+      echo -e "${COLOR_RED}RESULT JSON: ***** BAD ******${COLOR_NONE}  "`cat $TMP_PATH/result.json` | cut -c 1-100 
     fi
-    echo "RESULT INFO:                   "`cat /tmp/result.info` | cut -c 1-100
+    echo "RESULT INFO:                   "`cat $TMP_PATH/result.info` | cut -c 1-100
   else
-    echo -e "${COLOR_RED}ERROR: No file /tmp/result.html${COLOR_NONE}"
+    echo -e "${COLOR_RED}ERROR: No file $TMP_PATH/result.html${COLOR_NONE}"
   fi
-  mv /tmp/result.html ${TEST_DIR}_result_$BUILD_ID.html 2>/dev/null;
-  mv /tmp/result.json ${TEST_DIR}_result_$BUILD_ID.json 2>/dev/null;
-  mv /tmp/result.info ${TEST_DIR}_result_$BUILD_ID.info 2>/dev/null;
-  mv /tmp/result_html.log ${TEST_DIR}_result_html_$BUILD_ID.log 2>/dev/null;
-  mv /tmp/result_json.log ${TEST_DIR}_result_json_$BUILD_ID.log 2>/dev/null;
-  mv /tmp/result_info.log ${TEST_DIR}_result_info_$BUILD_ID.log 2>/dev/null;
+  mv $TMP_PATH/result.html ${TEST_DIR}_result_$BUILD_ID.html 2>/dev/null;
+  mv $TMP_PATH/result.json ${TEST_DIR}_result_$BUILD_ID.json 2>/dev/null;
+  mv $TMP_PATH/result.info ${TEST_DIR}_result_$BUILD_ID.info 2>/dev/null;
+  mv $TMP_PATH/result_html.log ${TEST_DIR}_result_html_$BUILD_ID.log 2>/dev/null;
+  mv $TMP_PATH/result_json.log ${TEST_DIR}_result_json_$BUILD_ID.log 2>/dev/null;
+  mv $TMP_PATH/result_info.log ${TEST_DIR}_result_info_$BUILD_ID.log 2>/dev/null;
 
   if [ "$CSV_JSON_OK" == "1" ]; then
     test_run_100
@@ -187,6 +189,8 @@ build_option() {
   fi  
   if [ "$OPTION_INFRA_AS_CODE" == "resource_manager" ]; then
     NAME=${NAME}-rm
+  elif [ "$OPTION_INFRA_AS_CODE" == "from_resource_manager" ]; then
+    NAME=${NAME}-frm
   fi  
   NAME=${NAME/_/-}
   NAME=${NAME/_/-}
@@ -216,6 +220,8 @@ build_option() {
     fi
   fi
     
+  add_inprogress_rerun
+
   # Prevent to have undeleted resource when rerunning the test_suite
   if [ -d $TEST_DIR/target ]; then
      cd $TEST_DIR
@@ -227,9 +233,6 @@ build_option() {
     echo "ERROR: $TEST_HOME/group_common_env.sh not found"
     exit 1
   fi 
-
-  add_inprogress_rerun
-
 
   # Avoid 2 parallel creations of code
   while [ -f $TEST_HOME/oci_starter_busy ]; do
@@ -259,7 +262,7 @@ build_option() {
        -web_subnet_ocid $TF_VAR_web_subnet_ocid \
        -app_subnet_ocid $TF_VAR_app_subnet_ocid \
        -db_subnet_ocid $TF_VAR_db_subnet_ocid \
-       -oke_ocid $TF_VAR_oke_ocid \
+       -oke_ocid $OKE_OCID \
        -atp_ocid $TF_VAR_atp_ocid \
        -db_ocid $TF_VAR_db_ocid \
        -mysql_ocid $TF_VAR_mysql_ocid \
@@ -289,7 +292,7 @@ build_option() {
        -web_subnet_ocid $TF_VAR_web_subnet_ocid \
        -app_subnet_ocid $TF_VAR_app_subnet_ocid \
        -db_subnet_ocid $TF_VAR_db_subnet_ocid \
-       -oke_ocid $TF_VAR_oke_ocid \
+       -oke_ocid $OKE_OCID \
        -atp_ocid $TF_VAR_atp_ocid \
        -db_ocid $TF_VAR_db_ocid \
        -mysql_ocid $TF_VAR_mysql_ocid \
@@ -378,13 +381,14 @@ pre_test_suite() {
 
   cd $TEST_HOME/oci-starter
   ./oci_starter.sh -group_name $GROUP_NAME -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN -shape $SHAPE_GROUP
-  exit_on_error
+  exit_on_error "oci_starter.sh"
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
   echo "# Test Suite use 2 nodes to avoid error: Too Many Pods (110 pods/node K8s limit)" >> env.sh
   echo "export TF_VAR_node_pool_size=2" >> env.sh
+  echo "node_pool_size=2" >> terraform.tfvars
   ./starter.sh build --auto-approve
-  exit_on_error
+  exit_on_error "starter.sh build"
   date
   echo "CSV_DATE,OPTION_DEPLOY,OPTION_LANG,OPTION_JAVA_FRAMEWORK,OPTION_JAVA_VM,OPTION_DB,OPTION_DB_INSTALL,OPTION_UI,OPTION_SHAPE,CSV_NAME,CSV_HTML_OK,CSV_JSON_OK,CSV_BUILD_SECOND,CSV_DESTROY_SECOND,CSV_RUN100_OK,CSV_RUN100_SECOND" > $TEST_HOME/result.csv 
 }

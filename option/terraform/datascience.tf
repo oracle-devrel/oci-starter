@@ -51,11 +51,11 @@ data "oci_datascience_notebook_session_shapes" "ds_shapes" {
   }
 }
 
-output "ds_notebook_session_shape" {
-  value = data.oci_datascience_notebook_session_shapes.ds_shapes.notebook_session_shapes[0].name
-}
+# output "ds_notebook_session_shape" {
+#   value = data.oci_datascience_notebook_session_shapes.ds_shapes.notebook_session_shapes[0].name
+# }
 
-output "ds_notebook_session" {
-  value = oci_datascience_notebook_session.starter_notebook_session.notebook_session_url
-}
+# output "ds_notebook_session" {
+#   value = oci_datascience_notebook_session.starter_notebook_session.notebook_session_url
+# }
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ "$PROJECT_DIR" == "" ]; then
   echo "ERROR: PROJECT_DIR undefined. Please use starter.sh deploy bastion"
   exit 1
@@ -30,4 +30,4 @@ while [ true ]; do
 done
 
 ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$BASTION_IP "export DB_USER=\"$TF_VAR_db_user\";export DB_PASSWORD=\"$TF_VAR_db_password\";export DB_URL=\"$DB_URL\"; bash db/db_init.sh 2>&1 | tee -a db/db_init.log"
-exit_on_error
+exit_on_error "Deploy Bastion -"

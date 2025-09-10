@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Build_app.sh
 #
 # Compute:
@@ -31,7 +31,7 @@ if is_deploy_compute; then
   else 
     mvn package -DskipTests -Dnet.bytebuddy.experimental=true
   fi
-  exit_on_error  
+  exit_on_error "mvn package"
   cp start.sh install.sh target/.
   mkdir -p ../../target/compute/$APP_DIR
   cp -r target/* ../../target/compute/$APP_DIR/.
@@ -42,6 +42,6 @@ else
   else
     docker build -t ${TF_VAR_prefix}-app:latest . 
   fi
-  exit_on_error  
+  exit_on_error "docker build"  
 fi  
 

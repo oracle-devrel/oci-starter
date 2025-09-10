@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ "$PROJECT_DIR" = "" ]; then
   echo "Error: PROJECT_DIR not set. Please use starter.sh."
   exit 1
@@ -28,10 +28,10 @@ if declare -p | grep -q "__TO_FILL__"; then
     esac
   }
 
-  store_env_sh() {
+  store_terraform_tfvars() {
     echo "$1=$2"            
-    sed -i "s&$1=\"__TO_FILL__\"&$1=\"$2\"&" $PROJECT_DIR/env.sh              
-    echo "$1 stored in env.sh"            
+    sed -i "s&$1=\"__TO_FILL__\"&$1=\"$2\"&" $PROJECT_DIR/terraform.tfvars              
+    echo "$1 stored in terraform.tfvars"            
     echo       
   }
 
@@ -41,13 +41,19 @@ if declare -p | grep -q "__TO_FILL__"; then
       read -r -p "Enter your $2 OCID (Format: $3.xxxxx): " response
       if [[ $response == $3* ]]; then
         export $1=$response
-        store_env_sh $1 ${!1}
+        store_terraform_tfvars $1 ${!1}
       else
         echo "Wrong format $response"
         echo            
       fi
     done    
   }
+
+  # Livelabs Green Button (Autodetect compartment/vcn/subnet)
+  livelabs_green_button 
+
+  # LunaLab (Autodetect compartment)
+  lunalab
 
   # PREFIX
   if [ "$TF_VAR_prefix" == "__TO_FILL__" ]; then
@@ -78,7 +84,7 @@ if declare -p | grep -q "__TO_FILL__"; then
         fi
       done         
     fi 
-    store_env_sh TF_VAR_prefix $TF_VAR_prefix
+    store_terraform_tfvars TF_VAR_prefix $TF_VAR_prefix
   fi
 
   # DB_PASSWORD
@@ -122,7 +128,7 @@ if declare -p | grep -q "__TO_FILL__"; then
         error_exit "The password is too short."
         fi        
     fi 
-    store_env_sh TF_VAR_db_password $TF_VAR_db_password
+    store_terraform_tfvars TF_VAR_db_password $TF_VAR_db_password
   fi
 
   # AUTH_TOKEN
@@ -134,7 +140,7 @@ if declare -p | grep -q "__TO_FILL__"; then
       . $BIN_DIR/gen_auth_token.sh
     else 
       read -r -p "Enter your OCI Auth token (TF_VAR_auth_token) " TF_VAR_auth_token 
-      store_env_sh TF_VAR_auth_token $TF_VAR_auth_token
+      store_terraform_tfvars TF_VAR_auth_token $TF_VAR_auth_token
     fi      
   fi
 
@@ -146,7 +152,7 @@ if declare -p | grep -q "__TO_FILL__"; then
       read -r -p "Enter BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED: " response
       if [[ $response == "BRING_YOUR_OWN_LICENSE" ]] || [[ $response == "LICENSE_INCLUDED" ]] ; then
         export TF_VAR_license_model=$response
-        store_env_sh TF_VAR_license_model $response
+        store_terraform_tfvars TF_VAR_license_model $response
       else
         echo "Wrong value $response"
         echo            
@@ -164,21 +170,15 @@ if declare -p | grep -q "__TO_FILL__"; then
     else
       error_exit "TF_VAR_oic_appid does not end with _APPID"
     fi    
-    store_env_sh TF_VAR_oic_appid $TF_VAR_oic_appid
+    store_terraform_tfvars TF_VAR_oic_appid $TF_VAR_oic_appid
   fi  
 
   # API_KEY
   if [ "$TF_VAR_api_key" == "__TO_FILL__" ]; then
     title "Config - API Key"     
     read -r -p "Enter the value of the API_KEY (ex: MY_long_KEY_123456) ? (TF_VAR_api_key) " TF_VAR_api_key 
-    store_env_sh TF_VAR_api_key $TF_VAR_api_key
+    store_terraform_tfvars TF_VAR_api_key $TF_VAR_api_key
   fi  
-
-  # Livelabs Green Button (Autodetect compartment/vcn/subnet)
-  livelabs_green_button 
-
-  # LunaLab (Autodetect compartment)
-  lunalab
 
   # COMPARTMENT_ID
   if [ "$TF_VAR_compartment_ocid" == "__TO_FILL__" ]; then
@@ -206,7 +206,7 @@ if declare -p | grep -q "__TO_FILL__"; then
         echo "Using the existing 'oci-starter' Compartment"
       fi 
       export TF_VAR_compartment_ocid=$STARTER_OCID
-      store_env_sh TF_VAR_compartment_ocid $TF_VAR_compartment_ocid
+      store_terraform_tfvars TF_VAR_compartment_ocid $TF_VAR_compartment_ocid
       echo            
     else
       read_ocid TF_VAR_compartment_ocid "Compartment" ocid1.compartment 
@@ -221,8 +221,8 @@ if declare -p | grep -q "__TO_FILL__"; then
     export REQUEST="Create a new vault ? (<No> will ask for the ocid of an existing one) ?"
     if accept_request; then  
       # Comment the 2 lines. The vault will be created.
-      sed -i "s/^export TF_VAR_vault_ocid/# export TF_VAR_vault_ocid/" $PROJECT_DIR/env.sh     
-      sed -i "s/^export TF_VAR_vault_key_ocid/# export TF_VAR_vault_key_ocid/" $PROJECT_DIR/env.sh     
+      sed -i "s/^[ ]*vault_ocid/# vault_ocid/" $PROJECT_DIR/terraform.tfvars     
+      sed -i "s/^[ ]*vault_key_ocid/# vault_key_ocid/" $PROJECT_DIR/terraform.tfvars        
       unset TF_VAR_vault_ocid
       unset TF_VAR_vault_key_ocid
     else
@@ -236,6 +236,7 @@ if declare -p | grep -q "__TO_FILL__"; then
   read_ocid TF_VAR_web_subnet_ocid "Web Subnet" ocid1.subnet
   read_ocid TF_VAR_app_subnet_ocid "App Private Subnet" ocid1.subnet
   read_ocid TF_VAR_db_subnet_ocid "Database Private Subnet" ocid1.subnet
+  # XXXXX
   read_ocid TF_VAR_oke_ocid "Kubernetes Cluster (OKE)" ocid1.cluster
   read_ocid TF_VAR_atp_ocid "Autonomous Datababase" ocid1.autonomousdatabase
   read_ocid TF_VAR_db_ocid "Base Database" ocid1.dbsystem
@@ -250,7 +251,7 @@ if declare -p | grep -q "__TO_FILL__"; then
   read_ocid TF_VAR_bastion_ocid "Bastion Instance" ocid1.instance
   # ? # read_ocid TF_VAR_vault_secret_authtoken_ocid "Enter your Private Subnet OCID" ocid1.subnet
 
-  # -- env.sh
+  # -- terraform.tfvars
   # Do not stop if __TO_FILL__ are not replaced if TF_VAR_group_name exist in env variable
   # XXX -> It would be safer to check also for TF_VAR_xxx containing __TO_FILL__ too
 
@@ -260,8 +261,8 @@ if declare -p | grep -q "__TO_FILL__"; then
     echo
     declare -p | grep __TO_FILL__
     echo
-    echo "Edit the file env.sh. Some variables needs to be filled:" 
-    cat env.sh | grep __TO_FILL__
+    echo "Edit the file terraform.tfvars. Some variables needs to be filled:" 
+    cat terraform.tfvars | grep __TO_FILL__
     error_exit "Missing environment variables."
   fi 
 fi 

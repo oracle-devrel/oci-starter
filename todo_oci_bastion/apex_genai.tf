@@ -36,7 +36,7 @@ resource "oci_identity_domains_dynamic_resource_group" "starter-adb-dyngroup" {
   #Required
   provider       = oci.home    
   display_name = "${var.prefix}-adb-dyngroup"
-  idcs_endpoint = local.idcs_url
+  idcs_endpoint = local.local_idcs_url
   matching_rule = "ANY{ resource.id = '${oci_database_autonomous_database.starter_atp.id}' }"
   schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
   lifecycle {
@@ -48,7 +48,7 @@ resource "oci_identity_domains_dynamic_resource_group" "starter-compute-dyngroup
   #Required
   provider       = oci.home    
   display_name = "${var.prefix}-compute-dyngroup"
-  idcs_endpoint = local.idcs_url
+  idcs_endpoint = local.local_idcs_url
   matching_rule = "ANY{ instance.compartment.id = '${local.lz_app_cmp_ocid}' }"
   schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
   lifecycle {
@@ -220,8 +220,12 @@ resource "oci_bastion_session" "starter_bastion_session" {
   display_name = "${var.prefix}-bastion-session"
 }
 
+locals {
+  local_bastion_command = oci_bastion_session.starter_bastion_session.ssh_metadata.command
+}
+
 output "bastion_command" {
-  value = oci_bastion_session.starter_bastion_session.ssh_metadata.command
+  value = local.local_bastion_command
 }
 
 //---- Load Balancer -------------------------------------------------------

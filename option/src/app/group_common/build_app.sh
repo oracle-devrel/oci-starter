@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Build_app.sh
 #
 # Build the group_common_env.sh file.
@@ -56,8 +56,6 @@ fi
 if [ -z "$TF_VAR_nosql_ocid" ]; then
    get_id_from_tfstate "TF_VAR_nosql_ocid" "starter_nosql_table" 
 fi   
-
-get_output_from_tfstate "TF_VAR_oke_ocid" "oke_ocid"
 
 if [ -z "$TF_VAR_apigw_ocid" ]; then
   get_id_from_tfstate "TF_VAR_apigw_ocid" "starter_apigw"
@@ -139,7 +137,7 @@ conditional_append mysql TF_VAR_mysql_ocid
 conditional_append psql TF_VAR_psql_ocid
 conditional_append opensearch TF_VAR_opensearch_ocid
 conditional_append nosql TF_VAR_nosql_ocid
-conditional_append oke TF_VAR_oke_ocid
+conditional_append oke OKE_OCID
 conditional_append apigw TF_VAR_apigw_ocid
 conditional_append fnapp TF_VAR_fnapp_ocid
 conditional_append compute TF_VAR_compute_ocid

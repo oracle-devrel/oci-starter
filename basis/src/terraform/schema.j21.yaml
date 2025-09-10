@@ -1,0 +1,60 @@
+title: "OCI Starter: From Resource Manager {{ prefix }} "
+stackDescription: "Resource Manager stack created by OCI Starter " 
+description: "Stack will deploy the component used in the OCI Starter project" 
+schemaVersion: 1.1.0
+version: "20221004"
+locale: "en"
+
+#################
+# Variable Groups
+#################
+variableGroups:
+
+- title: Starter Project
+  visible: true  
+  variables:
+{%- for param in env_params %}
+{%- if param in ["prefix","license_model","db_password","compartment_ocid"] %}  
+  - {{ param }}
+{%- endif %}  
+{%- endfor %}
+
+- title: Static
+  visible: true  
+  variables:
+{%- for param in env_params %}
+  - {{ param }}
+{%- endfor %}
+
+#################
+# Output Groups
+#################
+
+######################
+# Variable Definitions
+######################
+
+variables:
+
+{%- for param in env_params %}
+  {{ param }}:
+    {%- if param in ["compartment_ocid"] %}
+    type: oci:identity:compartment:id
+    {%- else %}
+    type: string
+    {%- endif %}
+    {%- if param=="license_model" %}
+    enum:
+      - BRING_YOUR_OWN_LICENSE
+      - LICENSE_INCLUDED
+    {%- endif %}
+    title: {{ title[param] }}
+    description: ( {{ param }} )
+    required: true
+    default: {{ params[param] }}
+
+{%- endfor %}
+
+
+
+

@@ -1,17 +1,18 @@
 ## Copyright (c) 2023, Oracle and/or its affiliates. 
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
-
-variable home_region {
-  default=null
+terraform {
+  required_providers {
+    oci = {
+      source = "hashicorp/oci"
+      configuration_aliases = [
+        oci.home
+      ]
+    }
+  }
 }
 
 data "oci_identity_availability_domains" "ADs" {
   compartment_id = var.tenancy_ocid
-}
-
-# Gets home and current regions
-data "oci_identity_tenancy" "tenant_details" {
-  tenancy_id = var.tenancy_ocid
 }
 
 data "oci_identity_regions" "current_region" {
@@ -19,35 +20,6 @@ data "oci_identity_regions" "current_region" {
     name   = "name"
     values = [var.region]
   }
-}
-
-data oci_identity_regions regions {
-}
-
-# HOME REGION
-locals {
-  region_map = {
-    for r in data.oci_identity_regions.regions.regions :
-    r.key => r.name
-  } 
-  # XXXXX ISSUE WITH CHILD REGION - BAD work-around - Works only from home region
-  home_region = coalesce( var.home_region, try( lookup( local.region_map, data.oci_identity_tenancy.tenant_details.home_region_key ), var.region ) )
-}
-
-# Provider Home Region
-provider "oci" {
-  alias  = "home"
-  region = local.home_region
-}
-
-# Gets a list of supported images based on the shape, operating_system and operating_system_version provided
-data "oci_core_images" "node_pool_images" {
-  compartment_id           = var.tenancy_ocid
-  operating_system         = "Oracle Linux"
-  operating_system_version = "7.9"
-  shape                    = "VM.Standard.E4.Flex"
-  sort_by                  = "TIMECREATED"
-  sort_order               = "DESC"
 }
 
 # Identity Domain
@@ -65,11 +37,11 @@ data "oci_identity_domains" "starter_domains" {
 
 locals {
   # Try: LiveLabs has no access to IDCS
-  idcs_url = try( (var.idcs_url!=null)?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url, "" )
+  local_idcs_url = try( (var.idcs_url!=null)?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url, "" )
 }
 
 output "idcs_url" {
-  value = local.idcs_url
+  value = local.local_idcs_url
 }
 
 # OCI Services
@@ -107,33 +79,6 @@ data "oci_core_images" "oraclelinux" {
   }
 }
 
-/*
-# Oracle-Linux-Cloud-Developer-8.5-2022.05.22-0
-# Oracle-Linux-Cloud-Developer-8.5-aarch64-2022.05.22-0
-data "oci_core_images" "oracledevlinux" {
-  compartment_id = var.tenancy_ocid
-  operating_system = "Oracle Linux Cloud Developer"
-  operating_system_version = "8"
-  filter {
-    name = "display_name"
-    values = [local.regex_dev_linux]
-    regex = true
-  }
-}
-
-# output "oracle_dev_linux_latest_name" {
-  value = data.oci_core_images.oracledevlinux.images.0.display_name
-}
-*/
-
-locals {
-  oracle_linux_latest_name = coalesce( try(data.oci_core_images.oraclelinux.images.0.display_name, "Oracle-Linux-8.10-2025.03.18-0" ), "Oracle-Linux-8.10-2025.03.18-0")
-}
-
-output "oracle_linux_latest_name" {
-  value = local.oracle_linux_latest_name
-}
-
 ## Object Storage
 data "oci_objectstorage_namespace" "ns" {
   compartment_id = var.compartment_ocid
@@ -158,7 +103,11 @@ resource "random_string" "id" {
 }
 
 locals {
-  ocir_docker_repository = join("", [lower(lookup(data.oci_identity_regions.current_region.regions[0], "key")), ".ocir.io"])
+  local_ocir_host = join("", [lower(lookup(data.oci_identity_regions.current_region.regions[0], "key")), ".ocir.io"])
   ocir_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace")
   ocir_username = join( "/", [ coalesce(local.ocir_namespace, "missing_privilege"), var.username ])
+}
+
+output "ocir_host" {
+  value = local.local_ocir_host
 }

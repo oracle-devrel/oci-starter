@@ -23,7 +23,7 @@ resource oci_identity_domains_app starter_oic_confidential_app {
   client_ip_checking = ""
   client_type        = "confidential"
   display_name      = "${var.prefix}-confidential-oic-app"
-  idcs_endpoint     = "${local.idcs_url}"
+  idcs_endpoint     = "${local.local_idcs_url}"
   is_alias_app      = "false"
   is_enterprise_app = "false"
   is_kerberos_realm = "false"
@@ -124,7 +124,7 @@ resource "oci_identity_domains_app" "starter_oic_confidential_app" {
   delegated_service_names = [
   ]
   display_name = "${var.prefix}-oic-app"
-  idcs_endpoint = "${local.idcs_url}"
+  idcs_endpoint = "${local.local_idcs_url}"
   is_alias_app      = "false"
   is_enterprise_app = "false"
   is_kerberos_realm = "false"
@@ -154,7 +154,7 @@ locals {
 resource "null_resource" "get_idcs_token" { 
   provisioner "local-exec" {
       command = <<EOT
-        curl -X POST ${local.idcs_url}/oauth2/v1/token -H 'Authorization: Basic ${base64encode(format("%s:%s",local.oic_client_id,local.oic_client_secret))}' -d 'grant_type=client_credentials&scope=urn:opc:idm:__myscopes__' | jq -r ".access_token" > ../../target/idcs_token
+        curl -X POST ${local.local_idcs_url}/oauth2/v1/token -H 'Authorization: Basic ${base64encode(format("%s:%s",local.oic_client_id,local.oic_client_secret))}' -d 'grant_type=client_credentials&scope=urn:opc:idm:__myscopes__' | jq -r ".access_token" > ../../target/idcs_token
 EOT
   }
 }

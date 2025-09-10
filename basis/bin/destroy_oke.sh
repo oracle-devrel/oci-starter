@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $SCRIPT_DIR/../starter.sh env -no-auto
 . $BIN_DIR/build_common.sh
@@ -23,7 +23,7 @@ fi
 # Check if OKE is still in the terraform state file
 get_id_from_tfstate "OKE_OCID" "starter_oke"
 if [ "$OKE_OCID" == "" ]; then
-  echo "OKE_DESTROY skipped. OKE not detected in $STATE_FILE"
+  echo "destroy_oke skipped. OKE not detected in $STATE_FILE"
   exit 0
 fi 
 

@@ -16,9 +16,7 @@ resource "oci_functions_application" "starter_fn_application" {
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-fn-application"
   subnet_ids     = [data.oci_core_subnet.starter_app_subnet.id]
-  {%- if shape == "ampere" %}
-  shape          = "GENERIC_ARM"   
-  {%- endif %}
+  shape          = startswith(var.instance_shape, "VM.Standard.A") ? "GENERIC_ARM" : "GENERIC_X86"
 
   image_policy_config {
     #Required
@@ -54,46 +52,9 @@ locals {
 
 {%- if group_name is not defined %}
 variable "fn_image" { default = null }
-variable "fn_db_url" { default = null }
 {%- if db_type == "nosql" %} 
 variable nosql_endpoint {}
 {%- endif %} 
-
-resource "oci_functions_function" "starter_fn_function" {
-  #Required
-  count          = var.fn_image == null ? 0 : 1
-  application_id = local.fnapp_ocid
-  display_name   = "${var.prefix}-fn-function"
-  image          = var.fn_image
-  memory_in_mbs  = "2048"
-  config = {
-    {%- if language == "java" %} 
-    JDBC_URL      = var.fn_db_url,
-    {%- else %}     
-    DB_URL      = var.fn_db_url,
-    {%- endif %}     
-    DB_USER     = var.db_user,
-    DB_PASSWORD = var.db_password,
-    {%- if db_type == "nosql" %} 
-    TF_VAR_compartment_ocid = var.compartment_ocid,
-    TF_VAR_nosql_endpoint = var.nosql_endpoint,
-    {%- endif %}     
-  }
-  #Optional
-  timeout_in_seconds = "300"
-  trace_config {
-    is_enabled = true
-  }
-
-  freeform_tags = local.freeform_tags
-/*
-  # To start faster
-  provisioned_concurrency_config {
-    strategy = "CONSTANT"
-    count = 40
-  }
-*/    
-}
 
 output "fn_url" {
   value = join("", oci_apigateway_deployment.starter_apigw_deployment.*.endpoint)

@@ -1,12 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR/..
 
-if [ -z "$TF_VAR_deploy_type" ]; then
-  . starter.sh env -silent
-else
-  . starter.sh env -no-auto
-fi 
+. starter.sh env -silent
 
 get_ui_url
 
@@ -15,7 +11,9 @@ echo "Build done"
 
 if [ -f $PROJECT_DIR/src/after_done.sh ]; then
   # Unset UI_URL in after_done to remove the standard output
-  . $PROJECT_DIR/src/after_done.sh
+  if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ] || [ "$CALLED_BY_TERRAFORM" != "" ]; then
+    . $PROJECT_DIR/src/after_done.sh
+  fi
 elif [ ! -z "$UI_URL" ]; then
   if [ "$TF_VAR_ui_type" != "api" ]; then
     echo - User Interface: $UI_URL/
@@ -36,7 +34,7 @@ elif [ ! -z "$UI_URL" ]; then
     export APIGW_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}  
     echo - API Gateway URL : $APIGW_URL/app/dept 
   fi
-  if [ "$TF_VAR_language" == "java" ] && [ "$TF_VAR_java_framework" == "springboot" ] && [ "$TF_VAR_ui_type" == "html" ] && [ "$TF_VAR_db_node_count" == "2" ]; then
+  if [ "$TF_VAR_language" == "java" ] && [ "$TF_VAR_java_framework" == "springboot" ] && [ "$TF_VAR_ui_type" == "html" ] && [ "$TF_VAR_db_subtype" == "rac" ]; then
     echo - RAC Page        : $UI_URL/rac.html
   fi
   if [ "$TF_VAR_language" == "apex" ]; then

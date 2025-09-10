@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
 cd group_common
 . bin/shared_bash_function.sh
 ./starter.sh build ${@}
-exit_on_error
+exit_on_error "group_common - starter.sh build"
 cd $SCRIPT_DIR
 
 for d in `ls -d */ | sort -g`; do
@@ -14,7 +14,7 @@ for d in `ls -d */ | sort -g`; do
 
       cd $d
       ./starter.sh build ${@}
-      exit_on_error
+      exit_on_error "$d - starter.sh build"
       cd $SCRIPT_DIR
     fi
 done

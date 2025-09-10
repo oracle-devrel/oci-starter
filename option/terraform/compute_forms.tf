@@ -63,21 +63,21 @@ resource "oci_marketplace_accepted_agreement" "forms_accepted_agreement" {
   signature       = oci_marketplace_listing_package_agreement.forms_listing_package_agreement.signature
 }
 
-output "image_id" {
-  value = data.oci_marketplace_listing_package.forms_listing_package.image_id
-}
+# output "image_id" {
+#   value = data.oci_marketplace_listing_package.forms_listing_package.image_id
+# }
 
-output "forms_listing_id" {
-   value = data.oci_marketplace_listing.forms_listing.id
-}
+# output "forms_listing_id" {
+#    value = data.oci_marketplace_listing.forms_listing.id
+# }
 
-output "signature" {
-  value = oci_marketplace_listing_package_agreement.forms_listing_package_agreement.signature
-}
+# output "signature" {
+#   value = oci_marketplace_listing_package_agreement.forms_listing_package_agreement.signature
+# }
 
-output "listing_resource_id" {
-  value = data.oci_core_app_catalog_listing_resource_version.forms_catalog_listing.listing_resource_id
-}
+# output "listing_resource_id" {
+#   value = data.oci_core_app_catalog_listing_resource_version.forms_catalog_listing.listing_resource_id
+# }
 
 resource oci_core_instance starter_compute {
 

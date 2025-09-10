@@ -44,8 +44,12 @@ resource "oci_bastion_session" "starter_bastion_session" {
   display_name = "${var.prefix}-bastion-session"
 }
 
+locals {
+  local_bastion_command = oci_bastion_session.starter_bastion_session.ssh_metadata.command
+}
+
 output "bastion_command" {
-  value = oci_bastion_session.starter_bastion_session.ssh_metadata.command
+  value = local.local_bastion_command
 }
 
 {%- else %}
@@ -103,6 +107,10 @@ data "oci_core_instance" "starter_bastion" {
 {%- endif %}
 {%- endif %}
 
-output "bastion_public_ip" {
-  value = data.oci_core_instance.starter_bastion.public_ip
+locals {
+  local_bastion_ip = data.oci_core_instance.starter_bastion.public_ip
+}
+
+output "bastion_ip" {
+  value = local.local_bastion_ip
 }

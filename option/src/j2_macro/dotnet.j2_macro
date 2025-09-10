@@ -44,7 +44,6 @@ using Oracle.NoSQL.SDK;
     {
         public Hits hits { get; set; }
     }    
-    private static HttpClient client = new HttpClient();
 {%- endif %}        
 {%- if db_family == "nosql" %}
     private static NoSQLClient client = new NoSQLClient( new NoSQLConfig{
@@ -70,6 +69,7 @@ using Oracle.NoSQL.SDK;
         };
     {%- elif db_family == "opensearch" %}
         List<Dept> a = new List<Dept>();
+        HttpClient client = new HttpClient();
         client.BaseAddress = new Uri(@"https://"+Environment.GetEnvironmentVariable("DB_URL")+":9200");
 
         var task = Task.Run(() => client.GetAsync("/dept/_search?size=1000&scroll=1m&pretty=true"));

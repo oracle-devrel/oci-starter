@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # OCI Starter
 # 
 # Script to create a directory or a zip file with the source code

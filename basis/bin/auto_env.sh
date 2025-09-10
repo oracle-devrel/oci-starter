@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # PROJECT_DIR
 if [[ -z "${PROJECT_DIR}" ]]; then
@@ -19,9 +19,39 @@ fi
 if [ -f $PROJECT_DIR/terraform.tfstate ]; then
   ln -sf $PROJECT_DIR/terraform.tfstate $STATE_FILE
 fi
+# Set pipefail to get the error despite pipe to tee
+set -o pipefail
+
+# Function to parse a .tfvars file and export TF_VAR_ variables
+export_terraform_tfvars() {
+  # Read the file line by line, ignoring comments and empty lines
+  while read -r line; do
+    if [[ "$line" =~ ^\s*# ]]; then
+       :
+    elif [[ "$line" =~ ^\s*$ ]]; then
+       :      
+    else
+      key="${line%%=*}"
+      value="${line#*=}"
+      # Remove quotes from the value if present (e.g., "value" or 'value')
+      value=$(echo "$value" | sed -E "s/^['\"](.*)['\"]$/\1/")
+      # Check if key and value are not empty
+      if [[ "$key" != "" && "$value" != "" ]]; then
+        export "TF_VAR_${key}"="${value}"
+        echo "export TF_VAR_${key}=\"${value}\""
+      fi
+    fi
+  done < "$PROJECT_DIR/terraform.tfvars"
+  unset value
+
+  if [ -f $HOME/.oci_starter_profile ]; then
+    . $HOME/.oci_starter_profile
+  fi  
+}
 
 # ENV.SH
-. $PROJECT_DIR/env.sh
+# . $PROJECT_DIR/env.sh
+export_terraform_tfvars
 
 # Autocomplete in bash
 _starter_completions()
@@ -39,7 +69,12 @@ fi
 
 # Check the SHAPE
 unset MISMATCH_PLATFORM
-if [ "$TF_VAR_instance_shape" == "VM.Standard.A1.Flex" ]; then
+if [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
+  if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
+    # Resource Manager run on ARM processor. So, docker is in ARM mode too...
+    export TF_VAR_instance_shape="VM.Standard.A1.Flex"
+  fi
+elif [ "$TF_VAR_instance_shape" == "VM.Standard.A1.Flex" ]; then
   if [ `arch` != "aarch64" ]; then
     if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
         MISMATCH_PLATFORM="ERROR: ARM (Ampere) build using Containers (Kubernetes / Cointainer Instance / Function) needs to run on ARM processor"
@@ -70,6 +105,7 @@ if [ "$MISMATCH_PLATFORM" != "" ]; then
   exit 1
 fi
 
+
 # Enable BASH history for Stack Trace.
 # - Do not store in HISTFILE 
 # - Do not use it when env.sh is called from bash directly.
@@ -95,10 +131,10 @@ else
   unset SILENT_MODE
 fi 
 
-# XXXXXX TO REMOVE WHEN PY_OCI_STARTER.PY is done
-if [ -v REPOSITORY_NAME ]; then
-  return
-fi 
+# Skip if runned from OCI Devops ?
+# if [ "$REPOSITORY_NAME" != "" ]; then
+#   return
+# fi 
 
 # CONFIG.SH
 . $BIN_DIR/config.sh
@@ -108,7 +144,7 @@ if ! command -v jq &> /dev/null; then
 fi
 
 #-- PRE terraform ----------------------------------------------------------
-if [ "$OCI_STARTER_VARIABLES_SET" == "$OCI_STARTER_CREATION_DATE" ]; then
+if [ "$OCI_STARTER_VARIABLES_SET" == "$TF_VAR_prefix" ]; then
   echo "Variables already set"
 else
   #-- Check internet connection ---------------------------------------------
@@ -125,7 +161,7 @@ else
     echo "---------------------------------------------------------------------"
   fi
 
-  export OCI_STARTER_VARIABLES_SET=$OCI_STARTER_CREATION_DATE
+  export OCI_STARTER_VARIABLES_SET=$TF_VAR_prefix
   get_user_details
 
   # Availability Domain for FreeTier E2.1 Micro
@@ -165,11 +201,6 @@ else
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     export TF_VAR_email=mail@domain.com
     auto_echo TF_VAR_email=$TF_VAR_email
-    # ex: OCIR region is using the key prefix: fra.ocir.io
-    export TF_VAR_region_key=`oci iam region list --all --query "data[?name=='$TF_VAR_region']" | jq -r ".[0].key" | awk '{print tolower($0)}'`
-    auto_echo TF_VAR_region_key=$TF_VAR_region_key
-    export TF_VAR_ocir=${TF_VAR_region_key}.ocir.io
-    auto_echo TF_VAR_ocir=$TF_VAR_ocir
     export KUBECONFIG=$TARGET_DIR/kubeconfig_starter
   fi
 
@@ -229,6 +260,8 @@ fi
 
 #-- POST terraform ----------------------------------------------------------
 if [ -f $STATE_FILE ]; then
+  echo "Reading $STATE_FILE"
+
   # OBJECT_STORAGE_URL
   export OBJECT_STORAGE_URL=https://objectstorage.${TF_VAR_region}.oraclecloud.com
 
@@ -249,9 +282,8 @@ if [ -f $STATE_FILE ]; then
 
   # Docker
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
-    get_output_from_tfstate "CONTAINER_PREFIX" "container_prefix"
     export DOCKER_PREFIX_NO_OCIR=${CONTAINER_PREFIX}
-    export DOCKER_PREFIX=${TF_VAR_ocir}/${TF_VAR_namespace}/${DOCKER_PREFIX_NO_OCIR}
+    export DOCKER_PREFIX=${OCIR_HOST}/${TF_VAR_namespace}/${DOCKER_PREFIX_NO_OCIR}
     auto_echo DOCKER_PREFIX=$DOCKER_PREFIX
   fi
 
@@ -267,8 +299,6 @@ if [ -f $STATE_FILE ]; then
     if [ -f $TARGET_DIR/fn_image.txt ]; then
       export TF_VAR_fn_image=`cat $TARGET_DIR/fn_image.txt`
       auto_echo TF_VAR_fn_image=$TF_VAR_fn_image
-      export TF_VAR_fn_db_url=`cat $TARGET_DIR/fn_db_url.txt`
-      auto_echo TF_VAR_fn_db_url=$TF_VAR_fn_db_url
     fi   
   fi
 
@@ -286,14 +316,17 @@ if [ -f $STATE_FILE ]; then
     fi
   fi
 
-  # Compute
-  get_output_from_tfstate "COMPUTE_IP" "compute_ip"
-  
-  # Bastion 
-  get_output_from_tfstate "BASTION_IP" "bastion_public_ip"
+  # export all OUTPUTS of the terraform file
+  if [ "$IDCS_URL" == "" ]; then
+    LIST_OUTPUT=`cat $STATE_FILE| jq .outputs | jq -r 'keys[]'`
+    for output in $LIST_OUTPUT; do
+      value=`cat $STATE_FILE | jq -r ".outputs[\"$output\"].value"`
+      echo "export ${output^^}=\"$value\"" 
+      eval "export ${output^^}=\"$value\"" 
+    done 
+  fi
 
   # Check if there is a BASTION SERVICE with a BASTION COMMAND
-  get_output_from_tfstate "BASTION_COMMAND" "bastion_command"
   if [ "$BASTION_COMMAND" == "" ]; then
     if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
       # Ideally BASTION_PROXY_COMMAND should be not used. But passing a empty value does not work...
@@ -308,24 +341,12 @@ if [ -f $STATE_FILE ]; then
     export BASTION_PROXY_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p $BASTION_USER_HOST"
   fi
 
-  # JDBC_URL
-  get_output_from_tfstate "JDBC_URL" "jdbc_url"
-  get_output_from_tfstate "DB_URL" "db_url"
-
-
-  if [ "$TF_VAR_db_type" == "autonomous" ] || [ "$TF_VAR_db_type" == "database" ] ; then
-    get_output_from_tfstate "ORDS_URL" "ords_url"
-  fi
-
   if [ "$TF_VAR_db_type" == "database" ]; then
     get_attribute_from_tfstate "DB_NODE_IP" "starter_node_vnic" "private_ip_address"
-  elif [ "$TF_VAR_db_type" == "db_free" ]; then
-    get_output_from_tfstate "DB_NODE_IP" "db_free_ip"
   fi
 
   if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
     # OKE
-    get_output_from_tfstate "OKE_OCID" "oke_ocid"
     if [ -f $KUBECONFIG ]; then
       export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
       export INGRESS_LB_OCID=`oci lb load-balancer list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[] | select(.["ip-addresses"][0]["ip-address"]=="'$TF_VAR_ingress_ip'") | .id'`  
@@ -335,8 +356,6 @@ if [ -f $STATE_FILE ]; then
   # JMS
   if [ -f $PROJECT_DIR/src/terraform/jms.tf ]; then 
     if [ ! -f $TARGET_DIR/jms_agent_deploy.sh ]; then
-      get_output_from_tfstate "FLEET_OCID" "fleet_ocid"
-      get_output_from_tfstate "INSTALL_KEY_OCID" "install_key_ocid"
        # JMS requires a "jms" tag namespace / tag "fleet_ocid" (that is unique and should not be deleted by terraform destroy) 
       TAG_NAMESPACE_OCID=`oci iam tag-namespace list --compartment-id=$TF_VAR_tenancy_ocid | jq -r '.data[] | select(.name=="jms") | .id'`
       if [ "$TAG_NAMESPACE_OCID" == "" ]; then

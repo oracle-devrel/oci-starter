@@ -30,6 +30,6 @@ resource "oci_artifacts_container_repository" "starter_repo_ui" {
 
 {%- endif %}
 
-output "container_prefix" {
-  value = random_string.container_prefix.result
+locals  {
+  local_container_prefix = random_string.container_prefix.result
 }

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Build_app.sh
 #
 # Compute:
@@ -24,5 +24,5 @@ if is_deploy_compute; then
 else
   docker image rm ${TF_VAR_prefix}-app:latest
   docker build -t ${TF_VAR_prefix}-app:latest .
-  exit_on_error
+  exit_on_error "docker build"
 fi  

@@ -225,9 +225,9 @@ locals {
   # OCI DevOps GIT login is tenancy/username
   encoded_oci_username = urlencode("${data.oci_identity_tenancy.tenant_details.name}/${var.username}")
   encoded_auth_token  = urlencode(var.auth_token)
-  devops_git_url = "https://${local.encoded_oci_username}:${local.encoded_auth_token}@devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.ocir_namespace}/projects/${oci_devops_project.starter_devops_project.name}/repositories/${oci_devops_repository.starter_devops_repository.name}"
+  local_devops_git_url = "https://${local.encoded_oci_username}:${local.encoded_auth_token}@devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.ocir_namespace}/projects/${oci_devops_project.starter_devops_project.name}/repositories/${oci_devops_repository.starter_devops_repository.name}"
 }
 
 output "devops_git_url" {
-  value=local.devops_git_url
+  value=local.local_devops_git_url
 }

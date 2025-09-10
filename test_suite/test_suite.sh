@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 export TEST_HOME=$SCRIPT_DIR/test_group_all
@@ -153,6 +153,20 @@ loop_compute_other() {
   OPTION_INFRA_AS_CODE=resource_manager
   build_option   
   OPTION_INFRA_AS_CODE=terraform_local
+
+  # From Resource Manager
+#   OPTION_INFRA_AS_CODE=from_resource_manager
+#   OPTION_DEPLOY=public_compute
+#   build_option   
+#   OPTION_DEPLOY=private_compute
+#   build_option   
+#   OPTION_DEPLOY=container_instance
+#   build_option   
+#   OPTION_DEPLOY=function
+#   build_option   
+#   OPTION_DEPLOY=oke
+#   build_option   
+#   OPTION_INFRA_AS_CODE=terraform_local
 
   # Pluggable DB 
   OPTION_DB=pdb
