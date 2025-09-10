@@ -591,11 +591,11 @@ def env_sh_contents():
     contents.append('')
     contents.append('# CREATION DETAILS')
     contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
-    contents.append(f'export OCI_STARTER_VERSION=3.7')
+    contents.append(f'export OCI_STARTER_VERSION=4.0')
     contents.append(f'export OCI_STARTER_PARAMS="{params["params"]}"')
     tfvars.append('# Creation Details')
     tfvars.append(f'OCI_STARTER_CREATION_DATE={timestamp}')
-    tfvars.append(f'OCI_STARTER_VERSION=3.7')
+    tfvars.append(f'OCI_STARTER_VERSION=4.0')
     tfvars.append(f'OCI_STARTER_PARAMS="{params["params"]}"')
     tfvars.append('')
     return contents, tfvars

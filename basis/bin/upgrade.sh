@@ -61,7 +61,7 @@ export TF_VAR_auth_token=__TO_FILL__
 PARAM_LIST=""
 
 IFS=','
-read -ra ARR <<<"$OCI_STARTER_PARAMS" 
+read -ra ARR <<<"$TF_VAR_OCI_STARTER_PARAMS" 
 for p in "${ARR[@]}"; 
 do  
   VAR_NAME="TF_VAR_${p}"
@@ -86,8 +86,8 @@ rm upgrade.zip
 mv $TF_VAR_prefix/* $TF_VAR_prefix/.*  .
 rmdir $TF_VAR_prefix
 
-export LINE_OCI_STARTER_CREATION_DATE=`grep "export OCI_STARTER_CREATION_DATE" env.sh`
-export LINE_OCI_STARTER_VERSION=`grep "export OCI_STARTER_VERSION" env.sh`
+export LINE_OCI_STARTER_CREATION_DATE=`grep "OCI_STARTER_CREATION_DATE=" terraform.tfvars`
+export LINE_OCI_STARTER_VERSION=`grep "OCI_STARTER_VERSION=" terraform.tfvars`
 
 title "Upgrade directory"
 mkdir not_used
@@ -111,17 +111,12 @@ sed -i "/# Get other env variables/d" env.sh
 sed -i '/. $BIN_DIR\/auto_env.sh/d' env.sh 
 
 # Change the OCI_STARTER_CREATION_DATE / VERSION
-
-title "Remove call to group_common_env.sh (now in auto_env.sh)"
-sed -i '/..\/group_common_env.sh/d' env.sh  
-sed -i '/elif [ -f $HOME\/.oci_starter_profile ]/c if [ -f $HOME/.oci_starter_profile ]; then'  env.sh  
+title "Replacing OCI_STARTER versions with the downloaded version"
+sed -i "/OCI_STARTER_CREATION_DATE/c $LINE_OCI_STARTER_CREATION_DATE" terraform.tfvars
+sed -i "/OCI_STARTER_VERSION/c $LINE_OCI_STARTER_VERSION" terraform.tfvars
 
 title "Replacing OCI_STARTER versions with the downloaded version"
-sed -i "/export OCI_STARTER_CREATION_DATE/c $LINE_OCI_STARTER_CREATION_DATE" env.sh
-sed -i "/export OCI_STARTER_VERSION/c $LINE_OCI_STARTER_VERSION" env.sh
-
-title "Replacing OCI_STARTER versions with the downloaded version"
-sed -i 's/export TF_VAR_deploy_type="compute"/export TF_VAR_deploy_type="public_compute"/' env.sh
+sed -i 's/deploy_type="compute"/deploy_type="public_compute"/' terraform.tfvars
 
 # Calls to env.sh
 title "Replacing calls to env.sh"
