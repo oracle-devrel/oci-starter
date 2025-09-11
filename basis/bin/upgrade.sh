@@ -145,6 +145,11 @@ if [ -f src/before_build.sh ]; then
   mv src/before_build.sh src/before_terraform.sh
 fi
 
+# after_done.sh
+if [ -f src/after_done.sh ]; then
+  mv src/after_done.sh src/after_build.sh
+fi
+
 
 # Remove *.sh from src/terraform
 rm src/terraform/*.sh

@@ -88,7 +88,7 @@ resource "null_resource" "build_deploy" {
 #
 # In case like instance_pool, oke, function, container_instance, ...
 # More terraform resources need to be created after build_deploy.
-# Reread the env viables
+# Reread the env variables
 data "external" "env_part2" {
   program = ["cat", "${local.project_dir}/target/resource_manager_variables.json"]
   depends_on = [
@@ -139,9 +139,7 @@ resource "null_resource" "before_destroy" {
   provisioner "local-exec" {
       when = destroy
       command = <<-EOT
-        if [ ! -f starter.sh ]; then 
-          cd ../..
-        fi
+        cd ${local.project_dir}  
         ./starter.sh destroy --called_by_resource_manager
         EOT
   }
