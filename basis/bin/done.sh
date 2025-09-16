@@ -9,12 +9,8 @@ get_ui_url
 echo 
 echo "Build done"
 
-if [ -f $PROJECT_DIR/src/after_build.sh ]; then
-  # Unset UI_URL in after_build to remove the standard output
-  if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ] || [ "$CALLED_BY_TERRAFORM" != "" ]; then
-    . $PROJECT_DIR/src/after_build.sh
-  fi
-elif [ ! -z "$UI_URL" ]; then
+# Do not show the Done URLs if after_build.sh exists 
+if [ ! -f $PROJECT_DIR/src/after_build.sh ] && [ "$UI_URL" != "" ]; then
   if [ "$TF_VAR_ui_type" != "api" ]; then
     echo - User Interface: $UI_URL/
   fi  

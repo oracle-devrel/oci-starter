@@ -23,7 +23,9 @@ variableGroups:
   visible: true  
   variables:
 {%- for param in env_params %}
+{%- if param not in ["prefix","license_model","db_password","compartment_ocid"] %}  
   - {{ param }}
+{%- endif %} 
 {%- endfor %}
 
 #################
