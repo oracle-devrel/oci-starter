@@ -14,6 +14,6 @@ sudo update-alternatives --set python /usr/bin/python3.12
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Install virtual env python_env
-uv venv myenv/
-source myvenv/bin/activate
+uv venv myenv
+source myenv/bin/activate
 uv pip install -r requirements.txt
