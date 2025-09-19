@@ -98,7 +98,10 @@ elif [ "$ARG1" == "rm" ]; then
     echo "Unknown command: $ARG1 $ARG2"
   fi    
 elif [ "$ARG1" == "destroy" ]; then
-  if [ "$TF_VAR_infra_as_code" == "from_resource_manager" ] && [ "$2" != "--called_by_resource_manager" ]; then
+  if [ ! -f $TARGET_DIR/resource_manager_stackid ]; then
+    # From the shell that created a RM Stack
+    $BIN_DIR/terraform_destroy.sh 
+  elif [ "$TF_VAR_infra_as_code" == "from_resource_manager" ] && [ "$2" != "--called_by_resource_manager" ]; then
     # ./starter.sh destroy 
     # - with terraform stack in resource_manager (=from_resource_manager)
     # - called from Command Line 
