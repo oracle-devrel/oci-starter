@@ -56,7 +56,6 @@ variables:
     {%- else %}
     description: ( {{ title[param] }} )
     {%- endif %}
-    description: 
     required: true
     default: {{ params[param] }}
 
