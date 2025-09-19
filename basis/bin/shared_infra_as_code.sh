@@ -167,7 +167,9 @@ resource_manager_create_or_update() {
   echo "Created Resource Manager Zip file - $ZIP_FILE_PATH"
   cd -
 
-  resource_manager_variables_json
+  if [ "$DISTRIBUTE" != "YES" ]; then
+    resource_manager_variables_json
+  fi
 
   if [ -f $TARGET_DIR/resource_manager_stackid ]; then
     if cmp -s $ZIP_FILE_PATH $ZIP_FILE_PATH.$DATE_POSTFIX; then
