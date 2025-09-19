@@ -82,7 +82,7 @@ variables:
     {%- else %}
     type: string
     {%- endif %}
-    title: param
+    title: {{ param }}
     description: ( {{ param }} )
     required: false  
 {%- endif %}
