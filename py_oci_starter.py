@@ -602,14 +602,15 @@ def env_sh_contents():
     tfvars.append('')
     return contents, tfvars
 
+table_comments = {
+    'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
+    'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345'],
+    'license_model': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
+    'certificate_ocid': ['OCID of the OCI Certificate','If the certificate is not imported in OCI, use instead TF_VAR_certificate_dir=<directory where the certificate resides>', 'export TF_VAR_certificate_dir="__TO_FILL__"']
+}
 
 def tf_var_comment(contents, param):
-    comments = {
-        'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
-        'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345'],
-        'license_model': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
-        'certificate_ocid': ['OCID of the OCI Certificate','If the certificate is not imported in OCI, use instead TF_VAR_certificate_dir=<directory where the certificate resides>', 'export TF_VAR_certificate_dir="__TO_FILL__"']
-    }.get(param)
+    table_comments.get(param)
        
     if comments is not None:
         b=True
@@ -1211,6 +1212,7 @@ def jinja2_replace_template():
     template_param['env_params'].append('region')
     template_param['env_params'].append('current_user_ocid')
     template_param['params'] = params
+    template_param['comments'] = table_comments
     print( template_param, flush=True )
 
     template_param['title'] = {

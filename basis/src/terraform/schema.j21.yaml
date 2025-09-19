@@ -20,7 +20,7 @@ variableGroups:
 {%- endfor %}
 
 - title: Static
-  visible: true  
+  visible: false  
   variables:
 {%- for param in env_params %}
 {%- if param not in ["prefix","license_model","db_password","compartment_ocid"] %}  
@@ -45,13 +45,19 @@ variables:
     {%- else %}
     type: string
     {%- endif %}
+    {%- endif %}
+    title: {{ title[param] }}
     {%- if param=="license_model" %}
     enum:
       - BRING_YOUR_OWN_LICENSE
       - LICENSE_INCLUDED
     {%- endif %}
-    title: {{ title[param] }}
-    description: ( {{ param }} )
+    {%- if param in [ "prefix", "license_model", "db_password" ] %}
+    description: {{ comments[param][0] }}
+    {%- else %}
+    description: ( {{ title[param] }} )
+    {%- endif %}
+    description: 
     required: true
     default: {{ params[param] }}
 
