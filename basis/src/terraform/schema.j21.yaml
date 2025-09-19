@@ -13,8 +13,9 @@ variableGroups:
 - title: Starter Project
   visible: true  
   variables:
+  - prefix
 {%- for param in env_params %}
-{%- if param in ["prefix","license_model","db_password","compartment_ocid"] %}  
+{%- if param in ["license_model","db_password","compartment_ocid"] %}  
   - {{ param }}
 {%- endif %}  
 {%- endfor %}
