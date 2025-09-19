@@ -34,7 +34,7 @@ variableGroups:
   variables:
 {%- for var in terraform_variables %}
 {%- if var not in env_params %}
-  - {{ var }}:
+  - {{ var }}
 {%- endif %}
 {%- endfor %}
 
