@@ -99,7 +99,7 @@ resource oci_core_instance starter_compute {
   }
 
   metadata = {
-    "ssh_authorized_keys" = var.ssh_public_key
+    "ssh_authorized_keys" = local.local_ssh_public_key
   }
 
   source_details {

@@ -2,8 +2,6 @@ variable tenancy_ocid {}
 variable region {}
 variable compartment_ocid {}
 # variable current_user_ocid {}
-variable ssh_public_key { default="" }
-variable ssh_private_key { default="" }
 
 # Prefix
 variable prefix { 
@@ -91,6 +89,15 @@ variable "certificate_ocid" { default=null }
 # Infrastructure as code
 variable "infra_as_code" { default=null }
 
+# SSH Keys
+variable ssh_public_key { default=null }
+variable ssh_private_key { default=null }
+
+resource "tls_private_key" "ssh_key" {
+  algorithm   = "RSA"
+  rsa_bits = "2048"
+}
+
 locals {
   group_name = var.group_name == null ? "none" : var.group_name
 
@@ -109,4 +116,17 @@ locals {
   lz_serv_cmp_ocid = var.lz_serv_cmp_ocid == null ? var.compartment_ocid : var.lz_serv_cmp_ocid
   lz_network_cmp_ocid = var.lz_network_cmp_ocid == null ? var.compartment_ocid : var.lz_network_cmp_ocid
   lz_security_cmp_ocid =var.lz_security_cmp_ocid == null ? var.compartment_ocid : var.lz_security_cmp_ocid
+
+  # SSH Key
+  local_ssh_public_key=var.ssh_public_key == null ? var.compartment_ocid : tls_private_key.ssh_key.public_key_openssh
+  local_ssh_private_key=var.ssh_private_key == null ? var.ssh_private_key : tls_private_key.ssh_key.private_key_pem
 }
+
+output "ssh-key-private" {
+  value = local.local_ssh_public_key
+}
+
+output "ssh-key-public" {
+  value = local.local_ssh_public_key
+}
+

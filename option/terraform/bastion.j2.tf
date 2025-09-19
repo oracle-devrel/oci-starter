@@ -30,7 +30,7 @@ resource "oci_bastion_bastion" "starter_bastion" {
 resource "oci_bastion_session" "starter_bastion_session" {
   bastion_id = oci_bastion_bastion.starter_bastion.id
   key_details {
-      public_key_content = var.ssh_public_key
+      public_key_content = local.local_ssh_public_key
   }
 
   target_resource_details {
@@ -75,7 +75,7 @@ resource "oci_core_instance" "starter_bastion" {
   }
 
   metadata = {
-    ssh_authorized_keys = var.ssh_public_key
+    ssh_authorized_keys = local.local_ssh_public_key
   }
 
   source_details {

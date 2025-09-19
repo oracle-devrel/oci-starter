@@ -206,7 +206,7 @@ resource "oci_bastion_bastion" "starter_bastion" {
 resource "oci_bastion_session" "starter_bastion_session" {
   bastion_id = oci_bastion_bastion.starter_bastion.id
   key_details {
-      public_key_content = var.ssh_public_key
+      public_key_content = local.local_ssh_public_key
   }
 
   target_resource_details {
