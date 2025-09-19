@@ -30,7 +30,7 @@ variableGroups:
 {%- endfor %}
 
 - title: Optional
-  visible: true  
+  visible: false  
   variables:
 {%- for param in terraform_variables %}
 {%- if param not in env_params %}
