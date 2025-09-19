@@ -162,12 +162,16 @@ resource_manager_create_or_update() {
   mv src/terraform/* .
   rm terraform_local.tf
   rm -Rf src/terraform/
+  if [ "$DISTRIBUTE" == "YES" ]; then
+    # Comment all lines before -- FIXED
+    sed -i '1,/-- Fixed/{/-- Fixed/!s/^[^#]/#&/}' terraform.tfvars
+  fi
   # Create zip
   zip -r $ZIP_FILE_PATH * -x "target/*" -x "$TERRAFORM_DIR/.terraform/*"
   echo "Created Resource Manager Zip file - $ZIP_FILE_PATH"
   cd -
 
-  if [ "$DISTRIBUTE" != "YES" ]; then
+  if [ "$DISTRIBUTE" !== "YES" ]; then
     resource_manager_variables_json
   fi
 
