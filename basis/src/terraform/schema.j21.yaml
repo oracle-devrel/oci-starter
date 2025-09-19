@@ -45,7 +45,6 @@ variables:
     {%- else %}
     type: string
     {%- endif %}
-    {%- endif %}
     title: {{ title[param] }}
     {%- if param=="license_model" %}
     enum:
