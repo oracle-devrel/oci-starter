@@ -129,9 +129,11 @@ resource_manager_variables_json () {
 resource_manager_create_or_update() {   
   DISTRIBUTE=$1
   rs_echo "Create Stack"
-  if [ -f $TARGET_DIR/resource_manager_stackid ]; then
+  if [ -f $ZIP_FILE_PATH ]; then
      echo "Stack exists already ( file target/resource_manager_stackid found )"
      mv $ZIP_FILE_PATH $ZIP_FILE_PATH.$DATE_POSTFIX
+  fi    
+  if [ -f $VAR_FILE_PATH ]; then
      mv $VAR_FILE_PATH $VAR_FILE_PATH.$DATE_POSTFIX
   fi    
 
