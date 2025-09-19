@@ -533,7 +533,7 @@ def env_sh_contents():
     contents.append(f'export TF_VAR_prefix="{prefix}"')
     contents.append('')
     tfvars.append('')
-    tfvars.append(table_comments["prefix"][0])
+    tfvars.append('# '+table_comments["prefix"][0])
     tfvars.append(f'prefix="{prefix}"')
 
     fixed_contents = []
@@ -603,7 +603,7 @@ def env_sh_contents():
     return contents, tfvars
 
 table_comments = {
-    'prefix': ['# Prefix to all resources created by terraform'],
+    'prefix': ['Prefix to all resources created by terraform'],
     'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
     'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345'],
     'license_model': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
