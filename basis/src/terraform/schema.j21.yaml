@@ -29,6 +29,15 @@ variableGroups:
 {%- endif %} 
 {%- endfor %}
 
+- title: Optional
+  visible: true  
+  variables:
+{%- for var in terraform_variables %}
+{%- if var not in env_params %}
+  - {{ var }}:
+{%- endif %}
+{%- endfor %}
+
 #################
 # Output Groups
 #################
@@ -66,15 +75,6 @@ variables:
 
 {%- endfor %}
 
-
-# terraform_variables
-{%- for var in terraform_variables %}
-{%- if var in env_params %}
-# - {{ var }}:
-{%- else %}
-# -> {{ var }}:
-{%- endif %}
-{%- endfor %}
 
 
 
