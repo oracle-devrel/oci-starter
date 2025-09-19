@@ -171,7 +171,7 @@ resource_manager_create_or_update() {
   echo "Created Resource Manager Zip file - $ZIP_FILE_PATH"
   cd -
 
-  if [ "$DISTRIBUTE" !== "YES" ]; then
+  if [ "$DISTRIBUTE" != "YES" ]; then
     resource_manager_variables_json
   fi
 
