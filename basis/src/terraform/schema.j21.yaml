@@ -67,5 +67,15 @@ variables:
 {%- endfor %}
 
 
+# terraform_variables
+{%- for var in terraform_variables %}
+{%- if var in env_params %}
+# - {{ var }}:
+{%- else %}
+# -> {{ var }}:
+{%- endif %}
+{%- endfor %}
+
+
 
 
