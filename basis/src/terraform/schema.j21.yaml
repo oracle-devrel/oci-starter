@@ -42,15 +42,20 @@ variables:
   {{ param }}:
     {%- if param in ["compartment_ocid"] %}
     type: oci:identity:compartment:id
+    {%- elif param in ["db_password"] %}
+    type: password
+    confirmation: true
+    {%- elif param=="license_model" %}
+    type: enum
+    enum:
+      - BRING_YOUR_OWN_LICENSE
+      - LICENSE_INCLUDED
+    {%- elif param=="ssh_public_key" %}
+    type: oci:core:ssh:publickey
     {%- else %}
     type: string
     {%- endif %}
     title: {{ title[param] }}
-    {%- if param=="license_model" %}
-    enum:
-      - BRING_YOUR_OWN_LICENSE
-      - LICENSE_INCLUDED
-    {%- endif %}
     {%- if param in [ "prefix", "license_model", "db_password", "auth_token", "certificate_ocid" ] %}
     description: "{{ comments[param][0] }}"
     {%- else %}
