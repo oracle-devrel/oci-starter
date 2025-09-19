@@ -94,6 +94,8 @@ elif [ "$ARG1" == "rm" ]; then
   elif [ "$ARG2" == "distribute" ]; then
     export TF_VAR_infra_as_code="distribute_resource_manager"
     $BIN_DIR/terraform_apply.sh 
+  else 
+    echo "Unknown command: $ARG1 $ARG2"
   fi    
 elif [ "$ARG1" == "destroy" ]; then
   if [ "$TF_VAR_infra_as_code" == "from_resource_manager" ] && [ "$2" != "--called_by_resource_manager" ]; then
