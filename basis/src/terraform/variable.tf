@@ -2,8 +2,8 @@ variable tenancy_ocid {}
 variable region {}
 variable compartment_ocid {}
 # variable current_user_ocid {}
-variable ssh_public_key {}
-variable ssh_private_key {}
+variable ssh_public_key { default="" }
+variable ssh_private_key { default="" }
 
 # Prefix
 variable prefix { 
