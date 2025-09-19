@@ -610,7 +610,7 @@ table_comments = {
 }
 
 def tf_var_comment(contents, param):
-    table_comments.get(param)
+    comments=table_comments.get(param)
        
     if comments is not None:
         b=True
