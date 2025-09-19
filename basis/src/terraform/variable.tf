@@ -94,6 +94,7 @@ variable ssh_public_key { default=null }
 variable ssh_private_key { default=null }
 
 resource "tls_private_key" "ssh_key" {
+  count = var.ssh_public_key == null ? 1 : 0
   algorithm   = "RSA"
   rsa_bits = "2048"
 }
@@ -118,8 +119,8 @@ locals {
   lz_security_cmp_ocid =var.lz_security_cmp_ocid == null ? var.compartment_ocid : var.lz_security_cmp_ocid
 
   # SSH Key
-  local_ssh_public_key = var.ssh_public_key == null ? var.compartment_ocid : tls_private_key.ssh_key.public_key_openssh
-  local_ssh_private_key = var.ssh_private_key == null ? var.ssh_private_key : tls_private_key.ssh_key.private_key_pem
+  local_ssh_public_key  = var.ssh_public_key != null ? var.ssh_public_key  : tls_private_key.ssh_key[0].public_key_openssh
+  local_ssh_private_key = var.ssh_public_key != null ? var.ssh_private_key : tls_private_key.ssh_key[0].private_key_pem
 }
 
 output "ssh-key-private" {
