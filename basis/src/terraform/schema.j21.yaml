@@ -32,9 +32,9 @@ variableGroups:
 - title: Optional
   visible: true  
   variables:
-{%- for var in terraform_variables %}
-{%- if var not in env_params %}
-  - {{ var }}
+{%- for param in terraform_variables %}
+{%- if param not in env_params %}
+  - {{ param }}
 {%- endif %}
 {%- endfor %}
 
@@ -47,7 +47,7 @@ variableGroups:
 ######################
 
 variables:
-
+# Env Params
 {%- for param in env_params %}
   {{ param }}:
     {%- if param in ["compartment_ocid"] %}
@@ -72,10 +72,20 @@ variables:
     description: ( {{ title[param] }} )
     {%- endif %}
     required: true
-
 {%- endfor %}
-
-
-
+# Terraform Variables
+{%- for param in terraform_variables %}
+{%- if param not in env_params %}
+  {{ param }}:
+    {%- if param=="ssh_public_key" %}
+    type: oci:core:ssh:publickey
+    {%- else %}
+    type: string
+    {%- endif %}
+    title: param
+    description: ( {{ param }} )
+    required: false  
+{%- endif %}
+{%- endfor %}
 
 
