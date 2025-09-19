@@ -52,7 +52,7 @@ variables:
       - LICENSE_INCLUDED
     {%- endif %}
     {%- if param in [ "prefix", "license_model", "db_password", "auth_token", "certificate_ocid" ] %}
-    description: {{ comments[param][0] }}
+    description: "{{ comments[param][0] }}"
     {%- else %}
     description: ( {{ title[param] }} )
     {%- endif %}
