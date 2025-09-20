@@ -49,7 +49,6 @@ variableGroups:
 variables:
 # Env Params
 {%- for param in env_params %}
-  {%- if param not in [ "region", "current_user_ocid", "tenancy_ocid"] %}
   {{ param }}:
     {%- if param in ["compartment_ocid"] %}
     type: oci:identity:compartment:id
@@ -74,6 +73,8 @@ variables:
     {%- endif %}
     required: true
 {%- endfor %}
+
+
 # Terraform Variables
 {%- for param in terraform_variables %}
 {%- if param not in env_params %}
@@ -90,3 +91,4 @@ variables:
     required: false  
 {%- endif %}
 {%- endfor %}
+
