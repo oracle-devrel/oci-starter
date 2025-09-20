@@ -125,5 +125,6 @@ output "ssh-key-public" {
 
 output "ssh-key-private" {
   value = local.local_ssh_private_key
+  sensitive = true 
 }
 
