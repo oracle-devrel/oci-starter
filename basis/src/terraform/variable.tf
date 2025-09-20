@@ -1,7 +1,6 @@
 variable tenancy_ocid {}
 variable region {}
 variable compartment_ocid {}
-# variable current_user_ocid {}
 
 # Prefix
 variable prefix { 
@@ -51,9 +50,6 @@ variable lz_db_cmp_ocid { default=null }
 variable lz_serv_cmp_ocid { default=null }
 variable lz_network_cmp_ocid { default=null }
 variable lz_security_cmp_ocid { default=null }
-
-# OCIR
-variable username { default=null }
 
 # Availability Domain
 variable availability_domain_number { 
