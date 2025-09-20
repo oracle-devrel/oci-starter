@@ -273,11 +273,10 @@ get_user_details() {
     else 
       echo "Called From Resource Manager"
       export CALLED_BY_TERRAFORM="TRUE"
-      # export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
-      # echo "$SSH_PUBLIC_KEY" > ${TF_VAR_ssh_private_path}.pub
-      # echo "$SSH_PRIVATE_KEY" > ${TF_VAR_ssh_private_path}
-      chmod 600 ${TF_VAR_ssh_private_path}.pub
-      chmod 600 $TF_VAR_ssh_private_path
+      # Exported by build.tf
+      export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
+      export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
+      export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)      
     fi
   elif [ -f $HOME/.oci/config ]; then
     ## Get the [DEFAULT] config
