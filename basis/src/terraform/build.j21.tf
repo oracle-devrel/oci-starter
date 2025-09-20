@@ -10,6 +10,7 @@ resource "null_resource" "ssh_key" {
     mkdir target
     echo "${local.ssh_public_key}" > target/ssh_key_starter.pub
     echo "${local.ssh_private_key}" > target/ssh_key_starter
+    chmod 600 target/ssh_key_starter.pub
     chmod 600 target/ssh_key_starter
     EOT
   }
