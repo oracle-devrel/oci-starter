@@ -57,7 +57,7 @@ resource "oci_core_instance" "starter_compute" {
     agent       = false
     host        = oci_core_instance.starter_compute.public_ip
     user        = "opc"
-    private_key = var.ssh_private_key
+    private_key = local.local_ssh_private_key
   }
 
   lifecycle {

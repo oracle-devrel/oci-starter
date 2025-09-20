@@ -49,6 +49,7 @@ variableGroups:
 variables:
 # Env Params
 {%- for param in env_params %}
+  {%- if param not in [ "region", "current_user_ocid", "tenancy_ocid"] %}
   {{ param }}:
     {%- if param in ["compartment_ocid"] %}
     type: oci:identity:compartment:id
@@ -76,7 +77,6 @@ variables:
 # Terraform Variables
 {%- for param in terraform_variables %}
 {%- if param not in env_params %}
-{%- if param not in [ "region", "current_user_ocid", "tenancy_ocid"] %}
   {{ param }}:
     {%- if param=="ssh_public_key" %}
     type: oci:core:ssh:publickey
@@ -88,21 +88,5 @@ variables:
     title: {{ param }}
     description: ( {{ param }} )
     required: false  
-{%- endif %}    
 {%- endif %}
 {%- endfor %}
-  tenancy_ocid:
-    type: string
-    title: "Tenancy OCID"
-    description: "The Oracle Cloud Identifier (OCID) for your tenancy"
-    required: true        
-  region:   
-    type: oci:identity:region:name
-    title: "Region"
-    description: "The region in which to create all resources"
-    required: true
-  current_user_ocid:
-    type: string
-    title: "User OCID"
-    description: "User"
-    required: true

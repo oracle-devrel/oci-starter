@@ -42,7 +42,7 @@ resource "oci_core_instance" "starter_db_free" {
     agent       = false
     host        = oci_core_instance.starter_db_free.public_ip
     user        = "opc"
-    private_key = var.ssh_private_key
+    private_key = local.local_ssh_private_key
   }
 
   provisioner "remote-exec" {

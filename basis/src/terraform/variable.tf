@@ -119,11 +119,11 @@ locals {
   local_ssh_private_key = var.ssh_public_key != null ? var.ssh_private_key : tls_private_key.ssh_key[0].private_key_pem
 }
 
-output "ssh-key-private" {
+output "ssh-key-public" {
   value = local.local_ssh_public_key
 }
 
-output "ssh-key-public" {
-  value = local.local_ssh_public_key
+output "ssh-key-private" {
+  value = local.local_ssh_private_key
 }
 
