@@ -99,7 +99,7 @@ resource oci_core_instance starter_compute {
   }
 
   metadata = {
-    "ssh_authorized_keys" = local.local_ssh_public_key
+    "ssh_authorized_keys" = local.ssh_public_key
   }
 
   source_details {
@@ -113,7 +113,7 @@ resource oci_core_instance starter_compute {
       agent       = false
       timeout     = "5m"
       user        = "opc"
-      private_key = local.local_ssh_private_key
+      private_key = local.ssh_private_key
       host        = oci_core_instance.starter_compute.public_ip
     }
     source      = "../app/.success"
@@ -125,7 +125,7 @@ resource oci_core_instance starter_compute {
       agent       = false
       timeout     = "5m"
       user        = "opc"
-      private_key = local.local_ssh_private_key
+      private_key = local.ssh_private_key
       host        = oci_core_instance.starter_compute.public_ip
     }
     source      = "../app/.autosetup.ini"
@@ -137,7 +137,7 @@ resource oci_core_instance starter_compute {
       agent       = false
       timeout     = "5m"
       user        = "opc"
-      private_key = local.local_ssh_private_key
+      private_key = local.ssh_private_key
       host        = oci_core_instance.starter_compute.public_ip
     }
     source      = "../app/.autosetup.json"
@@ -149,7 +149,7 @@ resource oci_core_instance starter_compute {
       agent       = false
       timeout     = "5m"
       user        = "opc"
-      private_key = local.local_ssh_private_key
+      private_key = local.ssh_private_key
       host        = oci_core_instance.starter_compute.public_ip
     }
     source      = "../app/domainconfig.sh"
@@ -161,7 +161,7 @@ resource oci_core_instance starter_compute {
       agent       = false
       timeout     = "5m"
       user        = "opc"
-      private_key = local.local_ssh_private_key
+      private_key = local.ssh_private_key
       host        = oci_core_instance.starter_compute.public_ip
     }
     inline = [

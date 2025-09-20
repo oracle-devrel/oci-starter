@@ -115,16 +115,16 @@ locals {
   lz_security_cmp_ocid =var.lz_security_cmp_ocid == null ? var.compartment_ocid : var.lz_security_cmp_ocid
 
   # SSH Key
-  local_ssh_public_key  = var.ssh_public_key != null ? var.ssh_public_key  : tls_private_key.ssh_key[0].public_key_openssh
-  local_ssh_private_key = var.ssh_public_key != null ? var.ssh_private_key : tls_private_key.ssh_key[0].private_key_pem
+  ssh_public_key  = var.ssh_public_key != null ? var.ssh_public_key  : tls_private_key.ssh_key[0].public_key_openssh
+  ssh_private_key = var.ssh_public_key != null ? var.ssh_private_key : tls_private_key.ssh_key[0].private_key_pem
 }
 
 output "ssh-key-public" {
-  value = local.local_ssh_public_key
+  value = var.ssh_public_key != null ? "Created" : "-"
 }
 
 output "ssh-key-private" {
-  value = local.local_ssh_private_key
+  value = var.ssh_public_key != null ? "Created" : "-"
   sensitive = true 
 }
 

@@ -2,6 +2,17 @@ locals {
   project_dir = (var.infra_as_code=="from_resource_manager")?".":"../.."
 }
 
+# SSH Keys
+resource "null_resource" "ssh_key" {
+  provisioner "local-exec" {
+    command = <<-EOT
+    cd ${local.project_dir}
+    echo "${local.ssh_public_key}" > target/ssh_key_starter.pub
+    echo "${local.ssh_private_key}" > target/ssh_key_starter
+    EOT
+  }
+}
+
 ## BUILD_DEPLOY
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {

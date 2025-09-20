@@ -56,7 +56,7 @@ resource "oci_core_instance_configuration" "starter_instance_configuration" {
         }
 
         metadata = {
-            ssh_authorized_keys = local.local_ssh_public_key
+            ssh_authorized_keys = local.ssh_public_key
         }
 
         source_details {

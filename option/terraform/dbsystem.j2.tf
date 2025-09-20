@@ -59,7 +59,7 @@ resource "oci_database_db_system" "starter_dbsystem" {
   shape                   = "VM.Standard.E4.Flex"
   cpu_core_count          = ##cpu_core_count##
   subnet_id               = data.oci_core_subnet.starter_db_subnet.id
-  ssh_public_keys         = [local.local_ssh_public_key]
+  ssh_public_keys         = [local.ssh_public_key]
   display_name            = "${var.prefix}db"
   hostname                = "${var.prefix}db"
   data_storage_size_in_gb = "256"

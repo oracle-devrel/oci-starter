@@ -273,9 +273,9 @@ get_user_details() {
     else 
       echo "Called From Resource Manager"
       export CALLED_BY_TERRAFORM="TRUE"
-      export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
-      echo "$TF_VAR_ssh_public_key" > ${TF_VAR_ssh_private_path}.pub
-      echo "$TF_VAR_ssh_private_key" > $TF_VAR_ssh_private_path
+      # export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
+      # echo "$SSH_PUBLIC_KEY" > ${TF_VAR_ssh_private_path}.pub
+      # echo "$SSH_PRIVATE_KEY" > ${TF_VAR_ssh_private_path}
       chmod 600 ${TF_VAR_ssh_private_path}.pub
       chmod 600 $TF_VAR_ssh_private_path
     fi

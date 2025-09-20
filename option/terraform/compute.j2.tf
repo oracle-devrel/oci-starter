@@ -44,7 +44,7 @@ resource "oci_core_instance" "starter_compute" {
   }
 
   metadata = {
-    ssh_authorized_keys = local.local_ssh_public_key
+    ssh_authorized_keys = local.ssh_public_key
   }
 
   source_details {
@@ -57,7 +57,7 @@ resource "oci_core_instance" "starter_compute" {
     agent       = false
     host        = oci_core_instance.starter_compute.public_ip
     user        = "opc"
-    private_key = local.local_ssh_private_key
+    private_key = local.ssh_private_key
   }
 
   lifecycle {

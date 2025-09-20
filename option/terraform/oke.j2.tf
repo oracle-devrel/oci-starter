@@ -437,7 +437,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
     #   pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
     # }
   }
-  ssh_public_key      = local.local_ssh_public_key
+  ssh_public_key      = local.ssh_public_key
 
   freeform_tags = local.freeform_tags
 }
