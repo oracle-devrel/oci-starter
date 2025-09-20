@@ -12,6 +12,9 @@ resource "null_resource" "ssh_key" {
     echo "${local.ssh_private_key}" > target/ssh_key_starter
     EOT
   }
+  triggers = {
+    always_run = "${timestamp()}"
+  }     
 }
 
 ## BUILD_DEPLOY
