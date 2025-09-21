@@ -8,18 +8,6 @@ variable prefix {
   nullable = false
 }
 
-# Java
-variable language { 
-  default = "java" 
-  nullable = false
-}
-
-# Java Version
-variable java_version { 
-  default = "21"
-  nullable = false
-}
-
 # Home Region
 variable home_region {
   default=null
@@ -65,15 +53,6 @@ variable license_model {
   default="BRING_YOUR_OWN_LICENSE"
   nullable = false
 }
-
-# Deploy Type
-variable deploy_type { default=null }
-
-# UI Type
-variable ui_type { default=null }
-
-# Database Type
-variable db_type { default=null }
 
 # Group
 variable group_name { default=null }

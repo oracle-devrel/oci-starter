@@ -56,7 +56,7 @@ locals {
       group = local.group_name
       app_prefix = var.prefix
 
-      api_icon = var.language
+      api_icon = {{ language }} 
       api_git_url = var.git_url 
       api_git_spec_path = "src/app/openapi_spec.yaml"
       api_git_spec_type = "OpenAPI"

@@ -72,9 +72,12 @@ variables:
     {%- else %}
     description: ( {{ title[param] }} )
     {%- endif %}
+    {%- if ( param in ["prefix", "license_model","db_password"] or param.endswith("_ocid") ) and param not in [ "current_user_ocid"] %}
     required: true
+    {%- else %}
+    required: false
+    {%- endif %}
 {%- endfor %}
-
 
 # Terraform Variables
 {%- for param in terraform_variables %}
