@@ -33,6 +33,7 @@ resource "null_resource" "tf_env" {
 {%- for param in fixed_param %}
     echo 'export TF_VAR_{{param}}="{{ params[param] }}"' >> $ENV_FILE
 {%- endfor %} 
+    chmod 755 $ENV_FILE
     EOT
   }
   triggers = {
