@@ -548,35 +548,7 @@ def env_sh_contents():
         tfvars.append('# Compartment')
         tfvars.append('compartment_ocid="__TO_FILL__"')
 
-    tfvars.append('')   
-    tfvars.append('# -- Fixed -------------------------------------------------')   
-
-    for s in fixed_tfvars:
-        tfvars.append(s)
-
     tfvars.append('')
-    # contents.append('')
-    # contents.append("if [ -f $HOME/.oci_starter_profile ]; then")
-    # contents.append("  . $HOME/.oci_starter_profile")
-    # contents.append("fi")
-    # contents.append("else")
-    # contents.append('')
-    # contents.append('  # API Management')
-    # contents.append('  # export APIM_HOST=xxxx-xxx.adb.region.oraclecloudapps.com')
-    # contents.append('')
-    # if params.get('instance_shape') == None:
-    #    contents.append('  # Compute Shape')
-    #    contents.append('  # export TF_VAR_instance_shape=VM.Standard.E4.Flex')
-    # contents.append('')
-    # contents.append('# Landing Zone')
-    # contents.append('# export TF_VAR_lz_app_cmp_ocid=$TF_VAR_compartment_ocid')
-    # contents.append('# export TF_VAR_lz_db_cmp_ocid=$TF_VAR_compartment_ocid')
-    # contents.append('# export TF_VAR_lz_network_cmp_ocid=$TF_VAR_compartment_ocid')
-    # contents.append('# export TF_VAR_lz_security_cmp_ocid=$TF_VAR_compartment_ocid')
-    # contents.append('# export TF_VAR_lz_vcn_ocid="XXXX"')
-    # contents.append('# export TF_VAR_lz_web_subnet_ocid="XXXX"')
-    # contents.append('# export TF_VAR_lz_app_subnet_ocid="XXXX"')
-    # contents.append('# export TF_VAR_lz_db_subnet_ocid="XXXX"')
     return tfvars
 
 table_comments = {
