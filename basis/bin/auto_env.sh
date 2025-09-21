@@ -52,7 +52,7 @@ export_terraform_tfvars() {
 
 # ENV.SH
 # . $PROJECT_DIR/env.sh
-if [ -f $TARGET_DIR/tf_env.sh ]; then
+if [ -f $TARGET_DIR/tf_env.sh ]; then
   . $TARGET_DIR/tf_env.sh
 else
   export_terraform_tfvars
