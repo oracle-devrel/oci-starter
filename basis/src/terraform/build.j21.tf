@@ -17,7 +17,7 @@ resource "null_resource" "ssh_key" {
     
     # Create target/tf_env.sh
     ENV_FILE=target/tf_env.sh
-    echo "# Terraform Variables (generated file) > $ENV_FILE
+    echo "# Terraform Variables (generated file)" > $ENV_FILE
     echo "" >> $ENV_FILE
     echo "# Terraform Variables" >> $ENV_FILE
 {%- for param in env_params %}
