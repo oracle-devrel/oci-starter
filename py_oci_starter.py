@@ -545,7 +545,7 @@ def env_sh_contents():
         else:
             fixed_param.append(param)
             tf_var_comment(fixed_tfvars, param)
-            fixed_tfvars.append(f'{param}="{params[param]}"')
+            fixed_tfvars.append(f'# {param}="{params[param]}"')
     if params.get('compartment_ocid') == None:
         tfvars.append('')
         tfvars.append('# Compartment')
@@ -581,9 +581,9 @@ def env_sh_contents():
     # contents.append('# export TF_VAR_lz_app_subnet_ocid="XXXX"')
     # contents.append('# export TF_VAR_lz_db_subnet_ocid="XXXX"')
     tfvars.append('# Creation Details')
-    tfvars.append(f'OCI_STARTER_CREATION_DATE="{timestamp}"')
-    tfvars.append(f'OCI_STARTER_VERSION="4.0"')
-    tfvars.append(f'OCI_STARTER_PARAMS="{params["params"]}"')
+    tfvars.append(f'# OCI_STARTER_CREATION_DATE="{timestamp}"')
+    tfvars.append(f'# OCI_STARTER_VERSION="4.0"')
+    tfvars.append(f'# OCI_STARTER_PARAMS="{params["params"]}"')
     tfvars.append('')
     return tfvars
 
