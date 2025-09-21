@@ -1,3 +1,5 @@
+# Build.tf
+
 locals {
   project_dir = (var.infra_as_code=="from_resource_manager")?".":"../.."
 }
@@ -185,3 +187,8 @@ resource "null_resource" "before_destroy" {
     null_resource.after_build
   ]
 }
+
+# Creation Details (Used by upgrade.sh)
+# OCI_STARTER_CREATION_DATE="{{ now() | strftime("%Y-%m-%d-%H-%M-%S-%f") }}"
+# OCI_STARTER_VERSION="4.0"
+# OCI_STARTER_PARAMS="{{ params["params"] }}"

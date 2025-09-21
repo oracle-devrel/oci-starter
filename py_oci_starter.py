@@ -521,8 +521,6 @@ def env_param_list():
 def env_sh_contents():
     env_params = env_param_list()
     print(env_params)
-    timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
-    contents = ['#!/usr/bin/env bash','# -- Variables ---------------------------------------------']
     tfvars= ['# -- Variables ---------------------------------------------']
 
     if 'group_name' in params:
@@ -538,7 +536,6 @@ def env_sh_contents():
     fixed_tfvars = []
     for param in env_params:
         if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model"]:
-            tf_var_comment(contents, param)
             tfvars.append('')
             tf_var_comment(tfvars, param)
             tfvars.append(f'{param}="{params[param]}"')
@@ -558,10 +555,10 @@ def env_sh_contents():
         tfvars.append(s)
 
     tfvars.append('')
-    contents.append('')
-    contents.append("if [ -f $HOME/.oci_starter_profile ]; then")
-    contents.append("  . $HOME/.oci_starter_profile")
-    contents.append("fi")
+    # contents.append('')
+    # contents.append("if [ -f $HOME/.oci_starter_profile ]; then")
+    # contents.append("  . $HOME/.oci_starter_profile")
+    # contents.append("fi")
     # contents.append("else")
     # contents.append('')
     # contents.append('  # API Management')
@@ -580,11 +577,6 @@ def env_sh_contents():
     # contents.append('# export TF_VAR_lz_web_subnet_ocid="XXXX"')
     # contents.append('# export TF_VAR_lz_app_subnet_ocid="XXXX"')
     # contents.append('# export TF_VAR_lz_db_subnet_ocid="XXXX"')
-    tfvars.append('# Creation Details')
-    tfvars.append(f'# OCI_STARTER_CREATION_DATE="{timestamp}"')
-    tfvars.append(f'# OCI_STARTER_VERSION="4.0"')
-    tfvars.append(f'# OCI_STARTER_PARAMS="{params["params"]}"')
-    tfvars.append('')
     return tfvars
 
 table_comments = {
