@@ -25,6 +25,7 @@ set -o pipefail
 # Function to parse a .tfvars file and export TF_VAR_ variables
 export_terraform_tfvars() {
   # Read the file line by line, ignoring comments and empty lines
+  echo "Reading terraform.tfvars"  
   while read -r line; do
     if [[ "$line" =~ ^\s*# ]]; then
        :
@@ -51,7 +52,11 @@ export_terraform_tfvars() {
 
 # ENV.SH
 # . $PROJECT_DIR/env.sh
-export_terraform_tfvars
+if [ -f $TARGET_DIR/tf_env.sh ]; then
+  . $TARGET_DIR/tf_env.sh
+else
+  export_terraform_tfvars
+fi 
 
 # Autocomplete in bash
 _starter_completions()
@@ -144,7 +149,7 @@ if ! command -v jq &> /dev/null; then
 fi
 
 #-- PRE terraform ----------------------------------------------------------
-if [ "$OCI_STARTER_VARIABLES_SET" == "$TF_VAR_prefix" ]; then
+if [ "$OCI_STARTER_VARIABLES_SET" == "${TF_VAR_prefix}" ]; then
   echo "Variables already set"
 else
   #-- Check internet connection ---------------------------------------------

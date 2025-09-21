@@ -32,6 +32,7 @@ BASIS_DIR = "basis"
 output_dir = "output"
 zip_dir = ""
 a_group_common = []
+fixed_param = []
 
 ## functions ################################################################
 
@@ -526,44 +527,33 @@ def env_sh_contents():
 
     if 'group_name' in params:
         prefix = params["group_name"]
-        contents.append(f'export TF_VAR_group_name="{prefix}"')
         tfvars.append(f'group_name="{prefix}"')
     else:
         prefix = params["prefix"]
-    contents.append(f'export TF_VAR_prefix="{prefix}"')
-    contents.append('')
     tfvars.append('')
     tfvars.append('# '+table_comments["prefix"][0])
     tfvars.append(f'prefix="{prefix}"')
 
-    fixed_contents = []
+    global fixed_param
     fixed_tfvars = []
     for param in env_params:
         if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model"]:
             tf_var_comment(contents, param)
-            contents.append(f'export {get_tf_var(param)}="{params[param]}"')
             tfvars.append('')
             tf_var_comment(tfvars, param)
             tfvars.append(f'{param}="{params[param]}"')
         else:
-            tf_var_comment(fixed_contents, param)
-            fixed_contents.append(f'export {get_tf_var(param)}="{params[param]}"')
-
+            fixed_param.append(param)
             tf_var_comment(fixed_tfvars, param)
             fixed_tfvars.append(f'{param}="{params[param]}"')
     if params.get('compartment_ocid') == None:
-        contents.append('export TF_VAR_compartment_ocid="__TO_FILL__"')
         tfvars.append('')
         tfvars.append('# Compartment')
         tfvars.append('compartment_ocid="__TO_FILL__"')
 
-    contents.append('')
-    contents.append('# -- Fixed -------------------------------------------------')   
     tfvars.append('')   
     tfvars.append('# -- Fixed -------------------------------------------------')   
 
-    for s in fixed_contents:
-        contents.append(s)
     for s in fixed_tfvars:
         tfvars.append(s)
 
@@ -590,17 +580,12 @@ def env_sh_contents():
     # contents.append('# export TF_VAR_lz_web_subnet_ocid="XXXX"')
     # contents.append('# export TF_VAR_lz_app_subnet_ocid="XXXX"')
     # contents.append('# export TF_VAR_lz_db_subnet_ocid="XXXX"')
-    contents.append('')
-    contents.append('# CREATION DETAILS')
-    contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
-    contents.append(f'export OCI_STARTER_VERSION=4.0')
-    contents.append(f'export OCI_STARTER_PARAMS="{params["params"]}"')
     tfvars.append('# Creation Details')
     tfvars.append(f'OCI_STARTER_CREATION_DATE="{timestamp}"')
     tfvars.append(f'OCI_STARTER_VERSION="4.0"')
     tfvars.append(f'OCI_STARTER_PARAMS="{params["params"]}"')
     tfvars.append('')
-    return contents, tfvars
+    return tfvars
 
 table_comments = {
     'prefix': ['Prefix to all resources created by terraform'],
@@ -628,7 +613,7 @@ def tf_var_comment(contents, param):
 
 
 def write_env_sh():
-    env_sh, env_tfvars = env_sh_contents()
+    env_tfvars = env_sh_contents()
     # output_path = output_dir + os.sep + 'env.sh'
     # file_output(output_path, env_sh)
     # os.chmod(output_path, 0o755)
@@ -1215,6 +1200,9 @@ def jinja2_replace_template():
     template_param['env_params'].append('current_user_ocid')
     template_param['params'] = params
     template_param['comments'] = table_comments
+
+    global fixed_param
+    template_param['fixed_param'] = fixed_param
     print( template_param, flush=True )
 
     template_param['title'] = {

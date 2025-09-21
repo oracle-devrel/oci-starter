@@ -8,10 +8,31 @@ resource "null_resource" "ssh_key" {
     command = <<-EOT
     cd ${local.project_dir}
     mkdir target
+    # Create the files needed by the shell scripts
+    # Create SSH Key
     echo "${local.ssh_public_key}" > target/ssh_key_starter.pub
     echo "${local.ssh_private_key}" > target/ssh_key_starter
     chmod 600 target/ssh_key_starter.pub
     chmod 600 target/ssh_key_starter
+    
+    # Create target/tf_env.sh
+    ENV_FILE=target/tf_env.sh
+    echo "# Terraform Variables (generated file) > $ENV_FILE
+    echo "" >> $ENV_FILE
+    echo "# Terraform Variables" >> $ENV_FILE
+{%- for param in env_params %}
+{%- if param in ["license_model","db_password"] or param.endswith("_ocid") %}  
+    echo 'export TF_VAR_{{param}}="${var.{{param}}}"' >> $ENV_FILE
+{%- endif %}  
+{%- endfor %}  
+    echo "# Terraform Locals" >> $ENV_FILE
+{%- for key in terraform_locals %}
+    echo 'export {{key.upper()}}="${local.local_{{key}}}"' >> $ENV_FILE
+{%- endfor %} 
+    echo "# Fixed >> $ENV_FILE   
+{%- for param in fixed_param %}
+    echo 'export TF_VAR_{{param}}="{{ params[param] }}"' >> $ENV_FILE
+{%- endfor %} 
     EOT
   }
   triggers = {
@@ -27,12 +48,12 @@ resource "null_resource" "build_deploy" {
         export {{key.upper()}}="${local.local_{{key}}}"
 {%- endfor %}     
         cd ${local.project_dir}
+        export CALLED_BY_TERRAFORM="true"
+        . ./starter.sh env        
         # pwd
         # ls -al target
         # cat target/terraform.tfstate
         # export
-        export CALLED_BY_TERRAFORM="true"
-        . ./starter.sh env
         # Run config command on the DB directly (ex RAC)
 {%- if db_subtype == "rac" %}
         src/db/deploy_rac.sh
