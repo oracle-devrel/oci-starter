@@ -2,7 +2,7 @@ locals {
   project_dir = (var.infra_as_code=="from_resource_manager")?".":"../.."
 }
 
-# SSH Keys
+# SSH Keys + tf_env.sh
 resource "null_resource" "ssh_key" {
   provisioner "local-exec" {
     command = <<-EOT
@@ -29,7 +29,7 @@ resource "null_resource" "ssh_key" {
 {%- for key in terraform_locals %}
     echo 'export {{key.upper()}}="${local.local_{{key}}}"' >> $ENV_FILE
 {%- endfor %} 
-    echo "# Fixed >> $ENV_FILE   
+    echo "# Fixed" >> $ENV_FILE   
 {%- for param in fixed_param %}
     echo 'export TF_VAR_{{param}}="{{ params[param] }}"' >> $ENV_FILE
 {%- endfor %} 
@@ -44,9 +44,6 @@ resource "null_resource" "ssh_key" {
 resource "null_resource" "build_deploy" {
   provisioner "local-exec" {
     command = <<-EOT
-{%- for key in terraform_locals %}
-        export {{key.upper()}}="${local.local_{{key}}}"
-{%- endfor %}     
         cd ${local.project_dir}
         export CALLED_BY_TERRAFORM="true"
         . ./starter.sh env        
@@ -141,10 +138,8 @@ data "external" "env_part2" {
 resource "null_resource" "after_build" {
   provisioner "local-exec" {
     command = <<-EOT
-{%- for key in terraform_locals %}
-        export {{key.upper()}}="${local.local_{{key}}}"
-{%- endfor %}     
         cd ${local.project_dir}    
+        export CALLED_BY_TERRAFORM="true"        
         . ./starter.sh env    
         if [ "$TF_VAR_tls" != "" ]; then
             title "Certificate - Post Deploy"
