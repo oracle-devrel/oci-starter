@@ -1146,11 +1146,6 @@ def jinja2_find_in_terraform( dir ):
 
 #----------------------------------------------------------------------------
 
-def strftime(value, format='%Y-%m-%d'):
-    return value.strftime(format)
-
-#----------------------------------------------------------------------------
-
 def jinja2_replace_template_prefix( template_param, prefix ):
     for subdir, dirs, files in os.walk(output_dir):
         for filename in files:
@@ -1161,7 +1156,6 @@ def jinja2_replace_template_prefix( template_param, prefix ):
                     print(f"J2 - Skipping - destination file already exists: {output_file_path}")
                 else:
                     environment = Environment(loader=FileSystemLoader([subdir,"option/src/j2_macro"]))
-                    environment.filters['strftime'] = strftime
                     template = environment.get_template(filename)
                     db_param = jinja2_db_params.get( params.get('db_family') )
                     content = template.render( template_param )
@@ -1198,6 +1192,7 @@ def jinja2_replace_template():
     template_param['env_params'].append('current_user_ocid')
     template_param['params'] = params
     template_param['comments'] = table_comments
+    template_param['create_datetime'] = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
 
     global fixed_param
     template_param['fixed_param'] = fixed_param
