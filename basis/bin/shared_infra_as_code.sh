@@ -155,11 +155,6 @@ resource_manager_create_or_update() {
     find . -path '*/target' -prune -o -exec cp -r --parents {} target/stack \;
   fi
   cd target/stack
-  # Add infra_as_code in terraform.tfvars
-  if ! grep -q '="from_resource_manager"' terraform.tfvars; then
-    echo >> terraform.tfvars
-    echo 'infra_as_code="from_resource_manager"' >> terraform.tfvars
-  fi
   # Move src/terraform to .
   mv src/terraform/* .
   rm terraform_local.tf
@@ -167,6 +162,11 @@ resource_manager_create_or_update() {
   if [ "$DISTRIBUTE" == "YES" ]; then
     # Comment all lines before -- FIXED
     sed -i '1,/-- Fixed/{/-- Fixed/!s/^[^#]/#&/}' terraform.tfvars
+  fi
+  # Add infra_as_code in terraform.tfvars
+  if ! grep -q '="from_resource_manager"' terraform.tfvars; then
+    echo >> terraform.tfvars
+    echo 'infra_as_code="from_resource_manager"' >> terraform.tfvars
   fi
   # Create zip
   zip -r $ZIP_FILE_PATH * -x "target/*" -x "$TERRAFORM_DIR/.terraform/*"
