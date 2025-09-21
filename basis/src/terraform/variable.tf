@@ -122,11 +122,10 @@ locals {
 }
 
 output "ssh-key-public" {
-  value = var.ssh_public_key != null ? "Created" : "-"
+  value = var.ssh_public_key != null ? "-" : tls_private_key.ssh_key[0].public_key_openssh
 }
 
 output "ssh-key-private" {
-  value = var.ssh_public_key != null ? "Created" : "-"
-  sensitive = true 
+  value = var.ssh_public_key != null ? "-" : "See Stack / Stack Resources / tls_private_key.ssh_key.private_key_pem"
 }
 
