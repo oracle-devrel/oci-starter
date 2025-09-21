@@ -3,7 +3,7 @@ locals {
 }
 
 # SSH Keys + tf_env.sh
-resource "null_resource" "ssh_key" {
+resource "null_resource" "tf_env" {
   provisioner "local-exec" {
     command = <<-EOT
     cd ${local.project_dir}
@@ -111,7 +111,7 @@ resource "null_resource" "build_deploy" {
 {%- for key in terraform_resources %}
     {{key}},
 {%- endfor %}  
-    null_resource.ssh_key  
+    null_resource.tf_env  
   ]
 
   triggers = {

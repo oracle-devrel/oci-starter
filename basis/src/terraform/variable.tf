@@ -31,7 +31,8 @@ variable db_password{ default=null }
 
 # Compute Instance size
 variable instance_shape { 
-  default = "VM.Standard.x86.Generic" 
+  # default = "VM.Standard.x86.Generic" 
+  default = "VM.Standard.E5.Flex" 
   nullable = false
 }
 variable instance_ocpus { 
