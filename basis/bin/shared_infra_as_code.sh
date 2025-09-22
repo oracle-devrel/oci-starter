@@ -199,6 +199,8 @@ resource_manager_create_or_update() {
   else 
     if [ "$DISTRIBUTE" == "YES" ]; then
         STACK_ID=$(oci resource-manager stack create --compartment-id $TF_VAR_compartment_ocid --config-source $ZIP_FILE_PATH --display-name $TF_VAR_prefix-resource-manager --query 'data.id' --raw-output)
+        # Add tenancy_ocid and region since they are not detected by OCI CLI
+        oci resource-manager stack update --stack-id $STACK_ID --variables "{\"tenancy_ocid\":\"$TF_VAR_tenancy_ocid\",\"region\":\"$TF_VAR_region\"}" --force
     else 
         STACK_ID=$(oci resource-manager stack create --compartment-id $TF_VAR_compartment_ocid --config-source $ZIP_FILE_PATH --display-name $TF_VAR_prefix-resource-manager --variables file://$VAR_FILE_PATH --query 'data.id' --raw-output)
     fi
