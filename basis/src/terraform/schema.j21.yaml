@@ -15,7 +15,7 @@ variableGroups:
   variables:
   - prefix
 {%- for param in env_params %}
-{%- if ( param in ["license_model","db_password"] or param.endswith("_ocid") ) and param not in [ "current_user_ocid"] %}  
+{%- if ( param in ["license_model","db_password"] or param.endswith("_ocid") ) and param not in [ "current_user_ocid", "tenancy_ocid" ] %}  
   - {{ param }}
 {%- endif %}  
 {%- endfor %}
@@ -24,7 +24,7 @@ variableGroups:
   visible: true  
   variables:
 {%- for param in env_params %}
-{%- if ( param in ["prefix", "license_model","db_password"] or param.endswith("_ocid") ) and param not in [ "current_user_ocid"] %}  
+{%- if ( param in ["prefix", "license_model","db_password"] or param.endswith("_ocid") ) and param not in [ "current_user_ocid", "tenancy_ocid" ] %}  
 {%- else %}  
   - {{ param }}
 {%- endif %} 
