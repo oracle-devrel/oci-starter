@@ -132,9 +132,10 @@ locals {
   
   # Create a list of shapes
   shape_names = [for shape in data.oci_core_shapes.shapes.shapes : shape.name]
-  # Sort the list of 
+  # Reverse Sort the list of shapes (Goal is to have the latest on the top) 
   reverse_sorted_shape_names = reverse(sort(local.shape_names))
   local_shape = local.reverse_sorted_shape_names[0]
+
   # username = var.username != null ? var.username : oci_identity_user.user[0].name
   # ocir_username = join( "/", [ coalesce(local.ocir_namespace, "missing_privilege"), local.username ])
 }
@@ -144,5 +145,5 @@ output "ocir_host" {
 }
 
 output "shape" {
-  value = local.shape
+  value = local.local_shape
 }
