@@ -207,7 +207,7 @@ resource_manager_create_or_update() {
   fi
   if [ "$DISTRIBUTE" == "YES" ]; then
     # Add tenancy_ocid and region since they are not detected by OCI CLI
-    oci resource-manager stack update --stack-id $STACK_ID --variables "{\"tenancy_ocid\":\"$TF_VAR_tenancy_ocid\",\"region\":\"$TF_VAR_region\"}" --force
+    oci resource-manager stack update --stack-id $STACK_ID --variables "{\"tenancy_ocid\":\"$TF_VAR_tenancy_ocid\",\"compartment_ocid\":\"$TF_VAR_compartment_ocid\",\"region\":\"$TF_VAR_region\"}" --force
   fi
 }
 
