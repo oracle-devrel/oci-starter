@@ -66,8 +66,8 @@ locals {
   regex_ampere_dev_linux= "^([a-zA-z]+)-([a-zA-z]+)-([a-zA-z]+)-([a-zA-z]+)-([\\.0-9]+)-aarch64-([\\.0-9-]+)$"
   regex_dev_linux = (var.instance_shape=="VM.Standard.A1.Flex")?local.regex_ampere_dev_linux:local.regex_amd_dev_linux
 
-  regex_shape_amd = "^VM.Standard.E([.*))Flex$" 
-  regex_shape_ampere = "^VM.Standard.A([.*))Flex$" 
+  regex_shape_amd = "^VM.Standard.E.*Flex$" 
+  regex_shape_ampere = "^VM.Standard.A.*Flex$" 
   regex_shape = (var.instance_shape=="VM.Standard.A1.Flex")?local.regex_shape_ampere:local.regex_shape_amd
 }
 
@@ -102,9 +102,9 @@ data "oci_identity_compartment" "compartment" {
 # Instance shape
 data "oci_core_shapes" "shapes" {
   compartment_id = var.compartment_ocid
-  availability_domain = var.availability_domain_number
+  # availability_domain = var.availability_domain_number
   filter {
-    name = "shape"
+    name = "name"
     values = [local.regex_shape]
     regex = true
   }  
@@ -129,7 +129,12 @@ resource "random_string" "id" {
 locals {
   local_ocir_host = join("", [lower(lookup(data.oci_identity_regions.current_region.regions[0], "key")), ".ocir.io"])
   ocir_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace")
-  local_shape = data.oci_core_shapes.shapes
+  
+  # Create a list of shapes
+  shape_names = [for shape in data.oci_core_shapes.shapes.shapes : shape.name]
+  # Sort the list of 
+  reverse_sorted_shape_names = reverse(sort(local.shape_names))
+  local_shape = local.reverse_sorted_shape_names[0]
   # username = var.username != null ? var.username : oci_identity_user.user[0].name
   # ocir_username = join( "/", [ coalesce(local.ocir_namespace, "missing_privilege"), local.username ])
 }
@@ -139,5 +144,5 @@ output "ocir_host" {
 }
 
 output "shape" {
-  value = local.local_shape
+  value = local.shape
 }

@@ -27,7 +27,7 @@ resource "oci_core_instance_configuration" "starter_instance_configuration" {
         availability_domain = data.oci_identity_availability_domain.ad.name
         compartment_id      = local.lz_app_cmp_ocid
         display_name        = "${var.prefix}-launch-details"
-        shape               = var.instance_shape
+        shape               = local.local_shape
 
         shape_config {
             ocpus         = var.instance_ocpus

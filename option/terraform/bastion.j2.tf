@@ -59,7 +59,7 @@ resource "oci_core_instance" "starter_bastion" {
   availability_domain = data.oci_identity_availability_domain.ad.name
   compartment_id      = local.lz_web_cmp_ocid
   display_name        = "${var.prefix}-bastion"
-  shape               = var.instance_shape
+  shape               = local.local_shape
 
   shape_config {
     ocpus         = var.instance_ocpus
