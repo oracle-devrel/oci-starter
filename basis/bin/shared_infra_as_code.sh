@@ -191,22 +191,24 @@ resource_manager_create_or_update() {
     fi
     resource_manager_get_stack
     if [ "$DISTRIBUTE" == "YES" ]; then
-        STACK_ID=$(oci resource-manager stack update --stack-id $STACK_ID --config-source $ZIP_FILE_PATH --force --query 'data.id' --raw-output)
+      STACK_ID=$(oci resource-manager stack update --stack-id $STACK_ID --config-source $ZIP_FILE_PATH --force --query 'data.id' --raw-output)
     else 
-     	STACK_ID=$(oci resource-manager stack update --stack-id $STACK_ID --config-source $ZIP_FILE_PATH --variables file://$VAR_FILE_PATH --force --query 'data.id' --raw-output)
+   	  STACK_ID=$(oci resource-manager stack update --stack-id $STACK_ID --config-source $ZIP_FILE_PATH --variables file://$VAR_FILE_PATH --force --query 'data.id' --raw-output)
     fi
     rs_echo "Updated stack id: ${STACK_ID}"
   else 
     if [ "$DISTRIBUTE" == "YES" ]; then
-        STACK_ID=$(oci resource-manager stack create --compartment-id $TF_VAR_compartment_ocid --config-source $ZIP_FILE_PATH --display-name $TF_VAR_prefix-resource-manager --query 'data.id' --raw-output)
-        # Add tenancy_ocid and region since they are not detected by OCI CLI
-        oci resource-manager stack update --stack-id $STACK_ID --variables "{\"tenancy_ocid\":\"$TF_VAR_tenancy_ocid\",\"region\":\"$TF_VAR_region\"}" --force
+      STACK_ID=$(oci resource-manager stack create --compartment-id $TF_VAR_compartment_ocid --config-source $ZIP_FILE_PATH --display-name $TF_VAR_prefix-resource-manager --query 'data.id' --raw-output)
     else 
-        STACK_ID=$(oci resource-manager stack create --compartment-id $TF_VAR_compartment_ocid --config-source $ZIP_FILE_PATH --display-name $TF_VAR_prefix-resource-manager --variables file://$VAR_FILE_PATH --query 'data.id' --raw-output)
+      STACK_ID=$(oci resource-manager stack create --compartment-id $TF_VAR_compartment_ocid --config-source $ZIP_FILE_PATH --display-name $TF_VAR_prefix-resource-manager --variables file://$VAR_FILE_PATH --query 'data.id' --raw-output)
     fi
     rs_echo "Created stack id: ${STACK_ID}"
     echo "export STACK_ID=$STACK_ID" > $TARGET_DIR/resource_manager_stackid
-  fi  
+  fi
+  if [ "$DISTRIBUTE" == "YES" ]; then
+    # Add tenancy_ocid and region since they are not detected by OCI CLI
+    oci resource-manager stack update --stack-id $STACK_ID --variables "{\"tenancy_ocid\":\"$TF_VAR_tenancy_ocid\",\"region\":\"$TF_VAR_region\"}" --force
+  fi
 }
 
 resource_manager_plan() {
