@@ -180,5 +180,5 @@ output "ocir_host" {
 }
 
 output "shape" {
-  value = local.shape
+  value = local.local_shape
 }
