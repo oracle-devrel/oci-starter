@@ -11,10 +11,6 @@ terraform {
   }
 }
 
-data "oci_identity_availability_domains" "ADs" {
-  compartment_id = var.tenancy_ocid
-}
-
 data "oci_identity_regions" "current_region" {
   filter {
     name   = "name"
@@ -131,28 +127,12 @@ locals {
   filtered_shapes = flatten([for ad in data.oci_core_shapes.filtered_shapes : [ for shape in ad.shapes: shape.name ] ])
 
   # First AD with the shape
-  availability_domains_name_with_shape = local.available_domains[0]
+  availability_domain_name = local.available_domains[0]
 
   # Reverse Sort the list of shapes (Goal is to have the latest on the top) 
   reverse_sorted_shape_names = reverse(sort(local.filtered_shapes))
   shape = local.reverse_sorted_shape_names[0]  
 }
-
-data "oci_identity_availability_domains" "ad_shape" {
-  compartment_id = var.tenancy_ocid
-  # id  = availability_domains_name_with_shape
-  filter {
-    name   = "name"
-    values = [var.availability_domains_name_with_shape]
-    regex  = false
-  }  
-}
-
-data "oci_identity_availability_domain" "ad" {
-  compartment_id = var.tenancy_ocid
-  id  = oci.oci_identity_availability_domains.ad_shape[0].id
-}
-
 
 # Random ID
 resource "random_string" "id" {
