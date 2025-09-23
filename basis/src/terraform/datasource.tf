@@ -136,7 +136,7 @@ locals {
   shape_names = [for shape in local.filtered_shapes : shape.name]
   # Reverse Sort the list of shapes (Goal is to have the latest on the top) 
   reverse_sorted_shape_names = reverse(sort(local.shape_names))
-  shape = local.reverse_sorted_shape_names[0]  
+  local_shape = local.reverse_sorted_shape_names[0]  
 }
 
 # 4. Output the final list
