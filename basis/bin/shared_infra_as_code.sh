@@ -56,7 +56,7 @@ infra_as_code_precheck() {
 }
 
 infra_as_code_apply() {
-  echo "infra_as_code_apply: $CALLED_BY_TERRAFORM"  
+  title "Infra_as_code_apply - $CALLED_BY_TERRAFORM"  
   cd $TERRAFORM_DIR  
   pwd
   if [ "$CALLED_BY_TERRAFORM" != "" ]; then 
