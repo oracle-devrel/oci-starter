@@ -119,7 +119,7 @@ data "oci_core_shapes" "filtered_shapes" {
 
   filter {
     name   = "name"
-    values = [var.regex_shape]
+    values = [local.regex_shape]
   }
 }
 
