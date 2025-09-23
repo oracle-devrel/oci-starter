@@ -130,7 +130,7 @@ locals {
   filtered_shapes = [for ad in data.oci_core_shapes.filtered_shapes : ad.shapes if length(ad.shapes) > 0]
   
   # First AD with the shape
-  availability_domains_with_shape = available_domains[0]
+  availability_domains_with_shape = local.available_domains[0]
 
   # Create a list of shapes
   shape_names = [for shape in local.filtered_shapes : shape.name]
@@ -181,8 +181,4 @@ output "ocir_host" {
 
 output "shape" {
   value = local.shape
-}
-
-output "availability_domains_with_shape" {
-  value = local.availability_domains_with_shape
 }
