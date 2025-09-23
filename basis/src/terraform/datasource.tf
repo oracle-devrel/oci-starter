@@ -62,9 +62,8 @@ locals {
   regex_ampere_dev_linux= "^([a-zA-z]+)-([a-zA-z]+)-([a-zA-z]+)-([a-zA-z]+)-([\\.0-9]+)-aarch64-([\\.0-9-]+)$"
   regex_dev_linux = (var.instance_shape=="VM.Standard.A1.Flex")?local.regex_ampere_dev_linux:local.regex_amd_dev_linux
 
-  regex_shape_amd = "^VM.Standard.E.*Flex$" 
-  regex_shape_ampere = "^VM.Standard.A.*Flex$" 
-  regex_shape_arch = (var.instance_shape=="VM.Standard.A1.Flex")?local.regex_shape_ampere:local.regex_shape_amd
+  regex_shape_amd = (var.instance_shape=="VM.Standard.x86.Generic")?"^VM.Standard.E.*Flex$":var.instance_shape
+  regex_shape_ampere = (var.instance_shape=="VM.Standard.A1.Flex")?"^VM.Standard.A.*Flex$" :local.regex_shape_amd
   regex_shape = (var.instance_shape=="VM.Standard.E2.1.Micro")?var.instance_shape:local.regex_shape_arch
 }
 
