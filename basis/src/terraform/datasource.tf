@@ -170,5 +170,5 @@ output "shape" {
 }
 
 output "availability_domains_name_with_shape" {
-  value       = local.availability_domains_name_with_shape
+  value       = local.availability_domain_name
 }

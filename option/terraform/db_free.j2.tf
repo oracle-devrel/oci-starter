@@ -10,7 +10,7 @@ resource "oci_core_instance" "starter_db_free" {
   availability_domain = local.availability_domain_name
   compartment_id      = local.lz_db_cmp_ocid
   display_name        = "${var.prefix}-db-free"
-  shape               = local.local_shape
+  shape               = local.shape
 
   shape_config {
     ocpus         = var.instance_ocpus

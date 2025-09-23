@@ -11,7 +11,7 @@ resource "oci_core_instance" "starter_compute" {
   availability_domain = local.availability_domain_name
   compartment_id      = local.lz_app_cmp_ocid
   display_name        = "${var.prefix}-compute"
-  shape               = local.local_shape
+  shape               = local.shape
 
   shape_config {
     ocpus         = var.instance_ocpus
