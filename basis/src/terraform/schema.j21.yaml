@@ -83,6 +83,7 @@ variables:
 # Terraform Variables
   show_optional:
     type: boolean
+    default: false
 {%- for param in terraform_variables %}
 {%- if param not in env_params %}
   {{ param }}:
