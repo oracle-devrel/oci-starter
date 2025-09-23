@@ -83,6 +83,8 @@ variables:
 # Terraform Variables
   show_optional:
     type: boolean
+    title: Advanced
+    description: Show Advanced Parameters
     default: false
 {%- for param in terraform_variables %}
 {%- if param not in env_params %}
