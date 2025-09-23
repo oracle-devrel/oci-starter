@@ -119,6 +119,7 @@ data "oci_core_shapes" "filtered_shapes" {
 
   filter {
     name   = "name"
+    regex  = true
     values = [local.regex_shape]
   }
 }
@@ -133,7 +134,8 @@ locals {
   availability_domains_with_shape = local.available_domains[0]
 
   # Create a list of shapes
-  shape_names = [for shape in local.filtered_shapes : shape.name]
+  # shape_names = [for shape in local.filtered_shapes : shape.name]
+  shape_names = toset(local.filtered_shapes[*].name)
   # Reverse Sort the list of shapes (Goal is to have the latest on the top) 
   reverse_sorted_shape_names = reverse(sort(local.shape_names))
   local_shape = local.reverse_sorted_shape_names[0]  
@@ -184,4 +186,12 @@ output "ocir_host" {
 
 output "shape" {
   value = local.local_shape
+}
+
+output "ads" {
+  value=data.oci_identity_availability_domains.ads
+}
+
+output "filtered_shapes" {
+  value=data.oci_core_shapes.filtered_shapes
 }
