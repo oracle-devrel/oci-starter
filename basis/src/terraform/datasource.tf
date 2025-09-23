@@ -128,30 +128,31 @@ data "oci_core_shapes" "filtered_shapes" {
 locals {
   # Get an available_domains with at least one shape 
   available_domains = [for ad in data.oci_core_shapes.filtered_shapes : ad.availability_domain if length(ad.shapes) > 0]
-  filtered_shapes = [for ad in data.oci_core_shapes.filtered_shapes : ad.shapes if length(ad.shapes) > 0]
-  
+  filtered_shapes = flatten([for ad in data.oci_core_shapes.filtered_shapes : [ for shape in ad.shapes: shape.name ] ])
+
   # First AD with the shape
-  availability_domains_with_shape = local.available_domains[0]
+  availability_domains_name_with_shape = local.available_domains[0]
 
-  # Create a list of shapes
-  # shape_names = [for shape in local.filtered_shapes : shape.name]
-  shape_names = toset(local.filtered_shapes[*].name)
   # Reverse Sort the list of shapes (Goal is to have the latest on the top) 
-  reverse_sorted_shape_names = reverse(sort(local.shape_names))
-  local_shape = local.reverse_sorted_shape_names[0]  
+  reverse_sorted_shape_names = reverse(sort(local.filtered_shapes))
+  shape = local.reverse_sorted_shape_names[0]  
 }
 
-# 4. Output the final list
-output "availability_domains_with_shape" {
-  description = "A list of Availability Domains where the shape is available."
-  value       = local.available_domains
+data "oci_identity_availability_domains" "ad_shape" {
+  compartment_id = var.tenancy_ocid
+  # id  = availability_domains_name_with_shape
+  filter {
+    name   = "name"
+    values = [var.availability_domains_name_with_shape]
+    regex  = false
+  }  
 }
 
-## 5. Availability domain
 data "oci_identity_availability_domain" "ad" {
   compartment_id = var.tenancy_ocid
-  ad_number      = local.availability_domains_with_shape.ad_number
+  id  = oci.oci_identity_availability_domains.ad_shape[0].id
 }
+
 
 # Random ID
 resource "random_string" "id" {
@@ -185,13 +186,9 @@ output "ocir_host" {
 }
 
 output "shape" {
-  value = local.local_shape
+  value = local.shape
 }
 
-output "ads" {
-  value=data.oci_identity_availability_domains.ads
-}
-
-output "filtered_shapes" {
-  value=data.oci_core_shapes.filtered_shapes
+output "availability_domains_name_with_shape" {
+  value       = local.availability_domains_name_with_shape
 }

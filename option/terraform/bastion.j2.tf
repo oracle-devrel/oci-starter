@@ -56,10 +56,10 @@ output "bastion_command" {
 
 resource "oci_core_instance" "starter_bastion" {
 
-  availability_domain = data.oci_identity_availability_domain.ad.name
+  availability_domain = local.availability_domain_name
   compartment_id      = local.lz_web_cmp_ocid
   display_name        = "${var.prefix}-bastion"
-  shape               = local.local_shape
+  shape               = local.shape
 
   shape_config {
     ocpus         = var.instance_ocpus

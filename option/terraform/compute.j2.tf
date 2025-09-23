@@ -8,7 +8,7 @@ data "oci_core_instance" "starter_compute" {
 {%- else %}   
 resource "oci_core_instance" "starter_compute" {
 
-  availability_domain = data.oci_identity_availability_domain.ad.name
+  availability_domain = local.availability_domain_name
   compartment_id      = local.lz_app_cmp_ocid
   display_name        = "${var.prefix}-compute"
   shape               = local.local_shape

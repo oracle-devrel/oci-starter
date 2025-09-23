@@ -24,7 +24,7 @@ resource "oci_core_instance_configuration" "starter_instance_configuration" {
     instance_type = "compute"
 
     launch_details {
-        availability_domain = data.oci_identity_availability_domain.ad.name
+        availability_domain = local.availability_domain_name
         compartment_id      = local.lz_app_cmp_ocid
         display_name        = "${var.prefix}-launch-details"
         shape               = local.local_shape
@@ -81,7 +81,7 @@ resource "oci_core_instance_pool" "starter_instance_pool" {
   instance_hostname_formatter = "${var.prefix}-pool$${launchCount}"
 
   placement_configurations {
-    availability_domain = data.oci_identity_availability_domain.ad.name
+    availability_domain = local.availability_domain_name
     primary_subnet_id = data.oci_core_subnet.starter_app_subnet.id
   }
 

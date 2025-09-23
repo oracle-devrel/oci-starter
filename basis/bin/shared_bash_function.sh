@@ -211,7 +211,7 @@ find_availabilty_domain_for_shape() {
   for ad in `oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r ".data[].name"` 
   do
     echo "Checking in $ad"
-    TEST=`oci compute shape list --compartment-id=$TF_VAR_tenancy_ocid --availability-domain $ad | jq ".data[] | select( .shape==\"$1\" )"`
+    TEST=`oci compute shape list --compartment-id=$TF_VAR_compartment_ocid --availability-domain $ad | jq ".data[] | select( .shape==\"$1\" )"`
     if [[ "$TEST" != "" ]]; then
         echo "Found in $ad"
         export TF_VAR_availability_domain_number=$i
@@ -233,7 +233,7 @@ guess_available_shape() {
     i=1
     for ad in `oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r ".data[].name"` 
     do
-        oci compute shape list --compartment-id=$TF_VAR_tenancy_ocid --availability-domain $ad > $TARGET_DIR/shapes.json
+        oci compute shape list --compartment-id=$TF_VAR_compartment_ocid --availability-domain $ad > $TARGET_DIR/shapes.json
         for s in VM.Standard.E6.Flex VM.Standard.E5.Flex VM.Standard.E4.Flex; do
         TEST=`cat $TARGET_DIR/shapes.json | jq ".data[] | select( .shape==\"$s\" )"`
         if [[ "$TEST" != "" ]]; then

@@ -7,7 +7,7 @@ locals {
 {%- else %}  
 resource "oci_core_instance" "starter_db_free" {
 
-  availability_domain = data.oci_identity_availability_domain.ad.name
+  availability_domain = local.availability_domain_name
   compartment_id      = local.lz_db_cmp_ocid
   display_name        = "${var.prefix}-db-free"
   shape               = local.local_shape

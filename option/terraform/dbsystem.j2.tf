@@ -36,7 +36,7 @@ resource "null_resource" "sleep_before_db_system" {
 
 resource "oci_database_db_system" "starter_dbsystem" {
   depends_on = [ null_resource.sleep_before_db_system ]
-  availability_domain = data.oci_identity_availability_domain.ad.name
+  availability_domain = local.availability_domain_name
   compartment_id      = local.lz_db_cmp_ocid
   database_edition    = "##db_edition##"
 
