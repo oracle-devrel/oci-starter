@@ -68,7 +68,8 @@ locals {
 
   regex_shape_amd = "^VM.Standard.E.*Flex$" 
   regex_shape_ampere = "^VM.Standard.A.*Flex$" 
-  regex_shape = (var.instance_shape=="VM.Standard.A1.Flex")?local.regex_shape_ampere:local.regex_shape_amd
+  regex_shape_arch = (var.instance_shape=="VM.Standard.A1.Flex")?local.regex_shape_ampere:local.regex_shape_amd
+  regex_shape = (var.instance_shape=="VM.Standard.E2.1.Micro")?var.instance_shape:local.regex_shape_arch
 }
 
 # Get latest Oracle Linux image 
@@ -88,12 +89,6 @@ data "oci_objectstorage_namespace" "ns" {
   compartment_id = var.compartment_ocid
 }
 
-## Availability domains
-data "oci_identity_availability_domain" "ad" {
-  compartment_id = var.tenancy_ocid
-  ad_number      = var.availability_domain_number
-}
-
 ## Compartment
 data "oci_identity_compartment" "compartment" {
   id = var.compartment_ocid
@@ -108,6 +103,52 @@ data "oci_core_shapes" "shapes" {
     values = [local.regex_shape]
     regex = true
   }  
+}
+
+# 1. Retrieve all Availability Domains
+data "oci_identity_availability_domains" "ads" {
+  compartment_id = var.tenancy_ocid
+}
+
+# 2. Check for the specific shape in each Availability Domain
+data "oci_core_shapes" "filtered_shapes" {
+  for_each = toset(data.oci_identity_availability_domains.ads.availability_domains[*].name)
+
+  compartment_id = var.compartment_ocid
+  availability_domain = each.value
+
+  filter {
+    name   = "name"
+    values = [var.regex_shape]
+  }
+}
+
+# 3. Create a local list of domains where the shape is available
+locals {
+  # Get an available_domains with at least one shape 
+  available_domains = [for ad in data.oci_core_shapes.filtered_shapes : ad.availability_domain if length(ad.shapes) > 0]
+  filtered_shapes = [for ad in data.oci_core_shapes.filtered_shapes : ad.shapes if length(ad.shapes) > 0]
+  
+  # First AD with the shape
+  availability_domains_with_shape = available_domains[0]
+
+  # Create a list of shapes
+  shape_names = [for shape in local.filtered_shapes : shape.name]
+  # Reverse Sort the list of shapes (Goal is to have the latest on the top) 
+  reverse_sorted_shape_names = reverse(sort(local.shape_names))
+  shape = local.reverse_sorted_shape_names[0]  
+}
+
+# 4. Output the final list
+output "availability_domains_with_shape" {
+  description = "A list of Availability Domains where the shape is available."
+  value       = local.available_domains
+}
+
+## 5. Availability domain
+data "oci_identity_availability_domain" "ad" {
+  compartment_id = var.tenancy_ocid
+  ad_number      = local.availability_domains_with_shape.ad_number
 }
 
 # Random ID
@@ -130,12 +171,6 @@ locals {
   local_ocir_host = join("", [lower(lookup(data.oci_identity_regions.current_region.regions[0], "key")), ".ocir.io"])
   ocir_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace")
   
-  # Create a list of shapes
-  shape_names = [for shape in data.oci_core_shapes.shapes.shapes : shape.name]
-  # Reverse Sort the list of shapes (Goal is to have the latest on the top) 
-  reverse_sorted_shape_names = reverse(sort(local.shape_names))
-  local_shape = local.reverse_sorted_shape_names[0]
-
   # username = var.username != null ? var.username : oci_identity_user.user[0].name
   # ocir_username = join( "/", [ coalesce(local.ocir_namespace, "missing_privilege"), local.username ])
 }
@@ -145,5 +180,9 @@ output "ocir_host" {
 }
 
 output "shape" {
-  value = local.local_shape
+  value = local.shape
+}
+
+output "availability_domains_with_shape" {
+  value = local.availability_domains_with_shape
 }

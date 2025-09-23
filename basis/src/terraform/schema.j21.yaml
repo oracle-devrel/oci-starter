@@ -51,7 +51,7 @@ variables:
 # Env Params
 {%- for param in env_params %}
   {{ param }}:
-    {%- if param in ["compartment_ocid"] %}
+    {%- if param in ["compartment_ocid", "lz_app_cmp_ocid", "lz_db_cmp_ocid", "lz_network_cmp_ocid", "lz_security_cmp_ocid", "lz_serv_cmp_ocid", "lz_web_cmp_ocid"] %}
     type: oci:identity:compartment:id
     {%- elif param in ["db_password"] %}
     type: password
