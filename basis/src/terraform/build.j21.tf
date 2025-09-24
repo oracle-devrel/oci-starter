@@ -171,6 +171,11 @@ resource "null_resource" "after_build" {
   }    
 }
 
+output "done" {
+    value = file( "${local.project_dir}/target/done.txt" )
+    depends_on = [ null_resource.after_build ]
+}
+
 # BEFORE_DESTROY
 resource "null_resource" "before_destroy" {
   provisioner "local-exec" {
