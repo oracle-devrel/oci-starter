@@ -9,13 +9,14 @@ get_ui_url
 echo 
 echo "Build done"
 
-append_done () {
-  echo $1 >> $TARGET_DIR/done.txt
+FILE_DONE=$TARGET_DIR/done.txt
+append_done() {
+  echo "$1" >> $FILE_DONE
 }
 
 # Do not show the Done URLs if after_build.sh exists 
 if [ ! -f $PROJECT_DIR/src/after_build.sh ] && [ "$UI_URL" != "" ]; then
-  echo "URLs" > $TARGET_DIR/done.txt
+  echo "URLs" > $FILE_DONE
   if [ "$TF_VAR_ui_type" != "api" ]; then
     append_done "- User Interface: $UI_URL/"
   fi  
@@ -26,7 +27,7 @@ if [ ! -f $PROJECT_DIR/src/after_build.sh ] && [ "$UI_URL" != "" ]; then
     if [ -f  $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml ]; then
       # - does not work anymore - python3 $BIN_DIR/openapi_list.py $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml $UI_URL
       # Show the list of paths in the openapi_spec.yaml 
-      append_done `grep "^[[:space:]]*/.*:" $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml | sed "s#[[:space:]]*##" | sed "s/://" | sed  "s#^#- Rest API: $UI_URL#"`
+      grep "^[[:space:]]*/.*:" $PROJECT_DIR/src/$APP_DIR/openapi_spec.yaml | sed "s#[[:space:]]*##" | sed "s/://" | sed  "s#^#- Rest API: $UI_URL#" >> $FILE_DONE
     fi  
     # echo - Rest API: $UI_URL/$APP_DIR/dept
     # echo - Rest API: $UI_URL/$APP_DIR/info
@@ -52,5 +53,5 @@ if [ ! -f $PROJECT_DIR/src/after_build.sh ] && [ "$UI_URL" != "" ]; then
     append_done "$UI_URL/ords/r/apex_app/apex_app/"
     append_done "  User: APEX_APP / $TF_VAR_db_password"
   fi
-  cat $TARGET_DIR/done.txt
+  cat $FILE_DONE
 fi
