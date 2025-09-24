@@ -171,9 +171,16 @@ resource "null_resource" "after_build" {
   }    
 }
 
+data "local_file" "done_txt" {
+  filename = "${local.project_dir}/target/done.txt"
+  depends_on = [
+    null_resource.after_build
+  ]
+}
+
+# OUTPUT done.txt
 output "done" {
-    value = file( "${local.project_dir}/target/done.txt" )
-    depends_on = [ null_resource.after_build ]
+    value = data.local_file.done_txt.content
 }
 
 # BEFORE_DESTROY
