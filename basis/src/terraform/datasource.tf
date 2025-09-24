@@ -36,10 +36,6 @@ locals {
   local_idcs_url = try( (var.idcs_url!=null)?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url, "" )
 }
 
-output "idcs_url" {
-  value = local.local_idcs_url
-}
-
 # OCI Services
 ## Available Services
 data "oci_core_services" "all_services" {
@@ -130,6 +126,10 @@ locals {
   # Reverse Sort the list of shapes (Goal is to have the latest on the top) 
   reverse_sorted_shape_names = reverse(sort(local.filtered_shapes))
   shape = local.reverse_sorted_shape_names[0]  
+
+  # OCIR
+  local_ocir_host = join("", [lower(lookup(data.oci_identity_regions.current_region.regions[0], "key")), ".ocir.io"])
+  ocir_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace") 
 }
 
 # Random ID
@@ -140,7 +140,7 @@ resource "random_string" "id" {
 }
 
 /*
-# Username (not needed anymore)
+### Username (not needed anymore)
 variable username { default=null }
 variable current_user_ocid { default=null }
 data "oci_identity_user" "user" {
@@ -153,15 +153,4 @@ locals {
 }
 */
 
-locals {
-  local_ocir_host = join("", [lower(lookup(data.oci_identity_regions.current_region.regions[0], "key")), ".ocir.io"])
-  ocir_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace") 
-}
 
-output "shape" {
-  value = local.shape
-}
-
-output "availability_domain_name" {
-  value = local.availability_domain_name
-}
