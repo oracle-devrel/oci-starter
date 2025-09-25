@@ -59,14 +59,18 @@ variables:
       - LICENSE_INCLUDED
     {%- elif param=="ssh_public_key" %}
     type: oci:core:ssh:publickey
-    {%- else %}
+    {%- elif param=="region" %}
+    type: oci:identity:region:name
+    {%- else %}    
     type: string
     {%- endif %}
+    {%- if param in title %}
     title: {{ title[param] }}
-    {%- if param in [ "prefix", "license_model", "db_password", "auth_token", "certificate_ocid" ] %}
-    description: "{{ comments[param][0] }}"
     {%- else %}
-    description: ( {{ title[param] }} )
+    title: {{ param }}
+    {%- endif %}
+    {%- if param in comments %}
+    description: "{{ comments[param][0] }}"
     {%- endif %}
     {%- if ( param in ["prefix", "license_model","db_password"] or param.endswith("_ocid") ) and param not in [ "current_user_ocid"] %}
     required: true
@@ -74,26 +78,8 @@ variables:
     required: false
     {%- endif %}
 {%- endfor %}
-
-# Terraform Variables
   show_optional:
     type: boolean
     title: Advanced
     description: Show Advanced Parameters
     default: false
-{%- for param in terraform_variables %}
-{%- if param not in env_params %}
-  {{ param }}:
-    {%- if param=="ssh_public_key" %}
-    type: oci:core:ssh:publickey
-    {%- elif param=="region" %}
-    type: oci:identity:region:name
-    {%- else %}
-    type: string
-    {%- endif %}
-    title: {{ param }}
-    description: ( {{ param }} )
-    required: false  
-{%- endif %}
-{%- endfor %}
-
