@@ -30,7 +30,7 @@ variableGroups:
   visible: ${show_optional}  
   variables:
 {%- for param in terraform_variables %}
-{%- if ( param not in to_fill_params and param not in fixed_params %}
+{%- if ( param not in to_fill_params and param not in fixed_params ) %}
   - {{ param }}
 {%- endif %}
 {%- endfor %}
