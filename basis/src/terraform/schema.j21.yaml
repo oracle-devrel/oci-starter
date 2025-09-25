@@ -37,6 +37,7 @@ variableGroups:
 {%- else %}
   - {{ param }}
 {%- endif %}
+{%- endif %}
 {%- endfor %}
 
 #################
