@@ -42,8 +42,7 @@ variable lz_security_cmp_ocid { default=null }
 
 # Availability Domain
 variable availability_domain_number { 
-  default = "1"
-  nullable = false
+  default = null
   description="Availability Domain"
 }
 

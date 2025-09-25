@@ -87,7 +87,7 @@ data "oci_identity_compartment" "compartment" {
 # Instance shape
 data "oci_core_shapes" "shapes" {
   compartment_id = var.compartment_ocid
-  # availability_domain = var.availability_domain_number
+  availability_domain = var.availability_domain_number
   filter {
     name = "name"
     values = [local.regex_shape]
