@@ -13,7 +13,6 @@ variableGroups:
 - title: Starter Project
   visible: true  
   variables:
-  - prefix
 {%- for param in to_fill_params %}
   - {{ param }}
 {%- endfor %}

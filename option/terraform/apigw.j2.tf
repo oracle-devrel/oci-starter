@@ -1,6 +1,6 @@
 {%- if apigw_ocid is defined %}
 variable apigw_ocid {
-  description = "OCI API Gateway OCID"     
+  description = "Existing OCI API Gateway OCID"     
 }
 
 data "oci_apigateway_gateway" "starter_apigw" {
@@ -46,6 +46,7 @@ locals {
 
 // API Management - Tags
 variable git_url { 
+  description = "Git URL"  
   default = "" 
   nullable = false
 }
@@ -59,7 +60,7 @@ locals {
       group = local.group_name
       app_prefix = var.prefix
 
-      api_icon = {{ language }} 
+      api_icon = {{ params["language"] }} 
       api_git_url = var.git_url 
       api_git_spec_path = "src/app/openapi_spec.yaml"
       api_git_spec_type = "OpenAPI"
