@@ -16,7 +16,6 @@ variableGroups:
   - prefix
 {%- for param in to_fill_params %}
   - {{ param }}
-{%- endif %}  
 {%- endfor %}
   - show_optional
 
