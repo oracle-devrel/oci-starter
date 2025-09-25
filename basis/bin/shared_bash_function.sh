@@ -200,28 +200,55 @@ group_common_contain() {
   fi
 }
 
+
 # Find the availability domain for a shape (ex: "VM.Standard.E2.1.Micro")
 # ex: find_availabilty_domain_for_shape "VM.Standard.E2.1.Micro"
-find_availabilty_domain_for_shape() {
-  if [ "$TF_VAR_availability_domain_number" != "" ]; then
-    return 0
-  fi
-  echo "Searching for shape $1 in Availability Domains"  
-  i=1
-  for ad in `oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r ".data[].name"` 
-  do
-    echo "Checking in $ad"
-    TEST=`oci compute shape list --compartment-id=$TF_VAR_compartment_ocid --availability-domain $ad | jq ".data[] | select( .shape==\"$1\" )"`
-    if [[ "$TEST" != "" ]]; then
-        echo "Found in $ad"
-        export TF_VAR_availability_domain_number=$i
-        return 0
-    fi
-    i=$((i+1))
-  done
-  echo "Error shape $1 not found" 
-  exit 1
-}
+# find_availabilty_domain_for_shape() {
+#   if [ "$TF_VAR_availability_domain_number" != "" ]; then
+#     return 0
+#   fi
+#   echo "Searching for shape $1 in Availability Domains"  
+#   i=1
+#   for ad in `oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r ".data[].name"` 
+#   do
+#     echo "Checking in $ad"
+#     TEST=`oci compute shape list --compartment-id=$TF_VAR_compartment_ocid --availability-domain $ad | jq ".data[] | select( .shape==\"$1\" )"`
+#     if [[ "$TEST" != "" ]]; then
+#         echo "Found in $ad"
+#         export TF_VAR_availability_domain_number=$i
+#         return 0
+#     fi
+#     i=$((i+1))
+#   done
+#   echo "Error shape $1 not found" 
+#   exit 1
+# }
+
+# # Guess the shape E6/E5/E4
+# guess_available_shape() {
+#   if [ -f $TARGET_DIR/shape.json ]; then  
+#     export TF_VAR_instance_shape=`cat $TARGET_DIR/shape.json`
+#     echo "Reading shape from $TARGET_DIR/shape.json ($TF_VAR_instance_shape)"
+#   else
+#     echo "Searching for compute shape..."  
+#     i=1
+#     for ad in `oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r ".data[].name"` 
+#     do
+#         oci compute shape list --compartment-id=$TF_VAR_compartment_ocid --availability-domain $ad > $TARGET_DIR/shapes.json
+#         for s in VM.Standard.E6.Flex VM.Standard.E5.Flex VM.Standard.E4.Flex; do
+#         TEST=`cat $TARGET_DIR/shapes.json | jq ".data[] | select( .shape==\"$s\" )"`
+#         if [[ "$TEST" != "" ]]; then
+#             echo "Found Shape $s in $ad"
+#             export TF_VAR_instance_shape=$s
+#             echo $TF_VAR_instance_shape > $TARGET_DIR/shape.json
+#             return 0
+#         fi
+#         done  
+#         i=$((i+1))
+#     done
+#     error_exit "Error no shape not found" 
+#   fi
+# }
 
 # Get User Details (username and OCID)
 get_user_details() {
