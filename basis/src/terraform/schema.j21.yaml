@@ -21,12 +21,10 @@ variableGroups:
 {%- endfor %}
   - show_optional
 
-- title: Static
+- title: Fixed
   visible: ${show_optional}
   variables:
-{%- for param in env_params %}
-{%- if ( param in ["prefix", "license_model","db_password"] or param.endswith("_ocid") ) and param not in [ "current_user_ocid", "tenancy_ocid" ] %}  
-{%- else %}  
+{%- for param in fixed_param %}
   - {{ param }}
 {%- endif %} 
 {%- endfor %}
@@ -35,7 +33,9 @@ variableGroups:
   visible: ${show_optional}  
   variables:
 {%- for param in terraform_variables %}
-{%- if param not in env_params %}
+{%- if param not in fixed_param %}
+{%- if ( param in ["prefix","license_model","db_password"] or param.endswith("_ocid") ) and param not in [ "current_user_ocid", "tenancy_ocid" ] %}  
+{%- else %}
   - {{ param }}
 {%- endif %}
 {%- endfor %}
