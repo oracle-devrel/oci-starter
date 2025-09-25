@@ -520,6 +520,8 @@ def env_param_list():
     return env_params
 
 def env_sh_contents():
+    global to_fill_params, fixed_params
+
     env_params = env_param_list()
     print(env_params)
     tfvars= ['# -- Variables ---------------------------------------------']
@@ -535,7 +537,6 @@ def env_sh_contents():
     tfvars.append('# '+table_comments["prefix"][0])
     tfvars.append(f'prefix="{prefix}"')
 
-    global to_fill_params, fixed_params
     fixed_tfvars = []
     fixed_tfvars = []
     for param in env_params:
