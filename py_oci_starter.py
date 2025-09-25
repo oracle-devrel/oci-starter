@@ -32,7 +32,8 @@ BASIS_DIR = "basis"
 output_dir = "output"
 zip_dir = ""
 a_group_common = []
-fixed_param = []
+fixed_params = []
+to_fill_params = []
 
 ## functions ################################################################
 
@@ -525,25 +526,30 @@ def env_sh_contents():
 
     if 'group_name' in params:
         prefix = params["group_name"]
+        to_fill_params.append("group_name")
         tfvars.append(f'group_name="{prefix}"')
     else:
         prefix = params["prefix"]
+    to_fill_params.append("prefix")
     tfvars.append('')
     tfvars.append('# '+table_comments["prefix"][0])
     tfvars.append(f'prefix="{prefix}"')
 
-    global fixed_param
+    global to_fill_params, fixed_params
+    fixed_tfvars = []
     fixed_tfvars = []
     for param in env_params:
         if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model"]:
+            to_fill_params.append(param)
             tfvars.append('')
             tf_var_comment(tfvars, param)
             tfvars.append(f'{param}="{params[param]}"')
         else:
-            fixed_param.append(param)
+            fixed_params.append(param)
             tf_var_comment(fixed_tfvars, param)
             fixed_tfvars.append(f'# {param}="{params[param]}"')
     if params.get('compartment_ocid') == None:
+        to_fill_params.append("compartment_ocid")
         tfvars.append('')
         tfvars.append('# Compartment')
         tfvars.append('compartment_ocid="__TO_FILL__"')
@@ -1166,8 +1172,9 @@ def jinja2_replace_template():
     template_param['comments'] = table_comments
     template_param['create_datetime'] = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
 
-    global fixed_param
-    template_param['fixed_param'] = fixed_param
+    global to_fill_params, fixed_params
+    template_param['fixed_params'] = fixed_params
+    template_param['to_fill_params'] = to_fill_params
     print( template_param, flush=True )
 
     template_param['title'] = {

@@ -32,7 +32,7 @@ resource "null_resource" "tf_env" {
     echo 'export {{key.upper()}}="${local.local_{{key}}}"' >> $ENV_FILE
 {%- endfor %} 
     echo "# Fixed" >> $ENV_FILE   
-{%- for param in fixed_param %}
+{%- for param in fixed_params %}
     echo 'export TF_VAR_{{param}}="{{ params[param] }}"' >> $ENV_FILE
 {%- endfor %} 
     chmod 755 $ENV_FILE
