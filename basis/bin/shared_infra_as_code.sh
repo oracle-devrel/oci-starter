@@ -105,7 +105,7 @@ resource_manager_get_stack() {
     rs_echo "Stack does not exists ( file target/resource_manager_stackid not found )"
     exit
   fi    
-  source $TARGET_DIR/resource_manager_stackid
+  export STACK_ID=`cat $TARGET_DIR/resource_manager_stackid`
 }
 
 rs_echo() {
@@ -203,12 +203,14 @@ resource_manager_create_or_update() {
       STACK_ID=$(oci resource-manager stack create --compartment-id $TF_VAR_compartment_ocid --config-source $ZIP_FILE_PATH --display-name $TF_VAR_prefix-resource-manager --variables file://$VAR_FILE_PATH --query 'data.id' --raw-output)
     fi
     rs_echo "Created stack id: ${STACK_ID}"
-    echo "export STACK_ID=$STACK_ID" > $TARGET_DIR/resource_manager_stackid
+    echo "$STACK_ID" > $TARGET_DIR/resource_manager_stackid
+    rs_echo "Created stack id: ${STACK_ID}"
   fi
   if [ "$DISTRIBUTE" == "YES" ]; then
     # Add tenancy_ocid and region since they are not detected by OCI CLI
     oci resource-manager stack update --stack-id $STACK_ID --variables "{\"tenancy_ocid\":\"$TF_VAR_tenancy_ocid\",\"compartment_ocid\":\"$TF_VAR_compartment_ocid\",\"current_user_ocid\":\"$TF_VAR_current_user_ocid\",\"region\":\"$TF_VAR_region\"}" --force
   fi
+  rs_echo "URL: https://cloud.oracle.com/resourcemanager/stacks/${STACK_ID}?region=${TF_VAR_region}"
 }
 
 resource_manager_plan() {
