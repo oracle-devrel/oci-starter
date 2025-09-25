@@ -4,7 +4,9 @@ locals {
 }
 
 {%- if db_type == "nosql" %} 
-variable nosql_endpoint {}
+variable nosql_endpoint {
+  description = "OCI NoSQL Endpoint"
+}
 {%- endif %} 
 
 resource oci_container_instances_container_instance starter_container_instance {

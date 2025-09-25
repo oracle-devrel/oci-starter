@@ -1,12 +1,18 @@
-variable tenancy_ocid {}
-variable region {}
-variable compartment_ocid {}
+# Resource Manager (Prepopulated)
+variable tenancy_ocid {
+  description= "Tenancy OCID"   
+}
+variable region {
+  description= "OCI Region"   
+}
+variable compartment_ocid {
+  description= "Compartment OCID"   
+}
 
 # Prefix
 variable prefix { 
   default = "starter"
   nullable = false
-  description= "Prefix added to all created resources"   
 }
 
 # Home Region
@@ -24,13 +30,13 @@ variable db_password {
   default = null
   description= "Database Password"   
 }
-# Compute Instance size
+
+# Compute Instance
 variable instance_shape { 
   default = "VM.Standard.x86.Generic"
   description="Instance - Shape"    
   nullable = false
 }
-
 variable instance_ocpus { 
   default = 1
   description="Instance - Number of OCPUs"   

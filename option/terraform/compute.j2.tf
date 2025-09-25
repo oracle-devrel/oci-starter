@@ -1,5 +1,7 @@
 {%- if compute_ocid is defined %}
-variable "compute_ocid" {}
+variable "compute_ocid" {
+  description = "Existing OCI Compute OCID"     
+}
 
 data "oci_core_instance" "starter_compute" {
     instance_id = var.compute_ocid

@@ -1,6 +1,8 @@
 # Database Cloud
 {%- if pdb_ocid is defined %}
-variable "pdb_ocid" {}
+variable "pdb_ocid" {
+  description = "Existing Pluggable Database OCID"      
+}
 
 data "oci_database_pluggable_database" "starter_pluggable_database" {
     pluggable_database_id = var.pdb_ocid
@@ -8,10 +10,15 @@ data "oci_database_pluggable_database" "starter_pluggable_database" {
 
 {%- else %}   
 # OCID of the DBSYSTEM
-variable "db_ocid" {}
+variable "db_ocid" {
+  description = "Existing Base Database OCID"      
+}
 
 # OCID of the COMPARTMENT of the DBSYSTEM (usecase where it is <> Landing Zone DB Compartment )
-variable "db_compartment_ocid" { default=null }
+variable "db_compartment_ocid" { 
+  description = "Compartment OCID of the existing Base Database"    
+  default=null 
+}
 
 locals {
   db_compartment_ocid = var.db_compartment_ocid == null ? local.lz_db_cmp_ocid : var.db_compartment_ocid

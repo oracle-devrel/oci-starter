@@ -1,6 +1,8 @@
 # Database Cloud
 {%- if db_ocid is defined %}
-variable "db_ocid" {}
+variable "db_ocid" {
+  description = "Existing Base Database OCID"    
+}
 
 # OCID of the COMPARTMENT of the DBSYSTEM (usecase where it is <> Landing Zone DB Compartment )
 variable "db_compartment_ocid" { default=null }
@@ -16,13 +18,17 @@ data "oci_database_db_homes" "starter_db_homes" {
 }
 
 {%- else %}   
-variable "db_version" {}
+variable "db_version" {
+  description = "Database Version"    
+}
 
 variable n_character_set {
+  description = "Database NCharacter Set"    
   default = "AL16UTF16"
 }
 
 variable character_set {
+  description = "Database Character Set"    
   default = "AL32UTF8"
 }
 

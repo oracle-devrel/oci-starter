@@ -1,5 +1,7 @@
 {%- if mysql_ocid is defined %}
-variable "mysql_ocid" {}
+variable "mysql_ocid" {
+  description = "Existing MySQL Database OCID"
+}
 
 data "oci_mysql_mysql_db_system" "starter_mysql" {
     #Required

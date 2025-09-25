@@ -1,5 +1,7 @@
 {%- if apigw_ocid is defined %}
-variable apigw_ocid {}
+variable apigw_ocid {
+  description = "OCI API Gateway OCID"     
+}
 
 data "oci_apigateway_gateway" "starter_apigw" {
     #Required
@@ -13,6 +15,7 @@ locals {
 
 {%- else %}   
 variable "openapi_spec" {
+  description = "API Gateway - OpenAPI specification"     
   default = "openapi: 3.0.0\ninfo:\n  version: 1.0.0\n  title: Test API\n  license:\n    name: MIT\npaths:\n  /ping:\n    get:\n      responses:\n        '200':\n          description: OK"
 }
 

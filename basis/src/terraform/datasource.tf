@@ -21,16 +21,18 @@ data "oci_identity_regions" "current_region" {
 # Identity Domain
 variable idcs_domain_name { 
   default = "Default" 
+  description= "OCI Domain Name (Typically Default or OracleIdentityCloudService) "    
   nullable = false
 }
-variable idcs_url { default = null }
-
+variable idcs_url { 
+  default = null 
+  description= "Identity Cloud Service URL"  
+}
 data "oci_identity_domains" "starter_domains" {
   #Required
   compartment_id = var.tenancy_ocid
   display_name = var.idcs_domain_name
 }
-
 locals {
   # Try: LiveLabs has no access to IDCS
   local_idcs_url = try( (var.idcs_url!=null)?var.idcs_url:data.oci_identity_domains.starter_domains.domains[0].url, "" )
@@ -139,18 +141,14 @@ resource "random_string" "id" {
   upper = false
 }
 
-/*
 ### Username (not needed anymore)
-variable username { default=null }
-variable current_user_ocid { default=null }
-data "oci_identity_user" "user" {
-  count = var.username == null ? 1 : 0
-  user_id = var.current_user_ocid
-}
-locals {
-  username = var.username != null ? var.username : oci_identity_user.user[0].name
-  ocir_username = join( "/", [ coalesce(local.ocir_namespace, "missing_privilege"), local.username ])
-}
-*/
-
-
+# variable username { default=null }
+# variable current_user_ocid { default=null }
+# data "oci_identity_user" "user" {
+#   count = var.username == null ? 1 : 0
+#   user_id = var.current_user_ocid
+# }
+# locals {
+#   username = var.username != null ? var.username : oci_identity_user.user[0].name
+#   ocir_username = join( "/", [ coalesce(local.ocir_namespace, "missing_privilege"), local.username ])
+# }

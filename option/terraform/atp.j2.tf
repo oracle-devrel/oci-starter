@@ -1,6 +1,8 @@
 // ------------------------ Autonomous database -----------------------------
 {%- if atp_ocid is defined %}
-variable "atp_ocid" {}
+variable "atp_ocid" {
+  description = "Existing OCI Autonomous Database OCID"     
+}
 
 data "oci_database_autonomous_database" "starter_atp" {
   #Required

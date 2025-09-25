@@ -1,6 +1,8 @@
 // ------------------------ PostgreSQL -----------------------------
 {%- if psql_ocid is defined %}
-variable "psql_ocid" {}
+variable "psql_ocid" {
+  description = "Existing PostgreSQL OCID"
+}
 
 # Compatibility with postgresql_existing.tf 
 data "oci_psql_db_system" "starter_psql" {

@@ -4,7 +4,9 @@ data "oci_core_instance" "starter_bastion" {
 }
 
 {%- elif bastion_ocid is defined %}
-variable "bastion_ocid" {}
+variable "bastion_ocid" {
+  description = "Existing Bastion (OCI Compute) OCID"     
+}
 
 data "oci_core_instance" "starter_bastion" {
   instance_id = var.bastion_ocid

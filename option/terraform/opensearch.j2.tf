@@ -1,5 +1,7 @@
 {%- if opensearch_ocid is defined %}
-variable "opensearch_ocid" {}
+variable "opensearch_ocid" {
+  description = "Existing OCI OpenSearch OCID"
+}
 
 data "oci_opensearch_opensearch_cluster" "starter_opensearch" {
     #Required
