@@ -48,7 +48,7 @@ if [ ! -f $PROJECT_DIR/src/after_build.sh ] && [ "$UI_URL" != "" ]; then
     append_done "$UI_URL/ords/r/apex_app/apex_app/"
     append_done "  User: APEX_APP / $TF_VAR_db_password"
   fi
-  cat $FILE_DONE  
 elif [ ! -f $FILE_DONE ]; then
   echo "-" > $FILE_DONE  
 fi
+cat $FILE_DONE  
