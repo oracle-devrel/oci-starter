@@ -10,6 +10,7 @@ data "oci_opensearch_opensearch_cluster" "starter_opensearch" {
 
 {%- else %}   
 resource "oci_identity_policy" "starter_opensearch_policy" {
+  provider       = oci.home    
   name           = "${var.prefix}-policy"
   description    = "${var.prefix} policy"
   compartment_id = local.lz_app_cmp_ocid
