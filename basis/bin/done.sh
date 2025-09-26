@@ -9,11 +9,6 @@ get_ui_url
 echo 
 echo "Build done"
 
-FILE_DONE=$TARGET_DIR/done.txt
-append_done() {
-  echo "$1" >> $FILE_DONE
-}
-
 # Do not show the Done URLs if after_build.sh exists 
 if [ ! -f $PROJECT_DIR/src/after_build.sh ] && [ "$UI_URL" != "" ]; then
   echo "URLs" > $FILE_DONE
