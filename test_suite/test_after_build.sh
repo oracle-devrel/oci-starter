@@ -1,4 +1,11 @@
-# after_done.sh for testsuite
+#!/usr/bin/env bash
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd $SCRIPT_DIR/..
+
+. starter.sh env -silent
+
+get_ui_url
+
 if [ ! -z "$UI_URL" ]; then
   # Check the URL if running in the test_suite
   if [ ! -z "$TEST_NAME" ]; then
