@@ -23,7 +23,7 @@ resource "null_resource" "tf_env" {
     echo "" >> $ENV_FILE
     echo "# Terraform Variables" >> $ENV_FILE
     echo_export() {
-      if [ "$2" != "" && "$2" != "-" ]; then
+      if [ "$2" != "" ] && [ "$2" != "-" ]; then
         echo "export $1=\"$2\"" >> $ENV_FILE
       fi 
     }
