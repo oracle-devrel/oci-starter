@@ -6,6 +6,7 @@ cd $SCRIPT_DIR/..
 
 get_ui_url
 
+title "After Build"
 if [ ! -z "$UI_URL" ]; then
   echo "TEST URLs" > $FILE_DONE
   append_done "- UI URL: $UI_URL"
