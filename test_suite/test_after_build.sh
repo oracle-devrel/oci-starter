@@ -7,8 +7,11 @@ cd $SCRIPT_DIR/..
 get_ui_url
 
 if [ ! -z "$UI_URL" ]; then
+  echo "TEST URLs" > $FILE_DONE
+  append_done "- UI URL: $UI_URL"
+  if [ "$TF_VAR_ui_type" != "api" ]; then
   # Check the URL if running in the test_suite
-  if [ ! -z "$TEST_NAME" ]; then
+  if [ "$TEST_NAME" != "" ]; then
     export TMP_PATH="/tmp/$TF_VAR_prefix"
     rm -Rf $TMP_PATH     
     mkdir -p $TMP_PATH 

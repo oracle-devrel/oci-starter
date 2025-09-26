@@ -707,3 +707,9 @@ file_replace_variables() {
 
   mv "$temp_file" "$file"
 }
+
+# done.txt
+FILE_DONE=$TARGET_DIR/done.txt
+append_done() {
+  echo "$1" >> $FILE_DONE
+}
