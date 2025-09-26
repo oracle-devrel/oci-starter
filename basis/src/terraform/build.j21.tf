@@ -24,7 +24,7 @@ resource "null_resource" "tf_env" {
     echo "# Terraform Variables" >> $ENV_FILE
 {%- for param in terraform_variables %}
 {%- if ( param in ["prefix", "license_model","db_password"] or param.endswith("_ocid") ) and param not in [ "current_user_ocid" ] %}  
-    echo 'export TF_VAR_{{param}}="${(try(var.{{param}},"-")}"' >> $ENV_FILE
+    echo 'export TF_VAR_{{param}}="${try(var.{{param}},"")}"' >> $ENV_FILE
 {%- endif %}  
 {%- endfor %}  
     echo "# Terraform Locals" >> $ENV_FILE
