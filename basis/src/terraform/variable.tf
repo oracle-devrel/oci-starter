@@ -151,11 +151,11 @@ locals {
   ssh_private_key = var.ssh_public_key != null ? var.ssh_private_key : tls_private_key.ssh_key[0].private_key_pem
 }
 
-output "ssh-key-public" {
+output "ssh_key_public" {
   value = var.ssh_public_key != null ? "-" : tls_private_key.ssh_key[0].public_key_openssh
 }
 
-output "ssh-key-private" {
+output "ssh_key_private" {
   value = var.ssh_public_key != null ? "-" : "See Stack / Stack Resources / tls_private_key.ssh_key.private_key_pem"
 }
 
