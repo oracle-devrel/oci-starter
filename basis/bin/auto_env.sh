@@ -149,7 +149,8 @@ if ! command -v jq &> /dev/null; then
 fi
 
 #-- PRE terraform ----------------------------------------------------------
-if [ "$OCI_STARTER_VARIABLES_SET" == "${TF_VAR_prefix}" ]; then
+# Combination of tvars variables and fixed variables
+if [ "$OCI_STARTER_VARIABLES_SET" == "${TF_VAR_prefix}_${TF_VAR_deploy_type}" ]; then
   echo "Variables already set"
 else
   #-- Check internet connection ---------------------------------------------
