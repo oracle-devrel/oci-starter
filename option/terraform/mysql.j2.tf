@@ -12,7 +12,7 @@ data "oci_mysql_mysql_db_system" "starter_mysql" {
 resource "oci_mysql_mysql_db_system" "starter_mysql" {
   display_name        = "${var.prefix}-mysql"
 
-  admin_username      = {{ params["db_user" }}
+  admin_username      = local.db_user
   admin_password      = var.db_password
   availability_domain = local.availability_domain_name
   compartment_id      = local.lz_db_cmp_ocid

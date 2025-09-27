@@ -23,7 +23,7 @@ resource oci_container_instances_container_instance starter_container_instance {
       {%- if db_type != "none" %} 
       "DB_URL" = local.local_db_url,
       "JDBC_URL" = local.local_jdbc_url,
-      "DB_USER" = {{ params["db_user" }},
+      "DB_USER" = local.db_user,
       "DB_PASSWORD" = var.db_password,
       "JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL" = local.local_jdbc_url
       {%- endif %} 
