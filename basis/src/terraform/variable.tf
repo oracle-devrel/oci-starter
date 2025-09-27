@@ -21,11 +21,7 @@ variable home_region {
   description= "OCI Home Region"   
 }
 
-# Database user
-variable db_user { 
-  default = null
-  description= "Database Username"   
-}
+# Database
 variable db_password { 
   default = null
   description= "Database Password"   
