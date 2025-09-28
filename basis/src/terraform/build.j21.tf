@@ -10,7 +10,7 @@ resource "null_resource" "tf_env" {
   provisioner "local-exec" {
     command = <<-EOT
     cd ${local.project_dir}
-    mkdir target
+    mkdir -p target
     # Create the files needed by the shell scripts
     # Create SSH Key
     echo "${local.ssh_public_key}" > target/ssh_key_starter.pub
