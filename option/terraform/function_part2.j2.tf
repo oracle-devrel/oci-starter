@@ -21,7 +21,7 @@ resource "oci_functions_function" "starter_fn_function" {
     {%- if db_type == "nosql" %} 
     TF_VAR_compartment_ocid = var.compartment_ocid,
     # XXX Ideally it should be nosql.${region}.oci.${regionDomain}  
-    TF_VAR_nosql_endpoint = "nosql.${region}.oci.oraclecloud.com",
+    TF_VAR_nosql_endpoint = "nosql.${var.region}.oci.oraclecloud.com",
     {%- endif %}     
   }
   #Optional
