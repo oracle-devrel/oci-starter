@@ -57,11 +57,6 @@ variable "fn_image" {
   default = null 
   description = "OCI Function Docker Image Name"
 }
-{%- if db_type == "nosql" %} 
-variable nosql_endpoint {
-  description = "OCI NoSQL Endpoint"
-}
-{%- endif %} 
 
 output "fn_url" {
   value = join("", oci_apigateway_deployment.starter_apigw_deployment.*.endpoint)

@@ -3,12 +3,6 @@ locals {
   docker_image_app=data.external.env_part2.result.docker_image_app
 }
 
-{%- if db_type == "nosql" %} 
-variable nosql_endpoint {
-  description = "OCI NoSQL Endpoint"
-}
-{%- endif %} 
-
 resource oci_container_instances_container_instance starter_container_instance {
   depends_on = [ local.docker_image_ui ]
 
@@ -29,7 +23,8 @@ resource oci_container_instances_container_instance starter_container_instance {
       {%- endif %} 
       {%- if db_type == "nosql" %} 
       "TF_VAR_compartment_ocid" = var.compartment_ocid,
-      "TF_VAR_nosql_endpoint" = var.nosql_endpoint,
+      # XXX Ideally it should be nosql.${region}.oci.${regionDomain}
+      "TF_VAR_nosql_endpoint" = "nosql.${region}.oci.oraclecloud.com",
       {%- endif %} 
     }    
   }
