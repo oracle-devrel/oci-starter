@@ -70,6 +70,12 @@ variable lz_security_cmp_ocid {
   description="Landing Zone - Security Compartment OCID" 
 }
 
+# Auth Token
+variable auth_token { 
+  default = null
+  description="OCI Authorization token"
+}
+
 # Availability Domain
 variable availability_domain_number { 
   default = null
