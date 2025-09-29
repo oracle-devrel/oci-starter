@@ -17,12 +17,12 @@ resource "oci_psql_db_system" "starter_psql" {
   system_type = "OCI_OPTIMIZED_STORAGE"
 
   #Required
-  db_version          = "14"
+  db_version          = "16"
   display_name = "${var.prefix}psql"
   network_details {
     subnet_id = data.oci_core_subnet.starter_db_subnet.id
   }
-  shape = "PostgreSQL.VM.Standard.E4.Flex.2.32GB"
+  shape = "PostgreSQL.VM.Standard.E5.Flex"
   storage_details {
     is_regionally_durable = true
     system_type = "OCI_OPTIMIZED_STORAGE"
