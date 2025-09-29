@@ -71,7 +71,7 @@ variables:
     {%- if param in comments %}
     description: "{{ comments[param][0] }}"
     {%- endif %}
-    {%- if ( param in to_fill_params %}
+    {%- if param in to_fill_params %}
     required: true
     {%- else %}
     required: false
