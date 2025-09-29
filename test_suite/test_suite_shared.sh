@@ -385,8 +385,7 @@ pre_test_suite() {
   exit_on_error "oci_starter.sh"
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
-  echo "# Test Suite use 2 nodes to avoid error: Too Many Pods (110 pods/node K8s limit)" >> env.sh
-  echo "export TF_VAR_node_pool_size=2" >> env.sh
+  echo "# Test Suite use 2 nodes to avoid error: Too Many Pods (110 pods/node K8s limit)" >> terraform.tfvars
   echo "node_pool_size=2" >> terraform.tfvars
   echo "" >> terraform.tfvars
   ./starter.sh build --auto-approve

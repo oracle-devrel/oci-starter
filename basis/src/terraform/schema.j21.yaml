@@ -71,7 +71,7 @@ variables:
     {%- if param in comments %}
     description: "{{ comments[param][0] }}"
     {%- endif %}
-    {%- if ( param in ["prefix", "license_model","db_password"] or param.endswith("_ocid") ) and param not in [ "current_user_ocid"] %}
+    {%- if ( param in to_fill_params %}
     required: true
     {%- else %}
     required: false

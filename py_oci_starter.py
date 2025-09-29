@@ -540,7 +540,7 @@ def env_sh_contents():
     fixed_tfvars = []
     fixed_tfvars = []
     for param in env_params:
-        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model"]:
+        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model", "certificate_email", "dns_name"]:
             to_fill_params.append(param)
             tfvars.append('')
             tf_var_comment(tfvars, param)
