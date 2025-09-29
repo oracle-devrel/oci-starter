@@ -3,13 +3,13 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
 if [[ `arch` == "aarch64" ]]; then
-    dnf install -y oracle-release-el8
-    dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel
-    export OCI_CLIENT_DIR=/usr/lib/oracle/19.19/client64/lib
+    sudo dnf install -y oracle-release-el8
+    sudo dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel
+    # OCI_CLIENT_DIR=/usr/lib/oracle/19.19/client64/lib
 else
-    dnf install oracle-instantclient-release-23ai-el8 -y
-    dnf install -y oracle-instantclient-basic oracle-instantclient-devel
-    export OCI_CLIENT_DIR=/usr/lib/oracle/23/client64/lib
+    sudo dnf install oracle-instantclient-release-23ai-el8 -y
+    sudo dnf install -y oracle-instantclient-basic oracle-instantclient-devel
+    # OCI_CLIENT_DIR=/usr/lib/oracle/23/client64/lib
 fi
 
 # Install last version of PHP
