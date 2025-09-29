@@ -30,7 +30,6 @@ resource "null_resource" "tf_env" {
     }
 {%- for param in to_fill_params %}
     echo_export "TF_VAR_{{param}}" "${coalesce(var.{{param}},"-")}"
-{%- endif %}  
 {%- endfor %}  
     echo "# Terraform Locals" >> $ENV_FILE
 {%- for key in terraform_locals %}
