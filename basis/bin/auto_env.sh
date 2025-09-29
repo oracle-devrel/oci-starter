@@ -23,7 +23,7 @@ fi
 set -o pipefail
 
 # Function to parse a .tfvars file and export TF_VAR_ variables
-export_terraform_tfvars() {
+read_terraform_tfvars() {
   # Read the file line by line, ignoring comments and empty lines
   echo "Reading terraform.tfvars"  
   while read -r line; do
@@ -54,9 +54,8 @@ export_terraform_tfvars() {
 # . $PROJECT_DIR/env.sh
 if [ -f $TARGET_DIR/tf_env.sh ]; then
   . $TARGET_DIR/tf_env.sh
-else
-  export_terraform_tfvars
 fi 
+read_terraform_tfvars
 
 # Autocomplete in bash
 _starter_completions()
