@@ -2,13 +2,32 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
+if [[ `arch` == "aarch64" ]]; then
+    dnf install -y oracle-release-el8
+    dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel
+    export OCI_CLIENT_DIR=/usr/lib/oracle/19.19/client64/lib
+else
+    dnf install oracle-instantclient-release-23ai-el8 -y
+    dnf install -y oracle-instantclient-basic oracle-instantclient-devel
+    export OCI_CLIENT_DIR=/usr/lib/oracle/23/client64/lib
+fi
+
 # Install last version of PHP
 # https://yum.oracle.com/oracle-linux-php.html
 
-# XXX This should be the right way. But it does not work...
-# sudo dnf install -y @php:7.4
-# sudo dnf install -y oraclelinux-developer-release-el8 oracle-instantclient-release-el8
+# # XXX This should be the right way. But it does not work...
+# # See https://docs.oracle.com/en-us/iaas/Content/developer/apache-on-oracle-linux/01-summary.htm
+# sudo dnf install httpd -y
+# sudo systemctl enable httpd
+# sudo dnf install @php:7.4 -y
+# php -v
+# # See https://yum.oracle.com/oracle-linux-php.html#InstallPHPOCI8
 # sudo dnf module enable php:7.4 php-oci8
+# sudo dnf install -y php-oci8-21c php-mysqlnd 
+
+# sudo dnf install @php:8.2 -y
+# sudo dnf install -y oraclelinux-developer-release-el8 oracle-instantclient-release-el8
+# sudo dnf module enable php:8.2 php-oci8
 # sudo dnf install -y php-oci8-21c php-mysqlnd 
 # sudo dnf install -y php-mysqlnd 
 # sudo dnf install -y httpd
@@ -33,10 +52,14 @@ sudo cp app.conf /etc/httpd/conf.d/.
 
 # Configure the Apache Listener on 8080
 sudo sed -i "s/Listen 80$/Listen 8080/" /etc/httpd/conf/httpd.conf
+
+# Restart all
+sudo systemctl enable httpd
+sudo systemctl enable php-fpm
 sudo systemctl restart httpd
 sudo systemctl restart php-fpm
 
-# XXXX
+# Use Apache to PHP, and nginx to forward request to Apache
 sudo rm /etc/nginx/default.d/php.conf
 
 
