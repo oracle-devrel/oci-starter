@@ -23,6 +23,7 @@ resource "oci_psql_db_system" "starter_psql" {
     subnet_id = data.oci_core_subnet.starter_db_subnet.id
   }
   shape = "PostgreSQL.VM.Standard.E5.Flex"
+  instance_ocpu_count = 1
   storage_details {
     is_regionally_durable = true
     system_type = "OCI_OPTIMIZED_STORAGE"

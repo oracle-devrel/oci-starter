@@ -29,7 +29,11 @@ resource "null_resource" "tf_env" {
       fi 
     }
 {%- for param in to_fill_params %}
+{%- if param in terraform_variables %}
     echo_export "TF_VAR_{{param}}" "${coalesce(var.{{param}},"-")}"
+{%- else %} 
+    echo "# {{param}} declared in to_fill_params but not a terraform variable" >> $ENV_FILE
+{%- endif %} 
 {%- endfor %}  
     echo "# Terraform Locals" >> $ENV_FILE
 {%- for key in terraform_locals %}
