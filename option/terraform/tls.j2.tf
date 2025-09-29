@@ -1,6 +1,20 @@
-variable "dns_zone_name" { default=null }
-variable "dns_name" { default=null }
-variable "dns_ip" { default=null }
+# TLS
+variable "dns_zone_name" { 
+  default=null 
+  description = "TLS - DNS Zone Name"  
+}
+variable "dns_name" { 
+  default=null 
+  description = "TLS - DNS Name"  
+}
+variable "dns_ip" { 
+  default=null
+  description = "TLS - IP associated with the DNS Name"  
+}
+variable "certificate_email" { 
+  default=null
+  description = "Email used for CertBot"  
+}
 
 locals {
 {%- if deploy_type == "public_compute" and tls != "existing_ocid" %}  
