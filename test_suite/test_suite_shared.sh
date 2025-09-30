@@ -151,6 +151,13 @@ build_test_destroy () {
   fi  
   SECONDS=0
   ./starter.sh destroy --auto-approve > destroy.log 2>&1  
+  if [ -d "target" ]; then
+    # Avoid to have a lot of left resource in the tenancy after a lot of destroy that failed
+    echo "FATAL ERROR: target directory not fully destroyed"
+    echo "Last directory: $TEST_DIR"
+    exit
+  fi
+
   echo "destroy_secs=$SECONDS" >> ${TEST_DIR}_time.txt
   CSV_DESTROY_SECOND=$SECONDS
   cat ${TEST_DIR}_time.txt
