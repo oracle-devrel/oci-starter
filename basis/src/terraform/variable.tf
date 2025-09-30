@@ -22,6 +22,10 @@ variable home_region {
 }
 
 # Database
+variable db_user { 
+  default = null
+  description= "Database User"   
+}
 variable db_password { 
   default = null
   description= "Database Password"   
