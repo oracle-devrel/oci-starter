@@ -81,7 +81,7 @@ build_test () {
   TMP_PATH="/tmp/$NAME"
 
   echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
-  if [ -f $TMP_PATH/result.html ]; then
+  if [ -f $TMP_PATH/result_html.html ]; then
     if grep -q -i "starter" $TMP_PATH/result_html.html; then
       echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
       CSV_HTML_OK=1
@@ -99,7 +99,7 @@ build_test () {
     fi
     echo "RESULT INFO:                   "`cat $TMP_PATH/result_info.html` | cut -c 1-100
   else
-    echo -e "${COLOR_RED}ERROR: No file $TMP_PATH/result.html${COLOR_NONE}"
+    echo -e "${COLOR_RED}ERROR: No file $TMP_PATH/result_html.html${COLOR_NONE}"
   fi
   mv $TMP_PATH/result_html.html ${TEST_DIR}_${BUILD_ID}_result_html.html 2>/dev/null;
   mv $TMP_PATH/result_dept.json ${TEST_DIR}_${BUILD_ID}_result_dept.json 2>/dev/null;
