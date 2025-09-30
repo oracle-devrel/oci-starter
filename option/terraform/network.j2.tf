@@ -202,8 +202,8 @@ resource "oci_core_security_list" "starter_security_list" {
     stateless = false
 
     tcp_options {
-      min = 33306
-      max = 33306
+      min = 33060
+      max = 33060
     }
   }  
 

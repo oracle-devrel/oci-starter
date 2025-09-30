@@ -2,7 +2,6 @@
 
 locals {
   project_dir = (var.infra_as_code=="from_resource_manager")?".":"../.."
-  db_user="{{ params["db_user"] }}"
 }
 
 # SSH Keys + tf_env.sh
