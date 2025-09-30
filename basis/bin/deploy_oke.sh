@@ -20,7 +20,7 @@ if [ ! -f $KUBECONFIG ]; then
  
   # Check if Ingress Controller is installed
   kubectl get service ingress-nginx-controller -n ingress-nginx
-  if [ $? -eq 0 ]; then
+  if [ $? -neq 0 ]; then
     # Deploy Latest ingress-nginx
     kubectl create clusterrolebinding starter_clst_adm --clusterrole=cluster-admin --user=$TF_VAR_current_user_ocid
     echo "OKE Deploy: Role Binding created"  
