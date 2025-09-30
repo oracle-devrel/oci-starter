@@ -556,6 +556,9 @@ certificate_validity() {
   CERT_VALIDITY_DAY=`echo $((($(date -d $CERT_DATE_VALIDITY +%s) - $(date +%s))/86400))`
   echo "Certificate valid until: $CERT_DATE_VALIDITY"
   echo "Days left: $CERT_VALIDITY_DAY"
+  if [ "$CERT_VALIDITY_DAY" -lt "0" ]; then
+    error_exit( "Invalid Certificate" )
+  fi
 }
 
 certificate_create() {
