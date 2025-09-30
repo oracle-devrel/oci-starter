@@ -35,7 +35,7 @@ if [ "$UI_URL" != "" ]; then
       else
         curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_dept.log > $TMP_PATH/result_dept.json
       fi      
-      if grep -q -i "deptno" $TMP_PATH/result.json; then
+      if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
         echo "----- OK ----- deptno detected in $UI_URL/app/dept"
         break
       fi
