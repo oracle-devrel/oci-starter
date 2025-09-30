@@ -557,7 +557,7 @@ certificate_validity() {
   echo "Certificate valid until: $CERT_DATE_VALIDITY"
   echo "Days left: $CERT_VALIDITY_DAY"
   if [ "$CERT_VALIDITY_DAY" -lt "0" ]; then
-    error_exit( "Invalid Certificate" )
+    error_exit "Invalid Certificate"
   fi
 }
 
