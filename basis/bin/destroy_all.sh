@@ -71,6 +71,7 @@ if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ]; then
     fi
   else
     echo "File $STATE_FILE does not exist. Nothing to destroy."
+    cleanUp 
     exit 0
   fi
 
