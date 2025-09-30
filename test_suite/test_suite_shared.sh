@@ -281,7 +281,6 @@ build_option() {
        -psql_ocid $TF_VAR_psql_ocid \
        -opensearch_ocid $TF_VAR_opensearch_ocid \
        -nosql_ocid $TF_VAR_nosql_ocid \
-       -auth_token $OCI_TOKEN \
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
        -fnapp_ocid $TF_VAR_fnapp_ocid > ${TEST_DIR}.log 2>&1   
@@ -311,7 +310,6 @@ build_option() {
        -psql_ocid $TF_VAR_psql_ocid \
        -opensearch_ocid $TF_VAR_opensearch_ocid \
        -nosql_ocid $TF_VAR_nosql_ocid \
-       -auth_token $OCI_TOKEN \
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
        -fnapp_ocid $TF_VAR_fnapp_ocid >> ${TEST_DIR}.log 2>&1 
@@ -392,7 +390,7 @@ pre_test_suite() {
   GROUP_NAME="ts${SHAPE_GROUP}"
 
   cd $TEST_HOME/oci-starter
-  ./oci_starter.sh -group_name $GROUP_NAME -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN -shape $SHAPE_GROUP
+  ./oci_starter.sh -group_name $GROUP_NAME -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -shape $SHAPE_GROUP
   exit_on_error "oci_starter.sh"
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
