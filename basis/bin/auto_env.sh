@@ -15,8 +15,9 @@ fi
 if [[ -z "${BIN_DIR}" ]]; then
   export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 fi
-# From Resource Manager 
+# Detect if the script is started From Resource Manager 
 if [ -f $PROJECT_DIR/terraform.tfstate ]; then
+  # If yes, link terraform.tfstate to target/terraform.tfstate 
   ln -sf $PROJECT_DIR/terraform.tfstate $STATE_FILE
 fi
 # Set pipefail to get the error despite pipe to tee
@@ -44,18 +45,28 @@ read_terraform_tfvars() {
     fi
   done < "$PROJECT_DIR/terraform.tfvars"
   unset value
-
-  if [ -f $HOME/.oci_starter_profile ]; then
-    . $HOME/.oci_starter_profile
-  fi  
 }
 
-# ENV.SH
-# . $PROJECT_DIR/env.sh
+
+
+# Environment Variables
+# In 4 places:
+# 1. target/tf_env.sh created by the terraform (created by the first build)
 if [ -f $TARGET_DIR/tf_env.sh ]; then
   . $TARGET_DIR/tf_env.sh
 fi 
+# 2. terraform.tfstate
 read_terraform_tfvars
+# 3. $HOME/.oci_starter_profile
+if [ -f $HOME/.oci_starter_profile ]; then
+  . $HOME/.oci_starter_profile
+fi  
+# 4. for groups, also in group_common_env.sh
+if [ -f $PROJECT_DIR/../group_common_env.sh ]; then
+  . $PROJECT_DIR/../group_common_env.sh
+elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then
+  . $PROJECT_DIR/../../group_common_env.sh
+fi
 
 # Autocomplete in bash
 _starter_completions()
@@ -64,12 +75,7 @@ _starter_completions()
 }
 complete -F _starter_completions ./starter.sh
 
-# group_common_env.sh
-if [ -f $PROJECT_DIR/../group_common_env.sh ]; then
-  . $PROJECT_DIR/../group_common_env.sh
-elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then
-  . $PROJECT_DIR/../../group_common_env.sh
-fi
+
 
 # Check the SHAPE
 unset MISMATCH_PLATFORM

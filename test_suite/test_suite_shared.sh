@@ -234,6 +234,10 @@ build_option() {
   if [ -d $TEST_DIR/target ]; then
      cd $TEST_DIR
      ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
+     if [ -d $TEST_DIR/target ]; then
+       echo "ERROR: Existing target directory detected. Destroy failed."
+       exit 1
+     fi
   fi
 
   # Prevent to start test build if the group_common was not finished
