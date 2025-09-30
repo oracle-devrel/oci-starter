@@ -31,9 +31,9 @@ if [ "$UI_URL" != "" ]; then
         rm $TMP_PATH/cookie.txt
       fi  
       if [ "$TF_VAR_language" == "apex" ]; then
-        wget $UI_URL/app/dept -o $TMP_PATH/result_json.log -O $TMP_PATH/result.json
+        wget $UI_URL/app/dept -o $TMP_PATH/result_dept.log -O $TMP_PATH/result_dept.json
       else
-        curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_json.log > $TMP_PATH/result.json
+        curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_dept.log > $TMP_PATH/result_dept.json
       fi      
       if grep -q -i "deptno" $TMP_PATH/result.json; then
         echo "----- OK ----- deptno detected in $UI_URL/app/dept"
@@ -46,9 +46,9 @@ if [ "$UI_URL" != "" ]; then
       if [ -f "$TMP_PATH/cookie.txt" ]; then
         rm $TMP_PATH/cookie.txt
       fi  
-      curl $UI_URL/ -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_html.log > $TMP_PATH/result.html
+      curl $UI_URL/ -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_html.log > $TMP_PATH/result_html.html
     else 
-      echo "OCI Starter" > $TMP_PATH/result.html
+      echo "OCI Starter" > $TMP_PATH/result_html.html
     fi  
     if [ -f "$TMP_PATH/cookie.txt" ]; then
       rm $TMP_PATH/cookie.txt
@@ -56,7 +56,7 @@ if [ "$UI_URL" != "" ]; then
     if [ "$TF_VAR_language" == "apex" ]; then
       wget $UI_URL/app/info -o $TMP_PATH/result_info.log -O $TMP_PATH/result.info
     else
-      curl $UI_URL/app/info -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_info.log > $TMP_PATH/result.info
+      curl $UI_URL/app/info -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_info.log > $TMP_PATH/result_info.html
     fi      
   
     if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then

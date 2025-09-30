@@ -82,31 +82,31 @@ build_test () {
 
   echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
   if [ -f $TMP_PATH/result.html ]; then
-    if grep -q -i "starter" $TMP_PATH/result.html; then
+    if grep -q -i "starter" $TMP_PATH/result_html.html; then
       echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
       CSV_HTML_OK=1
-    elif grep -q -i "deptno" $TMP_PATH/result.html; then
+    elif grep -q -i "deptno" $TMP_PATH/result_html.html; then
       echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
       CSV_HTML_OK=1
     else
       echo -e "${COLOR_RED}RESULT HTML: ***** BAD ******${COLOR_NONE}"
     fi
-    if grep -q -i "deptno" $TMP_PATH/result.json; then
-      echo -e "${COLOR_GREEN}RESULT JSON: OK${COLOR_NONE}                "`cat $TMP_PATH/result.json` | cut -c 1-100  
+    if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
+      echo -e "${COLOR_GREEN}RESULT JSON: OK${COLOR_NONE}                "`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
       CSV_JSON_OK=1
     else
-      echo -e "${COLOR_RED}RESULT JSON: ***** BAD ******${COLOR_NONE}  "`cat $TMP_PATH/result.json` | cut -c 1-100 
+      echo -e "${COLOR_RED}RESULT JSON: ***** BAD ******${COLOR_NONE}  "`cat $TMP_PATH/result_dept.json` | cut -c 1-100 
     fi
-    echo "RESULT INFO:                   "`cat $TMP_PATH/result.info` | cut -c 1-100
+    echo "RESULT INFO:                   "`cat $TMP_PATH/result_info.html` | cut -c 1-100
   else
     echo -e "${COLOR_RED}ERROR: No file $TMP_PATH/result.html${COLOR_NONE}"
   fi
-  mv $TMP_PATH/result.html ${TEST_DIR}_result_$BUILD_ID.html 2>/dev/null;
-  mv $TMP_PATH/result.json ${TEST_DIR}_result_$BUILD_ID.json 2>/dev/null;
-  mv $TMP_PATH/result.info ${TEST_DIR}_result_$BUILD_ID.info 2>/dev/null;
-  mv $TMP_PATH/result_html.log ${TEST_DIR}_result_html_$BUILD_ID.log 2>/dev/null;
-  mv $TMP_PATH/result_json.log ${TEST_DIR}_result_json_$BUILD_ID.log 2>/dev/null;
-  mv $TMP_PATH/result_info.log ${TEST_DIR}_result_info_$BUILD_ID.log 2>/dev/null;
+  mv $TMP_PATH/result_html.html ${TEST_DIR}_${BUILD_ID}_result_html.html 2>/dev/null;
+  mv $TMP_PATH/result_dept.json ${TEST_DIR}_${BUILD_ID}_result_dept.json 2>/dev/null;
+  mv $TMP_PATH/result_info.html ${TEST_DIR}_${BUILD_ID}_result_info.html 2>/dev/null;
+  mv $TMP_PATH/result_html.log  ${TEST_DIR}_${BUILD_ID}_result_html.log 2>/dev/null;
+  mv $TMP_PATH/result_dept.log  ${TEST_DIR}_${BUILD_ID}_result_dept.log 2>/dev/null;
+  mv $TMP_PATH/result_info.log  ${TEST_DIR}_${BUILD_ID}_result_info.log 2>/dev/null;
 
   if [ "$CSV_JSON_OK" == "1" ]; then
     test_run_100
