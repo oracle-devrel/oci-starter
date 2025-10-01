@@ -15,7 +15,7 @@ resource "oci_functions_function" "starter_fn_function" {
     {%- else %}     
     DB_URL      = local.local_db_url,
     {%- endif %}     
-    DB_USER     = var.db_user != null ? var.db_user : "{{ params["db_user"] }}",
+    DB_USER     = var.db_user != null ? var.db_user : "{{ db_user }}",
     DB_PASSWORD = var.db_password,
     {%- endif %}     
     {%- if db_type == "nosql" %} 
