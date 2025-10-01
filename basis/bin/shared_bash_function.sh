@@ -551,17 +551,16 @@ java_find_version() {
   fi
 }
 
-certificate_validity() {
+# Get the validity of the certificate $TF_VAR_certificate_ocid
+get_certificate_validity() {
   CERT_DATE_VALIDITY=`oci certs-mgmt certificate get --certificate-id $TF_VAR_certificate_ocid | jq -r '.data["current-version"].validity["time-of-validity-not-after"]'`
   CERT_VALIDITY_DAY=`echo $((($(date -d $CERT_DATE_VALIDITY +%s) - $(date +%s))/86400))`
   echo "Certificate valid until: $CERT_DATE_VALIDITY"
   echo "Days left: $CERT_VALIDITY_DAY"
-  if [ "$CERT_VALIDITY_DAY" -lt "0" ]; then
-    error_exit "Invalid Certificate"
-  fi
 }
 
-certificate_create() {
+# Create or Update the certificate contained in $TF_VAR_certificate_dir
+certificate_create_update() {
   echo "Creating or Updating certificate $TF_VAR_dns_name"
   CERT_CERT=$(cat $TF_VAR_certificate_dir/cert.pem)
   CERT_CHAIN=$(cat $TF_VAR_certificate_dir/chain.pem)
@@ -592,10 +591,23 @@ certificate_dir_before_terraform() {
       exit 1
     fi
   elif [ "$TF_VAR_tls" == "new_dns_01" ]; then
-    # Create a new certificate via DNS-01
-    $BIN_DIR/tls_dns_create.sh 
-    exit_on_error "tls_dns_create"
-    export TF_VAR_certificate_dir=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
+    # If there is already a TF_VAR_certificate_ocid, check if it is still valid
+    if [ "$TF_VAR_certificate_ocid" != "" ]; then
+      get_certificate_validity
+      if [ "$CERT_VALIDITY_DAY" -lt "0" ]; then
+        echo "Certificate $TF_VAR_certificate_ocid expired. Need to renew it."
+      fi
+      # Renew new certificate via DNS-01
+      $BIN_DIR/tls_dns_create.sh 
+      exit_on_error "renew_tls_dns_create"
+      certificate_create_update
+    else
+      # Create a new certificate via DNS-01
+      $BIN_DIR/tls_dns_create.sh 
+      exit_on_error "tls_dns_create"
+      export TF_VAR_certificate_dir=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
+    fi
+
   fi
 
   if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then
@@ -620,9 +632,12 @@ certificate_dir_before_terraform() {
       exit 1
     fi    
   elif [ "$TF_VAR_certificate_ocid" == "" ] && [ "$TF_VAR_certificate_dir" != "" ] ;  then
-    certificate_create
+    certificate_create_update
   elif [ "$TF_VAR_certificate_ocid" != "" ]; then
-    certificate_validity
+    get_certificate_validity
+    if [ "$CERT_VALIDITY_DAY" -lt "0" ]; then
+      error_exit "Invalid Certificate $TF_VAR_certificate_ocid. Delete or renew the certificate."
+    fi
   else 
     error_exit "certificate_dir_before_terraform: missing variables TF_VAR_certificate_ocid or TF_VAR_certificate_dir"
   fi  
