@@ -574,6 +574,13 @@ certificate_create_update() {
   TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[0].id`
 }
 
+# Create a new certificate with DNS01
+certificate_dns01_create () {
+  $BIN_DIR/tls_dns01_create.sh 
+  exit_on_error "certificate_dns01_create"
+  export TF_VAR_certificate_dir=$PROJECT_DIR/src/tls/$TF_VAR_dns_name  
+}
+
 certificate_dir_before_terraform() {
   if [ "$TF_VAR_dns_name" == "" ]; then
     echo "ERROR: certificate_dir_before_terraform: TF_VAR_dns_name not defined"
@@ -597,15 +604,10 @@ certificate_dir_before_terraform() {
       if [ "$CERT_VALIDITY_DAY" -lt "0" ]; then
         echo "Certificate $TF_VAR_certificate_ocid expired. Need to renew it."
       fi
-      # Renew new certificate via DNS-01
-      $BIN_DIR/tls_dns_create.sh 
-      exit_on_error "renew_tls_dns_create"
+      certificate_dns01_create 
       certificate_create_update
     else
-      # Create a new certificate via DNS-01
-      $BIN_DIR/tls_dns_create.sh 
-      exit_on_error "tls_dns_create"
-      export TF_VAR_certificate_dir=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
+      certificate_dns01_create 
     fi
 
   fi
