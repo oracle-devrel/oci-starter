@@ -2,12 +2,12 @@
 # https://jira-sd.mc1.oracleiaas.com/browse/YUM-5781
 
 if [[ `arch` == "aarch64" ]]; then
-    sudo dnf install -y oracle-release-el8
-    sudo dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel
+    dnf install -y oracle-release-el8
+    dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel
     # OCI_CLIENT_DIR=/usr/lib/oracle/19.19/client64/lib
 else
-    sudo dnf install oracle-instantclient-release-23ai-el8 -y
-    sudo dnf install -y oracle-instantclient-basic oracle-instantclient-devel
+    dnf install oracle-instantclient-release-23ai-el8 -y
+    dnf install -y oracle-instantclient-basic oracle-instantclient-devel
     # OCI_CLIENT_DIR=/usr/lib/oracle/23/client64/lib
 fi
 
