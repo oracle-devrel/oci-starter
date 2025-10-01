@@ -2,16 +2,6 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
-if [[ `arch` == "aarch64" ]]; then
-    sudo dnf install -y oracle-release-el8
-    sudo dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel
-    # OCI_CLIENT_DIR=/usr/lib/oracle/19.19/client64/lib
-else
-    sudo dnf install oracle-instantclient-release-23ai-el8 -y
-    sudo dnf install -y oracle-instantclient-basic oracle-instantclient-devel
-    # OCI_CLIENT_DIR=/usr/lib/oracle/23/client64/lib
-fi
-
 # Install last version of PHP
 # https://yum.oracle.com/oracle-linux-php.html
 
@@ -54,8 +44,6 @@ sudo cp app.conf /etc/httpd/conf.d/.
 sudo sed -i "s/Listen 80$/Listen 8080/" /etc/httpd/conf/httpd.conf
 
 # Restart all
-sudo systemctl enable httpd
-sudo systemctl enable php-fpm
 sudo systemctl restart httpd
 sudo systemctl restart php-fpm
 

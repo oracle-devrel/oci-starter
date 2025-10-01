@@ -1,4 +1,15 @@
+# Use by PUBLIC_COMPUTE and DOCKER installation (K8s/Container Instance/Fn)
 # https://jira-sd.mc1.oracleiaas.com/browse/YUM-5781
+
+if [[ `arch` == "aarch64" ]]; then
+    sudo dnf install -y oracle-release-el8
+    sudo dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel
+    # OCI_CLIENT_DIR=/usr/lib/oracle/19.19/client64/lib
+else
+    sudo dnf install oracle-instantclient-release-23ai-el8 -y
+    sudo dnf install -y oracle-instantclient-basic oracle-instantclient-devel
+    # OCI_CLIENT_DIR=/usr/lib/oracle/23/client64/lib
+fi
 
 mkdir -p /run/php-fpm
 
@@ -22,4 +33,7 @@ echo >> /etc/php.ini
 echo extension=oci8.so >> /etc/php.ini
 echo extension=oci8 > /etc/php.d/20-oci8.ini
 
+# Eanble Service
+sudo systemctl enable httpd
+sudo systemctl enable php-fpm
 
