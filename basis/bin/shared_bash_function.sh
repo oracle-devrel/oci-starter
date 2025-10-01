@@ -559,7 +559,7 @@ get_certificate_validity() {
   echo "Days left: $CERT_VALIDITY_DAY"
 }
 
-# Create or Update the certificate contained in $TF_VAR_certificate_dir
+# Create or Update with name $TF_VAR_dns_name with the certificate contained in $TF_VAR_certificate_dir
 certificate_create_update() {
   echo "Creating or Updating certificate $TF_VAR_dns_name"
   CERT_CERT=$(cat $TF_VAR_certificate_dir/cert.pem)

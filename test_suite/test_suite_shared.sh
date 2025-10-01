@@ -70,7 +70,7 @@ build_test () {
   pwd
   ./starter.sh build --auto-approve > build_$BUILD_ID.log 2>&1
 
-  CSV_NAME=$NAME
+  CSV_NAME=$PREFIX
   CSV_DIR=$TEST_DIR
   CSV_DATE=`date '+%Y%m%d-%H%M%S'`
   CSV_BUILD_SECOND=$SECONDS
@@ -78,7 +78,7 @@ build_test () {
   CSV_JSON_OK=0
   CSV_RUN100_SECOND=0
   CSV_RUN100_OK=0
-  TMP_PATH="/tmp/$NAME"
+  TMP_PATH="/tmp/$PREFIX"
 
   echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
   if [ -f $TMP_PATH/result_html.html ]; then
@@ -255,8 +255,9 @@ build_option() {
 
   cd $TEST_HOME/oci-starter
   if [ "$OPTION_GROUP_NAME" == "dummy" ]; then
+    PREFIX=$NAME
     echo ./oci_starter.sh\
-       -prefix $NAME \
+       -prefix $PREFIX \
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
        -language $OPTION_LANG \
@@ -285,7 +286,7 @@ build_option() {
        -bastion_ocid $TF_VAR_bastion_ocid \
        -fnapp_ocid $TF_VAR_fnapp_ocid > ${TEST_DIR}.log 2>&1   
     ./oci_starter.sh \
-       -prefix $NAME \
+       -prefix $PREFIX \
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
        -language $OPTION_LANG \
@@ -316,8 +317,9 @@ build_option() {
   else
     # Unique name to allow more generations of TLS certificates. The prefix is used as hostname for TLS http_01.
     OPTION_TSONE_ID=$((OPTION_TSONEID+1))
+    PREFIX=tsone${OPTION_TSONE_ID}
     ./oci_starter.sh \
-       -prefix tsone${OPTION_TSONE_ID} \
+       -prefix $PREFIX \
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
        -language $OPTION_LANG \
