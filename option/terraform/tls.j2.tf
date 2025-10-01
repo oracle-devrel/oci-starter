@@ -1,19 +1,19 @@
 # TLS
 variable "dns_zone_name" { 
   default=null 
-  description = "TLS - DNS Zone Name"  
+  description = "SSL/TLS - DNS Zone Name"  
 }
 variable "dns_name" { 
   default=null 
-  description = "TLS - DNS Name"  
+  description = "SSL/TLS - DNS Name"  
 }
 variable "dns_ip" { 
   default=null
-  description = "TLS - IP associated with the DNS Name"  
+  description = "SSL/TLS - IP associated with the DNS Name"  
 }
 variable "certificate_email" { 
   default=null
-  description = "Email used for CertBot"  
+  description = "SSL/TLS - Email used to create the certificate"  
 }
 
 locals {

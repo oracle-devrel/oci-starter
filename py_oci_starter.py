@@ -564,7 +564,11 @@ table_comments = {
     'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345'],
     'license_model': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
     'compartment_ocid': ['Compartment OCID'],
-    'certificate_ocid': ['OCID of the OCI Certificate','If the certificate is not imported in OCI, use instead TF_VAR_certificate_dir=<directory where the certificate resides>', 'export TF_VAR_certificate_dir="__TO_FILL__"']
+    'certificate_ocid': ['OCID of the OCI Certificate','If the certificate is not imported in OCI, use instead TF_VAR_certificate_dir=<directory where the certificate resides>', 'export TF_VAR_certificate_dir="__TO_FILL__"'],
+    'certificate_email': ['SSL/TLS - Email used to create the certificate'],
+    'dns_name': ['SSL/TLS - Webserver DNS Name used by the installation (ex: www.mydomain.com)'],
+    'dns_zone_name': ['SSL/TLS - OCI DNS Zone Name (ex:mydomain.com)'],
+    'tls': ['SSL/TLS - Method to create the certificate (new_http_01 or new_dns_01 or existing_ocid) ']  
 }
 
 def tf_var_comment(contents, param):
