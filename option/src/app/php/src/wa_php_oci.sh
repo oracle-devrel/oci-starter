@@ -21,6 +21,7 @@ dnf update php\* -y
 dnf install -y php php-cli php-common php-fpm php-pear gcc curl-devel php-devel zlib-devel pcre-devel php-pecl-http php-mysqlnd systemtap-sdt-devel
 dnf install -y php84-php-oci8
 # Not sure why I have to copy it
+mkdir -p /usr/lib64/php/modules/
 cp /opt/remi/php84/root/usr/lib64/php/modules/oci8.so /usr/lib64/php/modules/.
 php -v
 # export PHP_DTRACE=yes
@@ -34,6 +35,8 @@ echo extension=oci8.so >> /etc/php.ini
 echo extension=oci8 > /etc/php.d/20-oci8.ini
 
 # Eanble Service
-sudo systemctl enable httpd
-sudo systemctl enable php-fpm
+systemctl enable httpd
+systemctl enable php-fpm
+
+
 
