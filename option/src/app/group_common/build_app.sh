@@ -154,16 +154,14 @@ if [ -n "$TF_VAR_idcs_domain_name" ]; then
   append "export TF_VAR_idcs_domain_name=$TF_VAR_idcs_domain_name"
 fi   
 
-cat >> ../../../group_common_env.sh <<EOT 
+if [ "$TF_VAR_auth_token" != "" ]; then
+  append "export TF_VAR_auth_token=$TF_VAR_auth_token"
+fi   
+
+cat >> ../../../group_common_env.sh <<'EOT' 
 
 # Database Password
 export TF_VAR_db_password="$TF_VAR_db_password"
-# Auth Token
-export TF_VAR_auth_token="$TF_VAR_auth_token"
-
-EOT
-
-cat >> ../../../group_common_env.sh <<'EOT' 
 
 # SSH Keys
 if [ -f $COMMON_DIR/group_common/target/ssh_key_starter ]; then
