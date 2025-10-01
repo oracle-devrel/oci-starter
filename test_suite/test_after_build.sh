@@ -9,7 +9,7 @@ get_ui_url
 title "After Build"
 if [ "$UI_URL" != "" ]; then
   echo "TEST URLs" > $FILE_DONE
-  append_done "- UI URL: $UI_URL"
+  append_done "- UI URL: $UI_URL/"
   if [ "$TEST_NAME" != "" ]; then
     export TMP_PATH="/tmp/$TF_VAR_prefix"
     rm -Rf $TMP_PATH     
