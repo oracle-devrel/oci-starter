@@ -609,7 +609,6 @@ certificate_dir_before_terraform() {
     else
       certificate_dns01_create 
     fi
-
   fi
 
   if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then

@@ -25,6 +25,7 @@ if [ "$UI_URL" != "" ]; then
 
     # Retry several time. Needed for ORDS or Go or Tomcat that takes more time to start
     x=1
+    echo "----- Testing: $UI_URL/app/dept"
     while [ $x -le 20 ]
     do
       if [ -f "$TMP_PATH/cookie.txt" ]; then
@@ -36,12 +37,13 @@ if [ "$UI_URL" != "" ]; then
         curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_dept.log > $TMP_PATH/result_dept.json
       fi      
       if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
-        echo "----- OK ----- deptno detected in $UI_URL/app/dept"
+        echo -e "\u2705 deptno detected in $UI_URL/app/dept"
         break
       fi
       sleep 5  
       x=$(( $x + 1 ))
     done
+    echo "----- Testing: $UI_URL/"
     if [ "$TF_VAR_ui_type" != "api" ] && [ "$TF_VAR_language" != "apex" ]; then
       if [ -f "$TMP_PATH/cookie.txt" ]; then
         rm $TMP_PATH/cookie.txt
