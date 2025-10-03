@@ -162,6 +162,6 @@ output "ssh_key_public" {
 }
 
 output "ssh_key_private" {
-  value = var.ssh_public_key != null ? "-" : "See Stack / Stack Resources / tls_private_key.ssh_key.private_key_pem"
+  value = var.ssh_public_key != null ? "-" : "See Stack Details / Stack Resources / tls_private_key[0] / attributes / private_key_pem"
 }
 
