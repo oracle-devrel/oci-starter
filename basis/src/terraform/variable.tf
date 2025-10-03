@@ -158,10 +158,10 @@ locals {
 }
 
 output "ssh_key_public" {
-  value = var.ssh_public_key != null ? "-" : tls_private_key.ssh_key[0].public_key_openssh
+  value = var.ssh_public_key != null ? "target/ssh_key_starter.pub" : tls_private_key.ssh_key[0].public_key_openssh
 }
 
 output "ssh_key_private" {
-  value = var.ssh_public_key != null ? "-" : "See Stack Details / Stack Resources / tls_private_key[0] / attributes / private_key_pem"
+  value = var.ssh_public_key != null ? "target/ssh_key_starter" : "See Stack Details / Stack Resources / tls_private_key[0] / attributes / private_key_pem"
 }
 
