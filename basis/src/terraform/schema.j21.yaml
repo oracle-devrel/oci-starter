@@ -54,7 +54,7 @@ variables:
     {%- elif param in allowed_values %}
     type: enum
     enum:
-    {%- for value in allowed_values["param"] %}
+    {%- for value in allowed_values[param] %}
       - {{ value }}
     {%- endfor %}
     {%- elif param=="ssh_public_key" %}
