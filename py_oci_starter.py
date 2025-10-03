@@ -115,7 +115,7 @@ allowed_values = {
     'kubernetes': {'oke', 'docker'},
     'ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
     'db_type': {'atp', 'autonomous', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
-    'license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
+    'license_model': {'LICENSE_INCLUDED', 'BRING_YOUR_OWN_LICENSE'},
     'infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager','from_resource_manager'},
     'mode': {CLI, GIT, ZIP},
     'shape': {'amd','freetier_amd','ampere','arm'},
@@ -231,8 +231,6 @@ def license_rules():
     license_model = os.getenv('LICENSE_MODEL')
     if license_model is not None:
         params['license_model'] = license_model
-    params['license_model'] = longhand(
-        'license_model', {'included': 'LICENSE_INCLUDED', 'byol': 'BRING_YOUR_OWN_LICENSE'})
 
 
 def zip_rules():
