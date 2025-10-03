@@ -1,6 +1,8 @@
 // ------------------------ PostgreSQL -----------------------------
 {%- if psql_ocid is defined %}
-variable "psql_ocid" {}
+variable "psql_ocid" {
+  description = "Existing PostgreSQL OCID"
+}
 
 # Compatibility with postgresql_existing.tf 
 data "oci_psql_db_system" "starter_psql" {
@@ -15,12 +17,13 @@ resource "oci_psql_db_system" "starter_psql" {
   system_type = "OCI_OPTIMIZED_STORAGE"
 
   #Required
-  db_version          = "14"
+  db_version          = "16"
   display_name = "${var.prefix}psql"
   network_details {
     subnet_id = data.oci_core_subnet.starter_db_subnet.id
   }
-  shape = "PostgreSQL.VM.Standard.E4.Flex.2.32GB"
+  shape = "PostgreSQL.VM.Standard.E5.Flex"
+  instance_ocpu_count = 1
   storage_details {
     is_regionally_durable = true
     system_type = "OCI_OPTIMIZED_STORAGE"

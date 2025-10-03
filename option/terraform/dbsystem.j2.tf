@@ -1,6 +1,8 @@
 # Database Cloud
 {%- if db_ocid is defined %}
-variable "db_ocid" {}
+variable "db_ocid" {
+  description = "Existing Base Database OCID"    
+}
 
 # OCID of the COMPARTMENT of the DBSYSTEM (usecase where it is <> Landing Zone DB Compartment )
 variable "db_compartment_ocid" { default=null }
@@ -16,13 +18,17 @@ data "oci_database_db_homes" "starter_db_homes" {
 }
 
 {%- else %}   
-variable "db_version" {}
+variable "db_version" {
+  description = "Database Version"    
+}
 
 variable n_character_set {
+  description = "Database NCharacter Set"    
   default = "AL16UTF16"
 }
 
 variable character_set {
+  description = "Database Character Set"    
   default = "AL32UTF8"
 }
 
@@ -36,7 +42,7 @@ resource "null_resource" "sleep_before_db_system" {
 
 resource "oci_database_db_system" "starter_dbsystem" {
   depends_on = [ null_resource.sleep_before_db_system ]
-  availability_domain = data.oci_identity_availability_domain.ad.name
+  availability_domain = local.availability_domain_name
   compartment_id      = local.lz_db_cmp_ocid
   database_edition    = "##db_edition##"
 
@@ -59,7 +65,7 @@ resource "oci_database_db_system" "starter_dbsystem" {
   shape                   = "VM.Standard.E4.Flex"
   cpu_core_count          = ##cpu_core_count##
   subnet_id               = data.oci_core_subnet.starter_db_subnet.id
-  ssh_public_keys         = [var.ssh_public_key]
+  ssh_public_keys         = [local.ssh_public_key]
   display_name            = "${var.prefix}db"
   hostname                = "${var.prefix}db"
   data_storage_size_in_gb = "256"

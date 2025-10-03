@@ -1,6 +1,20 @@
-variable "dns_zone_name" { default=null }
-variable "dns_name" { default=null }
-variable "dns_ip" { default=null }
+# TLS
+variable "dns_zone_name" { 
+  default=null 
+  description = "SSL/TLS - DNS Zone Name"  
+}
+variable "dns_name" { 
+  default=null 
+  description = "SSL/TLS - DNS Name"  
+}
+variable "dns_ip" { 
+  default=null
+  description = "SSL/TLS - IP associated with the DNS Name"  
+}
+variable "certificate_email" { 
+  default=null
+  description = "SSL/TLS - Email used to create the certificate"  
+}
 
 locals {
 {%- if deploy_type == "public_compute" and tls != "existing_ocid" %}  

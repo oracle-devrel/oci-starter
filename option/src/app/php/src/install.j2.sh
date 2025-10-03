@@ -5,10 +5,19 @@ cd $SCRIPT_DIR
 # Install last version of PHP
 # https://yum.oracle.com/oracle-linux-php.html
 
-# XXX This should be the right way. But it does not work...
-# sudo dnf install -y @php:7.4
-# sudo dnf install -y oraclelinux-developer-release-el8 oracle-instantclient-release-el8
+# # XXX This should be the right way. But it does not work...
+# # See https://docs.oracle.com/en-us/iaas/Content/developer/apache-on-oracle-linux/01-summary.htm
+# sudo dnf install httpd -y
+# sudo systemctl enable httpd
+# sudo dnf install @php:7.4 -y
+# php -v
+# # See https://yum.oracle.com/oracle-linux-php.html#InstallPHPOCI8
 # sudo dnf module enable php:7.4 php-oci8
+# sudo dnf install -y php-oci8-21c php-mysqlnd 
+
+# sudo dnf install @php:8.2 -y
+# sudo dnf install -y oraclelinux-developer-release-el8 oracle-instantclient-release-el8
+# sudo dnf module enable php:8.2 php-oci8
 # sudo dnf install -y php-oci8-21c php-mysqlnd 
 # sudo dnf install -y php-mysqlnd 
 # sudo dnf install -y httpd
@@ -33,10 +42,12 @@ sudo cp app.conf /etc/httpd/conf.d/.
 
 # Configure the Apache Listener on 8080
 sudo sed -i "s/Listen 80$/Listen 8080/" /etc/httpd/conf/httpd.conf
+
+# Restart all
 sudo systemctl restart httpd
 sudo systemctl restart php-fpm
 
-# XXXX
+# Use Apache to PHP, and nginx to forward request to Apache
 sudo rm /etc/nginx/default.d/php.conf
 
 

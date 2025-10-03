@@ -32,6 +32,16 @@ cleanBucket() {
   fi  
 }
 
+# cleanUp
+cleanUp() {
+    echo "Empty state file - cleaning up .terraform"
+    rm -Rf $PROJECT_DIR/src/terraform/.terraform
+    rm -Rf $PROJECT_DIR/src/terraform/.terraform.lock.hcl
+    echo "Renaming target directory"
+    export DESTROY_DATE=`date '+%Y%m%d-%H%M%S'`
+    mv $TARGET_DIR $TARGET_DIR.$DESTROY_DATE
+}
+
 if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ]; then
 
   # Check if there is something to destroy.
@@ -56,10 +66,12 @@ if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ]; then
     export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
     if [ "$TF_RESOURCE" == "0" ]; then
         echo "No resource in terraform state file. Nothing to destroy."
+        cleanUp
         exit 0
     fi
   else
     echo "File $STATE_FILE does not exist. Nothing to destroy."
+    cleanUp 
     exit 0
   fi
 
@@ -92,11 +104,7 @@ if [ "$1" != "--called_by_resource_manager" ]; then
 
   export TF_RESOURCE=`cat $STATE_FILE | jq ".resources | length"`
   if [ "$TF_RESOURCE" == "0" ]; then
-    echo "Empty state file - cleaning up .terraform"
-    rm -Rf $PROJECT_DIR/src/terraform/.terraform
-    rm -Rf $PROJECT_DIR/src/terraform/.terraform.lock.hcl
-    export DESTROY_DATE=`date '+%Y%m%d-%H%M%S'`
-    mv $TARGET_DIR $TARGET_DIR.$DESTROY_DATE
+    cleanUp
   fi
 
   echo "Destroy time: ${SECONDS} secs"

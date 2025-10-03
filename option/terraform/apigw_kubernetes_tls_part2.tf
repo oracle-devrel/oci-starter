@@ -1,4 +1,7 @@
-variable ingress_ip { default=null }
+variable ingress_ip {
+  description = "Kubernetes Ingress IP"  
+  default=null 
+}
 
 resource "oci_apigateway_deployment" "starter_apigw_deployment" {
   count = var.ingress_ip == null ? 0 : 1

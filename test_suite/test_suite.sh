@@ -211,7 +211,6 @@ loop_tls() {
 
   OPTION_DEPLOY=public_compute
   OPTION_TLS=new_http_01
-  OPTION_DEPLOY=private_compute
   build_option  
   OPTION_DB_INSTALL=default
 

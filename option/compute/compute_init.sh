@@ -42,6 +42,10 @@ install_java() {
       sudo dnf install -y graalvm-21-jdk
       sudo update-alternatives --set java /usr/lib64/graalvm/graalvm-java21/bin/java
       # sudo update-alternatives --set native-image /usr/lib64/graalvm/graalvm-java21/lib/svm/bin/native-image
+    else
+      sudo dnf install -y graalvm-25-jdk
+      sudo update-alternatives --set java /usr/lib64/graalvm/graalvm-java25/bin/java
+      # sudo update-alternatives --set native-image /usr/lib64/graalvm/graalvm-java21/lib/svm/bin/native-image
     fi   
   else
     # JDK 
@@ -53,8 +57,10 @@ install_java() {
       sudo dnf install -y java-11  
     elif [ "$TF_VAR_java_version" == 17 ]; then
       sudo dnf install -y java-17        
+    elif [ "$TF_VAR_java_version" == 21 ]; then
+      sudo dnf install -y java-21         
     else
-      sudo dnf install -y java-21  
+      sudo dnf install -y java-25  
       # Trick to find the path
       # cd -P "/usr/java/latest"
       # export JAVA_LATEST_PATH=`pwd`

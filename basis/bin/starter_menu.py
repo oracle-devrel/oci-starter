@@ -17,27 +17,31 @@ normal_menu = [
 
 advanced_menu = [
     ("Build", [
-        ("Build     - Build and deploy all", "./starter.sh build"), 
-        ("Destroy   - Destroy all",          "./starter.sh destroy"),
-        ("Log       - Show last build log",  "cat target/build.log")
+        ("Build      - Build and deploy all", "./starter.sh build"), 
+        ("Destroy    - Destroy all",          "./starter.sh destroy"),
+        ("Log        - Show last build log",  "cat target/build.log")
     ]),
+    ("Resource Manager", [
+        ("Distribute - Create Resource Manager Stack", "./starter.sh rm"),
+        ("Build      - Create and Build using Resource Manager", "./starter.sh rm build")
+    ]),      
     ("SSH", [
-        ("Key       - SSH private key",      "cat target/ssh_key_starter"), 
-        ("Bastion   - SSH Bastion",          "./starter.sh ssh bastion"), 
-        ("Compute   - SSH Compute",          "./starter.sh ssh compute"),
-        ("Database  - SSH Database Node",    "./starter.sh ssh db_node"),
+        ("Key        - SSH private key",      "cat target/ssh_key_starter"), 
+        ("Bastion    - SSH Bastion",          "./starter.sh ssh bastion"), 
+        ("Compute    - SSH Compute",          "./starter.sh ssh compute"),
+        ("Database   - SSH Database Node",    "./starter.sh ssh db_node"),
     ]),
     ("Start/Stop", [
-        ("Start     - Start all resources",  "./starter.sh start"), 
-        ("Stop      - Stop all resources",   "./starter.sh stop")
+        ("Start      - Start all resources",  "./starter.sh start"), 
+        ("Stop       - Stop all resources",   "./starter.sh stop")
     ]),                
     ("Terraform", [
-        ("Plan      - Terraform Plan",       "./starter.sh terraform plan"), 
-        ("Apply     - Terraform Apply",      "./starter.sh terraform apply"),
-        ("Destroy   - Terraform Destroy",    "./starter.sh terraform destroy")
+        ("Plan       - Terraform Plan",       "./starter.sh terraform plan"), 
+        ("Apply      - Terraform Apply",      "./starter.sh terraform apply"),
+        ("Destroy    - Terraform Destroy",    "./starter.sh terraform destroy")
     ]),                
     ("Other", [
-        ("Env       - Set Environment variables", "./starter.sh env"), 
+        ("Env        - Set Environment variables", "./starter.sh env"), 
         ("Help", "./starter.sh help"), 
         ("Exit", "Exit")
     ])

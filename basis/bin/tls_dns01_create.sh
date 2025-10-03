@@ -7,6 +7,7 @@ cd $PROJECT_DIR
 
 . starter.sh env -silent
 . $BIN_DIR/tls/dns_shared_function.sh
+title "Certificate - Create using DNS01"
 
 # Start OCI Commands in Backgroud waiting from files coming from certbot 
 # (Since Certbot Docker has not OCI CLI access)

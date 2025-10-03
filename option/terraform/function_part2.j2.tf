@@ -15,12 +15,13 @@ resource "oci_functions_function" "starter_fn_function" {
     {%- else %}     
     DB_URL      = local.local_db_url,
     {%- endif %}     
-    DB_USER     = var.db_user,
+    DB_USER     = var.db_user != null ? var.db_user : "{{ db_user }}",
     DB_PASSWORD = var.db_password,
     {%- endif %}     
     {%- if db_type == "nosql" %} 
     TF_VAR_compartment_ocid = var.compartment_ocid,
-    TF_VAR_nosql_endpoint = var.nosql_endpoint,
+    # XXX Ideally it should be nosql.${region}.oci.${regionDomain}  
+    TF_VAR_nosql_endpoint = "nosql.${var.region}.oci.oraclecloud.com",
     {%- endif %}     
   }
   #Optional
@@ -71,7 +72,7 @@ resource "oci_apigateway_deployment" "starter_apigw_deployment" {
       methods = [ "ANY" ]
       backend {
         type = "STOCK_RESPONSE_BACKEND"
-        body   = "Function ${var.language}"
+        body   = "Function {{ language }}"
         status = 200
       }
     }    

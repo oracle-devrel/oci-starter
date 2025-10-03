@@ -3,9 +3,13 @@ locals {
   openid_client_secret = oci_identity_domains_app.starter_confidential_app.client_secret
 }
 
-variable "vault_ocid" {}
+variable "vault_ocid" {
+  description = "OCI Vault OCID"  
+}
 
-variable "vault_key_ocid" {}
+variable "vault_key_ocid" {
+  description = "OCI Vault Key OCID"  
+}
 
 resource "oci_kms_vault" "starter_vault" {
   count = var.vault_ocid==null ? 1 : 0  

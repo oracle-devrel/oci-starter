@@ -18,9 +18,11 @@ ocir_docker_push
 if [ ! -f $KUBECONFIG ]; then
   create_kubeconfig
  
-  # Deploy Latest ingress-nginx
-  kubectl create clusterrolebinding starter_clst_adm --clusterrole=cluster-admin --user=$TF_VAR_current_user_ocid
-  if [ $? -eq 0 ]; then
+  # Check if Ingress Controller is installed
+  kubectl get service ingress-nginx-controller -n ingress-nginx
+  if [ "$?" != "0" ]; then
+    # Deploy Latest ingress-nginx
+    kubectl create clusterrolebinding starter_clst_adm --clusterrole=cluster-admin --user=$TF_VAR_current_user_ocid
     echo "OKE Deploy: Role Binding created"  
     # LATEST_INGRESS_CONTROLLER=`curl --silent "https://api.github.com/repos/kubernetes/ingress-nginx/releases/latest" | jq -r .name`
     # echo LATEST_INGRESS_CONTROLLER=$LATEST_INGRESS_CONTROLLER
@@ -81,6 +83,7 @@ kubectl delete secret ocirsecret  --ignore-not-found=true
 if [ "$TF_VAR_auth_token" == "" ]; then
   # Create a temporary docker auth_token (valid for 1 hour)... 
   export TOKEN=`oci raw-request --region $TF_VAR_region --http-method GET --target-uri "https://${OCIR_HOST}/20180419/docker/token" | jq -r .data.token`
+  echo "TOKEN=$TOKEN" | cut -c 1-50
   kubectl create secret docker-registry ocirsecret --docker-server=$OCIR_HOST --docker-username="BEARER_TOKEN" --docker-password="$TOKEN" --docker-email="$TF_VAR_email"
 else
   kubectl create secret docker-registry ocirsecret --docker-server=$OCIR_HOST --docker-username="$TF_VAR_namespace/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"

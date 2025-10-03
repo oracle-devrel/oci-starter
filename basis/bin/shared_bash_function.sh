@@ -200,54 +200,55 @@ group_common_contain() {
   fi
 }
 
+
 # Find the availability domain for a shape (ex: "VM.Standard.E2.1.Micro")
 # ex: find_availabilty_domain_for_shape "VM.Standard.E2.1.Micro"
-find_availabilty_domain_for_shape() {
-  if [ "$TF_VAR_availability_domain_number" != "" ]; then
-    return 0
-  fi
-  echo "Searching for shape $1 in Availability Domains"  
-  i=1
-  for ad in `oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r ".data[].name"` 
-  do
-    echo "Checking in $ad"
-    TEST=`oci compute shape list --compartment-id=$TF_VAR_tenancy_ocid --availability-domain $ad | jq ".data[] | select( .shape==\"$1\" )"`
-    if [[ "$TEST" != "" ]]; then
-        echo "Found in $ad"
-        export TF_VAR_availability_domain_number=$i
-        return 0
-    fi
-    i=$((i+1))
-  done
-  echo "Error shape $1 not found" 
-  exit 1
-}
+# find_availabilty_domain_for_shape() {
+#   if [ "$TF_VAR_availability_domain_number" != "" ]; then
+#     return 0
+#   fi
+#   echo "Searching for shape $1 in Availability Domains"  
+#   i=1
+#   for ad in `oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r ".data[].name"` 
+#   do
+#     echo "Checking in $ad"
+#     TEST=`oci compute shape list --compartment-id=$TF_VAR_compartment_ocid --availability-domain $ad | jq ".data[] | select( .shape==\"$1\" )"`
+#     if [[ "$TEST" != "" ]]; then
+#         echo "Found in $ad"
+#         export TF_VAR_availability_domain_number=$i
+#         return 0
+#     fi
+#     i=$((i+1))
+#   done
+#   echo "Error shape $1 not found" 
+#   exit 1
+# }
 
-# Guess the shape E6/E5/E4
-guess_available_shape() {
-  if [ -f $TARGET_DIR/shape.json ]; then  
-    export TF_VAR_instance_shape=`cat $TARGET_DIR/shape.json`
-    echo "Reading shape from $TARGET_DIR/shape.json ($TF_VAR_instance_shape)"
-  else
-    echo "Searching for compute shape..."  
-    i=1
-    for ad in `oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r ".data[].name"` 
-    do
-        oci compute shape list --compartment-id=$TF_VAR_tenancy_ocid --availability-domain $ad > $TARGET_DIR/shapes.json
-        for s in VM.Standard.E6.Flex VM.Standard.E5.Flex VM.Standard.E4.Flex; do
-        TEST=`cat $TARGET_DIR/shapes.json | jq ".data[] | select( .shape==\"$s\" )"`
-        if [[ "$TEST" != "" ]]; then
-            echo "Found Shape $s in $ad"
-            export TF_VAR_instance_shape=$s
-            echo $TF_VAR_instance_shape > $TARGET_DIR/shape.json
-            return 0
-        fi
-        done  
-        i=$((i+1))
-    done
-    error_exit "Error no shape not found" 
-  fi
-}
+# # Guess the shape E6/E5/E4
+# guess_available_shape() {
+#   if [ -f $TARGET_DIR/shape.json ]; then  
+#     export TF_VAR_instance_shape=`cat $TARGET_DIR/shape.json`
+#     echo "Reading shape from $TARGET_DIR/shape.json ($TF_VAR_instance_shape)"
+#   else
+#     echo "Searching for compute shape..."  
+#     i=1
+#     for ad in `oci iam availability-domain list --compartment-id=$TF_VAR_tenancy_ocid | jq -r ".data[].name"` 
+#     do
+#         oci compute shape list --compartment-id=$TF_VAR_compartment_ocid --availability-domain $ad > $TARGET_DIR/shapes.json
+#         for s in VM.Standard.E6.Flex VM.Standard.E5.Flex VM.Standard.E4.Flex; do
+#         TEST=`cat $TARGET_DIR/shapes.json | jq ".data[] | select( .shape==\"$s\" )"`
+#         if [[ "$TEST" != "" ]]; then
+#             echo "Found Shape $s in $ad"
+#             export TF_VAR_instance_shape=$s
+#             echo $TF_VAR_instance_shape > $TARGET_DIR/shape.json
+#             return 0
+#         fi
+#         done  
+#         i=$((i+1))
+#     done
+#     error_exit "Error no shape not found" 
+#   fi
+# }
 
 # Get User Details (username and OCID)
 get_user_details() {
@@ -256,8 +257,9 @@ get_user_details() {
       # Cloud Shell
       export TF_VAR_tenancy_ocid=$OCI_TENANCY
       export TF_VAR_region=$OCI_REGION
-      # Needed for child region
-      export TF_VAR_home_region=`echo $OCI_CS_HOST_OCID | awk -F[/.] '{print $4}'`
+      # Good way to get the home_region is to get it via oci iam tenancy get --tenancy-id xxx -> home_region PREFIX (ex:FRA)
+      # That needs then to be converted from prefix to name via the region list (->eu-frankfurt-1). See provider.tf.
+      # export TF_VAR_home_region=`echo $OCI_CS_HOST_OCID | awk -F[/.] '{print $4}'`
       if [[ "$OCI_CS_USER_OCID" == *"ocid1.saml2idp"* ]]; then
         # Ex: ocid1.saml2idp.oc1..aaaaaaaaexfmggau73773/user@domain.com -> oracleidentitycloudservice/user@domain.com
         # Split the string in 2 
@@ -273,11 +275,10 @@ get_user_details() {
     else 
       echo "Called From Resource Manager"
       export CALLED_BY_TERRAFORM="TRUE"
+      # Exported by build.tf
       export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
-      echo "$TF_VAR_ssh_public_key" > ${TF_VAR_ssh_private_path}.pub
-      echo "$TF_VAR_ssh_private_key" > $TF_VAR_ssh_private_path
-      chmod 600 ${TF_VAR_ssh_private_path}.pub
-      chmod 600 $TF_VAR_ssh_private_path
+      export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
+      export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)      
     fi
   elif [ -f $HOME/.oci/config ]; then
     ## Get the [DEFAULT] config
@@ -290,9 +291,10 @@ get_user_details() {
     export TF_VAR_current_user_ocid=`sed -n 's/user=//p' /tmp/ociconfig |head -1`
     export TF_VAR_fingerprint=`sed -n 's/fingerprint=//p' /tmp/ociconfig |head -1`
     export TF_VAR_private_key_path=`sed -n 's/key_file=//p' /tmp/ociconfig |head -1`
-    export TF_VAR_home_region=`sed -n 's/region=//p' /tmp/ociconfig |head -1`
-    # XX maybe get region from 169.xxx ?
-    export TF_VAR_region=$TF_VAR_home_region
+    export TF_VAR_region=`sed -n 's/region=//p' /tmp/ociconfig |head -1`
+    # Good way to get the home_region is to get it via oci iam tenancy get --tenancy-id xxx -> home_region PREFIX (ex:FRA)
+    # That needs then to be converted from prefix to name via the region list (->eu-frankfurt-1). See provider.tf.
+    # export TF_VAR_home_region=$TF_VAR_region
     export TF_VAR_tenancy_ocid=`sed -n 's/tenancy=//p' /tmp/ociconfig |head -1`  
     # echo TF_VAR_current_user_ocid=$TF_VAR_current_user_ocid
     # echo TF_VAR_fingerprint=$TF_VAR_fingerprint
@@ -549,14 +551,16 @@ java_find_version() {
   fi
 }
 
-certificate_validity() {
+# Get the validity of the certificate $TF_VAR_certificate_ocid
+get_certificate_validity() {
   CERT_DATE_VALIDITY=`oci certs-mgmt certificate get --certificate-id $TF_VAR_certificate_ocid | jq -r '.data["current-version"].validity["time-of-validity-not-after"]'`
   CERT_VALIDITY_DAY=`echo $((($(date -d $CERT_DATE_VALIDITY +%s) - $(date +%s))/86400))`
   echo "Certificate valid until: $CERT_DATE_VALIDITY"
   echo "Days left: $CERT_VALIDITY_DAY"
 }
 
-certificate_create() {
+# Create or Update with name $TF_VAR_dns_name with the certificate contained in $TF_VAR_certificate_dir
+certificate_create_update() {
   echo "Creating or Updating certificate $TF_VAR_dns_name"
   CERT_CERT=$(cat $TF_VAR_certificate_dir/cert.pem)
   CERT_CHAIN=$(cat $TF_VAR_certificate_dir/chain.pem)
@@ -568,6 +572,13 @@ certificate_create() {
   fi
   exit_on_error "oci certs-mgmt"
   TF_VAR_certificate_ocid=`oci certs-mgmt certificate list --all --compartment-id $TF_VAR_compartment_ocid --name $TF_VAR_dns_name | jq -r .data.items[0].id`
+}
+
+# Create a new certificate with DNS01
+certificate_dns01_create () {
+  $BIN_DIR/tls_dns01_create.sh 
+  exit_on_error "certificate_dns01_create"
+  export TF_VAR_certificate_dir=$PROJECT_DIR/src/tls/$TF_VAR_dns_name  
 }
 
 certificate_dir_before_terraform() {
@@ -587,10 +598,17 @@ certificate_dir_before_terraform() {
       exit 1
     fi
   elif [ "$TF_VAR_tls" == "new_dns_01" ]; then
-    # Create a new certificate via DNS-01
-    $BIN_DIR/tls_dns_create.sh 
-    exit_on_error "tls_dns_create"
-    export TF_VAR_certificate_dir=$PROJECT_DIR/src/tls/$TF_VAR_dns_name
+    # If there is already a TF_VAR_certificate_ocid, check if it is still valid
+    if [ "$TF_VAR_certificate_ocid" != "" ]; then
+      get_certificate_validity
+      if [ "$CERT_VALIDITY_DAY" -lt "0" ]; then
+        echo "Certificate $TF_VAR_certificate_ocid expired. Need to renew it."
+      fi
+      certificate_dns01_create 
+      certificate_create_update
+    else
+      certificate_dns01_create 
+    fi
   fi
 
   if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then
@@ -615,9 +633,12 @@ certificate_dir_before_terraform() {
       exit 1
     fi    
   elif [ "$TF_VAR_certificate_ocid" == "" ] && [ "$TF_VAR_certificate_dir" != "" ] ;  then
-    certificate_create
+    certificate_create_update
   elif [ "$TF_VAR_certificate_ocid" != "" ]; then
-    certificate_validity
+    get_certificate_validity
+    if [ "$CERT_VALIDITY_DAY" -lt "0" ]; then
+      error_exit "Invalid Certificate $TF_VAR_certificate_ocid. Delete or renew the certificate."
+    fi
   else 
     error_exit "certificate_dir_before_terraform: missing variables TF_VAR_certificate_ocid or TF_VAR_certificate_dir"
   fi  
@@ -704,4 +725,10 @@ file_replace_variables() {
   done < "$file"
 
   mv "$temp_file" "$file"
+}
+
+# done.txt
+FILE_DONE=$TARGET_DIR/done.txt
+append_done() {
+  echo "$1" >> $FILE_DONE
 }

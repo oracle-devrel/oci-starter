@@ -25,9 +25,10 @@ exit_on_error() {
   if [ $RESULT -eq 0 ]; then
     echo "Success - $1"
   else
-    title "EXIT ON ERROR - HISTORY - $1 "
+    echo "EXIT ON ERROR - HISTORY - $1 "
     history 2 | cut -c1-256
-    error_exit "Command Failed (RESULT=$RESULT)"
+    echo "Command Failed (RESULT=$RESULT)"
+    exit
   fi  
 }
 
@@ -69,7 +70,7 @@ build_test () {
   pwd
   ./starter.sh build --auto-approve > build_$BUILD_ID.log 2>&1
 
-  CSV_NAME=$NAME
+  CSV_NAME=$PREFIX
   CSV_DIR=$TEST_DIR
   CSV_DATE=`date '+%Y%m%d-%H%M%S'`
   CSV_BUILD_SECOND=$SECONDS
@@ -77,35 +78,35 @@ build_test () {
   CSV_JSON_OK=0
   CSV_RUN100_SECOND=0
   CSV_RUN100_OK=0
-  TMP_PATH="/tmp/$NAME"
+  TMP_PATH="/tmp/$PREFIX"
 
   echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
-  if [ -f $TMP_PATH/result.html ]; then
-    if grep -q -i "starter" $TMP_PATH/result.html; then
+  if [ -f $TMP_PATH/result_html.html ]; then
+    if grep -q -i "starter" $TMP_PATH/result_html.html; then
       echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
       CSV_HTML_OK=1
-    elif grep -q -i "deptno" $TMP_PATH/result.html; then
+    elif grep -q -i "deptno" $TMP_PATH/result_html.html; then
       echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
       CSV_HTML_OK=1
     else
       echo -e "${COLOR_RED}RESULT HTML: ***** BAD ******${COLOR_NONE}"
     fi
-    if grep -q -i "deptno" $TMP_PATH/result.json; then
-      echo -e "${COLOR_GREEN}RESULT JSON: OK${COLOR_NONE}                "`cat $TMP_PATH/result.json` | cut -c 1-100  
+    if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
+      echo -e "${COLOR_GREEN}RESULT JSON: OK${COLOR_NONE}                "`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
       CSV_JSON_OK=1
     else
-      echo -e "${COLOR_RED}RESULT JSON: ***** BAD ******${COLOR_NONE}  "`cat $TMP_PATH/result.json` | cut -c 1-100 
+      echo -e "${COLOR_RED}RESULT JSON: ***** BAD ******${COLOR_NONE}  "`cat $TMP_PATH/result_dept.json` | cut -c 1-100 
     fi
-    echo "RESULT INFO:                   "`cat $TMP_PATH/result.info` | cut -c 1-100
+    echo "RESULT INFO:                   "`cat $TMP_PATH/result_info.html` | cut -c 1-100
   else
-    echo -e "${COLOR_RED}ERROR: No file $TMP_PATH/result.html${COLOR_NONE}"
+    echo -e "${COLOR_RED}ERROR: No file $TMP_PATH/result_html.html${COLOR_NONE}"
   fi
-  mv $TMP_PATH/result.html ${TEST_DIR}_result_$BUILD_ID.html 2>/dev/null;
-  mv $TMP_PATH/result.json ${TEST_DIR}_result_$BUILD_ID.json 2>/dev/null;
-  mv $TMP_PATH/result.info ${TEST_DIR}_result_$BUILD_ID.info 2>/dev/null;
-  mv $TMP_PATH/result_html.log ${TEST_DIR}_result_html_$BUILD_ID.log 2>/dev/null;
-  mv $TMP_PATH/result_json.log ${TEST_DIR}_result_json_$BUILD_ID.log 2>/dev/null;
-  mv $TMP_PATH/result_info.log ${TEST_DIR}_result_info_$BUILD_ID.log 2>/dev/null;
+  mv $TMP_PATH/result_html.html ${TEST_DIR}_${BUILD_ID}_result_html.html 2>/dev/null;
+  mv $TMP_PATH/result_dept.json ${TEST_DIR}_${BUILD_ID}_result_dept.json 2>/dev/null;
+  mv $TMP_PATH/result_info.html ${TEST_DIR}_${BUILD_ID}_result_info.html 2>/dev/null;
+  mv $TMP_PATH/result_html.log  ${TEST_DIR}_${BUILD_ID}_result_html.log 2>/dev/null;
+  mv $TMP_PATH/result_dept.log  ${TEST_DIR}_${BUILD_ID}_result_dept.log 2>/dev/null;
+  mv $TMP_PATH/result_info.log  ${TEST_DIR}_${BUILD_ID}_result_info.log 2>/dev/null;
 
   if [ "$CSV_JSON_OK" == "1" ]; then
     test_run_100
@@ -127,9 +128,11 @@ add_ok_rerun() {
   # Remove from inprogress_rerun
   sed -i "\#$TEST_DIR#d" $TEST_HOME/inprogress_rerun.sh          
   # Remove from errors_rerun
-  if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
-    sed -i "\#$TEST_DIR#d" $TEST_HOME/errors_rerun.sh          
-    echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_old.sh
+  if [ -f $TEST_HOME/errors_rerun.sh ]; then
+    if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
+      sed -i "\#$TEST_DIR#d" $TEST_HOME/errors_rerun.sh          
+      echo "./test_rerun.sh $TEST_DIR" >> $TEST_HOME/errors_old.sh
+    fi
   fi  
 }
 
@@ -150,6 +153,13 @@ build_test_destroy () {
   fi  
   SECONDS=0
   ./starter.sh destroy --auto-approve > destroy.log 2>&1  
+  if [ -d "target" ]; then
+    # Avoid to have a lot of left resource in the tenancy after a lot of destroy that failed
+    echo "FATAL ERROR: target directory not fully destroyed"
+    echo "Last directory: $TEST_DIR"
+    exit
+  fi
+
   echo "destroy_secs=$SECONDS" >> ${TEST_DIR}_time.txt
   CSV_DESTROY_SECOND=$SECONDS
   cat ${TEST_DIR}_time.txt
@@ -205,18 +215,20 @@ build_option() {
     fi
   else 
     if grep -q "$TEST_DIR" $TEST_HOME/inprogress_rerun.sh; then
-        echo "SKIP - FOUND in inprogress_rerun.sh: $TEST_DIR" 
-        return
+      echo "SKIP - FOUND in inprogress_rerun.sh: $TEST_DIR" 
+      return
     fi  
     if grep -q "$TEST_DIR" $TEST_HOME/ok_rerun.sh; then
-        echo "SKIP - FOUND in ok_rerun.sh: $TEST_DIR" 
-        return
+      echo "SKIP - FOUND in ok_rerun.sh: $TEST_DIR" 
+      return
     fi  
     if [ "$TEST_ERRORS_ONLY" = "" ]; then
+      if [ -f $TEST_HOME/errors_rerun.sh ]; then
         if grep -q "$TEST_DIR" $TEST_HOME/errors_rerun.sh; then
-            echo "SKIP - FOUND in errors_rerun.sh: $TEST_DIR" 
-            return
+          echo "SKIP - FOUND in errors_rerun.sh: $TEST_DIR" 
+          return
         fi
+      fi
     fi
   fi
     
@@ -226,6 +238,10 @@ build_option() {
   if [ -d $TEST_DIR/target ]; then
      cd $TEST_DIR
      ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
+     if [ -d $TEST_DIR/target ]; then
+       echo "ERROR: Existing target directory detected. Destroy failed."
+       exit 1
+     fi
   fi
 
   # Prevent to start test build if the group_common was not finished
@@ -243,8 +259,9 @@ build_option() {
 
   cd $TEST_HOME/oci-starter
   if [ "$OPTION_GROUP_NAME" == "dummy" ]; then
+    PREFIX=$NAME
     echo ./oci_starter.sh\
-       -prefix $NAME \
+       -prefix $PREFIX \
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
        -language $OPTION_LANG \
@@ -269,12 +286,11 @@ build_option() {
        -psql_ocid $TF_VAR_psql_ocid \
        -opensearch_ocid $TF_VAR_opensearch_ocid \
        -nosql_ocid $TF_VAR_nosql_ocid \
-       -auth_token $OCI_TOKEN \
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
        -fnapp_ocid $TF_VAR_fnapp_ocid > ${TEST_DIR}.log 2>&1   
     ./oci_starter.sh \
-       -prefix $NAME \
+       -prefix $PREFIX \
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
        -language $OPTION_LANG \
@@ -299,15 +315,15 @@ build_option() {
        -psql_ocid $TF_VAR_psql_ocid \
        -opensearch_ocid $TF_VAR_opensearch_ocid \
        -nosql_ocid $TF_VAR_nosql_ocid \
-       -auth_token $OCI_TOKEN \
        -apigw_ocid $TF_VAR_apigw_ocid \
        -bastion_ocid $TF_VAR_bastion_ocid \
        -fnapp_ocid $TF_VAR_fnapp_ocid >> ${TEST_DIR}.log 2>&1 
   else
     # Unique name to allow more generations of TLS certificates. The prefix is used as hostname for TLS http_01.
     OPTION_TSONE_ID=$((OPTION_TSONEID+1))
+    PREFIX=tsone${OPTION_TSONE_ID}
     ./oci_starter.sh \
-       -prefix tsone${OPTION_TSONE_ID} \
+       -prefix $PREFIX \
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
        -language $OPTION_LANG \
@@ -334,7 +350,7 @@ build_option() {
       rm ${TEST_DIR}_*
     fi
     mv output $TEST_DIR    
-    cp $SCRIPT_DIR/test_after_done.sh $TEST_DIR/src/after_done.sh
+    cp $SCRIPT_DIR/test_after_build.sh $TEST_DIR/src/after_build.sh
     if [ -z $GENERATE_ONLY ]; then
       build_test_destroy
     fi           
@@ -380,13 +396,13 @@ pre_test_suite() {
   GROUP_NAME="ts${SHAPE_GROUP}"
 
   cd $TEST_HOME/oci-starter
-  ./oci_starter.sh -group_name $GROUP_NAME -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -auth_token $OCI_TOKEN -shape $SHAPE_GROUP
+  ./oci_starter.sh -group_name $GROUP_NAME -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -shape $SHAPE_GROUP
   exit_on_error "oci_starter.sh"
   mv output/group_common ../group_common
   cd $TEST_HOME/group_common
-  echo "# Test Suite use 2 nodes to avoid error: Too Many Pods (110 pods/node K8s limit)" >> env.sh
-  echo "export TF_VAR_node_pool_size=2" >> env.sh
+  echo "# Test Suite use 2 nodes to avoid error: Too Many Pods (110 pods/node K8s limit)" >> terraform.tfvars
   echo "node_pool_size=2" >> terraform.tfvars
+  echo "" >> terraform.tfvars
   ./starter.sh build --auto-approve
   exit_on_error "starter.sh build"
   date

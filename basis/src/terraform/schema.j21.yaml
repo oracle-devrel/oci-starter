@@ -13,17 +13,25 @@ variableGroups:
 - title: Starter Project
   visible: true  
   variables:
-{%- for param in env_params %}
-{%- if param in ["prefix","license_model","db_password","compartment_ocid"] %}  
+{%- for param in to_fill_params %}
   - {{ param }}
-{%- endif %}  
+{%- endfor %}
+  - show_optional
+
+- title: Fixed
+  visible: ${show_optional}
+  variables:
+{%- for param in fixed_params %}
+  - {{ param }}
 {%- endfor %}
 
-- title: Static
-  visible: true  
+- title: Optional
+  visible: ${show_optional}  
   variables:
-{%- for param in env_params %}
+{%- for param in terraform_variables %}
+{%- if ( param not in to_fill_params and param not in fixed_params ) %}
   - {{ param }}
+{%- endif %}
 {%- endfor %}
 
 #################
@@ -35,26 +43,43 @@ variableGroups:
 ######################
 
 variables:
-
-{%- for param in env_params %}
+# Env Params
+{%- for param in terraform_variables %}
   {{ param }}:
-    {%- if param in ["compartment_ocid"] %}
+    {%- if param in ["compartment_ocid", "lz_app_cmp_ocid", "lz_db_cmp_ocid", "lz_network_cmp_ocid", "lz_security_cmp_ocid", "lz_serv_cmp_ocid", "lz_web_cmp_ocid"] %}
     type: oci:identity:compartment:id
-    {%- else %}
+    {%- elif param in ["db_password"] %}
+    type: password
+    confirmation: true
+    {%- elif param in allowed_values %}
+    type: enum
+    enum:
+    {%- for value in allowed_values[param] %}
+      - {{ value }}
+    {%- endfor %}
+    {%- elif param=="ssh_public_key" %}
+    type: oci:core:ssh:publickey
+    {%- elif param=="region" %}
+    type: oci:identity:region:name
+    {%- else %}    
     type: string
     {%- endif %}
-    {%- if param=="license_model" %}
-    enum:
-      - BRING_YOUR_OWN_LICENSE
-      - LICENSE_INCLUDED
-    {%- endif %}
+    {%- if param in title %}
     title: {{ title[param] }}
-    description: ( {{ param }} )
+    {%- else %}
+    title: {{ param }}
+    {%- endif %}
+    {%- if param in comments %}
+    description: "{{ comments[param][0] }}"
+    {%- endif %}
+    {%- if param in to_fill_params %}
     required: true
-    default: {{ params[param] }}
-
+    {%- else %}
+    required: false
+    {%- endif %}
 {%- endfor %}
-
-
-
-
+  show_optional:
+    type: boolean
+    title: Advanced
+    description: Show Advanced Parameters
+    default: false

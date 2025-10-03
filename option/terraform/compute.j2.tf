@@ -1,5 +1,7 @@
 {%- if compute_ocid is defined %}
-variable "compute_ocid" {}
+variable "compute_ocid" {
+  description = "Existing OCI Compute OCID"     
+}
 
 data "oci_core_instance" "starter_compute" {
     instance_id = var.compute_ocid
@@ -8,10 +10,10 @@ data "oci_core_instance" "starter_compute" {
 {%- else %}   
 resource "oci_core_instance" "starter_compute" {
 
-  availability_domain = data.oci_identity_availability_domain.ad.name
+  availability_domain = local.availability_domain_name
   compartment_id      = local.lz_app_cmp_ocid
   display_name        = "${var.prefix}-compute"
-  shape               = var.instance_shape
+  shape               = local.shape
 
   shape_config {
     ocpus         = var.instance_ocpus
@@ -44,7 +46,7 @@ resource "oci_core_instance" "starter_compute" {
   }
 
   metadata = {
-    ssh_authorized_keys = var.ssh_public_key
+    ssh_authorized_keys = local.ssh_public_key
   }
 
   source_details {
@@ -57,7 +59,7 @@ resource "oci_core_instance" "starter_compute" {
     agent       = false
     host        = oci_core_instance.starter_compute.public_ip
     user        = "opc"
-    private_key = var.ssh_private_key
+    private_key = local.ssh_private_key
   }
 
   lifecycle {

@@ -1,10 +1,18 @@
 # --- Network ---
 {%- if vcn_ocid is defined %}
 # Existing VCN and Subnets
-variable "vcn_ocid" {}
-variable "web_subnet_ocid" {}
-variable "app_subnet_ocid" {}
-variable "db_subnet_ocid" {}
+variable "vcn_ocid" {
+  description = "Existing OCI Virtual Cloud Network (VNC) OCID"       
+}
+variable "web_subnet_ocid" {
+  description = "Existing Web Subnet OCID"       
+}
+variable "app_subnet_ocid" {
+  description = "Existing Application Subnet OCID"       
+}
+variable "db_subnet_ocid" {
+  description = "Existing Database Subnet OCID"       
+}
 {%- else %}
 /* 
 # To use a existing Landing Zone, add these variables in env.sh
@@ -194,8 +202,8 @@ resource "oci_core_security_list" "starter_security_list" {
     stateless = false
 
     tcp_options {
-      min = 33306
-      max = 33306
+      min = 33060
+      max = 33060
     }
   }  
 

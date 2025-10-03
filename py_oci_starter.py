@@ -32,6 +32,8 @@ BASIS_DIR = "basis"
 output_dir = "output"
 zip_dir = ""
 a_group_common = []
+fixed_params = []
+to_fill_params = []
 
 ## functions ################################################################
 
@@ -71,7 +73,7 @@ default_options = {
     '-prefix': 'starter',
     '-java_framework': 'springboot',
     '-java_vm': 'graalvm',
-    '-java_version': '21',
+    '-java_version': '25',
     '-ui_type': 'html',
     '-db_type': 'atp',
     '-license_model': 'included',
@@ -105,28 +107,28 @@ def allowed_options():
 
 
 allowed_values = {
-    '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
-    '-deploy_type': { 'public_compute', 'private_compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
-    '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
-    '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
-    '-java_version': {'8', '11', '17', '21'},
-    '-kubernetes': {'oke', 'docker'},
-    '-ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
-    '-db_type': {'atp', 'autonomous', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
-    '-license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
-    '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager','from_resource_manager'},
-    '-mode': {CLI, GIT, ZIP},
-    '-shape': {'amd','freetier_amd','ampere','arm'},
-    '-db_install': {'default', 'kubernetes'},
-    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'},
-    '-oke_type': {'managed', 'virtual_node'},
-    '-security': {'none', 'openid'}
+    'language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
+    'deploy_type': { 'public_compute', 'private_compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
+    'java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
+    'java_vm': {'jdk', 'graalvm', 'graalvm-native'},
+    'java_version': {'8', '11', '17', '21', '25'},
+    'kubernetes': {'oke', 'docker'},
+    'ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
+    'db_type': {'atp', 'autonomous', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
+    'license_model': {'LICENSE_INCLUDED', 'BRING_YOUR_OWN_LICENSE'},
+    'infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager','from_resource_manager'},
+    'mode': {CLI, GIT, ZIP},
+    'shape': {'amd','freetier_amd','ampere','arm'},
+    'db_install': {'default', 'kubernetes'},
+    'tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'},
+    'oke_type': {'managed', 'virtual_node'},
+    'security': {'none', 'openid'}
 }
 
 def check_values():
     illegals = {}
     for arg in allowed_values:
-        arg_val = prog_arg_dict().get(arg)
+        arg_val = prog_arg_dict().get("-"+arg)
         if arg_val is not None:
             if arg_val not in allowed_values[arg]:
                 illegals[arg] = arg_val
@@ -187,9 +189,9 @@ def language_rules():
         params.pop('java_framework')
         params.pop('java_vm')
         params.pop('java_version')
-    elif params.get('java_framework') == 'helidon' and params.get('java_version') != '21':
-        warning('Helidon only supports Java 17. Forcing Java version to 21')
-        params['java_version'] = 21
+    elif params.get('java_framework') == 'helidon' and params.get('java_version') != '25':
+        warning('Helidon only supports Java 17. Forcing Java version to 25')
+        params['java_version'] = 25
 
 
 def kubernetes_rules():
@@ -229,8 +231,6 @@ def license_rules():
     license_model = os.getenv('LICENSE_MODEL')
     if license_model is not None:
         params['license_model'] = license_model
-    params['license_model'] = longhand(
-        'license_model', {'included': 'LICENSE_INCLUDED', 'byol': 'BRING_YOUR_OWN_LICENSE'})
 
 
 def zip_rules():
@@ -335,7 +335,7 @@ starter.sh
    -group_common (optional) atp | database | mysql | psql | opensearch | nosql | fnapp | apigw | oke | jms
    -group_name (optional)
    -java_framework (default helidon | springboot | tomcat)
-   -java_version (default 21 | 17 | 11 | 8)
+   -java_version (default 25 | 21 | 17 | 11 | 8)
    -java_vm (default jdk | graalvm)
    -kubernetes (default oke | docker)
    -language (mandatory) java | node | python | dotnet | ords
@@ -369,7 +369,7 @@ starter.sh
     if len(illegal_params) > 0:
         s = ''
         for arg in illegal_params:
-            s += f'Illegal value: "{illegal_params[arg]}" found for {arg}.  Permitted values: {allowed_values[arg]}\n'
+            s += f'Illegal value: "{illegal_params[arg]}" found for -{arg}.  Permitted values: {allowed_values["-"+arg]}\n'
         message += s
     if len(errors) > 0:
         s = ''
@@ -518,98 +518,59 @@ def env_param_list():
     return env_params
 
 def env_sh_contents():
+    global to_fill_params, fixed_params
+    fixed_tfvars = []
+    to_fill_params = []
+
     env_params = env_param_list()
     print(env_params)
-    timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
-    contents = ['#!/usr/bin/env bash','# -- Variables ---------------------------------------------']
     tfvars= ['# -- Variables ---------------------------------------------']
 
     if 'group_name' in params:
         prefix = params["group_name"]
-        contents.append(f'export TF_VAR_group_name="{prefix}"')
+        to_fill_params.append("group_name")
         tfvars.append(f'group_name="{prefix}"')
     else:
         prefix = params["prefix"]
-    contents.append(f'export TF_VAR_prefix="{prefix}"')
-    contents.append('')
+    to_fill_params.append("prefix")
     tfvars.append('')
-    tfvars.append('# Prefix to all resources created by terraform')
+    tfvars.append('# '+table_comments["prefix"][0])
     tfvars.append(f'prefix="{prefix}"')
 
-    fixed_contents = []
-    fixed_tfvars = []
     for param in env_params:
-        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model"]:
-            tf_var_comment(contents, param)
-            contents.append(f'export {get_tf_var(param)}="{params[param]}"')
+        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model", "certificate_email", "dns_name","dns_zone_name", "tls"]:
+            to_fill_params.append(param)
             tfvars.append('')
             tf_var_comment(tfvars, param)
             tfvars.append(f'{param}="{params[param]}"')
         else:
-            tf_var_comment(fixed_contents, param)
-            fixed_contents.append(f'export {get_tf_var(param)}="{params[param]}"')
-
+            fixed_params.append(param)
             tf_var_comment(fixed_tfvars, param)
-            fixed_tfvars.append(f'{param}="{params[param]}"')
+            fixed_tfvars.append(f'# {param}="{params[param]}"')
     if params.get('compartment_ocid') == None:
-        contents.append('export TF_VAR_compartment_ocid="__TO_FILL__"')
+        to_fill_params.append("compartment_ocid")
         tfvars.append('')
         tfvars.append('# Compartment')
         tfvars.append('compartment_ocid="__TO_FILL__"')
 
-    contents.append('')
-    contents.append('# -- Fixed -------------------------------------------------')   
-    tfvars.append('')   
-    tfvars.append('# -- Fixed -------------------------------------------------')   
-
-    for s in fixed_contents:
-        contents.append(s)
-    for s in fixed_tfvars:
-        tfvars.append(s)
-
     tfvars.append('')
-    contents.append('')
-    contents.append("if [ -f $HOME/.oci_starter_profile ]; then")
-    contents.append("  . $HOME/.oci_starter_profile")
-    contents.append("fi")
-    # contents.append("else")
-    # contents.append('')
-    # contents.append('  # API Management')
-    # contents.append('  # export APIM_HOST=xxxx-xxx.adb.region.oraclecloudapps.com')
-    # contents.append('')
-    # if params.get('instance_shape') == None:
-    #    contents.append('  # Compute Shape')
-    #    contents.append('  # export TF_VAR_instance_shape=VM.Standard.E4.Flex')
-    # contents.append('')
-    # contents.append('# Landing Zone')
-    # contents.append('# export TF_VAR_lz_app_cmp_ocid=$TF_VAR_compartment_ocid')
-    # contents.append('# export TF_VAR_lz_db_cmp_ocid=$TF_VAR_compartment_ocid')
-    # contents.append('# export TF_VAR_lz_network_cmp_ocid=$TF_VAR_compartment_ocid')
-    # contents.append('# export TF_VAR_lz_security_cmp_ocid=$TF_VAR_compartment_ocid')
-    # contents.append('# export TF_VAR_lz_vcn_ocid="XXXX"')
-    # contents.append('# export TF_VAR_lz_web_subnet_ocid="XXXX"')
-    # contents.append('# export TF_VAR_lz_app_subnet_ocid="XXXX"')
-    # contents.append('# export TF_VAR_lz_db_subnet_ocid="XXXX"')
-    contents.append('')
-    contents.append('# CREATION DETAILS')
-    contents.append(f'export OCI_STARTER_CREATION_DATE={timestamp}')
-    contents.append(f'export OCI_STARTER_VERSION=4.0')
-    contents.append(f'export OCI_STARTER_PARAMS="{params["params"]}"')
-    tfvars.append('# Creation Details')
-    tfvars.append(f'OCI_STARTER_CREATION_DATE="{timestamp}"')
-    tfvars.append(f'OCI_STARTER_VERSION="4.0"')
-    tfvars.append(f'OCI_STARTER_PARAMS="{params["params"]}"')
-    tfvars.append('')
-    return contents, tfvars
+    return tfvars
 
+table_comments = {
+    'prefix': ['Prefix to all resources created by terraform'],
+    'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
+    'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345'],
+    'license_model': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
+    'compartment_ocid': ['Compartment OCID'],
+    'certificate_ocid': ['OCID of the OCI Certificate','If the certificate is not imported in OCI, use instead TF_VAR_certificate_dir=<directory where the certificate resides>', 'export TF_VAR_certificate_dir="__TO_FILL__"'],
+    'certificate_email': ['SSL/TLS - Email used to create the certificate'],
+    'dns_name': ['SSL/TLS - Webserver DNS Name used by the installation (ex: www.mydomain.com)'],
+    'dns_zone_name': ['SSL/TLS - OCI DNS Zone Name (ex:mydomain.com)'],
+    'tls': ['SSL/TLS - Method to create the certificate (new_http_01 or new_dns_01 or existing_ocid) ']  
+}
 
 def tf_var_comment(contents, param):
-    comments = {
-        'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
-        'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345'],
-        'license_model': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
-        'certificate_ocid': ['OCID of the OCI Certificate','If the certificate is not imported in OCI, use instead TF_VAR_certificate_dir=<directory where the certificate resides>', 'export TF_VAR_certificate_dir="__TO_FILL__"']
-    }.get(param)
+    comments=table_comments.get(param)
        
     if comments is not None:
         b=True
@@ -625,7 +586,7 @@ def tf_var_comment(contents, param):
 
 
 def write_env_sh():
-    env_sh, env_tfvars = env_sh_contents()
+    env_tfvars = env_sh_contents()
     # output_path = output_dir + os.sep + 'env.sh'
     # file_output(output_path, env_sh)
     # os.chmod(output_path, 0o755)
@@ -772,10 +733,7 @@ def create_dir_shared():
 
     # -- Infrastructure As Code ---------------------------------------------
     # Default state local
-    if params.get('infra_as_code') == "resource_manager":
-        # Nothing to copy
-        print("resource_manager")
-    elif params.get('infra_as_code') == "terraform_object_storage":
+    if params.get('infra_as_code') == "terraform_object_storage":
         output_copy_tree("option/infra_as_code/terraform_object_storage", "src/terraform")
     elif params.get('infra_as_code') == "from_resource_manager":
         output_copy_tree("option/infra_as_code/from_resource_manager", ".")
@@ -911,7 +869,7 @@ def create_output_dir():
             if 'fnapp_ocid' not in params:
                 cp_terraform("log_group.tf")
             if params['language'] == "ords":
-                apigw_append = "apigw_fn_ords_append.tf"
+                apigw_append = "apigw_fn_ords_append.j2.tf"
             else:
                 cp_terraform("function_part2.j2.tf")
                 apigw_append = None
@@ -1214,6 +1172,13 @@ def jinja2_replace_template():
     template_param['env_params'].append('region')
     template_param['env_params'].append('current_user_ocid')
     template_param['params'] = params
+    template_param['comments'] = table_comments
+    template_param['create_datetime'] = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
+    template_param['allowed_values'] = allowed_values
+
+    global to_fill_params, fixed_params
+    template_param['fixed_params'] = fixed_params
+    template_param['to_fill_params'] = to_fill_params
     print( template_param, flush=True )
 
     template_param['title'] = {

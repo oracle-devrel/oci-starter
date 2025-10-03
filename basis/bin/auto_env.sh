@@ -15,15 +15,16 @@ fi
 if [[ -z "${BIN_DIR}" ]]; then
   export BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 fi
-# From Resource Manager 
+# Detect if the script is started From Resource Manager 
 if [ -f $PROJECT_DIR/terraform.tfstate ]; then
+  # If yes, link terraform.tfstate to target/terraform.tfstate 
   ln -sf $PROJECT_DIR/terraform.tfstate $STATE_FILE
 fi
 # Set pipefail to get the error despite pipe to tee
 set -o pipefail
 
 # Function to parse a .tfvars file and export TF_VAR_ variables
-export_terraform_tfvars() {
+read_terraform_tfvars() {
   # Read the file line by line, ignoring comments and empty lines
   while read -r line; do
     if [[ "$line" =~ ^\s*# ]]; then
@@ -43,15 +44,40 @@ export_terraform_tfvars() {
     fi
   done < "$PROJECT_DIR/terraform.tfvars"
   unset value
-
-  if [ -f $HOME/.oci_starter_profile ]; then
-    . $HOME/.oci_starter_profile
-  fi  
 }
 
-# ENV.SH
-# . $PROJECT_DIR/env.sh
-export_terraform_tfvars
+
+
+# Environment Variables
+# In 4 places:
+# 1. target/tf_env.sh created by the terraform (created by the first build)
+echo "Setting environment variables"
+if [ -f $TARGET_DIR/tf_env.sh ]; then
+  . $TARGET_DIR/tf_env.sh
+  echo "1 - target/tf_env.sh (created by terraform)"
+else
+  echo "1 - SKIP - no target/tf_env.sh (created by terraform)"
+fi 
+# 2. terraform.tfvars
+echo "2 - terraform.tfvars (user settings)"  
+read_terraform_tfvars
+# 3. $HOME/.oci_starter_profile
+if [ -f $HOME/.oci_starter_profile ]; then
+  . $HOME/.oci_starter_profile
+  echo "3 - \$HOME/.oci_starter_profile (shared settings)"
+else
+  echo "3 - SKIP - no \$HOME/.oci_starter_profile (shared settings)"
+fi 
+# 4. for groups, also in group_common_env.sh
+if [ -f $PROJECT_DIR/../group_common_env.sh ]; then
+  . $PROJECT_DIR/../group_common_env.sh
+  echo "4 - ../group_common_env.sh (group of projects settings)"
+elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then
+  . $PROJECT_DIR/../../group_common_env.sh
+  echo "4 - ../../group_common_env.sh (group of projects settings)"
+else
+  echo "4 - SKIP - no ../group_common_env.sh (group of projects settings)" 
+fi
 
 # Autocomplete in bash
 _starter_completions()
@@ -60,12 +86,7 @@ _starter_completions()
 }
 complete -F _starter_completions ./starter.sh
 
-# group_common_env.sh
-if [ -f $PROJECT_DIR/../group_common_env.sh ]; then
-  . $PROJECT_DIR/../group_common_env.sh
-elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then
-  . $PROJECT_DIR/../../group_common_env.sh
-fi
+
 
 # Check the SHAPE
 unset MISMATCH_PLATFORM
@@ -144,7 +165,8 @@ if ! command -v jq &> /dev/null; then
 fi
 
 #-- PRE terraform ----------------------------------------------------------
-if [ "$OCI_STARTER_VARIABLES_SET" == "$TF_VAR_prefix" ]; then
+# Combination of tvars variables and fixed variables
+if [ "$OCI_STARTER_VARIABLES_SET" == "${TF_VAR_prefix}_${TF_VAR_deploy_type}" ]; then
   echo "Variables already set"
 else
   #-- Check internet connection ---------------------------------------------
@@ -163,20 +185,6 @@ else
 
   export OCI_STARTER_VARIABLES_SET=$TF_VAR_prefix
   get_user_details
-
-  # Availability Domain for FreeTier E2.1 Micro
-  if [ "$TF_VAR_instance_shape" == "VM.Standard.E2.1.Micro" ]; then
-     find_availabilty_domain_for_shape $TF_VAR_instance_shape
-  elif [ "$TF_VAR_instance_shape" == "" ]; then
-     # Check that the Fungible shape VM.Standard.x86.Generic exists in the tenancy
-     oci compute shape list --compartment-id $TF_VAR_compartment_ocid --all | jq -r '.data[].shape' > $TARGET_DIR/shapes.list
-     if grep -q "VM.Standard.x86.Generic" $TARGET_DIR/shapes.list; then
-       auto_echo "Fungible shape VM.Standard.x86.Generic found"
-     else
-       guess_available_shape
-       echo "Warning: fungible shape VM.Standard.x86.Generic not found. Using $TF_VAR_instance_shape"
-     fi
-  fi
 
   # SSH keys
   if [ "$TF_VAR_ssh_private_path" == "" ] && [ -f $TARGET_DIR/ssh_key_starter ]; then 

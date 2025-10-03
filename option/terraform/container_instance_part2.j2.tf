@@ -3,14 +3,10 @@ locals {
   docker_image_app=data.external.env_part2.result.docker_image_app
 }
 
-{%- if db_type == "nosql" %} 
-variable nosql_endpoint {}
-{%- endif %} 
-
 resource oci_container_instances_container_instance starter_container_instance {
   depends_on = [ local.docker_image_ui ]
 
-  availability_domain = data.oci_identity_availability_domain.ad.name
+  availability_domain = local.availability_domain_name
   compartment_id      = local.lz_app_cmp_ocid  
   container_restart_policy = "ALWAYS"
   containers {
@@ -21,13 +17,14 @@ resource oci_container_instances_container_instance starter_container_instance {
       {%- if db_type != "none" %} 
       "DB_URL" = local.local_db_url,
       "JDBC_URL" = local.local_jdbc_url,
-      "DB_USER" = var.db_user,
+      "DB_USER" = var.db_user != null ? var.db_user : "{{ db_user }}",
       "DB_PASSWORD" = var.db_password,
       "JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL" = local.local_jdbc_url
       {%- endif %} 
       {%- if db_type == "nosql" %} 
       "TF_VAR_compartment_ocid" = var.compartment_ocid,
-      "TF_VAR_nosql_endpoint" = var.nosql_endpoint,
+      # XXX Ideally it should be nosql.${region}.oci.${regionDomain}
+      "TF_VAR_nosql_endpoint" = "nosql.${var.region}.oci.oraclecloud.com",
       {%- endif %} 
     }    
   }

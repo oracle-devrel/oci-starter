@@ -116,19 +116,18 @@ Date 21-June-2025
 
 ## 4.0
 Date 10-September-2025
-- In all bash file #!/bin/bash ->  #!/usr/bin/env bash (allow unsupported use of the script on MacOS...)
-- Move all the orchestration of the code in terraform. build is more or less "terraform apply" now.
-  - bin/build_all.sh is now build.tf
-  - replaced - env.sh by terraform.tfvars (that people are more used to)
-  - It is possible to ""just zip"" the directory and run it from resource manager 
+- Move all the orchestration of the code to terraform. ./starter.sh is more or less "terraform apply" now.
+  - bin/build_all.sh - destroy_all.sh are now build.tf
+  - $HOME/env.sh is replaced by terraform.tfvars
+  - It is possible to "just **" zip the directory and run it from resource manager 
     - to do so:
       - in terraform.tfvars, uncomment infra_as_code="resource_manager" 
       - ./starter.sh build -> This will create a zip and deploy via resource manager
-    - Limitation: resource manager is ARM only. Due that build happen on it. The docker image are ARM based.
-                  What means that OKE and ContainerInstance and Function need to run on ARM processors.
-   - new src/terraform/schema.yaml file (Resource Manager description file) 
-   - OKE / Function: shape architecture based on Compute Shape 
+    - (**) Limitation: resource manager is ARM only. Due that build happen on it. The docker image are ARM based.
+                     What means that OKE and ContainerInstance and Function need to run on ARM processors.
+    - new src/terraform/schema.yaml file (Resource Manager description file) 
 Small fix:
+  - In all bash file #!/bin/bash ->  #!/usr/bin/env bash (allow unsupported use of the build script from MacOS...)
   - Compute - added flag for vi edition with UTF-8
   - Improvement of exit_on_error 
   - Fix DotNet/NoSQL
