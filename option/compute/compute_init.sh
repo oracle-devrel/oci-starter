@@ -42,7 +42,7 @@ install_java() {
       sudo dnf install -y graalvm-21-jdk
       sudo update-alternatives --set java /usr/lib64/graalvm/graalvm-java21/bin/java
       # sudo update-alternatives --set native-image /usr/lib64/graalvm/graalvm-java21/lib/svm/bin/native-image
-    elif [ "$TF_VAR_java_version" == 25 ]; then
+    else
       sudo dnf install -y graalvm-25-jdk
       sudo update-alternatives --set java /usr/lib64/graalvm/graalvm-java25/bin/java
       # sudo update-alternatives --set native-image /usr/lib64/graalvm/graalvm-java21/lib/svm/bin/native-image

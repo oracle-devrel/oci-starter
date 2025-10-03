@@ -73,7 +73,7 @@ default_options = {
     '-prefix': 'starter',
     '-java_framework': 'springboot',
     '-java_vm': 'graalvm',
-    '-java_version': '21',
+    '-java_version': '25',
     '-ui_type': 'html',
     '-db_type': 'atp',
     '-license_model': 'included',
@@ -111,7 +111,7 @@ allowed_values = {
     '-deploy_type': { 'public_compute', 'private_compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
     '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
-    '-java_version': {'8', '11', '17', '21'},
+    '-java_version': {'8', '11', '17', '21', '25'},
     '-kubernetes': {'oke', 'docker'},
     '-ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
     '-db_type': {'atp', 'autonomous', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
@@ -189,9 +189,9 @@ def language_rules():
         params.pop('java_framework')
         params.pop('java_vm')
         params.pop('java_version')
-    elif params.get('java_framework') == 'helidon' and params.get('java_version') != '21':
-        warning('Helidon only supports Java 17. Forcing Java version to 21')
-        params['java_version'] = 21
+    elif params.get('java_framework') == 'helidon' and params.get('java_version') != '25':
+        warning('Helidon only supports Java 17. Forcing Java version to 25')
+        params['java_version'] = 25
 
 
 def kubernetes_rules():
@@ -337,7 +337,7 @@ starter.sh
    -group_common (optional) atp | database | mysql | psql | opensearch | nosql | fnapp | apigw | oke | jms
    -group_name (optional)
    -java_framework (default helidon | springboot | tomcat)
-   -java_version (default 21 | 17 | 11 | 8)
+   -java_version (default 25 | 21 | 17 | 11 | 8)
    -java_vm (default jdk | graalvm)
    -kubernetes (default oke | docker)
    -language (mandatory) java | node | python | dotnet | ords
