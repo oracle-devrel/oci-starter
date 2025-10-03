@@ -22,8 +22,8 @@ advanced_menu = [
         ("Log        - Show last build log",  "cat target/build.log")
     ]),
     ("Resource Manager", [
-        ("Create     - Create Resource Manager Stack", "./starter.sh rm")
-        ("Build      - Create and Build using Resource Manager", "./starter.sh rm build"), 
+        ("Create     - Create Resource Manager Stack", "./starter.sh rm"),
+        ("Build      - Create and Build using Resource Manager", "./starter.sh rm build")
     ]),      
     ("SSH", [
         ("Key        - SSH private key",      "cat target/ssh_key_starter"), 
