@@ -88,7 +88,7 @@ elif [ "$ARG1" == "rm" ]; then
   if [ "$ARG2" == "build" ]; then 
     export TF_VAR_infra_as_code="build_resource_manager"
     $BIN_DIR/terraform_apply.sh 
-  elif [ "$ARG2" == "create" ]; then
+  elif [ "$ARG2" == "" ]; then
     export TF_VAR_infra_as_code="create_resource_manager"
     $BIN_DIR/terraform_apply.sh 
   elif [ "$ARG2" == "distribute" ]; then
