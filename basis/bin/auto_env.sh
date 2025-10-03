@@ -56,27 +56,27 @@ if [ -f $TARGET_DIR/tf_env.sh ]; then
   . $TARGET_DIR/tf_env.sh
   echo "1 - target/tf_env.sh (created by terraform)"
 else
-  echo "1 - No target/tf_env.sh yet"
+  echo "1 - SKIP - no target/tf_env.sh (created by terraform)"
 fi 
 # 2. terraform.tfvars
-echo "2 - terraform.tfvars"  
+echo "2 - terraform.tfvars (user settings)"  
 read_terraform_tfvars
 # 3. $HOME/.oci_starter_profile
 if [ -f $HOME/.oci_starter_profile ]; then
   . $HOME/.oci_starter_profile
   echo "3 - \$HOME/.oci_starter_profile"
 else
-  echo "3 - No \$HOME/.oci_starter_profile"
+  echo "3 - SKIP - no \$HOME/.oci_starter_profile (shared settings)"
 fi 
 # 4. for groups, also in group_common_env.sh
 if [ -f $PROJECT_DIR/../group_common_env.sh ]; then
   . $PROJECT_DIR/../group_common_env.sh
-  echo "4 - ../group_common_env.sh"
+  echo "4 - ../group_common_env.sh (group of projects settings)"
 elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then
   . $PROJECT_DIR/../../group_common_env.sh
-  echo "4 - ../../group_common_env.sh"
+  echo "4 - ../../group_common_env.sh (group of projects settings)"
 else
-  echo "4 - no ../group_common_env.sh (no group of projects)" 
+  echo "4 - SKIP - no ../group_common_env.sh (group of projects settings)" 
 fi
 
 # Autocomplete in bash
