@@ -51,11 +51,12 @@ variables:
     {%- elif param in ["db_password"] %}
     type: password
     confirmation: true
-    {%- elif param=="license_model" %}
+    {%- elif param in allowed_values %}
     type: enum
     enum:
-      - BRING_YOUR_OWN_LICENSE
-      - LICENSE_INCLUDED
+    {%- for value in allowed_values %}
+      - {{ value }}
+    {%- endfor %}
     {%- elif param=="ssh_public_key" %}
     type: oci:core:ssh:publickey
     {%- elif param=="region" %}
