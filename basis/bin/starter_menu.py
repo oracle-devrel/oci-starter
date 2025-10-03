@@ -22,9 +22,9 @@ advanced_menu = [
         ("Log        - Show last build log",  "cat target/build.log")
     ]),
     ("Resource Manager", [
-        ("Build      - Build using Resource Manager", "./starter.sh rm build"), 
-        ("Distribute - Create Resource Manager Stack to distribute", "./starter.sh rm distribute")
-    ]),    
+        ("Create     - Create Resource Manager Stack", "./starter.sh rm")
+        ("Build      - Create and Build using Resource Manager", "./starter.sh rm build"), 
+    ]),      
     ("SSH", [
         ("Key        - SSH private key",      "cat target/ssh_key_starter"), 
         ("Bastion    - SSH Bastion",          "./starter.sh ssh bastion"), 
