@@ -209,5 +209,5 @@ resource "null_resource" "before_destroy" {
 
 # Creation Details (Used by upgrade.sh)
 # OCI_STARTER_CREATION_DATE="{{ create_datetime }}"
-# OCI_STARTER_VERSION="4.0"
+# OCI_STARTER_VERSION="4.1"
 # OCI_STARTER_PARAMS="{{ params["params"] }}"
