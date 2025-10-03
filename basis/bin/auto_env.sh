@@ -64,7 +64,7 @@ read_terraform_tfvars
 # 3. $HOME/.oci_starter_profile
 if [ -f $HOME/.oci_starter_profile ]; then
   . $HOME/.oci_starter_profile
-  echo "3 - \$HOME/.oci_starter_profile"
+  echo "3 - \$HOME/.oci_starter_profile (shared settings)"
 else
   echo "3 - SKIP - no \$HOME/.oci_starter_profile (shared settings)"
 fi 
