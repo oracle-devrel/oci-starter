@@ -56,12 +56,12 @@ infra_as_code_precheck() {
 }
 
 infra_as_code_apply() {
-  title "Infra_as_code_apply - $CALLED_BY_TERRAFORM"  
+  title "Infra_as_code_apply"  
   cd $TERRAFORM_DIR  
   pwd
   if [ "$CALLED_BY_TERRAFORM" != "" ]; then 
     # Called from resource manager
-    echo "WARNING: infra_as_code_apply"
+    echo "WARNING: infra_as_code_apply (CALLED_BY_TERRAFORM=$CALLED_BY_TERRAFORM)"
     resource_manager_variables_json 
   elif [ "$TF_VAR_infra_as_code" == "build_resource_manager" ]; then
     resource_manager_create_or_update
