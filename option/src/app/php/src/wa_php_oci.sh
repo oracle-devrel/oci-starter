@@ -34,7 +34,7 @@ echo >> /etc/php.ini
 echo extension=oci8.so >> /etc/php.ini
 echo extension=oci8 > /etc/php.d/20-oci8.ini
 
-# Eanble Service
+# Enable Service
 systemctl enable httpd
 systemctl enable php-fpm
 

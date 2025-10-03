@@ -76,7 +76,7 @@ default_options = {
     '-java_version': '25',
     '-ui_type': 'html',
     '-db_type': 'atp',
-    '-license_model': 'included',
+    '-license_model': 'LICENSE_INCLUDED',
     '-mode': CLI,
     '-infra_as_code': 'terraform_local',
     '-output_dir' : 'output',
@@ -231,7 +231,6 @@ def license_rules():
     license_model = os.getenv('LICENSE_MODEL')
     if license_model is not None:
         params['license_model'] = license_model
-
 
 def zip_rules():
     global output_dir, zip_dir
