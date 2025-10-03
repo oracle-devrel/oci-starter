@@ -107,28 +107,28 @@ def allowed_options():
 
 
 allowed_values = {
-    '-language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
-    '-deploy_type': { 'public_compute', 'private_compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
-    '-java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
-    '-java_vm': {'jdk', 'graalvm', 'graalvm-native'},
-    '-java_version': {'8', '11', '17', '21', '25'},
-    '-kubernetes': {'oke', 'docker'},
-    '-ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
-    '-db_type': {'atp', 'autonomous', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
-    '-license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
-    '-infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager','from_resource_manager'},
-    '-mode': {CLI, GIT, ZIP},
-    '-shape': {'amd','freetier_amd','ampere','arm'},
-    '-db_install': {'default', 'kubernetes'},
-    '-tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'},
-    '-oke_type': {'managed', 'virtual_node'},
-    '-security': {'none', 'openid'}
+    'language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
+    'deploy_type': { 'public_compute', 'private_compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
+    'java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
+    'java_vm': {'jdk', 'graalvm', 'graalvm-native'},
+    'java_version': {'8', '11', '17', '21', '25'},
+    'kubernetes': {'oke', 'docker'},
+    'ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
+    'db_type': {'atp', 'autonomous', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
+    'license_model': {'included', 'LICENSE_INCLUDED', 'byol', 'BRING_YOUR_OWN_LICENSE'},
+    'infra_as_code': {'terraform_local', 'terraform_object_storage', 'resource_manager','from_resource_manager'},
+    'mode': {CLI, GIT, ZIP},
+    'shape': {'amd','freetier_amd','ampere','arm'},
+    'db_install': {'default', 'kubernetes'},
+    'tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'},
+    'oke_type': {'managed', 'virtual_node'},
+    'security': {'none', 'openid'}
 }
 
 def check_values():
     illegals = {}
     for arg in allowed_values:
-        arg_val = prog_arg_dict().get(arg)
+        arg_val = prog_arg_dict().get("-"+arg)
         if arg_val is not None:
             if arg_val not in allowed_values[arg]:
                 illegals[arg] = arg_val
@@ -371,7 +371,7 @@ starter.sh
     if len(illegal_params) > 0:
         s = ''
         for arg in illegal_params:
-            s += f'Illegal value: "{illegal_params[arg]}" found for {arg}.  Permitted values: {allowed_values[arg]}\n'
+            s += f'Illegal value: "{illegal_params[arg]}" found for -{arg}.  Permitted values: {allowed_values["-"+arg]}\n'
         message += s
     if len(errors) > 0:
         s = ''
