@@ -1176,6 +1176,7 @@ def jinja2_replace_template():
     template_param['params'] = params
     template_param['comments'] = table_comments
     template_param['create_datetime'] = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
+    template_param['allowed_values'] = allowed_values
 
     global to_fill_params, fixed_params
     template_param['fixed_params'] = fixed_params
