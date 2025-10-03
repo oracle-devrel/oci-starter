@@ -26,7 +26,6 @@ set -o pipefail
 # Function to parse a .tfvars file and export TF_VAR_ variables
 read_terraform_tfvars() {
   # Read the file line by line, ignoring comments and empty lines
-  echo "Reading terraform.tfvars"  
   while read -r line; do
     if [[ "$line" =~ ^\s*# ]]; then
        :
@@ -52,20 +51,32 @@ read_terraform_tfvars() {
 # Environment Variables
 # In 4 places:
 # 1. target/tf_env.sh created by the terraform (created by the first build)
+echo "Setting environment variables"
 if [ -f $TARGET_DIR/tf_env.sh ]; then
   . $TARGET_DIR/tf_env.sh
+  echo "1 - target/tf_env.sh (created by terraform)"
+else
+  echo "1 - No target/tf_env.sh yet"
 fi 
-# 2. terraform.tfstate
+# 2. terraform.tfvars
+echo "2 - terraform.tfvars"  
 read_terraform_tfvars
 # 3. $HOME/.oci_starter_profile
 if [ -f $HOME/.oci_starter_profile ]; then
   . $HOME/.oci_starter_profile
-fi  
+  echo "3 - \$HOME/.oci_starter_profile"
+else
+  echo "3 - No \$HOME/.oci_starter_profile"
+fi 
 # 4. for groups, also in group_common_env.sh
 if [ -f $PROJECT_DIR/../group_common_env.sh ]; then
   . $PROJECT_DIR/../group_common_env.sh
+  echo "4 - ../group_common_env.sh"
 elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then
   . $PROJECT_DIR/../../group_common_env.sh
+  echo "4 - ../../group_common_env.sh"
+else
+  echo "4 - no ../group_common_env.sh (no group of projects)" 
 fi
 
 # Autocomplete in bash
