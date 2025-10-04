@@ -41,7 +41,10 @@ resource "null_resource" "tf_env" {
     echo "# Fixed" >> $ENV_FILE   
 {%- for param in fixed_params %}
     echo_export "TF_VAR_{{param}}" "{{ params[param] }}"
-{%- endfor %} 
+{%- endfor %}
+    echo_export "OCI_STARTER_CREATION_DATE" "{{ create_datetime }}"
+    echo_export "OCI_STARTER_VERSION" "4.1"
+    echo_export "OCI_STARTER_PARAMS" "{{ params["params"] }}"
     chmod 755 $ENV_FILE
     EOT
   }
@@ -206,8 +209,3 @@ resource "null_resource" "before_destroy" {
     null_resource.after_build
   ]
 }
-
-# Creation Details (Used by upgrade.sh)
-# OCI_STARTER_CREATION_DATE="{{ create_datetime }}"
-# OCI_STARTER_VERSION="4.1"
-# OCI_STARTER_PARAMS="{{ params["params"] }}"

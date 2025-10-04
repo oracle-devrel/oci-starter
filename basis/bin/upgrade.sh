@@ -54,6 +54,44 @@ fi
 
 title "Remove variable that should not be exposed"
 
+# Version 4.0
+if [ -f src/terraform/build.tf ]; then
+  # PARSING_STATE:
+  # 0 = Before finding '# Fixed'
+  # 1 = Currently parsing 'echo_export' lines
+  # 2 = Parsing complete (stop state)
+  PARSING_STATE=0
+
+  # Read the file line by line
+  while IFS= read -r LINE;do
+    # --- State 0: Looking for the starting point ---
+    if [ "$PARSING_STATE" -eq 0 ]; then
+      if [[ "$LINE" == *"# Fixed"*  ]]; then
+        PARSING_STATE=1
+        continue
+      fi
+      continue
+    fi
+
+    # --- State 1: Currently Parsing ---
+    if [ "$PARSING_STATE" -eq 1 ]; then
+      if [[ "$LINE" =~ ^[[:space:]]+echo_export[[:space:]]+\"([^\"]+)\"[[:space:]]+\"([^\"]+)\"$ ]]; then
+        # BASH_REMATCH[1] holds the content of the first capture group (KEY)
+        KEY="${BASH_REMATCH[1]}"
+        # BASH_REMATCH[2] holds the content of the second capture group (VALUE)
+        VALUE="${BASH_REMATCH[2]}"
+        # Output the required export command
+        echo "export $KEY=\"$VALUE\""
+        export $KEY=$VALUE
+      else
+        # Stop reading when a line does not match the expected pattern
+        PARSING_STATE=2
+        break
+      fi
+    fi
+  done < "src/terraform/build.tf"
+fi
+
 export `compgen -A variable | grep _ocid | grep _ocid | sed 's/$/=__TO_FILL__/'`
 export TF_VAR_db_password=__TO_FILL__
 export TF_VAR_auth_token=__TO_FILL__

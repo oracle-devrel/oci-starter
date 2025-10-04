@@ -44,10 +44,10 @@ infra_as_code_precheck() {
         echo
         echo "Solution: There is probably another installation on this tenancy with the same prefix."
         echo "If you want to create a new installation, "
-        echo "- edit the file env.sh"
-        echo "- put a unique prefix in TF_VAR_PREFIX. Ex:"
+        echo "- edit the file terraform.tfvars"
+        echo "- put a unique prefix in prefix. Ex:"
         echo  
-        echo "export TF_VAR_PREFIX=xxx123"
+        echo "prefix=xxx123"
         echo  
         error_exit
         fi
