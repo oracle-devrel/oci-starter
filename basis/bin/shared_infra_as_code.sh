@@ -26,7 +26,7 @@ infra_as_code_plan() {
 # Before to run the build check the some resource with unique name in the tenancy does not exists already
 # Run only once when the state file does not exist yet.
 infra_as_code_precheck() {
-  echo "-- Precheck"
+  title "Infra As Code - Precheck"
   cd $TERRAFORM_DIR
   $TERRAFORM_COMMAND init -no-color -upgrade  
   #   XXXX BUG in terraform plan -json
@@ -50,14 +50,15 @@ infra_as_code_precheck() {
         echo  
         echo "prefix=xxx123"
         echo  
-        error_exit
+        error_exit "infra_as_code_precheck"
       fi
     done
   fi
+  cd -
 }
 
 infra_as_code_apply() {
-  title "Infra_as_code_apply"  
+  title "Infra As Code - Apply" 
   cd $TERRAFORM_DIR  
   pwd
   if [ "$CALLED_BY_TERRAFORM" != "" ]; then 
