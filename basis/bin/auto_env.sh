@@ -325,6 +325,7 @@ if [ -f $STATE_FILE ]; then
   fi
 
   # export all OUTPUTS of the terraform file
+  # XXXXXX Still needed ? local_xx takes care of this ? 
   if [ "$IDCS_URL" == "" ]; then
     LIST_OUTPUT=`cat $STATE_FILE| jq .outputs | jq -r 'keys[]'`
     for output in $LIST_OUTPUT; do

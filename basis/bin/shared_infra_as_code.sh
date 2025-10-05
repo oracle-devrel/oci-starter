@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # - 2025-06_17 : added Tofu support for LunaLab
-set -e
 
 if command -v terraform  &> /dev/null; then
   export TERRAFORM_COMMAND=terraform
@@ -31,17 +30,15 @@ infra_as_code_precheck() {
   $TERRAFORM_COMMAND init -no-color -upgrade  
   $TERRAFORM_COMMAND plan -json -out=$TARGET_DIR/tfprecheck.plan > /dev/null 2>&1
   if [ "$?" != "0" ]; then
-    # BUG in terraform plan -json
-    # If there is an error in the plan phase, the code exit fully returning a error code... XXXX
+    # If there is an error in the plan phase, json output is not readable. 
+    # Continue to apply to let apply fails and give a readable message
     echo "WARNING: infra_as_code_precheck: Terraform plan failed"
   else 
     # Buckets
     LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfprecheck.plan | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .change.after.name'`
     for BUCKET_NAME in $LIST_BUCKETS; do
       echo "Bucket $BUCKET_NAME"
-      { # Try / Catch
-        BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace | jq -r .data.name 2> /dev/null`
-      } || { echo "- OK" }
+      BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace | jq -r .data.name 2> /dev/null`
       if [ "$BUCKET_NAME" == "$BUCKET_CHECK" ]; then
         echo "PRECHECK ERROR: Bucket $BUCKET_NAME exists already in this tenancy."
         echo
@@ -101,6 +98,7 @@ infra_as_code_destroy() {
   else
     $TERRAFORM_COMMAND init -upgrade
     $TERRAFORM_COMMAND destroy $@
+    exit_on_error "infra_as_code_destroy"    
   fi
 }
 
