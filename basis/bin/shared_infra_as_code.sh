@@ -29,17 +29,17 @@ infra_as_code_precheck() {
   title "Infra As Code - Precheck"
   cd $TERRAFORM_DIR
   $TERRAFORM_COMMAND init -no-color -upgrade  
-  #   XXXX BUG in terraform plan -json
-  #   XXXX If there is an error in the plan phase, the code exit fully returning a error code... XXXX
-  $TERRAFORM_COMMAND plan -json -out=$TARGET_DIR/tfprecheck_plan.json > /dev/null 2>&1
+  $TERRAFORM_COMMAND plan -json -out=$TARGET_DIR/tfprecheck.plan > /dev/null 2>&1
   if [ "$?" != "0" ]; then
+    # BUG in terraform plan -json
+    # If there is an error in the plan phase, the code exit fully returning a error code... XXXX
     echo "WARNING: infra_as_code_precheck: Terraform plan failed"
   else 
     # Buckets
-    LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfprecheck_plan.json | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .change.after.name'`
+    LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfprecheck.plan | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .change.after.name'`
     for BUCKET_NAME in $LIST_BUCKETS; do
       echo "Bucket $BUCKET_NAME"
-      {
+      { # Try / Catch
         BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace | jq -r .data.name 2> /dev/null`
       } || { echo "- OK" }
       if [ "$BUCKET_NAME" == "$BUCKET_CHECK" ]; then
