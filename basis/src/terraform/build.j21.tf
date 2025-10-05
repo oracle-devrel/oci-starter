@@ -42,9 +42,9 @@ resource "null_resource" "tf_env" {
 {%- for param in fixed_params %}
     echo_export "TF_VAR_{{param}}" "{{ params[param] }}"
 {%- endfor %}
-    echo_export "OCI_STARTER_CREATION_DATE" "{{ create_datetime }}"
-    echo_export "OCI_STARTER_VERSION" "4.1"
-    echo_export "OCI_STARTER_PARAMS" "{{ params["params"] }}"
+    # echo_export "OCI_STARTER_CREATION_DATE" "{{ create_datetime }}"
+    # echo_export "OCI_STARTER_VERSION" "4.1"
+    # echo_export "OCI_STARTER_PARAMS" "{{ params["params"] }}"
     chmod 755 $ENV_FILE
     EOT
   }
