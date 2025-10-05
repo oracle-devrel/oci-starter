@@ -36,11 +36,11 @@ infra_as_code_precheck() {
     echo "WARNING: infra_as_code_precheck: Terraform plan failed"
   else 
     # Buckets
-    LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfprecheck_plan.json | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .name'`
+    LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfprecheck_plan.json | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .change.after.name'`
     for BUCKET_NAME in $LIST_BUCKETS; do
-        echo "Precheck if bucket $BUCKET_NAME exists"
-        BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace 2> /dev/null | jq -r .data.name`
-        if [ "$BUCKET_NAME" == "$BUCKET_CHECK" ]; then
+      echo "Precheck: bucket $BUCKET_NAME"
+      BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace 2> /dev/null | jq -r .data.name`
+      if [ "$BUCKET_NAME" == "$BUCKET_CHECK" ]; then
         echo "PRECHECK ERROR: Bucket $BUCKET_NAME exists already in this tenancy."
         echo
         echo "Solution: There is probably another installation on this tenancy with the same prefix."
@@ -51,7 +51,7 @@ infra_as_code_precheck() {
         echo "prefix=xxx123"
         echo  
         error_exit
-        fi
+      fi
     done
   fi
 }
