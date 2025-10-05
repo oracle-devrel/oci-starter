@@ -92,14 +92,25 @@ if [ -f src/terraform/build.tf ]; then
   done < "src/terraform/build.tf"
 fi
 
+# Version 4.0
+if grep -q OCI_STARTER_VERSION terraform.tfvars; then
+  export LINE_OCI_STARTER_CREATION_DATE=`grep "OCI_STARTER_CREATION_DATE=" terraform.tfvars`
+  export LINE_OCI_STARTER_VERSION=`grep "OCI_STARTER_VERSION=" terraform.tfvars`
+fi
+
 export `compgen -A variable | grep _ocid | grep _ocid | sed 's/$/=__TO_FILL__/'`
 export TF_VAR_db_password=__TO_FILL__
 export TF_VAR_auth_token=__TO_FILL__
 
+# Version 3.0
+if [ "$TF_VAR_OCI_STARTER_PARAMS" != "" ]; then
+  OCI_STARTER_PARAMS=$TF_VAR_OCI_STARTER_PARAMS
+fi
+
 PARAM_LIST=""
 
 IFS=','
-read -ra ARR <<<"$TF_VAR_OCI_STARTER_PARAMS" 
+read -ra ARR <<<"$OCI_STARTER_PARAMS" 
 for p in "${ARR[@]}"; 
 do  
   VAR_NAME="TF_VAR_${p}"
@@ -124,37 +135,36 @@ rm upgrade.zip
 mv $TF_VAR_prefix/* $TF_VAR_prefix/.*  .
 rmdir $TF_VAR_prefix
 
-export LINE_OCI_STARTER_CREATION_DATE=`grep "OCI_STARTER_CREATION_DATE=" terraform.tfvars`
-export LINE_OCI_STARTER_VERSION=`grep "OCI_STARTER_VERSION=" terraform.tfvars`
-
 title "Upgrade directory"
 mkdir not_used
 mv src not_used
 echo "Saved $UPGRADE_DIR/src to $UPGRADE_DIR/not_used/src"
 
-mv env.sh not_used
-echo "Saved $UPGRADE_DIR/env.sh to $UPGRADE_DIR/not_used/env.sh"
+if [ -f env.sh ]; then
+  mv env.sh not_used
+  echo "Saved $UPGRADE_DIR/env.sh to $UPGRADE_DIR/not_used/env.sh"
+else
+  mv terraform.tfvars not_used
+  echo "Saved $UPGRADE_DIR/terraform.tfvars to $UPGRADE_DIR/not_used/terraform.tfvars"
+fi
 
 cp -r ../src .
 echo "Replaced the $UPGRADE_DIR/src directory by src"
 
-cp ../env.sh .
-echo "Replaced the $UPGRADE_DIR/env.sh directory by env.sh"
-
-# Remove lines in env.sh
-title "Removing unneeded lines in env.sh"
-sed -i "/PROJECT_DIR=/d" env.sh
-sed -i "/export BIN_DIR=/d" env.sh
-sed -i "/# Get other env variables/d" env.sh 
-sed -i '/. $BIN_DIR\/auto_env.sh/d' env.sh 
-
-# Change the OCI_STARTER_CREATION_DATE / VERSION
-title "Replacing OCI_STARTER versions with the downloaded version"
-sed -i "/OCI_STARTER_CREATION_DATE/c $LINE_OCI_STARTER_CREATION_DATE" terraform.tfvars
-sed -i "/OCI_STARTER_VERSION/c $LINE_OCI_STARTER_VERSION" terraform.tfvars
-
-title "Replacing OCI_STARTER versions with the downloaded version"
-sed -i 's/deploy_type="compute"/deploy_type="public_compute"/' terraform.tfvars
+if [ -f ../env.sh ]; then
+  cp ../env.sh .
+  echo "Replaced the $UPGRADE_DIR/env.sh directory by env.sh"
+  # Remove lines in env.sh
+  title "Removing unneeded lines in env.sh"
+  sed -i "/PROJECT_DIR=/d" env.sh
+  sed -i "/export BIN_DIR=/d" env.sh
+  sed -i "/# Get other env variables/d" env.sh 
+  sed -i '/. $BIN_DIR\/auto_env.sh/d' env.sh   
+else
+  cp ../terraform.tfvars .
+  echo "Replaced the $UPGRADE_DIR/terraform.tfvars directory by terraform.tfvars"
+  sed -i 's/deploy_type="compute"/deploy_type="public_compute"/' terraform.tfvars
+fi
 
 # Calls to env.sh
 title "Replacing calls to env.sh"
@@ -187,7 +197,6 @@ fi
 if [ -f src/after_done.sh ]; then
   mv src/after_done.sh src/after_build.sh
 fi
-
 
 # Remove *.sh from src/terraform
 rm src/terraform/*.sh

@@ -24,18 +24,19 @@ infra_as_code_plan() {
 }
 
 # Before to run the build check the some resource with unique name in the tenancy does not exists already
+# Run only once when the state file does not exist yet.
 infra_as_code_precheck() {
   echo "-- Precheck"
   cd $TERRAFORM_DIR
   $TERRAFORM_COMMAND init -no-color -upgrade  
   #   XXXX BUG in terraform plan -json
   #   XXXX If there is an error in the plan phase, the code exit fully returning a error code... XXXX
-  $TERRAFORM_COMMAND plan -json -out=$TARGET_DIR/tfplan.out # > /dev/null
+  $TERRAFORM_COMMAND plan -json -out=$TARGET_DIR/tfprecheck_plan.json > /dev/null 2>&1
   if [ "$?" != "0" ]; then
     echo "WARNING: infra_as_code_precheck: Terraform plan failed"
   else 
     # Buckets
-    LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfplan.out | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .name'`
+    LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfprecheck_plan.json | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .name'`
     for BUCKET_NAME in $LIST_BUCKETS; do
         echo "Precheck if bucket $BUCKET_NAME exists"
         BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace 2> /dev/null | jq -r .data.name`
