@@ -38,8 +38,10 @@ infra_as_code_precheck() {
     # Buckets
     LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfprecheck_plan.json | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .change.after.name'`
     for BUCKET_NAME in $LIST_BUCKETS; do
-      echo "Precheck: bucket $BUCKET_NAME"
-      BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace 2> /dev/null | jq -r .data.name`
+      echo "Bucket $BUCKET_NAME"
+      {
+        BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace | jq -r .data.name 2> /dev/null`
+      } || { echo "- OK" }
       if [ "$BUCKET_NAME" == "$BUCKET_CHECK" ]; then
         echo "PRECHECK ERROR: Bucket $BUCKET_NAME exists already in this tenancy."
         echo
