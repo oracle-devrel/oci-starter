@@ -54,29 +54,29 @@ read_terraform_tfvars() {
 echo "Setting environment variables"
 if [ -f $TARGET_DIR/tf_env.sh ]; then
   . $TARGET_DIR/tf_env.sh
-  echo "1 - target/tf_env.sh (created by terraform)"
+  echo "1 - target/tf_env.sh                      - Created by terraform"
 else
-  echo "1 - SKIP - no target/tf_env.sh (created by terraform)"
+  echo "1 - SKIP - no target/tf_env.sh            - Created by terraform"
 fi 
 # 2. terraform.tfvars
-echo "2 - terraform.tfvars (user settings)"  
+echo "2 - terraform.tfvars                      - Project settings"  
 read_terraform_tfvars
 # 3. $HOME/.oci_starter_profile
 if [ -f $HOME/.oci_starter_profile ]; then
   . $HOME/.oci_starter_profile
-  echo "3 - \$HOME/.oci_starter_profile (shared settings)"
+  echo "3 - \$HOME/.oci_starter_profile           - User Home Directory settings "
 else
-  echo "3 - SKIP - no \$HOME/.oci_starter_profile (shared settings)"
+  echo "3 - SKIP - no \$HOME/.oci_starter_profile - User Home Directory settings"
 fi 
 # 4. for groups, also in group_common_env.sh
 if [ -f $PROJECT_DIR/../group_common_env.sh ]; then
   . $PROJECT_DIR/../group_common_env.sh
-  echo "4 - ../group_common_env.sh (group of projects settings)"
+  echo "4 - ../group_common_env.sh                - Group of Projects settings"
 elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then
   . $PROJECT_DIR/../../group_common_env.sh
-  echo "4 - ../../group_common_env.sh (group of projects settings)"
+  echo "4 - ../../group_common_env.sh             - Group of Projects settings"
 else
-  echo "4 - SKIP - no ../group_common_env.sh (group of projects settings)" 
+  echo "4 - SKIP - no ../group_common_env.sh      - Group of Projects settings" 
 fi
 
 # Autocomplete in bash

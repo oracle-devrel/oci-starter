@@ -75,7 +75,7 @@ if [ -f src/terraform/build.tf ]; then
 
     # --- State 1: Currently Parsing ---
     if [ "$PARSING_STATE" -eq 1 ]; then
-      if [[ "$LINE" =~ ^[[:space:]]+echo_export[[:space:]]+\"([^\"]+)\"[[:space:]]+\"([^\"]+)\"$ ]]; then
+      if [[ "$LINE" =~ echo_export[[:space:]]+\"([^\"]+)\"[[:space:]]+\"([^\"]+)\"$ ]]; then
         # BASH_REMATCH[1] holds the content of the first capture group (KEY)
         KEY="${BASH_REMATCH[1]}"
         # BASH_REMATCH[2] holds the content of the second capture group (VALUE)
