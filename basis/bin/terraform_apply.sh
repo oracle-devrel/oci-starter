@@ -17,7 +17,7 @@ elif [ -f $STATE_FILE ]; then
 else
 #   XXXX If there is an error in the plan phase, the code exit fully returning a error code... XXXX
 #   if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ]; then
-#     infra_as_code_precheck
+    infra_as_code_precheck
 #   fi
   export TERRAFORM_FLAG="--auto-approve"
 fi

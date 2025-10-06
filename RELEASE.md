@@ -175,3 +175,8 @@ New version
 - added vault_ocid settings in config.sh
 - lunalab fix
 
+## 4.2
+- Infra As Code - Precheck (check if all buckets that will be created exists already)
+- Upgrade script
+- Fix for single availability domain regions
+- Small fix for Mysql and Postgres

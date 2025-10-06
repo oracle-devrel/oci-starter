@@ -46,37 +46,39 @@ read_terraform_tfvars() {
   unset value
 }
 
-
-
 # Environment Variables
 # In 4 places:
 # 1. target/tf_env.sh created by the terraform (created by the first build)
-echo "Setting environment variables"
+echo "Reading variables"
+echo
+echo "Order     File Name                             Settings from"
+echo "-----     ---------                             -------------"
+
 if [ -f $TARGET_DIR/tf_env.sh ]; then
   . $TARGET_DIR/tf_env.sh
-  echo "1 - target/tf_env.sh (created by terraform)"
+  echo "1         target/tf_env.sh                      Terraform apply"
 else
-  echo "1 - SKIP - no target/tf_env.sh (created by terraform)"
+  echo "1 SKIP    target/tf_env.sh                      Terraform apply"
 fi 
 # 2. terraform.tfvars
-echo "2 - terraform.tfvars (user settings)"  
+echo "2         terraform.tfvars                      Project"  
 read_terraform_tfvars
 # 3. $HOME/.oci_starter_profile
 if [ -f $HOME/.oci_starter_profile ]; then
   . $HOME/.oci_starter_profile
-  echo "3 - \$HOME/.oci_starter_profile (shared settings)"
+  echo "3         \$HOME/.oci_starter_profile            User Home"
 else
-  echo "3 - SKIP - no \$HOME/.oci_starter_profile (shared settings)"
+  echo "3 SKIP    \$HOME/.oci_starter_profile            User Home"
 fi 
 # 4. for groups, also in group_common_env.sh
 if [ -f $PROJECT_DIR/../group_common_env.sh ]; then
   . $PROJECT_DIR/../group_common_env.sh
-  echo "4 - ../group_common_env.sh (group of projects settings)"
+  echo "4         ../group_common_env.sh                Group of Projects"
 elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then
   . $PROJECT_DIR/../../group_common_env.sh
-  echo "4 - ../../group_common_env.sh (group of projects settings)"
+  echo "4         ../../group_common_env.sh             Group of Projects"
 else
-  echo "4 - SKIP - no ../group_common_env.sh (group of projects settings)" 
+  echo "4 SKIP    ../group_common_env.sh                Group of Projects" 
 fi
 
 # Autocomplete in bash
@@ -325,6 +327,7 @@ if [ -f $STATE_FILE ]; then
   fi
 
   # export all OUTPUTS of the terraform file
+  # XXXXXX Still needed ? local_xx takes care of this ? 
   if [ "$IDCS_URL" == "" ]; then
     LIST_OUTPUT=`cat $STATE_FILE| jq .outputs | jq -r 'keys[]'`
     for output in $LIST_OUTPUT; do

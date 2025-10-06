@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # - 2025-06_17 : added Tofu support for LunaLab
-set -e
 
 if command -v terraform  &> /dev/null; then
   export TERRAFORM_COMMAND=terraform
@@ -24,39 +23,41 @@ infra_as_code_plan() {
 }
 
 # Before to run the build check the some resource with unique name in the tenancy does not exists already
+# Run only once when the state file does not exist yet.
 infra_as_code_precheck() {
-  echo "-- Precheck"
+  title "Infra As Code - Precheck"
   cd $TERRAFORM_DIR
   $TERRAFORM_COMMAND init -no-color -upgrade  
-  #   XXXX BUG in terraform plan -json
-  #   XXXX If there is an error in the plan phase, the code exit fully returning a error code... XXXX
-  $TERRAFORM_COMMAND plan -json -out=$TARGET_DIR/tfplan.out # > /dev/null
+  $TERRAFORM_COMMAND plan -json -out=$TARGET_DIR/tfprecheck.plan > /dev/null 2>&1
   if [ "$?" != "0" ]; then
+    # If there is an error in the plan phase, json output is not readable. 
+    # Continue to apply to let apply fails and give a readable message
     echo "WARNING: infra_as_code_precheck: Terraform plan failed"
   else 
     # Buckets
-    LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfplan.out | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .name'`
+    LIST_BUCKETS=`$TERRAFORM_COMMAND show -json $TARGET_DIR/tfprecheck.plan | jq -r '.resource_changes[] | select(.type == "oci_objectstorage_bucket") | .change.after.name'`
     for BUCKET_NAME in $LIST_BUCKETS; do
-        echo "Precheck if bucket $BUCKET_NAME exists"
-        BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace 2> /dev/null | jq -r .data.name`
-        if [ "$BUCKET_NAME" == "$BUCKET_CHECK" ]; then
+      echo "Bucket $BUCKET_NAME"
+      BUCKET_CHECK=`oci os bucket get --bucket-name $BUCKET_NAME --namespace-name $TF_VAR_namespace | jq -r .data.name 2> /dev/null`
+      if [ "$BUCKET_NAME" == "$BUCKET_CHECK" ]; then
         echo "PRECHECK ERROR: Bucket $BUCKET_NAME exists already in this tenancy."
         echo
         echo "Solution: There is probably another installation on this tenancy with the same prefix."
         echo "If you want to create a new installation, "
-        echo "- edit the file env.sh"
-        echo "- put a unique prefix in TF_VAR_PREFIX. Ex:"
+        echo "- edit the file terraform.tfvars"
+        echo "- put a unique prefix in prefix. Ex:"
         echo  
-        echo "export TF_VAR_PREFIX=xxx123"
+        echo "prefix=xxx123"
         echo  
-        error_exit
-        fi
+        error_exit "infra_as_code_precheck"
+      fi
     done
   fi
+  cd -
 }
 
 infra_as_code_apply() {
-  title "Infra_as_code_apply"  
+  title "Infra As Code - Apply" 
   cd $TERRAFORM_DIR  
   pwd
   if [ "$CALLED_BY_TERRAFORM" != "" ]; then 
@@ -97,6 +98,7 @@ infra_as_code_destroy() {
   else
     $TERRAFORM_COMMAND init -upgrade
     $TERRAFORM_COMMAND destroy $@
+    exit_on_error "infra_as_code_destroy"    
   fi
 }
 

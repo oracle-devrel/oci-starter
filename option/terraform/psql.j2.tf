@@ -26,6 +26,7 @@ resource "oci_psql_db_system" "starter_psql" {
   instance_ocpu_count = 1
   storage_details {
     is_regionally_durable = true
+    # availability_domain = local.availability_domain_name
     system_type = "OCI_OPTIMIZED_STORAGE"
   }
   credentials {
