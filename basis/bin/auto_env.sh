@@ -46,13 +46,6 @@ read_terraform_tfvars() {
   unset value
 }
 
-Order     File Name                             Settings from
------     ---------                             -------------
-1         target/tf_env.sh                      Terraform apply
-2         terraform.tfvars                      Project
-3         $HOME/.oci_starter_profile            User Home  
-4 SKIP    ../group_common_env.sh                Group of Projects
-
 # Environment Variables
 # In 4 places:
 # 1. target/tf_env.sh created by the terraform (created by the first build)
