@@ -1,0 +1,4 @@
+Dockerfile
+.dockerignore
+k8s*
+build.sh

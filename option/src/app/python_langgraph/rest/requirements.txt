@@ -1,0 +1,10 @@
+# Langgraph
+# Issue with 0.2.2 version with openai-gpt-oss
+langchain_oci==0.2.1
+langchain_openai
+oci-openai
+langgraph-cli[inmem]
+langchain_mcp_adapters
+
+# OAuth Caching 
+aiocache

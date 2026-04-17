@@ -92,7 +92,7 @@ using Oracle.NoSQL.SDK;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.ToString());
         }
     {%- elif db_family == "nosql" %}
         List<Dept> a = new List<Dept>();
@@ -100,12 +100,12 @@ using Oracle.NoSQL.SDK;
             await foreach(var result in client.GetQueryAsyncEnumerable("select deptno, dname, loc from dept"))
             {
                 foreach(var row in result.Rows) {
-                    a.Add( new Dept{ deptno = row.GetValueAtIndex(0).AsInt32.ToString(), dname = row.GetValueAtIndex(1).AsString, loc = row.GetValueAtIndex(2).AsString } );
+                    a.Add( new Dept{ deptno = row.GetValueAtIndex(0).AsInt64.ToString(), dname = row.GetValueAtIndex(1).AsString, loc = row.GetValueAtIndex(2).AsString } );
                 }
             }
         }
         catch(Exception ex) {
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.ToString());
         }
     {%- else %}
         List<Dept> a = new List<Dept>();
@@ -151,7 +151,7 @@ using Oracle.NoSQL.SDK;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.ToString());
         }
     {%- endif %}  
 {%- endmacro -%}   

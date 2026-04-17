@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="chat.css">
+</head>
+
+<body>
+    <nav id="agentMenu" aria-label="Accessible agents and users">
+        <div class="section-title">Backend</div>
+        <ul id="backendList"></ul>
+        <div class="section-title">Agents</div>
+        <ul id="agentList"></ul>
+        <div class="section-title">Users</div>
+        <ul id="userList"></ul>
+    </nav>
+        <div id="chat-container">
+            <h2>How can I help ?</h2>
+            <div id="messages"></div>
+            <div id="spinner-container">
+            </div>
+        </div>    
+        <div id="form-container">
+            <form id="chat-form">
+                <textarea id="chat-input" rows="1" placeholder="Type your message..." autocomplete="off" required></textarea>
+                <button id="mic-button" type="button" title="Voice input" aria-label="Record voice message"><img src="images/microphone.png" alt="Microphone"></button>
+                <button type="submit"><img src="images/send.png"></button>
+            </form>
+        </div>
+    <div id="currentDisplay"></div>
+    <div id="reset"><img src="images/edit.png"></div>
+    <button class="hamburger" aria-label="Open accessible agents menu" aria-controls="agentMenu" aria-expanded="false">
+    </button>
+    <script type="module" src="chat.js"></script>
+</body>
+
+</html>

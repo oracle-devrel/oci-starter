@@ -36,6 +36,8 @@ if [ "$UI_URL" != "" ]; then
       else
         curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_dept.log > $TMP_PATH/result_dept.json
       fi      
+
+      # Check (Same test is also done test_suite_shared)
       if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
         echo -e "\u2705 deptno detected in $UI_URL/app/dept"
         break
@@ -43,15 +45,32 @@ if [ "$UI_URL" != "" ]; then
       sleep 5  
       x=$(( $x + 1 ))
     done
+    if [ "$x" == "20" ]; then
+      echo -e "\u2705 deptno not detected in $UI_URL/app/dept"  
+    fi
+
     echo "----- Testing: $UI_URL/"
-    if [ "$TF_VAR_ui_type" != "api" ] && [ "$TF_VAR_language" != "apex" ]; then
+    if [ "$TF_VAR_ui_type" != "api" ] && [ "$TF_VAR_ui_type" != "jsp" ] && [ "$TF_VAR_language" != "apex" ]; then
       if [ -f "$TMP_PATH/cookie.txt" ]; then
         rm $TMP_PATH/cookie.txt
       fi  
       curl $UI_URL/ -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_html.log > $TMP_PATH/result_html.html
     else 
       echo "OCI Starter" > $TMP_PATH/result_html.html
-    fi  
+    fi 
+
+    # Check (Same test is also done test_suite_shared)
+    if grep -q -i "starter" $TMP_PATH/result_html.html; then
+      echo -e "\u2705 starter detected in $UI_URL"
+      CSV_HTML_OK=1
+    elif grep -q -i "deptno" $TMP_PATH/result_html.html; then
+      echo -e "\u2705 deptno detected in $UI_URL"
+      CSV_HTML_OK=1
+    else
+      echo -e "\u274C $UI_URL does not contain starter or deptno" 
+    fi
+
+
     if [ -f "$TMP_PATH/cookie.txt" ]; then
       rm $TMP_PATH/cookie.txt
     fi  

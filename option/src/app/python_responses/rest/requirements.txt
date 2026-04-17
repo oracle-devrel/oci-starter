@@ -1,0 +1,19 @@
+# FastMCP
+fastmcp
+fastapi
+uvicorn
+
+# Oracle
+oracledb
+oci-genai-auth
+
+# Langgraph
+langchain_oci
+langchain_community
+langchain_openai
+oci-openai
+langgraph-cli[inmem]
+langchain_mcp_adapters
+
+# OAuth Caching 
+aiocache

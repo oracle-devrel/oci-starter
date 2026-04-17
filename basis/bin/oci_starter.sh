@@ -72,9 +72,13 @@ elif [ "$ARG1" == "help" ]; then
 
 elif [ "$ARG1" == "build" ]; then
   if [ "$ARG2" == "app" ]; then
-    $PROJECT_DIR/src/app/build_app.sh ${@:2}
+    # Build all apps
+    for APP_NAME in `app_name_list_build`; do
+        src/app/$APP_NAME/build.sh ${@:2}
+        exit_on_error "Build App $APP_NAME"
+    done
   elif [ "$ARG2" == "ui" ]; then
-    $PROJECT_DIR/src/ui/build_ui.sh ${@:2}
+    $PROJECT_DIR/src/app/build_ui.sh ${@:2}
   else
     export LOG_NAME=$TARGET_DIR/logs/build.${DATE_POSTFIX}.log
     # Show the log and save it to target/build.log and target/logs
@@ -166,7 +170,7 @@ elif [ "$ARG1" == "frm" ]; then # From Resource Manager
     exit_on_error "build_all.sh --before_terraform"
   fi    
   . shared_infra_as_code.sh
-  . ./starter.sh env
+  . ./starter.sh env -silent
   resource_manager_variables_json
 
 elif [ "$ARG1" == "start" ]; then
@@ -184,8 +188,6 @@ elif [ "$ARG1" == "deploy" ]; then
     $BIN_DIR/deploy_compute.sh
   elif [ "$ARG2" == "bastion" ]; then
     $BIN_DIR/deploy_bastion.sh
-  elif [ "$ARG2" == "oke" ]; then
-    $BIN_DIR/deploy_oke.sh
   else 
     echo "Unknown command: $ARG1 $ARG2"
     exit 1

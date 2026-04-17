@@ -259,6 +259,11 @@ generate_only() {
   export GENERATE_ONLY=true
 }
 
+if [ "$PROJECT_DIR" != "" ]; then
+  echo "ERROR: PROJECT_DIR set. Exiting."
+  exit 1
+fi
+
 if [ -d $TEST_HOME ]; then
   pre_git_refresh
   if [ ! -f $TEST_HOME/group_common_env.sh ]; then

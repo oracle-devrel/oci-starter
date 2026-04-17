@@ -1,6 +1,6 @@
 locals {
   docker_image_ui=data.external.env_part2.result.docker_image_ui
-  docker_image_app=data.external.env_part2.result.docker_image_app
+  docker_image_rest=data.external.env_part2.result.docker_image_rest
 }
 
 resource oci_container_instances_container_instance starter_container_instance {
@@ -10,8 +10,8 @@ resource oci_container_instances_container_instance starter_container_instance {
   compartment_id      = local.lz_app_cmp_ocid  
   container_restart_policy = "ALWAYS"
   containers {
-    display_name = "app"
-    image_url = local.docker_image_app
+    display_name = "rest"
+    image_url = local.docker_image_rest
     is_resource_principal_disabled = "false"
     environment_variables = {
       {%- if db_type != "none" %} 

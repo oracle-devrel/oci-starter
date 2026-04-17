@@ -31,6 +31,10 @@ sudo dnf install -y git python36-oci-cli
 oci setup repair-file-permissions --file $HOME/.oci/config
 oci setup repair-file-permissions --file $HOME/.oci/oci_api_key.pem
 
+# Python
+sudo dnf install -y python3.12 python3.12-pip python3-devel wget
+sudo update-alternatives --set python /usr/bin/python3.12
+pip3.12 install -y jinja2 
 
 # Java
 sudo dnf install -y graalvm-25-jdk

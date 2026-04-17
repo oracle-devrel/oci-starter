@@ -32,7 +32,7 @@ terraform() {
   exit_on_error "Terraform Apply"
 }
 
-. starter.sh env -no-auto
+. starter.sh env -no-auto -silent
 title "OCI Starter - Build"
 
 if [ "$1" == "--before_terraform" ]; then

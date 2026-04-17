@@ -1,0 +1,306 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f6f6f6;
+}
+
+#chat-container {
+    max-width: 1024px;
+    margin: 40px auto;
+    background: white;
+    padding: 16px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .06);
+    border-radius: 8px;
+}
+
+#form-container {
+    max-width: 1024px;
+    margin: 40px auto;
+    background: white;
+    padding: 16px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .06);
+    border-radius: 8px;
+}
+
+#currentDisplay {
+    font-size: 80%;
+    color: gray;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+}
+
+#messages {
+    min-height: 20vh;
+    margin-bottom: 16px;
+}
+
+.message {
+    margin-bottom: 20px;
+    display: flex;
+}
+
+.human {
+    justify-content: flex-end;
+}
+
+.ai,
+.tool {
+    justify-content: flex-start;
+}
+
+.meta {
+    font-size: .9em;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.bubble {
+    max-width: 90%;
+    padding: 14px 20px;
+    border-radius: 18px;
+    background: #eee;
+    position: relative;
+    word-break: break-word;
+    box-shadow: 0 2px 6px rgba(20, 71, 151, .08);
+}
+
+.human .bubble {
+    background: #ddd;
+    color: black;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 18px;
+    border-top-right-radius: 18px;
+    border-top-left-radius: 18px;
+}
+
+.ai .bubble,
+.tool .bubble {
+    background: #ddd;
+    color: black;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 18px;
+    border-top-right-radius: 18px;
+    border-top-left-radius: 18px;
+}
+
+form {
+    display: flex;
+    gap: 8px;
+}
+
+textarea {
+    flex: 1;
+    padding: 18px;
+    border-radius: 18px;
+    border: 1px lightgray solid;
+    outline: 0px #eee solid;
+    font-family: Arial, sans-serif;
+}
+
+button {
+    padding: 10px 10px;
+    border-radius: 18px;
+    border: 1px lightgray solid;
+    background-color: lightgray;
+}
+
+button img {
+    height: 25px;
+}
+
+#mic-button {
+    background-color: #e0f7fa;
+    border-color: #00acc1;
+}
+
+#mic-button.recording {
+    background-color: #ff4444;
+    border-color: #cc0000;
+    animation: micPulse 1s infinite;
+}
+
+@keyframes micPulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.tool-calls {
+    background: #eef4fc;
+    padding: 8px;
+    font-size: 0.95em;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+/* Tools table - hidden by default, shown as popup on hover */
+.bubble .tools-table {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    min-width: 400px;
+    max-width: 600px;
+    margin-top: 8px;
+    padding: 12px;
+    font-size: 0.9em;
+}
+
+.bubble:hover .tools-table {
+    display: block;
+}
+
+.bubble table {
+    background: #f8f9fa;
+    padding: 8px;
+    font-size: 0.95em;
+    border-radius: 4px;
+    margin-top: 8px;
+    min-width: 15em;
+    max-width: 95%;
+    width: 95%;
+    border-collapse: collapse;
+}
+
+.bubble td {
+    padding: 0.4em 0.6em;
+    max-width: 140px;
+    background: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 1px solid #eee;
+}
+
+.bubble th {
+    padding: 0.5em 0.6em;
+    background: #f0f0f0;
+    font-weight: 600;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.bubble tr:hover td {
+    white-space: normal;
+    overflow: visible;
+    background: #f0f8ff;
+}
+
+.citation {
+    font-size: 0.9em;
+    color: #187;
+    margin-top: 3px;
+}
+
+/* Spinner styles */
+#spinner-container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    min-height: 38px;
+}
+
+#spinner {
+    margin-top: -8px;
+    margin-bottom: 8px;
+    width: 35px;
+    height: 37px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.pulse-dot {
+    margin-left: 16px;
+    width: 18px;
+    height: 18px;
+    background: #111;
+    border-radius: 50%;
+    animation: pulseAnim 1s cubic-bezier(.4, 0, .6, 1) infinite;
+}
+
+@keyframes pulseAnim {
+    0% {
+        transform: scale(1);
+        opacity: .8;
+    }
+
+    50% {
+        transform: scale(1.7);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: .8;
+    }
+}
+
+/* Hamburger Menu */
+.hamburger {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    width: 30px;
+    height: 30px;
+    padding: 6px;
+    z-index: 100;
+    background:
+        linear-gradient(#111, #111) center 7px / 18px 2px no-repeat,
+        linear-gradient(#111, #111) center 14px / 18px 2px no-repeat,
+        linear-gradient(#111, #111) center 21px / 18px 2px no-repeat,
+        #fff;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.hamburger:focus {
+    outline: 1px solid #000;
+}
+nav {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    height: calc(100vh - 70px);
+    width: 220px;
+    background: white;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    transition: left .3s;
+    border-top: solid 70px black;
+}
+nav.open {
+    left: 0;
+}
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+nav .section-title {
+    font-weight: bold;
+    margin: 16px 0 4px 18px;
+    font-size: 1rem;
+    color: #005aad;
+}
+nav li {
+    padding: 12px 20px;
+    cursor: pointer;
+}
+nav li:focus,
+nav li:hover {
+    background: #efefef;
+    outline: none;
+}
+#reset {
+    position: fixed;
+    top: 10px;
+    right: 10px;    
+}
+#reset:hover {
+    background: #fff;
+}

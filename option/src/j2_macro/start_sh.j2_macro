@@ -1,31 +1,15 @@
 {%- macro env() %}
-# Generic
-curl -s -H "Authorization: Bearer Oracle" -L http://169.254.169.254/opc/v2/instance/ > /tmp/instance.json
-export TF_VAR_compartment_ocid=`cat /tmp/instance.json | jq -r .compartmentId`
-export TF_VAR_region=`cat /tmp/instance.json | jq -r .region`
-{% if language == "java" -%}
-export TF_VAR_java_vm="##TF_VAR_java_vm##"
-{%- endif %}
+. $HOME/compute/tf_env.sh
 
 {% if db_family == "none" -%}
 # No database
 {% else -%}
-# Database
 {% if db_family == "nosql" %}
-export regionDomain=`cat /tmp/instance.json | jq -r .regionInfo.realmDomainComponent`
-export TF_VAR_nosql_endpoint="nosql.${TF_VAR_region}.oci.${regionDomain}"
 {%- elif language == "java" -%}
-export DB_USER="##OPTIONAL/TF_VAR_db_user##"
-export DB_PASSWORD="##TF_VAR_db_password##"
-export JDBC_URL="##JDBC_URL##"
 {%- if java_framework == "helidon" or java_framework == "helidon4" %}
+# Helidon
 export JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL=$JDBC_URL
 {%- endif %}
-{%- else -%}
-export DB_USER="##OPTIONAL/TF_VAR_db_user##"
-export DB_PASSWORD="##TF_VAR_db_password##"
-export DB_URL="##DB_URL##"
 {%- endif %}
 {%- endif %}
-
 {% endmacro %}

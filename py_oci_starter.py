@@ -7,12 +7,12 @@
 # Date: 2022-11-24
 import sys
 import os
+import glob
 import shutil
 import json
 import stat
 import re
 from datetime import datetime
-from distutils.dir_util import copy_tree
 from jinja2 import Environment, FileSystemLoader
 
 ## constants ################################################################
@@ -74,6 +74,7 @@ default_options = {
     '-java_framework': 'springboot',
     '-java_vm': 'graalvm',
     '-java_version': '25',
+    '-python_framework': 'fastapi',
     '-ui_type': 'html',
     '-db_type': 'atp',
     '-license_model': 'LICENSE_INCLUDED',
@@ -83,7 +84,8 @@ default_options = {
     '-output_dir' : 'output',
     '-db_password' : TO_FILL,
     '-oke_type' : 'managed',
-    '-security' : 'none'
+    '-security' : 'none',
+    '-build_host' : 'terraform'
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
@@ -113,6 +115,7 @@ allowed_values = {
     'java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     'java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     'java_version': {'8', '11', '17', '21', '25'},
+    'python_framework': {'fastapi', 'langgraph', 'responses'},
     'kubernetes': {'oke', 'docker'},
     'ui_type': {'html', 'jet', 'angular', 'reactjs', 'jsp', 'php', 'api', 'apex', 'none'},
     'db_type': {'atp', 'autonomous', 'database', 'dbsystem', 'rac', 'db_free', 'pluggable', 'pdb', 'mysql', 'psql', 'opensearch', 'nosql', 'none'},
@@ -124,7 +127,8 @@ allowed_values = {
     'db_install': {'default', 'kubernetes'},
     'tls': {'none', 'new_http_01', 'new_dns_01', 'existing_ocid', 'existing_dir'},
     'oke_type': {'managed', 'virtual_node'},
-    'security': {'none', 'openid'}
+    'security': {'none', 'openid'},
+    'build_host' : {'terraform','bastion'}
 }
 
 def check_values():
@@ -221,6 +225,8 @@ def ui_rules():
         params['language'] = 'php'
     elif params.get('ui_type') == 'ruby':
         params['language'] = 'ruby'
+    elif params.get('python_framework') in [ 'langgraph', 'responses' ]:
+        params['ui_type'] = 'langgraph'
 
 
 def compartment_rules():
@@ -338,9 +344,10 @@ starter.sh
    -fnapp_ocid (optional)
    -group_common (optional) atp | database | mysql | psql | opensearch | nosql | fnapp | apigw | oke | jms
    -group_name (optional)
-   -java_framework (default helidon | springboot | tomcat)
+   -java_framework (default springboot | helidon | tomcat)
    -java_version (default 25 | 21 | 17 | 11 | 8)
    -java_vm (default jdk | graalvm)
+   -python_framework (default fastapi | langgraph | openai_compatible )
    -kubernetes (default oke | docker)
    -language (mandatory) java | node | python | dotnet | ords
    -license (default included | byol )
@@ -610,8 +617,8 @@ def file_output(file_path, contents):
 
 ## COPY FILES ###############################################################
 def copy_basis(basis_dir=BASIS_DIR):
-    print( "output_dir="+output_dir )
-    copy_tree(basis_dir, output_dir)
+    print( "<copy_basis> "+output_dir )
+    shutil.copytree(basis_dir, output_dir)
 
 def output_replace(old_string, new_string, filename):
     # Safely read the input filename using 'with'
@@ -629,7 +636,7 @@ def output_replace(old_string, new_string, filename):
             f.write(s)
 
 def append_file(file1, file2):
-    print("append " + file2)
+    print("<append_file> " + file2)
     # opening first file in append mode and second file in read mode
     f1 = open(file1, 'a+')
     f2 = open(file2, 'r')
@@ -640,7 +647,7 @@ def append_file(file1, file2):
     f2.close()
 
 def cp_terraform(file1, file2=None, file3=None):
-    print("cp_terraform " + file1)
+    print("<cp_terraform> " + file1)
     shutil.copy2("option/terraform/"+file1, output_dir + "/src/terraform")
 
     # Append a second file
@@ -655,7 +662,7 @@ def cp_terraform_existing( param_name, file1, file2=None, file3=None):
     file_name = file1
     if param_name in params:
         file_name = file1.replace(".j2.", "_existing.j2.")
-    print("cp_terraform_existing: " + file_name)
+    print("<cp_terraform_existing> " + file_name)
     shutil.copy2("option/terraform/"+file1, output_dir + "/src/terraform/"+file_name)
 
     # Append a second file
@@ -667,7 +674,8 @@ def cp_terraform_existing( param_name, file1, file2=None, file3=None):
         append_file( output_dir + "/src/terraform/"+file_name, "option/terraform/"+file3 )
 
 def output_copy_tree(src, target):
-    copy_tree(src, output_dir + os.sep + target)
+    print(f"<output_copy_tree> src={src} -> target={target}")
+    shutil.copytree(src, output_dir + os.sep + target, dirs_exist_ok=True)
 
 def output_move(src, target):
     shutil.move(output_dir + os.sep + src, output_dir + os.sep + target)
@@ -680,17 +688,21 @@ def output_mkdir(src):
     if not os.path.exists(file_path):
        os.mkdir(file_path)
 
-def output_remove(src):
-    file_path = output_dir+ os.sep + src
-    if os.path.exists(file_path):
-        os.remove(file_path)
+def output_remove(src_pattern):
+    pattern = os.path.join(output_dir, src_pattern)
+    print(f"<output_remove> {pattern}")
+    for file_path in glob.glob(pattern):
+        print(f"<output_remove>file_path={file_path}")
+        if os.path.isfile(file_path):
+            os.remove(file_path)
 
 def output_rm_tree(src):
+    print("<output_rm_tree> "+src)    
     shutil.rmtree(output_dir + os.sep + src)
 
 def cp_dir_src_db(db_family):
-    print("cp_dir_src_db "+db_family)
-    output_copy_tree("option/src/db/"+db_family, "src/db")
+    print("<cp_dir_src_db> "+db_family)
+    output_copy_tree("option/src/db/"+db_family, "src/app/db")
 
 def output_replace_db_node_count():
     if params.get('db_subtype')=="rac":
@@ -701,9 +713,9 @@ def output_replace_db_node_count():
        output_replace('##cpu_core_count##', "4", "src/terraform/dbsystem.j2.tf")
        output_copy_tree("option/src/db/rac", "src/db")
        if params['language'] == "java" and params['java_framework'] == "springboot":
-           output_copy_tree("option/src/app/java_springboot_rac", "src/app")
+           output_copy_tree("option/src/app/java_springboot_rac", "src/app/rest")
        if params['ui_type'] == "html":
-           output_copy_tree("option/src/ui/html_rac", "src/ui" )
+           output_copy_tree("option/src/app/ui/html_rac", "src/app/ui" )
     else:
        # Normal Database
        output_replace('##db_node_count##', "1", "src/terraform/dbsystem.j2.tf")
@@ -764,35 +776,75 @@ def create_dir_shared():
 def create_output_dir():
     create_dir_shared()
 
+    # -- Database ----------------------------------------------------------------
+    # Start by copying the app/db directory (for case like APEX that overwrite a part of the directory)
+    if params['db_type'] == "autonomous" or params['db_type'] == "database" or params['db_type'] == "pluggable" or params['db_type'] == "db_free":
+        db_family = "oracle"
+        db_family_type = "sql"
+    elif params['db_type'] == "mysql":
+        db_family = "mysql"
+        db_family_type = "sql"
+    elif params['db_type'] == "psql":
+        db_family = "psql"
+        db_family_type = "sql"
+    elif params['db_type'] == "opensearch":
+        db_family = "opensearch"
+        db_family_type = "other"
+    elif params['db_type'] == "nosql":
+        db_family = "nosql"
+        db_family_type = "other"
+    elif params['db_type'] == "none":
+        db_family = "none"
+        db_family_type = "other"
+    params['db_family'] = db_family
+    params['db_family_type'] = db_family_type
+
+    if params.get('db_type') != "none":
+        cp_terraform("output.tf")
+        output_mkdir("src/app/db")
+
+        cp_dir_src_db(db_family)
+        if params.get('db_type') == "autonomous":
+            cp_terraform_existing("atp_ocid", "atp.j2.tf")
+
+        if params.get('db_type') == "database":
+            cp_terraform_existing("db_ocid", "dbsystem.j2.tf")
+            if 'db_ocid' not in params:
+                output_replace_db_node_count()
+            if params.get('language') == 'apex':
+                output_copy_tree("option/src/db/apex", "src/app/db")
+
+        if params.get('db_type') == "pluggable":
+            cp_terraform_existing("pdb_ocid", "dbsystem_pluggable.j2.tf")
+
+        if params.get('db_type') == "db_free":
+            cp_terraform("db_free.j2.tf")
+            output_copy_tree("option/src/db/db_free", "src/app/db")
+
+        if params.get('db_type') == "mysql":
+            if params.get('deploy_type') == "public_compute":
+               cp_terraform("mysql_public_compute.tf")
+               output_copy_tree("option/src/db/mysql_public_compute", "src/app/db")
+            else:
+                cp_terraform_existing("mysql_ocid", "mysql.j2.tf")
+
+        if params.get('db_type') == "psql":
+            cp_terraform_existing("psql_ocid", "psql.j2.tf")
+
+        if params.get('db_type') == "opensearch":
+            cp_terraform_existing("opensearch_ocid", "opensearch.j2.tf")
+
+        if params.get('db_type') == "nosql":
+            cp_terraform_existing("nosql_ocid", "nosql.j2.tf")
+
     # -- APP ----------------------------------------------------------------
     if params['language'] == "none":
-        output_rm_tree("src/app")
+        output_rm_tree("src/app/rest")
     else:
         if params.get('deploy_type') == "function":
             app = "fn/fn_"+params['language']
         else:
             app = params['language']
-
-        if params['db_type'] == "autonomous" or params['db_type'] == "database" or params['db_type'] == "pluggable" or params['db_type'] == "db_free":
-            db_family = "oracle"
-            db_family_type = "sql"
-        elif params['db_type'] == "mysql":
-            db_family = "mysql"
-            db_family_type = "sql"
-        elif params['db_type'] == "psql":
-            db_family = "psql"
-            db_family_type = "sql"
-        elif params['db_type'] == "opensearch":
-            db_family = "opensearch"
-            db_family_type = "other"
-        elif params['db_type'] == "nosql":
-            db_family = "nosql"
-            db_family_type = "other"
-        elif params['db_type'] == "none":
-            db_family = "none"
-            db_family_type = "other"
-        params['db_family'] = db_family
-        params['db_family_type'] = db_family_type
 
         # Function Common
         if params.get('deploy_type') == "function":
@@ -804,8 +856,16 @@ def create_output_dir():
 
         if params.get('deploy_type') != "function" and params['language'] == "java":
             # Java Framework
+            output_copy_tree("option/src/app/java", "src/app")
             app = "java_" + params['java_framework']
             output_copy_tree("option/src/app/"+app, "src/app")
+
+        if params.get('deploy_type') != "function" and params['language'] == "python":
+            app = "python_" + params['python_framework']
+            output_copy_tree("option/src/app/"+app, "src/app")
+            if params.get('python_framework') in [ 'langgraph', 'responses' ]:
+                output_copy_tree("option/src/app/python_mcp_server", "src/app")
+
 
         # Overwrite the generic version (ex for mysql)
         family_dir = app+"_"+db_family
@@ -822,24 +882,41 @@ def create_output_dir():
         if params['language'] == "java":
             # FROM container-registry.oracle.com/graalvm/jdk:21
             # FROM eclipse-temurin:25
-            if os.path.exists(output_dir + "/src/app/Dockerfile"):
-                if params['java_vm'] == "graalvm":
-                    output_replace('##DOCKER_IMAGE##', 'container-registry.oracle.com/graalvm/jdk:25', "src/app/Dockerfile")
-                else:
-                    output_replace('##DOCKER_IMAGE##', 'eclipse-temurin:25', "src/app/Dockerfile")
+            if params.get('java_vm') == "graalvm":
+                params['java_docker'] = 'container-registry.oracle.com/graalvm/jdk:25'
+            else:
+                params['java_docker'] = 'eclipse-temurin:25'
+
+        # Check if any script exists that is NOT build_rest.sh
+        has_build_rest = False
+        has_other_build = False
+
+        for script in glob.glob(f"option/src/app/{app}/*/build.sh"):
+            if script.endswith("/rest/build.sh"):
+                has_build_rest = True
+            else:
+                has_other_build = True
+
+        print("has_build_rest="+str(has_build_rest))
+        print("has_other_build="+str(has_other_build))
+        if has_other_build and not has_build_rest:
+            output_rm_tree("src/app/rest")
 
     # -- User Interface -----------------------------------------------------
     if params.get('ui_type') == "none":
         print("No UI")
-        output_rm_tree("src/ui")
+        output_rm_tree("src/app/ui")
+        output_remove("src/app/build_ui*.sh")
     elif params.get('ui_type') == "api":
         print("API Only")
-        output_rm_tree("src/ui")
+        # Nothing to build. But something to install
+        output_remove("src/app/ui/Dockerfile")
+        output_remove("src/app/ui/k8s*")
         if params.get('deploy_type') in [ 'public_compute', 'private_compute', 'instance_pool' ]:
             cp_terraform_apigw("apigw_compute_append.tf")
     else:
         ui_lower = params.get('ui_type').lower()
-        output_copy_tree("option/src/ui/"+ui_lower, "src/ui")
+        output_copy_tree("option/src/ui/"+ui_lower, "src/app")
 
     # -- Deployment ---------------------------------------------------------
     if params.get('deploy_type') == "hpc":
@@ -880,8 +957,6 @@ def create_output_dir():
 
         elif params.get('deploy_type') in [ 'public_compute', 'private_compute', 'instance_pool' ]:
             cp_terraform_existing("compute_ocid", "compute.j2.tf")
-            output_mkdir("src/compute")
-            output_copy_tree("option/compute", "src/compute")
             if params.get('deploy_type') == 'instance_pool':
                 cp_terraform("instance_pool.j2.tf")
                 cp_terraform("instance_pool_part2.j2.tf")
@@ -914,72 +989,28 @@ def create_output_dir():
     if params.get('deploy_type') in ["kubernetes","container_instance","function"]:
         cp_terraform("repository.j2.tf")
 
-    # -- Database ----------------------------------------------------------------
-    if params.get('db_type') != "none":
-        cp_terraform("output.tf")
-        output_mkdir("src/db")
-
-        cp_dir_src_db(db_family)
-        if params.get('db_type') == "autonomous":
-            cp_terraform_existing("atp_ocid", "atp.j2.tf")
-
-        if params.get('db_type') == "database":
-            cp_terraform_existing("db_ocid", "dbsystem.j2.tf")
-            if 'db_ocid' not in params:
-                output_replace_db_node_count()
-            if params.get('language') == 'apex':
-                output_copy_tree("option/src/db/apex", ".")
-
-        if params.get('db_type') == "pluggable":
-            cp_terraform_existing("pdb_ocid", "dbsystem_pluggable.j2.tf")
-
-        if params.get('db_type') == "db_free":
-            cp_terraform("db_free.j2.tf")
-            output_copy_tree("option/src/db/db_free", "src/db")
-
-        if params.get('db_type') == "mysql":
-            if params.get('deploy_type') == "public_compute":
-               cp_terraform("mysql_public_compute.tf")
-               output_copy_tree("option/src/db/mysql_public_compute", "src/db")
-            else:
-                cp_terraform_existing("mysql_ocid", "mysql.j2.tf")
-
-        if params.get('db_type') == "psql":
-            cp_terraform_existing("psql_ocid", "psql.j2.tf")
-
-        if params.get('db_type') == "opensearch":
-            cp_terraform_existing("opensearch_ocid", "opensearch.j2.tf")
-
-        if params.get('db_type') == "nosql":
-            cp_terraform_existing("nosql_ocid", "nosql.j2.tf")
-
-    if os.path.exists(output_dir + "/src/app/db"):
-        allfiles = os.listdir(output_dir + "/src/app/db")
-        # iterate on all files to move them to destination folder
-        for f in allfiles:
-            src_path = os.path.join("src/app/db", f)
-            dst_path = os.path.join("src/db", f)
-            output_move(src_path, dst_path)
-        os.rmdir(output_dir + "/src/app/db")
-
     # CleanUp - Keep the minimum number of deployment files in the main app directory 
     if params.get('deploy_type')!="kubernetes":
-        output_remove('src/app/k8s_app.j2.yaml')
-        output_remove('src/ui/ui.j2.yaml')
+        output_remove('src/app/*/k8s*')
     if params.get('deploy_type') in ["kubernetes","container_instance","function"]:
-        output_remove('src/app/src/start.j2.sh')
-        output_remove('src/app/src/install.sh')
-        output_remove('src/app/src/env.j2.sh')
+        output_remove('src/app/rest/start.j2.sh')
+        output_remove('src/app/rest/install.sh')
+        output_remove('src/app/rest/env.j2.sh')
+        output_remove('src/app/nginx_app.locations')
     else:         
-        output_remove('src/app/Dockerfile')
-        output_remove('src/app/Dockerfile.j2')
-        output_remove('src/app/Dockerfile.native')
-        output_remove('src/app/Dockerfile.jlink')
-    # Remove starter/src/app/src is empty
-    app_src_dir= output_dir + "src/app/src"
-    if os.path.exists(app_src_dir):
-        if len(os.listdir(app_src_dir)) == 0:
-            os.remove(app_src_dir)
+        output_remove('src/app/*/Dockerfile')
+
+    # Remove empty directories in src/app
+    app_src_dir= output_dir + "src/app"
+    # Walk the directory tree bottom-up
+    for current_dir, subdirs, files in os.walk(app_src_dir, topdown=False):
+        # Check if directory is empty (no files and no subdirs left)
+        if not subdirs and not files:
+            try:
+                os.rmdir(current_dir)
+                print(f"Removed empty directory: {current_dir}")
+            except OSError as e:
+                print(f"Error removing {current_dir}: {e}")    
 
 #----------------------------------------------------------------------------
 # Create group_common Directory
@@ -987,11 +1018,8 @@ def create_group_common_dir():
     create_dir_shared()
 
     # -- APP ----------------------------------------------------------------
+    output_remove("src/app/*")
     output_copy_tree("option/src/app/group_common", "src/app")
-    os.remove(output_dir + "/src/app/k8s_app.j2.yaml")
-
-    # -- User Interface -----------------------------------------------------
-    output_rm_tree("src/ui")
 
     # -- Common -------------------------------------------------------------
     if "atp" in a_group_common:
@@ -1327,7 +1355,7 @@ if params['app_mode'] == 'app':
         dst_path = os.path.join(STARTER_DIR, f)
         output_move(src_path, dst_path)   
     # copy_tree(utput_dir + "/starter/src/app", output_dir)         
-    shutil.copytree( output_dir+"/"+STARTER_DIR + "/src/app/src", output_dir + "/src" )
+    shutil.copytree( output_dir+"/"+STARTER_DIR + "/src/app", output_dir + "/src" )
     output_copy( output_dir+"/"+STARTER_DIR+"/terraform.tfvars", "." )
     output_move( STARTER_DIR+"/README.md", "." )
     output_copy( "option/mode/app/starter.sh", "." )

@@ -1,0 +1,41 @@
+/*
+response_stream = client.responses.create(
+    model="openai.gpt-4.1",
+    tools=[
+        {
+            "type": "mcp",
+            "server_label": "stripe",
+            "server_url": "https://mcp.stripe.com",
+            "authorization": "$STRIPE_OAUTH_ACCESS_TOKEN" # just the token, don't include the "Bearer " phrase in the value
+        },
+    ],
+    input="Create a payment link for $20",
+    stream=True,
+    store=False,
+)
+
+response_stream = client.responses.create(
+    model="openai.gpt-5.4",
+    tools=[
+        {
+            "type": "mcp",
+            "server_label": "dmcp",
+            "server_description": "A Dungeons and Dragons MCP server to assist with dice rolling.",
+            "server_url": "https://mcp.deepwiki.com/mcp",
+            "require_approval": "never",
+            "allowed_tools": ["roll"],
+        },
+    ],
+    input="Roll 2d4+1",
+    stream=True,
+    store=False,
+)
+
+response = client.responses.create(
+    model="openai.gpt-5.4",
+    tools=[{"type": "web_search"}],
+    input="What was a positive news story on 2025-11-14?",
+)
+print(response)
+
+starter/src/app/openai/responses.py

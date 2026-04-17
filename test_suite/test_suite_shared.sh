@@ -151,6 +151,11 @@ build_test_destroy () {
     rm $TEST_HOME/stop_after_build
     exit
   fi  
+  if [ "$TEST_NO_DESTROY" != "" ]; then 
+    echo "TEST_NO_DESTROY - Exiting before destroy_all.sh"
+    echo "Last directory: $TEST_DIR"
+    exit 
+  fi 
   SECONDS=0
   ./starter.sh destroy --auto-approve > destroy.log 2>&1  
   if [ -d "target" ]; then
@@ -382,12 +387,15 @@ pre_test_suite() {
     exit;
   fi
 
+
   # Avoid already set variables
   unset "${!TF_VAR@}"
 
   mkdir $TEST_HOME
   cd $TEST_HOME
   git clone https://github.com/mgueury/oci-starter
+  touch inprogress_rerun.sh
+  touch ok_rerun.sh
 
   SHAPE_GROUP="amd"
   if [[ `arch` == "aarch64" ]]; then

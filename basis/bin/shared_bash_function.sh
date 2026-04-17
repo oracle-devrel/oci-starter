@@ -1,253 +1,139 @@
-### Commmon functions
-title() {
-  line='-------------------------------------------------------------------------'
-  NAME=$1
-  echo
-  echo "-- $NAME ${line:${#NAME}} ($SECONDS secs)"
-  echo  
-}
+#### Common functions shared with bastion and compute 
+
+if [ "$BIN_DIR" == "" ]; then
+    BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+fi   
+if [ -f $BIN_DIR/compute/shared_compute.sh ]; then
+    . $BIN_DIR/compute/shared_compute.sh
+else
+    echo "Error: $BIN_DIR/compute/shared_compute.sh not found"
+    exit 1;
+fi   
+
+#### Commmon functions
 
 # Used in for loop for APP_NAME
-app_name_list() {
-  ls -d $PROJECT_DIR/src/app/build_*.sh | sort -g | sed "s#.*src/app/build_##g" | sed "s/\.sh$//"
-}
-
-# Java Build Common
-java_build_common() {
-  if [ "${OCI_CLI_CLOUD_SHELL,,}" == "true" ]; then
-    # csruntimectl is a function defined in /etc/bashrc.cloudshell
-    . /etc/bashrc.cloudshell
-    export JAVA_ID=`csruntimectl java list | grep jdk-17 | sed -e 's/^.*\(graal[^ ]*\) .*$/\1/'`
-    csruntimectl java set $JAVA_ID
-  fi
-
-  if [ -f $TARGET_DIR/jms_agent_deploy.sh ]; then
-    cp $TARGET_DIR/jms_agent_deploy.sh $TARGET_DIR/compute/.
-  fi
-
-  if [ -f $PROJECT_DIR/../group_common/target/jms_agent_deploy.sh ]; then
-    cp $PROJECT_DIR/../group_common/target/jms_agent_deploy.sh $TARGET_DIR/compute/.
-  fi
-}
-
-build_ui() {
-  cd $SCRIPT_DIR
-  if is_deploy_compute; then
-    mkdir -p ../../target/compute/ui
-    cp -r ui/* ../../target/compute/ui/.
-  elif [ "$TF_VAR_deploy_type" == "function" ]; then 
-    oci os object bulk-upload -ns $TF_VAR_namespace -bn ${TF_VAR_prefix}-public-bucket --src-dir ui --overwrite --content-type auto
-  else
-    # Kubernetes and Container Instances
-    docker image rm ${TF_VAR_prefix}-ui:latest
-    docker build -t ${TF_VAR_prefix}-ui:latest .
-  fi 
-}
-
-build_rsync() {
-  if [ "$1" == "" ]; then
-    error_exit "Missing src parameter"
-  fi
-
-  # In Java, copy the src/*.sh to target 
-  if [ -d target ]; then
-    cp src/*.sh target/.
-  fi
-
-  # Copy all the app files in $TARGET_DIR/compute/$APP_NAME
-  mkdir -p $TARGET_DIR/compute/$APP_COMPUTE_DIR
-  rsync -av --progress $1/ $TARGET_DIR/compute/$APP_COMPUTE_DIR --exclude starter --exclude terraform.tfvars
-
-  # Replace the user and password in start.sh
-  if [ -f $TARGET_DIR/compute/$APP_COMPUTE_DIR/start.sh ]; then
-    replace_db_user_password_in_file $TARGET_DIR/compute/$APP_COMPUTE_DIR/start.sh
-  fi
-
-  # Replace variables in env.sh
-  if [ -f $TARGET_DIR/compute/$APP_COMPUTE_DIR/env.sh ]; then 
-    file_replace_variables $TARGET_DIR/compute/$APP_COMPUTE_DIR/env.sh
-  fi 
-}
-
-docker_login() {
-  oci raw-request --region $TF_VAR_region --http-method GET --target-uri "https://${OCIR_HOST}/20180419/docker/token" | jq -r .data.token | docker login -u BEARER_TOKEN --password-stdin ${OCIR_HOST}
-  exit_on_error "Docker Login"
+app_name_list_build() {
+    ls -d $PROJECT_DIR/src/app/*/build.sh | sort -g | sed "s#.*src/app/##g" | sed "s#/build\.sh##"
 }
 
 build_function() {
-  # Build the function
-  fn create context ${TF_VAR_region} --provider oracle
-  fn use context ${TF_VAR_region}
-  fn update context oracle.compartment-id ${TF_VAR_compartment_ocid}
-  fn update context api-url https://functions.${TF_VAR_region}.oraclecloud.com
-  fn update context registry ${DOCKER_PREFIX}
-  # Set pipefail to get the error despite pipe to tee
-  set -o pipefail
-  fn build -v | tee $TARGET_DIR/fn_build.log
-  exit_on_error "build_function - fn build"
+    # Build the function
+    get_docker_prefix
+    fn create context ${TF_VAR_region} --provider oracle
+    fn use context ${TF_VAR_region}
+    fn update context oracle.compartment-id ${TF_VAR_compartment_ocid}
+    fn update context api-url https://functions.${TF_VAR_region}.oraclecloud.com
+    fn update context registry ${DOCKER_PREFIX}
+    # Set pipefail to get the error despite pipe to tee
+    set -o pipefail
+    fn build -v | tee $TARGET_DIR/fn_build.log
+    exit_on_error "build_function - fn build"
 
-  if grep --quiet "built successfully" $TARGET_DIR/fn_build.log; then
-     fn bump
-     export TF_VAR_fn_image=`grep "built successfully" $TARGET_DIR/fn_build.log | sed "s/Function //" | sed "s/ built successfully.//"`
-     # Push the image to docker
-     docker_login
-     oci artifacts container repository create --compartment-id $TF_VAR_compartment_ocid --display-name ${TF_VAR_fn_image} 2>/dev/null
-     docker push $TF_VAR_fn_image
-     exit_on_error "build_function - docker push"
-     # Store the image name and DB_URL in files
-     echo $TF_VAR_fn_image > $TARGET_DIR/fn_image.txt
-  else 
-     echo "build_function - built successfully not found"
-     exit 1
-  fi 
+    if grep --quiet "built successfully" $TARGET_DIR/fn_build.log; then
+        fn bump
+        export TF_VAR_fn_image=`grep "built successfully" $TARGET_DIR/fn_build.log | sed "s/Function //" | sed "s/ built successfully.//"`
+        # Push the image to docker
+        docker_login
+        oci artifacts container repository create --compartment-id $TF_VAR_compartment_ocid --display-name ${TF_VAR_fn_image} 2>/dev/null
+        docker push $TF_VAR_fn_image
+        exit_on_error "build_function - docker push"
+        # Store the image name and DB_URL in files
+        echo $TF_VAR_fn_image > $TARGET_DIR/fn_image.txt
+    else 
+        echo "build_function - built successfully not found"
+        exit 1
+    fi 
 
-  if [ "$CALLED_BY_TERRAFORM" == "" ]; then
-    # First create the Function using terraform
-    # Run env.sh to get function image 
-    cd $PROJECT_DIR
-    . starter.sh env 
-    $BIN_DIR/terraform_apply.sh --auto-approve
-    exit_on_error "build_function - terraform apply"
-  fi
+    if [ "$CALLED_BY_TERRAFORM" == "" ]; then
+        # First create the Function using terraform
+        # Run env.sh to get function image 
+        cd $PROJECT_DIR
+        . starter.sh env 
+        $BIN_DIR/terraform_apply.sh --auto-approve
+        exit_on_error "build_function - terraform apply"
+    fi
 }
 
 # Create KUBECONFIG file
 create_kubeconfig() {
-  oci ce cluster create-kubeconfig --cluster-id $OKE_OCID --file $KUBECONFIG --region $TF_VAR_region --token-version 2.0.0  --kube-endpoint PUBLIC_ENDPOINT
-  chmod 600 $KUBECONFIG
-}
-
-ocir_docker_push () {
-  # Docker Login
-  docker_login
-  echo DOCKER_PREFIX=$DOCKER_PREFIX
-
-  # Push image in registry
-  for APP_NAME in `app_name_list`; do
-    if [ -n "$(docker images -q ${TF_VAR_prefix}-${APP_NAME} 2> /dev/null)" ]; then
-      docker tag ${TF_VAR_prefix}-${APP_NAME} ${DOCKER_PREFIX}/${TF_VAR_prefix}-${APP_NAME}:latest
-      oci artifacts container repository create --compartment-id $TF_VAR_compartment_ocid --display-name ${DOCKER_PREFIX_NO_OCIR}/${TF_VAR_prefix}-${APP_NAME} 2>/dev/null
-      docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-${APP_NAME}:latest
-      exit_on_error "docker push APP"
-      echo "${DOCKER_PREFIX}/${TF_VAR_prefix}-${APP_NAME}:latest" > $TARGET_DIR/docker_image_${APP_NAME}.txt
-    fi
-  done
-
-  # Push image in registry
-  if [ -d $PROJECT_DIR/src/ui ]; then
-    docker tag ${TF_VAR_prefix}-ui ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
-    oci artifacts container repository create --compartment-id $TF_VAR_compartment_ocid --display-name ${DOCKER_PREFIX_NO_OCIR}/${TF_VAR_prefix}-ui 2>/dev/null
-    docker push ${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest
-    exit_on_error "docker push UI"
-    echo "${DOCKER_PREFIX}/${TF_VAR_prefix}-ui:latest" > $TARGET_DIR/docker_image_ui.txt
-  fi
-}
-
-replace_db_user_password_in_file() {
-  # Replace DB_USER DB_PASSWORD
-  CONFIG_FILE=$1
-  if [ -f $CONFIG_FILE ]; then 
-    sed -i "s/##DB_USER##/$TF_VAR_db_user/" $CONFIG_FILE
-    sed -i "s/##DB_PASSWORD##/$TF_VAR_db_password/" $CONFIG_FILE
-    sed -i "s%##JDBC_URL##%$JDBC_URL%" $CONFIG_FILE
-  fi
-}  
-
-error_exit() {
-  echo
-  LEN=${#BASH_LINENO[@]}
-  printf "%-40s %-10s %-20s\n" "STACK TRACE"  "LINE" "FUNCTION"
-  for (( INDEX=${LEN}-1; INDEX>=0; INDEX--))
-  do
-     printf "   %-37s %-10s %-20s\n" ${BASH_SOURCE[${INDEX}]#$PROJECT_DIR/}  ${BASH_LINENO[$(($INDEX-1))]} ${FUNCNAME[${INDEX}]}
-  done
-
-  if [ "$1" != "" ]; then
-    echo
-    echo "ERROR: $1"
-  fi
-  exit 1
-}
-
-exit_on_error() {
-  RESULT=$?
-  if [ $RESULT -eq 0 ]; then
-    echo "Success - $1"
-  else
-    title "EXIT ON ERROR - HISTORY - $1 "
-    history 2 | cut -c1-256
-    error_exit "Command Failed (RESULT=$RESULT)"
-  fi  
-}
-
-auto_echo () {
-  if [ -z "$SILENT_MODE" ]; then
-    echo "$1"
-  fi  
+    oci ce cluster create-kubeconfig --cluster-id $OKE_OCID --file $KUBECONFIG --region $TF_VAR_region --token-version 2.0.0  --kube-endpoint PUBLIC_ENDPOINT
+    exit_on_error "create_kubeconfig - failed.... $OKE_OCID / $TF_VAR_region"
+    chmod 600 $KUBECONFIG
 }
 
 set_if_not_null () {
-  if [ "$2" != "" ] && [ "$2" != "null" ]; then
-    auto_echo "$1=$RESULT"
-    export $1="$RESULT"
-  fi  
+    if [ "$2" != "" ] && [ "$2" != "null" ]; then
+        auto_echo "$1=$RESULT"
+        export $1="$RESULT"
+    fi  
 }
 
 get_attribute_from_tfstate () {
-  RESULT=`jq -r '[.resources[] | select(.name=="'$2'") | .instances[0].attributes.'$3'][0]' $STATE_FILE`
-  set_if_not_null $1 $RESULT
+    RESULT=`jq -r '[.resources[] | select(.name=="'$2'") | .instances[0].attributes.'$3'][0]' $STATE_FILE`
+    set_if_not_null $1 $RESULT
 }
 
 get_id_from_tfstate () {
-  RESULT=`jq -r '.resources[] | select(.name=="'$2'") | select(.mode=="managed") | .instances[0].attributes.id' $STATE_FILE`
-  set_if_not_null $1 $RESULT
+    RESULT=`jq -r '.resources[] | select(.name=="'$2'") | select(.mode=="managed") | .instances[0].attributes.id' $STATE_FILE`
+    set_if_not_null $1 $RESULT
 }
 
 get_output_from_tfstate () {
-  output=$1
-  if [ "${!output}" != "" ]; then
-    echo "XXXXXX get_output_from_tfstate $1=${!output}"
-  else 
-    RESULT=`jq -r '.outputs."'$2'".value' $STATE_FILE | sed "s/ //"`
-    set_if_not_null $1 $RESULT
-  fi
+    output=$1
+    if [ "${!output}" != "" ]; then
+        echo "XXXXXX get_output_from_tfstate $1=${!output}"
+    else 
+        RESULT=`jq -r '.outputs."'$2'".value' $STATE_FILE | sed "s/ //"`
+        set_if_not_null $1 $RESULT
+    fi
 }
+
+# -- append_tf_env ----------------------------------------------------------
 
 # Append a line in tf_env.sh (typically used in before_build.sh to add custom variable to pass to bastion/compute/...)
 append_tf_env() {
-  echo "$1"
-  echo "$1" >> $TARGET_DIR/tf_env.sh
+    echo "$1"
+    echo "$1" >> $TARGET_DIR/tf_env.sh
 }
+
+# -- tf_env_configmap -------------------------------------------------------
 
 # Convert tf_env.sh to configmap
 tf_env_configmap() {
-  echo "apiVersion: v1
+    echo "apiVersion: v1
 kind: ConfigMap
 metadata:
   name: tf-env-configmap
 data:" > $TARGET_OKE/tf_env_configmap.yaml
 
-  grep -v '^#' $TARGET_DIR/tf_env.sh | grep '^export' | while read line; do
-    VAR=$(echo $line | sed 's/export //')
-    KEY=$(echo $VAR | cut -d= -f1)
-    VALUE=$(echo $VAR | cut -d= -f2- | sed 's/^"\(.*\)"$/\1/')
-    echo "  $KEY: \"$VALUE\"" >> $TARGET_OKE/tf_env_configmap.yaml
-  done
-  echo "tf_env_configmap.yaml created."
+    grep -v '^#' $TARGET_DIR/tf_env.sh | grep '^export' | while read line; do
+        VAR=$(echo $line | sed 's/export //')
+        KEY=$(echo $VAR | cut -d= -f1)
+        VALUE=$(echo $VAR | cut -d= -f2- | sed 's/^"\(.*\)"$/\1/')
+        if [[ "$VALUE" == \$* ]]; then
+            VAR_NAME="${VALUE:1}"
+            VALUE="${!VAR_NAME}" 
+        fi
+        echo "  $KEY: \"$VALUE\"" >> $TARGET_OKE/tf_env_configmap.yaml
+    done
+    echo "tf_env_configmap.yaml created."
 }
+
+# -- group_common_contain ---------------------------------------------------
 
 # Check is the option '$1' is part of the TF_VAR_group_common
 # If the app is not a group_common one, return 1==false
 group_common_contain() {
-  if [ "$TF_VAR_group_common" == "" ]; then
-    return 1 
-  fi  
-  COMMON=,${TF_VAR_group_common},
-  if [[ "$COMMON" == *",$1,"* ]]; then
-    return 0
-  else 
-    return 1  
-  fi
+    if [ "$TF_VAR_group_common" == "" ]; then
+        return 1 
+    fi  
+    COMMON=,${TF_VAR_group_common},
+    if [[ "$COMMON" == *",$1,"* ]]; then
+        return 0
+    else 
+        return 1  
+    fi
 }
 
 
@@ -302,129 +188,119 @@ group_common_contain() {
 
 # Get User Details (username and OCID)
 get_user_details() {
-  if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
-    if [ "$OCI_TENANCY" != "" ]; then 
-      # Cloud Shell
-      export TF_VAR_tenancy_ocid=$OCI_TENANCY
-      export TF_VAR_region=$OCI_REGION
-      # Good way to get the home_region is to get it via oci iam tenancy get --tenancy-id xxx -> home_region PREFIX (ex:FRA)
-      # That needs then to be converted from prefix to name via the region list (->eu-frankfurt-1). See provider.tf.
-      # export TF_VAR_home_region=`echo $OCI_CS_HOST_OCID | awk -F[/.] '{print $4}'`
-      if [[ "$OCI_CS_USER_OCID" == *"ocid1.saml2idp"* ]]; then
-        # Ex: ocid1.saml2idp.oc1..aaaaaaaaexfmggau73773/user@domain.com -> oracleidentitycloudservice/user@domain.com
-        # Split the string in 2 
-        IFS='/' read -r -a array <<< "$OCI_CS_USER_OCID"
-        IDP_NAME=`oci iam identity-provider get --identity-provider-id=${array[0]} | jq -r .data.name`
-        IDP_NAME_LOWER=${IDP_NAME,,}
-        export TF_VAR_username="$IDP_NAME_LOWER/${array[1]}"
-      elif [[ "$OCI_CS_USER_OCID" == *"ocid1.user"* ]]; then
-        export TF_VAR_current_user_ocid="$OCI_CS_USER_OCID"
-      else 
-        export TF_VAR_username=$OCI_CS_USER_OCID
-      fi
-    else 
-      echo "Called From Resource Manager"
-      export CALLED_BY_TERRAFORM="TRUE"
-      # Exported by build.tf
-      export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
-      export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
-      export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)      
+    if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
+        if [ "$OCI_TENANCY" != "" ]; then 
+        # Cloud Shell
+        export TF_VAR_tenancy_ocid=$OCI_TENANCY
+        export TF_VAR_region=$OCI_REGION
+        # Good way to get the home_region is to get it via oci iam tenancy get --tenancy-id xxx -> home_region PREFIX (ex:FRA)
+        # That needs then to be converted from prefix to name via the region list (->eu-frankfurt-1). See provider.tf.
+        export TF_VAR_home_region=`echo $OCI_CS_HOST_OCID | sed "s/.*\.oc[0-9]*\.//" | sed "s/\..*//"`      
+        if [[ "$OCI_CS_USER_OCID" == *"ocid1.saml2idp"* ]]; then
+            # Ex: ocid1.saml2idp.oc1..aaaaaaaaexfmggau73773/user@domain.com -> oracleidentitycloudservice/user@domain.com
+            # Split the string in 2 
+            IFS='/' read -r -a array <<< "$OCI_CS_USER_OCID"
+            IDP_NAME=`oci iam identity-provider get --identity-provider-id=${array[0]} | jq -r .data.name`
+            IDP_NAME_LOWER=${IDP_NAME,,}
+            export TF_VAR_username="$IDP_NAME_LOWER/${array[1]}"
+        elif [[ "$OCI_CS_USER_OCID" == *"ocid1.user"* ]]; then
+            export TF_VAR_current_user_ocid="$OCI_CS_USER_OCID"
+        else 
+            export TF_VAR_username=$OCI_CS_USER_OCID
+        fi
+        else 
+        echo "Called From Resource Manager"
+        export CALLED_BY_TERRAFORM="TRUE"
+        # Exported by build.tf
+        export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
+        export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
+        export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)      
+        fi
+    elif [ -f $HOME/.oci/config ]; then
+        ## Get the [DEFAULT] config
+        if [ -z "$OCI_CLI_PROFILE" ]; then
+        OCI_PRO=DEFAULT
+        else 
+        OCI_PRO=$OCI_CLI_PROFILE
+        fi    
+        sed -n -e "/\[$OCI_PRO\]/,$$p" $HOME/.oci/config > /tmp/ociconfig
+        export TF_VAR_current_user_ocid=`sed -n 's/user=//p' /tmp/ociconfig |head -1`
+        export TF_VAR_fingerprint=`sed -n 's/fingerprint=//p' /tmp/ociconfig |head -1`
+        export TF_VAR_private_key_path=`sed -n 's/key_file=//p' /tmp/ociconfig |head -1`
+        export TF_VAR_region=`sed -n 's/region=//p' /tmp/ociconfig |head -1`
+        # Good way to get the home_region is to get it via oci iam tenancy get --tenancy-id xxx -> home_region PREFIX (ex:FRA)
+        # That needs then to be converted from prefix to name via the region list (->eu-frankfurt-1). See provider.tf.
+        # export TF_VAR_home_region=$TF_VAR_region
+        export TF_VAR_tenancy_ocid=`sed -n 's/tenancy=//p' /tmp/ociconfig |head -1`  
+        # echo TF_VAR_current_user_ocid=$TF_VAR_current_user_ocid
+        # echo TF_VAR_fingerprint=$TF_VAR_fingerprint
+        # echo TF_VAR_private_key_path=$TF_VAR_private_key_path
+    elif [ "$OCI_AUTH" == "ResourcePrincipal" ]; then
+        # OCI DevOps use resource principal
+        # XXX Missing a lot of other variable... 
+        # OCI_RESOURCE_PRINCIPAL_RPST=xxx.xxxbase64xxx.xxxx
+        export TF_VAR_tenancy_ocid=`echo "${OCI_RESOURCE_PRINCIPAL_RPST#*\.}" | sed "s/\..*//" | base64 -d | jq -r .tenant`
+        export TF_VAR_region=$OCI_RESOURCE_PRINCIPAL_REGION
     fi
-  elif [ -f $HOME/.oci/config ]; then
-    ## Get the [DEFAULT] config
-    if [ -z "$OCI_CLI_PROFILE" ]; then
-      OCI_PRO=DEFAULT
-    else 
-      OCI_PRO=$OCI_CLI_PROFILE
-    fi    
-    sed -n -e "/\[$OCI_PRO\]/,$$p" $HOME/.oci/config > /tmp/ociconfig
-    export TF_VAR_current_user_ocid=`sed -n 's/user=//p' /tmp/ociconfig |head -1`
-    export TF_VAR_fingerprint=`sed -n 's/fingerprint=//p' /tmp/ociconfig |head -1`
-    export TF_VAR_private_key_path=`sed -n 's/key_file=//p' /tmp/ociconfig |head -1`
-    export TF_VAR_region=`sed -n 's/region=//p' /tmp/ociconfig |head -1`
-    # Good way to get the home_region is to get it via oci iam tenancy get --tenancy-id xxx -> home_region PREFIX (ex:FRA)
-    # That needs then to be converted from prefix to name via the region list (->eu-frankfurt-1). See provider.tf.
-    # export TF_VAR_home_region=$TF_VAR_region
-    export TF_VAR_tenancy_ocid=`sed -n 's/tenancy=//p' /tmp/ociconfig |head -1`  
-    # echo TF_VAR_current_user_ocid=$TF_VAR_current_user_ocid
-    # echo TF_VAR_fingerprint=$TF_VAR_fingerprint
-    # echo TF_VAR_private_key_path=$TF_VAR_private_key_path
-  elif [ "$OCI_AUTH" == "ResourcePrincipal" ]; then
-    # OCI DevOps use resource principal
-    # XXX Missing a lot of other variable... 
-    # OCI_RESOURCE_PRINCIPAL_RPST=xxx.xxxbase64xxx.xxxx
-    export TF_VAR_tenancy_ocid=`echo "${OCI_RESOURCE_PRINCIPAL_RPST#*\.}" | sed "s/\..*//" | base64 -d | jq -r .tenant`
-    export TF_VAR_region=$OCI_RESOURCE_PRINCIPAL_REGION
-  fi
 
-  # Find TF_VAR_username based on TF_VAR_current_user_ocid or the opposite
-  # In this order, else this is not reentrant. "oci iam user list" require more privileges.  
-  if [ "$TF_VAR_current_user_ocid" != "" ]; then
-    export TF_VAR_username=`oci iam user get --user-id $TF_VAR_current_user_ocid | jq -r '.data.name'`
-  elif [ "$TF_VAR_username" != "" ]; then
-    export TF_VAR_current_user_ocid=`oci iam user list --name $TF_VAR_username | jq -r .data[0].id`
-  fi  
-  auto_echo TF_VAR_username=$TF_VAR_username
-  auto_echo TF_VAR_current_user_ocid=$TF_VAR_current_user_ocid
+    # Find TF_VAR_username based on TF_VAR_current_user_ocid or the opposite
+    # In this order, else this is not reentrant. "oci iam user list" require more privileges.  
+    if [ "$TF_VAR_current_user_ocid" != "" ]; then
+        export TF_VAR_username=`oci iam user get --user-id $TF_VAR_current_user_ocid | jq -r '.data.name'`
+    elif [ "$TF_VAR_username" != "" ]; then
+        export TF_VAR_current_user_ocid=`oci iam user list --name $TF_VAR_username | jq -r .data[0].id`
+    fi  
+    auto_echo TF_VAR_username=$TF_VAR_username
+    auto_echo TF_VAR_current_user_ocid=$TF_VAR_current_user_ocid
 }
 
 # Get the user interface URL
 get_ui_url() {
-  if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ] ; then
-    if [ "$TF_VAR_dns_name" != "" ] && [ "$TF_VAR_tls" == "existing_ocid" ]; then
-      # xx APEX ? xx
-      export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
-    else 
-      if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
-        export UI_URL=http://${COMPUTE_IP}
-      else 
-        export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
-      fi    
-      if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
-        export UI_HTTP=$UI_URL
-        if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
-            export UI_URL=https://${TF_VAR_dns_name}
+    if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ] ; then
+        if [ "$TF_VAR_dns_name" != "" ] && [ "$TF_VAR_tls" == "existing_ocid" ]; then
+        # xx APEX ? xx
+        export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
         else 
-            export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
+        if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
+            export UI_URL=http://${COMPUTE_IP}
+        else 
+            export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
         fi    
-      fi
-    fi  
-  elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
-    export UI_URL=http://${INSTANCE_POOL_LB_IP}
-    if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
-      export UI_HTTP=$UI_URL
-      export UI_URL=https://${TF_VAR_dns_name}
+        if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
+            export UI_HTTP=$UI_URL
+            if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
+                export UI_URL=https://${TF_VAR_dns_name}
+            else 
+                export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
+            fi    
+        fi
+        fi  
+    elif [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
+        export UI_URL=http://${INSTANCE_POOL_LB_IP}
+        if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
+        export UI_HTTP=$UI_URL
+        export UI_URL=https://${TF_VAR_dns_name}
+        fi
+    elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
+        if [ ! -f $KUBECONFIG ]; then
+        create_kubeconfig  
+        fi 
+        export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
+        export UI_URL=http://${TF_VAR_ingress_ip}/${TF_VAR_prefix}
+        if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_dns_name" != "" ]; then
+        export UI_HTTP=$UI_URL
+        export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
+        fi
+    elif [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ]; then  
+        export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
+        if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
+        export UI_HTTP=$UI_URL
+        export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
+        fi   
     fi
-  elif [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
-    if [ ! -f $KUBECONFIG ]; then
-      create_kubeconfig  
-    fi 
-    export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
-    export UI_URL=http://${TF_VAR_ingress_ip}/${TF_VAR_prefix}
-    if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_dns_name" != "" ]; then
-      export UI_HTTP=$UI_URL
-      export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
-    fi
-  elif [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ]; then  
-    export UI_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}
-    if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_certificate_ocid" != "" ]; then
-      export UI_HTTP=$UI_URL
-      export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
-    fi   
-  fi
 }
 
-is_deploy_compute() {
-  if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ] || [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
-    return 0
-  else
-    return 1
-  fi
-}
-
-livelabs_green_button() {
-  # Lot of tests to be sure we are in an Green Button LiveLabs
-  # compartment_ocid still undefined ? 
+detect_livelabs() {
   if grep -q 'compartment_ocid="__TO_FILL__"' $PROJECT_DIR/terraform.tfvars; then
     # vnc_ocid still undefined ? 
     if [ "$TF_VAR_vcn_ocid" != "__TO_FILL__" ]; then
@@ -443,6 +319,15 @@ livelabs_green_button() {
     else
       return
     fi
+    export LIVELABS="true"
+  fi  
+}
+
+livelabs_green_button() {
+  # Lot of tests to be sure we are in an Green Button LiveLabs
+  # compartment_ocid still undefined ? 
+  detect_livelabs
+  if [ "$LIVELABS" == "true" ]; then
     get_user_details
     # OCI User name format ? 
     if [[ $TF_VAR_username =~ ^LL.*-USER$ ]]; then
@@ -750,40 +635,6 @@ function scp_via_bastion() {
   sleep 5
   i=$(($i+1))
   done
-}
-
-# Function to replace ##VARIABLE_NAME## in a file
-# Replace ##OPTIONAL/VARIABLE_NAME## by variables if it exists or __NOT_USED__
-file_replace_variables() {
-  local file="$1"
-  local temp_file=$(mktemp)
-
-  echo "Replace variables in file: $1"
-  while IFS= read -r line || [ -n "$line" ]; do  
-    while [[ $line =~ (.*)##(.*)##(.*) ]]; do
-      local var_name="${BASH_REMATCH[2]}"
-      echo "- variable: ${var_name}"
-
-      if [[ ${var_name} =~ OPTIONAL/(.*) ]]; then
-         var_name2="${BASH_REMATCH[1]}"
-         var_value="${!var_name2}"
-         if [ "$var_value" == "" ]; then
-            var_value="__NOT_USED__"
-         fi
-      else
-        var_value="${!var_name}"       
-        if [ "$var_value" == "" ]; then
-            echo "ERROR: Environment variable '${var_name}' is not defined."
-            error_exit
-        fi
-      fi
-      line=${line/"##${var_name}##"/${var_value}}
-    done
-
-    echo "$line" >> "$temp_file"
-  done < "$file"
-
-  mv "$temp_file" "$file"
 }
 
 # done.txt

@@ -23,6 +23,16 @@ fi
 # Set pipefail to get the error despite pipe to tee
 set -o pipefail
 
+# Shared BASH Functions
+. $BIN_DIR/shared_bash_function.sh
+
+# Silent mode (default is not silent)
+if [ "$1" == "-silent" ]; then
+  SILENT_MODE=true
+else
+  unset SILENT_MODE
+fi 
+
 # Function to parse a .tfvars file and export TF_VAR_ variables
 read_terraform_tfvars() {
   # Read the file line by line, ignoring comments and empty lines
@@ -49,36 +59,36 @@ read_terraform_tfvars() {
 # Environment Variables
 # In 4 places:
 # 1. target/tf_env.sh created by the terraform (created by the first build)
-echo "Reading variables"
-echo
-echo "Order     File Name                             Settings from"
-echo "-----     ---------                             -------------"
+auto_echo "Reading variables"
+auto_echo
+auto_echo "Order     File Name                             Settings from"
+auto_echo "-----     ---------                             -------------"
 
 if [ -f $TARGET_DIR/tf_env.sh ]; then
   . $TARGET_DIR/tf_env.sh
-  echo "1         target/tf_env.sh                      Terraform apply"
+  auto_echo "1         target/tf_env.sh                      Terraform apply"
 else
-  echo "1 SKIP    target/tf_env.sh                      Terraform apply"
+  auto_echo "1 SKIP    target/tf_env.sh                      Terraform apply"
 fi 
 # 2. terraform.tfvars
-echo "2         terraform.tfvars                      Project"  
+auto_echo "2         terraform.tfvars                      Project"  
 read_terraform_tfvars
 # 3. $HOME/.oci_starter_profile
 if [ -f $HOME/.oci_starter_profile ]; then
   . $HOME/.oci_starter_profile
-  echo "3         \$HOME/.oci_starter_profile            User Home"
+  auto_echo "3         \$HOME/.oci_starter_profile            User Home"
 else
-  echo "3 SKIP    \$HOME/.oci_starter_profile            User Home"
+  auto_echo "3 SKIP    \$HOME/.oci_starter_profile            User Home"
 fi 
 # 4. for groups, also in group_common_env.sh
 if [ -f $PROJECT_DIR/../group_common_env.sh ]; then
   . $PROJECT_DIR/../group_common_env.sh
-  echo "4         ../group_common_env.sh                Group of Projects"
+  auto_echo "4         ../group_common_env.sh                Group of Projects"
 elif [ -f $PROJECT_DIR/../../group_common_env.sh ]; then
   . $PROJECT_DIR/../../group_common_env.sh
-  echo "4         ../../group_common_env.sh             Group of Projects"
+  auto_echo "4         ../../group_common_env.sh             Group of Projects"
 else
-  echo "4 SKIP    ../group_common_env.sh                Group of Projects" 
+  auto_echo "4 SKIP    ../group_common_env.sh                Group of Projects" 
 fi
 
 # Autocomplete in bash
@@ -142,9 +152,6 @@ if [ "$0" != "-bash" ]; then
   set -o history -o histexpand
 fi
 
-# Shared BASH Functions
-. $BIN_DIR/shared_bash_function.sh
-
 if [ "$1" == "-no-auto" ]; then
   return
 fi 
@@ -152,12 +159,12 @@ fi
 # Change the prompt
 export PS1='[\[\e[0;3m\]\u@\h:\W\[\e[0m\]]$ '
 
-# Silent mode (default is not silent)
-if [ "$1" == "-silent" ]; then
-  SILENT_MODE=true
-else
-  unset SILENT_MODE
-fi 
+# Before Config (run only once)
+if [ -f $PROJECT_DIR/src/before_config.sh ]; then
+  detect_livelabs
+  . $PROJECT_DIR/src/before_config.sh
+  mv $PROJECT_DIR/src/before_config.sh $PROJECT_DIR/src/before_config.sh.done
+fi
 
 # Skip if runned from OCI Devops ?
 # if [ "$REPOSITORY_NAME" != "" ]; then
@@ -291,17 +298,10 @@ if [ -f $STATE_FILE ]; then
     fi
   fi
 
-  # Docker
-  if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "function" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
-    export DOCKER_PREFIX_NO_OCIR=${CONTAINER_PREFIX}
-    export DOCKER_PREFIX=${OCIR_HOST}/${TF_VAR_namespace}/${DOCKER_PREFIX_NO_OCIR}
-    auto_echo DOCKER_PREFIX=$DOCKER_PREFIX
-  fi
-
   # Functions
   if [ "$TF_VAR_deploy_type" == "function" ]; then
     # OBJECT Storage URL
-    export BUCKET_URL="https://objectstorage.${TF_VAR_region}.oraclecloud.com/n/${TF_VAR_namespace}/b/${TF_VAR_prefix}-public-bucket/o"
+    export BUCKET_URL="https://objectstorage.${TF_VAR_region}.oraclecloud.com/n/${OBJECT_STORAGE_NAMESPACE}/b/${TF_VAR_prefix}-public-bucket/o"
 
     # Function OCID
     get_attribute_from_tfstate "FN_FUNCTION_OCID" "starter_fn_function" "id"
@@ -320,10 +320,10 @@ if [ -f $STATE_FILE ]; then
     else
       export TF_VAR_docker_image_ui="busybox"      
     fi
-    if [ -f $TARGET_DIR/docker_image_app.txt ]; then
-      export TF_VAR_docker_image_app=`cat $TARGET_DIR/docker_image_app.txt`
+    if [ -f $TARGET_DIR/docker_image_rest.txt ]; then
+      export TF_VAR_docker_image_rest=`cat $TARGET_DIR/docker_image_rest.txt`
     else
-      export TF_VAR_docker_image_app="busybox"      
+      export TF_VAR_docker_image_rest="busybox"      
     fi
   fi
 

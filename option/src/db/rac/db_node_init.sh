@@ -1,3 +1,5 @@
+. $HOME/compute/shared_compute.sh
+
 export INSTANCE1=${PREFIX}1
 export INSTANCE2=${PREFIX}2
 export PDB=PDB1
@@ -37,3 +39,6 @@ srvctl status service -db ${ORACLE_UNQNAME} -service jac
 srvctl add service -db ${ORACLE_UNQNAME} -service jtaf -pdb $PDB -preferred ${INSTANCE1} -available ${INSTANCE2} -failover_restore LEVEL1 -commit_outcome TRUE -failovertype SELECT -notification TRUE -drain_timeout 300 -stopoption TRANSACTIONAL -role PRIMARY
 srvctl start service -db ${ORACLE_UNQNAME} -service jtaf
 srvctl status service -db ${ORACLE_UNQNAME} -service jtaf
+
+install_instant_client
+sqlplus -L $DB_USER/$DB_PASSWORD@DB @oracle.sql $DB_PASSWORD

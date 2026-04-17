@@ -35,7 +35,7 @@ data "oci_objectstorage_namespace" "ns" {
 }
 
 locals {
-  ocir_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace")
+  object_storage_namespace = lookup(data.oci_objectstorage_namespace.ns, "namespace")
 }
 
 resource "random_string" "id" {
@@ -97,13 +97,13 @@ resource "oci_logging_log" "starter_devops_log" {
 # Not needed when using ResourceManager
 resource "oci_objectstorage_bucket" "starter_devops_bucket" {
   compartment_id = var.compartment_ocid
-  namespace      = local.ocir_namespace
+  namespace      = local.object_storage_namespace
   name           = "${var.prefix}-devops-bucket"
   access_type    = "NoPublicAccess"
 }
 
 resource "oci_objectstorage_object" "starter_devops_object" {
-  namespace           = local.ocir_namespace
+  namespace           = local.object_storage_namespace
   bucket              = oci_objectstorage_bucket.starter_devops_bucket.name
   object              = "terraform.tfstate"
   content_language    = "en-US"
@@ -113,7 +113,7 @@ resource "oci_objectstorage_object" "starter_devops_object" {
 }
 
 resource "oci_objectstorage_preauthrequest" "starter_devops_object_par" {
-  namespace    = local.ocir_namespace
+  namespace    = local.object_storage_namespace
   bucket       = oci_objectstorage_bucket.starter_devops_bucket.name
   object_name  = oci_objectstorage_object.starter_devops_object.object
   name         = "objectPar"
@@ -187,7 +187,7 @@ resource "oci_devops_build_pipeline_stage" "starter_devops_build_function" {
       # connection_id  = oci_devops_connection.test_connection.id
       name           = "build"
       repository_id  = oci_devops_repository.starter_devops_repository.id
-      repository_url = "https://devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.ocir_namespace}/projects/${oci_devops_project.starter_devops_project.name}/repositories/${oci_devops_repository.starter_devops_repository.name}"
+      repository_url = "https://devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.object_storage_namespace}/projects/${oci_devops_project.starter_devops_project.name}/repositories/${oci_devops_repository.starter_devops_repository.name}"
     }
   }
   build_spec_file                    = "build_devops.yaml"
@@ -225,7 +225,7 @@ locals {
   # OCI DevOps GIT login is tenancy/username
   encoded_oci_username = urlencode("${data.oci_identity_tenancy.tenant_details.name}/${var.username}")
   encoded_auth_token  = urlencode(var.auth_token)
-  local_devops_git_url = "https://${local.encoded_oci_username}:${local.encoded_auth_token}@devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.ocir_namespace}/projects/${oci_devops_project.starter_devops_project.name}/repositories/${oci_devops_repository.starter_devops_repository.name}"
+  local_devops_git_url = "https://${local.encoded_oci_username}:${local.encoded_auth_token}@devops.scmservice.${var.region}.oci.oraclecloud.com/namespaces/${local.object_storage_namespace}/projects/${oci_devops_project.starter_devops_project.name}/repositories/${oci_devops_repository.starter_devops_repository.name}"
 }
 
 output "devops_git_url" {

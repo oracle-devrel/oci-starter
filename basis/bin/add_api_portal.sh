@@ -21,7 +21,7 @@ if [ "$APIM_HOST" != "" ]; then
   FIRST_LETTER_UPPERCASE=`echo $TF_VAR_prefix | sed -e "s/\b\(.\)/\u\1/g"`
   if [ "$TF_VAR_ui_type" == "api" ]; then
     APIGW_URL=https://${APIGW_HOSTNAME}/${TF_VAR_prefix}  
-    for APP_NAME in `app_name_list`; do
+    for APP_NAME in `app_name_list_build`; do
       if [ "$APP_NAME" == "app" ]; then
         APP_OPENAPI="openapi_spec.yaml"
       else

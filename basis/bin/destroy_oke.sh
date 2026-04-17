@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-. $SCRIPT_DIR/../starter.sh env -no-auto
+. $SCRIPT_DIR/../starter.sh env -no-auto -silent
 . $BIN_DIR/build_common.sh
 cd $PROJECT_DIR
 

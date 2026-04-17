@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ prefix }}-dep
+  labels:
+      app: {{ prefix }}-rest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ prefix }}-rest
+  template:
+    metadata:
+      labels:
+        app: {{ prefix }}-rest
+    spec:
+      containers:
+      - name: app
+        image: ##DOCKER_PREFIX##/{{ prefix }}-rest:##DOCKER_IMG_VERSION##
+        ports:
+        - containerPort: 8080
+          name: app-port
+        env:
+{%- if language == "java" %}
+{%- if java_framework == "helidon" or java_framework == "helidon4" %}
+        - name: JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: jdbc_url
+{%- endif %}
+        - name: JDBC_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: jdbc_url
+{%- else %}        
+        - name: DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: db_url
+{%- endif %}      
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: db_user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: db_password
+#        - name: POD_IP
+#          valueFrom:
+#            fieldRef:
+#              fieldPath: status.podIP
+{%- if db_type == "nosql" %}
+        - name: TF_VAR_compartment_ocid
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: TF_VAR_compartment_ocid
+        - name: TF_VAR_nosql_endpoint
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: TF_VAR_nosql_endpoint
+{%- endif %}
+      imagePullSecrets:
+      - name: ocirsecret        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ prefix }}-rest-service
+spec:
+  selector:
+    app: {{ prefix }}-rest
+  ports:
+  - name: http-service-port
+    protocol: TCP
+    port: 80
+    targetPort: app-port
+---

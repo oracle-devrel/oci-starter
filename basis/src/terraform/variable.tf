@@ -105,6 +105,11 @@ variable log_group_ocid  {
   description="LogGroup OCID"  
 }
 
+variable no_policy  { 
+  default=null 
+  description="No OCI Policy"  
+}
+
 # Certificate
 variable "certificate_ocid" {
   default=null 
@@ -153,12 +158,12 @@ locals {
   lz_security_cmp_ocid =var.lz_security_cmp_ocid == null ? var.compartment_ocid : var.lz_security_cmp_ocid
 
   # SSH Key
-  ssh_public_key  = var.ssh_public_key != null ? var.ssh_public_key  : tls_private_key.ssh_key[0].public_key_openssh
+  ssh_public_key  = var.ssh_public_key != null ? var.ssh_public_key  : tls_private_key.ssh_key[0].public_key_pem
   ssh_private_key = var.ssh_public_key != null ? var.ssh_private_key : tls_private_key.ssh_key[0].private_key_pem
 }
 
 output "ssh_key_public" {
-  value = var.ssh_public_key != null ? "target/ssh_key_starter.pub" : tls_private_key.ssh_key[0].public_key_openssh
+  value = var.ssh_public_key != null ? "target/ssh_key_starter.pub" : tls_private_key.ssh_key[0].public_key_pem
 }
 
 output "ssh_key_private" {

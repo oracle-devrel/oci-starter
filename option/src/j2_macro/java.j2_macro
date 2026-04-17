@@ -242,6 +242,6 @@ import javax.json.*;
         QueryRequest queryRequest = new QueryRequest().setStatement("SELECT deptno, dname, loc FROM dept");
         QueryIterableResult results = handle.queryIterable(queryRequest);
         for (MapValue row : results) {
-           rows.add( new Dept( row.get("deptno").asInteger().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
+           rows.add( new Dept( row.get("deptno").asLong().getValue(), row.get("dname").asString().getValue(), row.get("loc").asString().getValue() ) );
         }        
 {%- endmacro -%}   

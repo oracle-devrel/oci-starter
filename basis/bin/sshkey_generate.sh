@@ -9,7 +9,7 @@ if [ -f "$FILE" ]; then
 else 
     mkdir -p target
     echo "Generating SSH KEY"
-    ssh-keygen -b 2048 -t rsa -f $FILE -q -N ""
+    ssh-keygen -b 2048 -t rsa -m pem -f $FILE -q -N ""
     chmod 600 $FILE*
     # echo "Uploading the ssh key to bucket xxx-terraform"
     # oci os object put --bucket-name=${TF_VAR_prefix}-terraform --force --file $FILE

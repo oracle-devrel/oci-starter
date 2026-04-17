@@ -204,8 +204,13 @@ resource_manager_create_or_update() {
     else 
       STACK_ID=$(oci resource-manager stack create --compartment-id $TF_VAR_compartment_ocid --config-source $ZIP_FILE_PATH --display-name $TF_VAR_prefix-resource-manager --variables file://$VAR_FILE_PATH --query 'data.id' --raw-output)
     fi
-    echo "$STACK_ID" > $TARGET_DIR/resource_manager_stackid
-    rs_echo "Created stack id: ${STACK_ID}"
+    if [ "$STACK_ID" != "" ]; then
+      echo "$STACK_ID" > $TARGET_DIR/resource_manager_stackid
+      rs_echo "Created stack id: ${STACK_ID}"
+    else
+      rs_echo "ERROR: "oci resource-manager stack create" failed"
+      exit 1 # Exit with error
+    fi
   fi
   if [ "$DISTRIBUTE" == "YES" ]; then
     # Add tenancy_ocid and region since they are not detected by OCI CLI
@@ -244,10 +249,15 @@ resource_manager_apply() {
   rs_echo "Get stack state"
   oci resource-manager stack get-stack-tf-state --stack-id $STACK_ID --file $TARGET_DIR/terraform.tfstate
 
+  if [ ! -f $TARGET_DIR/ssh_key_starter ]; then
+    # Export the created SSH_KEY
+    jq -r '.resources[] | select(.name=="ssh_key") | .instances[0].attributes.private_key_pem' $TARGET_DIR/terraform.tfstate > $TARGET_DIR/ssh_key_starter
+    chmod 600 $TARGET_DIR/ssh_key_starter
+  fi 
+
   # Check the result of the destroy JOB and stop deletion if required
   if [ "$STATUS" != "SUCCEEDED" ]; then
     rs_echo "ERROR: Status ($STATUS) is not SUCCEEDED"
-
     exit 1 # Exit with error
   fi  
 }

@@ -182,8 +182,9 @@ function upgrade_calls_to_env_sh()
 }
 
 # Replace env.sh by starter.sh env  
-for APP_NAME in `app_name_list`; do
+for APP_NAME in `app_name_list_build`; do
   upgrade_calls_to_env_sh src/app/build_${APP_NAME}.sh
+  mv src/app/build_${APP_NAME}.sh src/app/$APP_NAME/build.sh
 done
 upgrade_calls_to_env_sh src/ui/build_ui.sh
 # upgrade_calls_to_env_sh src/after_done.sh

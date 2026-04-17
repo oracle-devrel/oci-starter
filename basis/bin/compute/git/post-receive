@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+APP_GIT_DIR="$HOME/app"
+BRANCH="master"
+
+echo "Deploy triggered for $BRANCH"
+
+# Update working tree
+git --work-tree="$APP_GIT_DIR" --git-dir="$HOME/app.git" checkout -f "$BRANCH"
+
+# Optional: ensure latest (usually not needed, but safe)
+git --work-tree="$APP_GIT_DIR" --git-dir="$HOME/app.git" pull origin "$BRANCH" || true
+
+# Run rebuild script
+DATE_POSTFIX=`date '+%Y%m%d-%H%M%S'`
+$HOME/compute/rebuild.sh >> "$HOME/compute/rebuild.$DATE_POSTFIX.log" 2>&1 &
