@@ -51,19 +51,21 @@ if [ "$UI_URL" != "" ]; then
 
   {%- if build_host == "bastion" %}
   append_done "-----------------------------------------------------------------------"
-  append_done "Build in Bastion:"
+  append_done "Vibe Coding (Build done in Bastion):"
   append_done
-  append_done "git clone opc@$BASTION_IP:~/app.git my-app"
-  append_done "cd my-app"
-  append_done "<do some changes>"
-  append_done "cat git_push.sh"
-  append_done "./git_push.sh"
-  append_done "Build will start automatically in the bastion"
+  append_done "1. Be sure your SSH key is available in your laptop (or see the key created target/*ssh*)"
+  append_done "2. Clone the git repo of the starter app in your laptop"
+  append_done "> git clone opc@$BASTION_IP:~/app.git your-app"
+  append_done "> cd my-app"
+  append_done "3. Do some changes with your favorite editor."
+  append_done "4. Check what git_push.sh does and run it."
+  append_done "> ./git_push.sh"
+  append_done "The build will start automatically in the bastion and redeploy the app."
   append_done
-  append_done "Build logs ssh to opc@$BASTION_IP"
-  append_done "- compute/rebuild.log"
-  append_done "Application logs" 
-  append_done "- app/rest/rest.log"
+  append_done "5. If you want to see the log. ssh opc@$BASTION_IP"
+  append_done "> cat compute/rebuild.log"
+  append_done "> cd app/xxxx" 
+  append_done "> cat xxxx.log"
   {%- endif %} 
 
 elif [ ! -f $FILE_DONE ]; then

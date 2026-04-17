@@ -191,3 +191,17 @@ New version
     - Docker openjdk21 -> eclipse-temurin:25
     - tomcat 10-> tomcat11
     - node18->node20
+
+## 5.0
+- AGENTS.md
+- build_host=agent / terraform (default)
+- App directory
+    - db / rest / ui
+    - build.sh
+    - install.sh
+    - .dockerignore
+- compute_init.sh -> compute_install.sh + rebuild.sh    
+- ssh key in pem format... (MacOs compatibility)
+- docker-img:later -> docker-img:##DOCKER_IMG_VERSION## to be sure to redeploy to oke if a change is done
+- replace all env.sh by $HOME/compute/share_compute.sh -> tf_env.sh
+- python_framework = fastapi, langchain, responses ( + MCP server )

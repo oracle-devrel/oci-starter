@@ -3,6 +3,7 @@ cd $SCRIPT_DIR
 start_time=$(date +%s)
 
 . ./shared_compute.sh
+title "Rebuild (in alphabetical order)"
 
 TARGET_OKE="$HOME/target/oke"
 mkdir -p $TARGET_OKE
