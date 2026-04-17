@@ -9,6 +9,7 @@
 # Docker:
 # - build the image
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd $SCRIPT_DIR
 # Set the settings. For src/app/xxx or src/app/zzz/xxx or BUILD_HOST=bastion 
 if [ -f $SCRIPT_DIR/../../../bin/build_common.sh ]; then
     . $SCRIPT_DIR/../../../bin/build_common.sh
