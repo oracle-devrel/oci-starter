@@ -33,6 +33,10 @@ if ! grep -q "export LC_CTYPE" $HOME/.bashrc; then
             install_docker_tools
             echo "export KUBECONFIG=$HOME/compute/kubeconfig_starter" >> $HOME/.bashrc
         fi 
+        # Kubernetes
+        if [ "$TF_VAR_language" == "java" ]; then 
+            install_java
+        fi         
         # Create a git branch 
         sudo dnf install -y git
         cd $HOME/app

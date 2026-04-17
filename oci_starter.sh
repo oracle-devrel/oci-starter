@@ -9,5 +9,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
 rm -rf ./output 
-python py_oci_starter.py "$@"
+# python py_oci_starter.py "$@"
+scl enable rh-python38 -- python py_oci_starter.py "$@"
+
 exit $RESULT
