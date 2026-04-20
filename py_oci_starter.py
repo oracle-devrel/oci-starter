@@ -871,11 +871,13 @@ def create_output_dir():
             output_copy_tree("option/src/app/"+app, "src/app")
 
         if params.get('deploy_type') != "function" and params['language'] == "python":
-            app = "python_" + params['python_framework']
-            output_copy_tree("option/src/app/"+app, "src/app")
+            # Clone the generic app/rest directory in app/mcp_server 
             if params.get('python_framework') in [ 'langgraph', 'responses' ]:
+                shutil.copytree(output_dir + os.sep + "src/app/rest", output_dir + os.sep + "src/app/mcp_server", dirs_exist_ok=True)
                 output_copy_tree("option/src/app/python_mcp_server", "src/app")
 
+            app = "python_" + params['python_framework']
+            output_copy_tree("option/src/app/"+app, "src/app")
 
         # Overwrite the generic version (ex for mysql)
         family_dir = app+"_"+db_family
