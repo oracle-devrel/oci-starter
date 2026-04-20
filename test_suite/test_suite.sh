@@ -124,7 +124,12 @@ loop_lang () {
   OPTION_LANG=node 
   loop_db
   OPTION_LANG=python
+  OPTION_PYTHON_FRAMEWORK=fastapi
   loop_db
+  OPTION_PYTHON_FRAMEWORK=langgraph
+  loop_ui
+  OPTION_PYTHON_FRAMEWORK=responses
+  loop_ui
   OPTION_LANG=dotnet
   loop_db
   # XXXX ORDS works only with ATP (DBSystems is not test/done)

@@ -16,6 +16,7 @@ OPTION_INFRA_AS_CODE=terraform_local
 OPTION_JAVA_FRAMEWORK=springboot
 OPTION_JAVA_VM=jdk
 OPTION_TSONE_ID=0
+OPTION_PYTHON_FRAMEWORK=fastapi
 
 # No color for terraforms logs
 export nocolorarg=1
@@ -272,6 +273,7 @@ build_option() {
        -language $OPTION_LANG \
        -java_framework $OPTION_JAVA_FRAMEWORK \
        -java_vm $OPTION_JAVA_VM \
+       -python_framework $OPTION_PYTHON_FRAMEWORK \
        -database $OPTION_DB \
        -db_password $TEST_DB_PASSWORD \
        -db_install $OPTION_DB_INSTALL \

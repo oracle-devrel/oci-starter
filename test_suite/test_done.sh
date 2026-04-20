@@ -8,91 +8,108 @@ get_ui_url
 
 title "Testsuite - Done"
 if [ "$UI_URL" != "" ]; then
-  echo "TEST URLs" > $FILE_DONE
-  append_done "- UI URL: $UI_URL/"
-  if [ "$TEST_NAME" != "" ]; then
-    export TMP_PATH="/tmp/$TF_VAR_prefix"
-    rm -Rf $TMP_PATH     
-    mkdir -p $TMP_PATH 
-    echo $UI_URL > $TMP_PATH/ui_url.txt
-    
-    if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
-      kubectl wait --for=condition=ready pod ${TF_VAR_prefix}-app
-      kubectl wait --for=condition=ready pod ${TF_VAR_prefix}-ui
-      kubectl get all
-      sleep 5
-    fi
-
-    # Retry several time. Needed for ORDS or Go or Tomcat that takes more time to start
-    x=1
-    echo "----- Testing: $UI_URL/app/dept"
-    while [ $x -le 20 ]
-    do
-      if [ -f "$TMP_PATH/cookie.txt" ]; then
-        rm $TMP_PATH/cookie.txt
-      fi  
-      if [ "$TF_VAR_language" == "apex" ]; then
-        wget $UI_URL/app/dept -o $TMP_PATH/result_dept.log -O $TMP_PATH/result_dept.json
-      else
-        curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_dept.log > $TMP_PATH/result_dept.json
-      fi      
-
-      # Check (Same test is also done test_suite_shared)
-      if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
-        echo -e "\u2705 deptno detected in $UI_URL/app/dept"
-        break
-      fi
-      sleep 5  
-      x=$(( $x + 1 ))
-    done
-    if [ "$x" == "20" ]; then
-      echo -e "\u2705 deptno not detected in $UI_URL/app/dept"  
-    fi
-
-    echo "----- Testing: $UI_URL/"
-    if [ "$TF_VAR_ui_type" != "api" ] && [ "$TF_VAR_ui_type" != "jsp" ] && [ "$TF_VAR_language" != "apex" ]; then
-      if [ -f "$TMP_PATH/cookie.txt" ]; then
-        rm $TMP_PATH/cookie.txt
-      fi  
-      curl $UI_URL/ -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_html.log > $TMP_PATH/result_html.html
-    else 
-      echo "OCI Starter" > $TMP_PATH/result_html.html
-    fi 
-
-    # Check (Same test is also done test_suite_shared)
-    if grep -q -i "starter" $TMP_PATH/result_html.html; then
-      echo -e "\u2705 starter detected in $UI_URL"
-      CSV_HTML_OK=1
-    elif grep -q -i "deptno" $TMP_PATH/result_html.html; then
-      echo -e "\u2705 deptno detected in $UI_URL"
-      CSV_HTML_OK=1
-    else
-      echo -e "\u274C $UI_URL does not contain starter or deptno" 
-    fi
-
-
-    if [ -f "$TMP_PATH/cookie.txt" ]; then
-      rm $TMP_PATH/cookie.txt
-    fi  
-    if [ "$TF_VAR_language" == "apex" ]; then
-      wget $UI_URL/app/info -o $TMP_PATH/result_info.log -O $TMP_PATH/result.info
-    else
-      curl $UI_URL/app/info -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_info.log > $TMP_PATH/result_info.html
-    fi      
-  
-    if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then
-      # Get the compute logs
-      eval "$(ssh-agent -s)"      
-      ssh-add $TF_VAR_ssh_private_path
-      scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/compute/*.log target/.
-      scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/*.log target/.
-      scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/app/*.log target/.
-      if [ "$TF_VAR_language" == "java" ]; then
-        if [ "$TF_VAR_java_framework" == "tomcat" ]; then
-          ssh -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP "sudo cp -r /opt/tomcat/logs $TMP_PATH/tomcat_logs; sudo chown -R opc $TMP_PATH/tomcat_logs"
-          scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:$TMP_PATH/tomcat_logs target/.
+    echo "TEST URLs" > $FILE_DONE
+    append_done "- UI URL: $UI_URL/"
+    if [ "$TEST_NAME" != "" ]; then
+        export TMP_PATH="/tmp/$TF_VAR_prefix"
+        rm -Rf $TMP_PATH     
+        mkdir -p $TMP_PATH 
+        echo $UI_URL > $TMP_PATH/ui_url.txt
+        
+        if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
+            kubectl wait --for=condition=ready pod ${TF_VAR_prefix}-app
+            kubectl wait --for=condition=ready pod ${TF_VAR_prefix}-ui
+            kubectl get all
+            sleep 5
         fi
-      fi
+
+        # Retry several time. Needed for ORDS or Go or Tomcat that takes more time to start
+        x=1
+        echo "----- Testing: $UI_URL/app"
+        while [ $x -le 20 ]; do
+            if [ -f "$TMP_PATH/cookie.txt" ]; then
+                rm $TMP_PATH/cookie.txt
+            fi  
+            if [ "$TF_VAR_ui_type == 'langgraph" ]; then
+                rm -f $TMP_PATH/cookie.txt
+                curl -sS -c "$cookie_jar" -b "$TMP_PATH/cookie.txt" \
+                    -H 'Content-Type: application/json' \
+                    -H 'Authorization: User customer' \
+                    -X POST "$UI_URL/app/threads" \
+                    -d '{}' > $TMP_PATH/thread.json
+                thread_id="$(jq -r '.thread_id // empty' $TMP_PATH/thread.json)"
+                if [[ -n "$thread_id" ]]; then
+                    echo "Created thread_id=$thread_id"
+                    response_file=$TMP_PATH/result_dept.json
+                    curl -sS -N -c "$TMP_PATH/cookie.txt" -b "$TMP_PATH/cookie.txt" \
+                        -H 'Content-Type: application/json' \
+                        -H 'Authorization: User customer' \
+                        -X POST "$UI_URL/app/threads/$thread_id/runs/stream" \
+                        -d '{"assistant_id":"agent","input":{"messages":[{"role":"human","content":"get departments"}]}}' \
+                        > $TMP_PATH/result_dept.json
+                fi
+            else if [ "$TF_VAR_language" == "apex" ]; then
+                wget $UI_URL/app/dept -o $TMP_PATH/result_dept.log -O $TMP_PATH/result_dept.json
+            else
+                curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_dept.log > $TMP_PATH/result_dept.json
+            fi      
+
+            # Check (Same test is also done test_suite_shared)
+            if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
+                echo -e "\u2705 deptno detected"
+                break
+            fi
+            sleep 5  
+            x=$(( $x + 1 ))
+        done
+        if [ "$x" == "20" ]; then
+            echo -e "\u2705 deptno not detected in $UI_URL/app/dept"  
+        fi
+
+        echo "----- Testing: $UI_URL/"
+        if [ "$TF_VAR_ui_type" != "api" ] && [ "$TF_VAR_ui_type" != "jsp" ] && [ "$TF_VAR_language" != "apex" ]; then
+            if [ -f "$TMP_PATH/cookie.txt" ]; then
+                rm $TMP_PATH/cookie.txt
+            fi  
+            curl $UI_URL/ -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_html.log > $TMP_PATH/result_html.html
+        else 
+            echo "OCI Starter" > $TMP_PATH/result_html.html
+        fi 
+
+        # Check (Same test is also done test_suite_shared)
+        if grep -q -i "starter" $TMP_PATH/result_html.html; then
+            echo -e "\u2705 starter detected in $UI_URL"
+            CSV_HTML_OK=1
+        elif grep -q -i "deptno" $TMP_PATH/result_html.html; then
+            echo -e "\u2705 deptno detected in $UI_URL"
+            CSV_HTML_OK=1
+        else
+            echo -e "\u274C $UI_URL does not contain starter or deptno" 
+        fi
+
+
+        if [ -f "$TMP_PATH/cookie.txt" ]; then
+            rm $TMP_PATH/cookie.txt
+        fi  
+        if [ "$TF_VAR_language" == "apex" ]; then
+            wget $UI_URL/app/info -o $TMP_PATH/result_info.log -O $TMP_PATH/result.info
+        else
+            curl $UI_URL/app/info -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_info.log > $TMP_PATH/result_info.html
+        fi      
+    
+        if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then
+            # Get the compute logs
+            eval "$(ssh-agent -s)"      
+            ssh-add $TF_VAR_ssh_private_path
+            scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/compute/*.log target/.
+            scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/*.log target/.
+            scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/app/*.log target/.
+            if [ "$TF_VAR_language" == "java" ]; then
+                if [ "$TF_VAR_java_framework" == "tomcat" ]; then
+                    ssh -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP "sudo cp -r /opt/tomcat/logs $TMP_PATH/tomcat_logs; sudo chown -R opc $TMP_PATH/tomcat_logs"
+                    scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:$TMP_PATH/tomcat_logs target/.
+                fi
+            fi
+        fi
     fi
-  fi
 fi

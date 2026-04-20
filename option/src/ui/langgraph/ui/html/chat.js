@@ -413,6 +413,7 @@ async function fetchUserInfo() {
     updateDisplay();
 }
 
+let currentLang = 'en';
 let recognition = null;
 
 function initRecognition() {
@@ -425,11 +426,11 @@ function initRecognition() {
     recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = 'en-US';
+    recognition.lang = getLangCode(currentLang);
 
     recognition.onstart = () => {
         micButton.classList.add('recording');
-        chatInput.placeholder = 'Listening...';
+        chatInput.placeholder = getPlaceholder();
     };
 
     recognition.onresult = (event) => {
@@ -443,13 +444,38 @@ function initRecognition() {
     recognition.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
         micButton.classList.remove('recording');
-        chatInput.placeholder = 'Type your message...';
+        chatInput.placeholder = getPlaceholder();
     };
 
     recognition.onend = () => {
         micButton.classList.remove('recording');
-        chatInput.placeholder = 'Type your message...';
+        chatInput.placeholder = getPlaceholder();
     };
+}
+
+function getLangCode(lang) {
+    return lang === 'fr' ? 'fr-FR' : 'en-US';
+}
+
+function getPlaceholder() {
+    return currentLang === 'fr' ? 'Écoute...' : 'Listening...';
+}
+
+function updateLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.querySelector('h2').textContent = lang === 'fr' 
+        ? 'Bienvenue à notre hôtel. Comment puis-je vous aider ?'
+        : 'Welcome to our Hotel. How can I help ?';
+    chatInput.placeholder = lang === 'fr' ? 'Tapez votre message...' : 'Type your message...';
+    if (recognition) {
+        recognition.lang = getLangCode(lang);
+    }
+
+    const languageItems = document.querySelectorAll('#languageList li');
+    languageItems.forEach((item) => {
+        item.setAttribute('aria-current', item.dataset.lang === lang ? 'true' : 'false');
+    });
 }
 
 micButton.addEventListener('click', (e) => {
@@ -457,6 +483,16 @@ micButton.addEventListener('click', (e) => {
     if (recognition) {
         recognition.start();
     }
+});
+
+// Language selector list in menu
+document.addEventListener('DOMContentLoaded', () => {
+    const languageItems = document.querySelectorAll('#languageList li');
+    languageItems.forEach((item) => {
+        item.addEventListener('click', () => {
+            updateLanguage(item.dataset.lang);
+        });
+    });
 });
 
 // On page load
