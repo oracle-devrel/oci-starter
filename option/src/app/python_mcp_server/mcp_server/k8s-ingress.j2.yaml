@@ -1,0 +1,31 @@
+# Use 2 Ingress since the parameter replacement work differently in NGINX for / and /app (see annotation)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ##TF_VAR_prefix##-mcp-server-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2    
+    # nginx.ingress.kubernetes.io/affinity: "cookie"   
+    # nginx.ingress.kubernetes.io/session-cookie-path: "/"    
+spec:
+  ingressClassName: nginx
+{%- if tls == "new_http_01" %}     
+  tls:
+  - hosts:
+    - ##TF_VAR_dns_name##
+    secretName: ##TF_VAR_prefix##-tls-secret  
+  rules:
+    - host: ##TF_VAR_dns_name##
+      http:
+{%- else %}    
+  rules:
+    - http:
+{%- endif %} 
+        paths:
+          - path: /##TF_VAR_prefix##/mcp_server(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: ##TF_VAR_prefix##-mcp-server-service
+                port:
+                  number: 2025
