@@ -6,7 +6,7 @@ cd $SCRIPT_DIR/..
 
 get_ui_url
 
-title "Testsuite - Done"
+title "Testsuite - done.sh - Checking if the app works"
 if [ "$UI_URL" != "" ]; then
     echo "TEST URLs" > $FILE_DONE
     append_done "- UI URL: $UI_URL/"
@@ -25,13 +25,12 @@ if [ "$UI_URL" != "" ]; then
 
         # Retry several time. Needed for ORDS or Go or Tomcat that takes more time to start
         x=1
-        echo "----- Testing: $UI_URL/app"
-        while [ $x -le 20 ]; do
-            if [ -f "$TMP_PATH/cookie.txt" ]; then
-                rm $TMP_PATH/cookie.txt
-            fi  
-            if [ "$TF_VAR_ui_type == 'langgraph" ]; then
-                rm -f $TMP_PATH/cookie.txt
+        title "Testing: $UI_URL/app/dept"
+        while [ $x -le 20 ]
+        do
+            rm -f $TMP_PATH/cookie.txt
+            if [ "$TF_VAR_ui_type == "langgraph" ]; then
+                echo "Testsuite - LangGraph"
                 curl -sS -c "$cookie_jar" -b "$TMP_PATH/cookie.txt" \
                     -H 'Content-Type: application/json' \
                     -H 'Authorization: User customer' \
@@ -49,8 +48,10 @@ if [ "$UI_URL" != "" ]; then
                         > $TMP_PATH/result_dept.json
                 fi
             elif [ "$TF_VAR_language" == "apex" ]; then
+                echo "Testsuite - apex - $UI_URL/app/dept"
                 wget $UI_URL/app/dept -o $TMP_PATH/result_dept.log -O $TMP_PATH/result_dept.json
             else
+                echo "Testsuite - default - $UI_URL/app/dept"
                 curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_dept.log > $TMP_PATH/result_dept.json
             fi      
 
@@ -66,7 +67,7 @@ if [ "$UI_URL" != "" ]; then
             echo -e "\u2705 deptno not detected in $UI_URL/app/dept"  
         fi
 
-        echo "----- Testing: $UI_URL/"
+        title "Testing: $UI_URL/"
         if [ "$TF_VAR_ui_type" != "api" ] && [ "$TF_VAR_ui_type" != "jsp" ] && [ "$TF_VAR_language" != "apex" ]; then
             if [ -f "$TMP_PATH/cookie.txt" ]; then
                 rm $TMP_PATH/cookie.txt
@@ -87,7 +88,7 @@ if [ "$UI_URL" != "" ]; then
             echo -e "\u274C $UI_URL does not contain starter or deptno" 
         fi
 
-
+        title "Testing: $UI_URL/app/info"
         if [ -f "$TMP_PATH/cookie.txt" ]; then
             rm $TMP_PATH/cookie.txt
         fi  
