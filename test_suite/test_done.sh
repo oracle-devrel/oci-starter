@@ -48,7 +48,7 @@ if [ "$UI_URL" != "" ]; then
                         -d '{"assistant_id":"agent","input":{"messages":[{"role":"human","content":"get departments"}]}}' \
                         > $TMP_PATH/result_dept.json
                 fi
-            else if [ "$TF_VAR_language" == "apex" ]; then
+            elif [ "$TF_VAR_language" == "apex" ]; then
                 wget $UI_URL/app/dept -o $TMP_PATH/result_dept.log -O $TMP_PATH/result_dept.json
             else
                 curl $UI_URL/app/dept -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L -D $TMP_PATH/result_dept.log > $TMP_PATH/result_dept.json
