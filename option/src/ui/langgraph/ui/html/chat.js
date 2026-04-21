@@ -464,8 +464,8 @@ function updateLanguage(lang) {
     currentLang = lang;
     document.documentElement.lang = lang;
     document.querySelector('h2').textContent = lang === 'fr'
-        ? 'Bienvenue à notre hôtel. Comment puis-je vous aider ?'
-        : 'Welcome to our Hotel. How can I help ?';
+        ? 'Comment puis-je vous aider ?'
+        : 'How can I help ?';
     chatInput.placeholder = lang === 'fr' ? 'Tapez votre message...' : 'Type your message...';
     if (recognition) {
         recognition.lang = getLangCode(lang);

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-. SCRIPT_DIR/done.sh
+. $SCRIPT_DIR/done_orig.sh
 
 title "Testsuite - test_done.sh - Checking if the app works"
 if [ "$UI_URL" != "" ]; then
@@ -66,6 +66,7 @@ if [ "$UI_URL" != "" ]; then
         if [ "$x" == "20" ]; then
             echo -e "\u2705 deptno not detected in $UI_URL/app/dept"  
         fi
+        echo "See $TMP_PATH/result_dept.json"
 
         title "Testing: $UI_URL/"
         if [ "$TF_VAR_ui_type" != "api" ] && [ "$TF_VAR_ui_type" != "jsp" ] && [ "$TF_VAR_language" != "apex" ]; then
@@ -78,12 +79,13 @@ if [ "$UI_URL" != "" ]; then
         fi 
 
         # Check (Same test is also done test_suite_shared)
-        if grep -qiE "starter|deptno|department" "$TMP_PATH/result_html.html"; then
-            echo -e "\u2705 starter or deptno or department detected in $UI_URL"
+        if grep -qiE "starter|deptno|messages" "$TMP_PATH/result_html.html"; then
+            echo -e "\u2705 starter or deptno or messages detected in $UI_URL"
             CSV_HTML_OK=1
         else
             echo -e "\u274C $UI_URL does not contain starter or deptno or department" 
         fi
+        echo "See $TMP_PATH/result_html.html"
 
         title "Testing: $UI_URL/app/info"
         if [ -f "$TMP_PATH/cookie.txt" ]; then
@@ -94,7 +96,8 @@ if [ "$UI_URL" != "" ]; then
         else
             curl $UI_URL/app/info -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_info.log > $TMP_PATH/result_info.html
         fi      
-    
+        echo "See $TMP_PATH/result.info"
+
         if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then
             # Get the compute logs
             eval "$(ssh-agent -s)"      
