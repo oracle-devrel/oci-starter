@@ -1,11 +1,14 @@
 import json
 import os
-import uuid
 from typing import Any
 
 from fastapi import FastAPI, Request
 from openai import OpenAI
 from fastapi.responses import StreamingResponse
+
+# OCI Auth
+from oci_genai_auth import OciInstancePrincipalAuth
+import httpx
 
 REGION = os.getenv("TF_VAR_region")
 if REGION == "eu-amsterdam-1":
@@ -14,10 +17,10 @@ MODEL_ID = "openai.gpt-oss-120b"
 # REGION = "us-chicago-1"
 # MODEL_ID = "xai.grok-4-fast-non-reasoning"
 
-BASE_URL = f"https://inference.generativeai.{REGION}.oci.oraclecloud.com/20231130/openai/v1"
 PROJECT_OCID = os.environ.get("TF_VAR_project_ocid")
-GENAI_API_KEY = os.environ.get("TF_VAR_genai_api_key")
+COMPARTMENT_OCID = os.environ.get("TF_VAR_compartment_ocid")
 MCP_SERVER_URL = os.environ.get("MCP_SERVER_URL")
+
 SYSTEM_PROMPT = """
 INSTRUCTIONS:
 - Assist ONLY with research-related tasks, DO NOT do any math.
@@ -25,18 +28,23 @@ INSTRUCTIONS:
 - If not, use MarkDown to give a clear and short answer to the user.
 - When showing an agenda, use colored icons to show the importance based on customer score (free, low, medium, high)
 """
+
 client = OpenAI(
-    base_url=BASE_URL,
-    api_key=GENAI_API_KEY,
-    project=PROJECT_OCID,
+    base_url=f"https://inference.generativeai.{REGION}.oci.oraclecloud.com/20231130/openai/v1",
+    api_key="unused",
+    http_client=httpx.Client(
+        auth=OciInstancePrincipalAuth(),
+        headers={
+            "opc-compartment-id": COMPARTMENT_OCID,
+        },
+    ),
 )
+
 
 app = FastAPI()
 
-
 def log(*args, **kwargs):
     print(*args, **kwargs, flush=True)
-
 
 def get_tools() -> list[dict[str, Any]]:
     if not MCP_SERVER_URL:
@@ -67,7 +75,7 @@ def chat(q: str):
 @app.post("/threads")
 @app.post("/app/threads")
 def create_thread() -> dict[str, str]:
-    conversation = client.conversations.create()
+    conversation = client.conversations.create(extra_headers={"OpenAI-Project": PROJECT_OCID})
     thread_id = conversation.id
     THREADS[thread_id] = {"next_message_id": 1}
     return {"thread_id": thread_id}
