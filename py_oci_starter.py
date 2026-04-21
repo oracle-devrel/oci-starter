@@ -198,7 +198,7 @@ def language_rules():
     elif params.get('java_framework') == 'helidon' and params.get('java_version') != '25':
         warning('Helidon only supports Java 17+. Forcing Java version to 25')
         params['java_version'] = 25
-    elif params.get('python_framework') == 'responses':
+    if params.get('python_framework') == 'responses':
         params['project_ocid'] = TO_FILL
 
 def kubernetes_rules():
