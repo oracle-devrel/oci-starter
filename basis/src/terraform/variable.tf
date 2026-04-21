@@ -47,7 +47,6 @@ variable instance_shape_config_memory_in_gbs {
   description="Instance - Memory in GBs"   
   nullable = false
 }
-
 variable your_public_ssh_key {
   default=null
   description= "(optional) Your Public SSH key to add to .ssh/authorized key"   

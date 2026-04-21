@@ -196,9 +196,9 @@ def language_rules():
         params.pop('java_vm')
         params.pop('java_version')
     elif params.get('java_framework') == 'helidon' and params.get('java_version') != '25':
-        warning('Helidon only supports Java 17. Forcing Java version to 25')
+        warning('Helidon only supports Java 17+. Forcing Java version to 25')
         params['java_version'] = 25
-    elif params.get('python_framework') in [ 'responses' ]:
+    elif params.get('python_framework') == 'responses':
         params['project_ocid'] = TO_FILL
 
 def kubernetes_rules():
@@ -559,7 +559,7 @@ def env_sh_contents():
     tfvars.append(f'prefix="{prefix}"')
 
     for param in env_params:
-        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model", "certificate_email", "dns_name","dns_zone_name", "tls", "your_public_ssh_key", "project_ocid"]:
+        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model", "certificate_email", "dns_name","dns_zone_name", "tls", "your_public_ssh_key"]:
             to_fill_params.append(param)
             tfvars.append('')
             tf_var_comment(tfvars, param)
@@ -882,6 +882,10 @@ def create_output_dir():
                 output_copy_tree("basis/src/app/rest", "src/app/mcp_server")
                 output_copy_tree("option/src/app/python/rest", "src/app/mcp_server")
                 output_copy_tree("option/src/app/python_mcp_server", "src/app")
+
+            # OpenAI Responses API
+            if params.get('python_framework') == 'responses':
+                cp_terraform("responses.tf")
 
         # Overwrite the generic version (ex for mysql)
         family_dir = app+"_"+db_family
