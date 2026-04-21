@@ -128,6 +128,7 @@ loop_lang () {
   loop_db
   if [ "$OPTION_DEPLOY" != "function" ]; then
     OPTION_PYTHON_FRAMEWORK=langgraph
+    OPTION_DB=atp 
     loop_ui
     OPTION_PYTHON_FRAMEWORK=responses
     loop_ui
