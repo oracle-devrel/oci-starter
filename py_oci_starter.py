@@ -877,7 +877,7 @@ def create_output_dir():
             # Clone the generic app/rest directory in app/mcp_server 
             if params.get('python_framework') in [ 'langgraph', 'responses' ]:
                 output_mkdir("src/app/mcp_server")
-                output_copy_tree("basic/src/app/rest", "src/app/mcp_server")
+                output_copy_tree("basis/src/app/rest", "src/app/mcp_server")
                 output_copy_tree("option/src/app/python/rest", "src/app/mcp_server")
                 output_copy_tree("option/src/app/python_mcp_server", "src/app")
 
