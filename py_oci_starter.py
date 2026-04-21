@@ -559,7 +559,7 @@ def env_sh_contents():
     tfvars.append(f'prefix="{prefix}"')
 
     for param in env_params:
-        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model", "certificate_email", "dns_name","dns_zone_name", "tls", "your_public_ssh_key"]:
+        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model", "certificate_email", "dns_name","dns_zone_name", "tls", "your_public_ssh_key", "project_ocid"]:
             to_fill_params.append(param)
             tfvars.append('')
             tf_var_comment(tfvars, param)

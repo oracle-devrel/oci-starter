@@ -38,6 +38,7 @@ client = OpenAI(
             "opc-compartment-id": COMPARTMENT_OCID,
         },
     ),
+    project=PROJECT_OCID
 )
 
 
@@ -75,7 +76,7 @@ def chat(q: str):
 @app.post("/threads")
 @app.post("/app/threads")
 def create_thread() -> dict[str, str]:
-    conversation = client.conversations.create(extra_headers={"OpenAI-Project": PROJECT_OCID})
+    conversation = client.conversations.create()
     thread_id = conversation.id
     THREADS[thread_id] = {"next_message_id": 1}
     return {"thread_id": thread_id}

@@ -24,7 +24,7 @@ if [ "$UI_URL" != "" ]; then
         rm -f $TMP_PATH/cookie.txt
         if [ "$TF_VAR_ui_type" == "langgraph" ]; then
             echo "Testsuite - LangGraph"
-            curl -sS -c "$cookie_jar" -b "$TMP_PATH/cookie.txt" \
+            curl -sS -c "$TMP_PATH/cookie.txt" -b "$TMP_PATH/cookie.txt" \
                 -H 'Content-Type: application/json' \
                 -H 'Authorization: User customer' \
                 -X POST "$UI_URL/app/threads" \
