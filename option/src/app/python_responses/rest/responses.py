@@ -9,12 +9,13 @@ from fastapi.responses import StreamingResponse
 
 # Defaults can be overridden by AGENT_HUB_REGION.
 REGION = os.getenv("TF_VAR_region")
+if REGION == "eu-amsterdam-1":
+    AI_REGION = "eu-frankfurt-1"
 MODEL_ID = "openai.gpt-oss-120b"
 # REGION = "us-chicago-1"
 # MODEL_ID = "xai.grok-4-fast-non-reasoning"
 
 BASE_URL = f"https://inference.generativeai.{REGION}.oci.oraclecloud.com/20231130/openai/v1"
-REGION = os.getenv("TF_VAR_region")
 PROJECT_OCID = os.environ.get("TF_VAR_project_ocid")
 GENAI_API_KEY = os.environ.get("TF_VAR_genai_api_key")
 MCP_SERVER_URL = os.environ.get("MCP_SERVER_URL")

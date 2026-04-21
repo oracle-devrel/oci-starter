@@ -10,7 +10,9 @@ title "Testsuite - done.sh - Checking if the app works"
 if [ "$UI_URL" != "" ]; then
     echo "TEST URLs" > $FILE_DONE
     append_done "- UI URL: $UI_URL/"
-    if [ "$TEST_NAME" != "" ]; then
+    if [ "$TEST_NAME" == "" ]; then
+        echo "Skip - TEST_NAME not set"
+    else 
         export TMP_PATH="/tmp/$TF_VAR_prefix"
         rm -Rf $TMP_PATH     
         mkdir -p $TMP_PATH 
@@ -29,7 +31,7 @@ if [ "$UI_URL" != "" ]; then
         while [ $x -le 20 ]
         do
             rm -f $TMP_PATH/cookie.txt
-            if [ "$TF_VAR_ui_type == "langgraph" ]; then
+            if [ "$TF_VAR_ui_type" == "langgraph" ]; then
                 echo "Testsuite - LangGraph"
                 curl -sS -c "$cookie_jar" -b "$TMP_PATH/cookie.txt" \
                     -H 'Content-Type: application/json' \
@@ -59,6 +61,8 @@ if [ "$UI_URL" != "" ]; then
             if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
                 echo -e "\u2705 deptno detected"
                 break
+            else 
+                echo -e "Waiting 5 secs: deptno not found"
             fi
             sleep 5  
             x=$(( $x + 1 ))

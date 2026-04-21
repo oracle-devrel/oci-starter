@@ -14,6 +14,8 @@ import oci_openai
 COMPARTMENT_OCID = os.getenv("TF_VAR_compartment_ocid")
 REGION = os.getenv("TF_VAR_region")
 MCP_SERVER_URL = os.getenv("MCP_SERVER_URL") or "http://localhost:2025/mcp"
+if REGION == "eu-amsterdam-1":
+    AI_REGION = "eu-frankfurt-1"
 
 # auth = oci_openai.OciInstancePrincipalAuth()
 # llm = ChatOpenAI(

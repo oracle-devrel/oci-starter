@@ -308,6 +308,7 @@ build_option() {
        -language $OPTION_LANG \
        -java_framework $OPTION_JAVA_FRAMEWORK \
        -java_vm $OPTION_JAVA_VM \
+       -python_framework $OPTION_PYTHON_FRAMEWORK \
        -database $OPTION_DB \
        -db_password $TEST_DB_PASSWORD \
        -db_install $OPTION_DB_INSTALL \
