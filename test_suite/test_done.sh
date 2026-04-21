@@ -78,11 +78,11 @@ if [ "$UI_URL" != "" ]; then
         fi 
 
         # Check (Same test is also done test_suite_shared)
-        if grep -qiE "starter|demo|hello" "$TMP_PATH/result_html.html"; then
-            echo -e "\u2705 starter or hello or deptno detected in $UI_URL"
+        if grep -qiE "starter|deptno|department" "$TMP_PATH/result_html.html"; then
+            echo -e "\u2705 starter or deptno or department detected in $UI_URL"
             CSV_HTML_OK=1
         else
-            echo -e "\u274C $UI_URL does not contain starter or hello or deptno" 
+            echo -e "\u274C $UI_URL does not contain starter or deptno or department" 
         fi
 
         title "Testing: $UI_URL/app/info"

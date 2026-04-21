@@ -81,11 +81,11 @@ build_test () {
 
   echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
   if [ -f $TMP_PATH/result_html.html ]; then
-    if grep -qiE "starter|demo|hello" "$TMP_PATH/result_html.html"; then
+    if grep -qiE "starter|deptno|department" "$TMP_PATH/result_html.html"; then  
       echo -e "\u2705 RESULT HTML: OK"
       CSV_HTML_OK=1
     else
-      echo -e "\u274C RESULT HTML - starter or hello or deptno not found. ***** BAD ******"
+      echo -e "\u274C RESULT HTML - starter or deptno or department not found. ***** BAD ******"
     fi
     if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
       echo -e "\u2705 RESULT JSON: OK"`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
