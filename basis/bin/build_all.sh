@@ -19,7 +19,7 @@ before_terraform() {
         . $BIN_DIR/sshkey_generate.sh
     fi
     
-    . starter.sh env
+    . starter.sh env -silent
     if [ "$TF_VAR_tls" != "" ]; then
         title "Certificate"
         certificate_dir_before_terraform

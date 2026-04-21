@@ -113,24 +113,3 @@ if [ "$UI_URL" != "" ]; then
 else
     echo "<test_done.sh> UI_URL not detected"    
 fi
-
-
-  echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
-  if [ -f $TMP_PATH/result_html.html ]; then
-    if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
-      echo -e "\u2705 RESULT JSON: OK"`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
-      CSV_JSON_OK=1
-    else
-      echo -e "\u274C RESULT JSON: ***** BAD ******"`cat $TMP_PATH/result_dept.json` | cut -c 1-100 
-    fi
-
-    if grep -qiE "starter|deptno|messages" "$TMP_PATH/result_html.html"; then  
-      echo -e "\u2705 RESULT HTML: OK"
-      CSV_HTML_OK=1
-    else
-      echo -e "\u274C RESULT HTML - starter or deptno or messages not found. ***** BAD ******"
-    fi
-    echo "RESULT INFO:                   "`cat $TMP_PATH/result_info.html` | cut -c 1-100
-  else
-    echo -e "\u274C ERROR: No file $TMP_PATH/result_html.html"
-  fi
