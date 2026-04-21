@@ -103,8 +103,7 @@ if [ "$UI_URL" != "" ]; then
             eval "$(ssh-agent -s)"      
             ssh-add $TF_VAR_ssh_private_path
             scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/compute/*.log target/.
-            scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/*.log target/.
-            scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/app/*.log target/.
+            scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP:/home/opc/app/*/*.log target/.
             if [ "$TF_VAR_language" == "java" ]; then
                 if [ "$TF_VAR_java_framework" == "tomcat" ]; then
                     ssh -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" opc@$COMPUTE_IP "sudo cp -r /opt/tomcat/logs $TMP_PATH/tomcat_logs; sudo chown -R opc $TMP_PATH/tomcat_logs"
