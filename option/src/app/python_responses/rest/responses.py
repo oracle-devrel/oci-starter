@@ -7,10 +7,9 @@ from fastapi import FastAPI, Request
 from openai import OpenAI
 from fastapi.responses import StreamingResponse
 
-# Defaults can be overridden by AGENT_HUB_REGION.
 REGION = os.getenv("TF_VAR_region")
 if REGION == "eu-amsterdam-1":
-    AI_REGION = "eu-frankfurt-1"
+    REGION = "eu-frankfurt-1"
 MODEL_ID = "openai.gpt-oss-120b"
 # REGION = "us-chicago-1"
 # MODEL_ID = "xai.grok-4-fast-non-reasoning"

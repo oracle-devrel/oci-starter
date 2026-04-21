@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR/..
+. SCRIPT_DIR/done.sh
 
-. starter.sh env -silent
-
-get_ui_url
-
-title "Testsuite - done.sh - Checking if the app works"
+title "Testsuite - test_done.sh - Checking if the app works"
 if [ "$UI_URL" != "" ]; then
     echo "TEST URLs" > $FILE_DONE
     append_done "- UI URL: $UI_URL/"
     if [ "$TEST_NAME" == "" ]; then
-        echo "Skip - TEST_NAME not set"
+        echo "<test_done.sh> Skip - TEST_NAME not set"
     else 
         export TMP_PATH="/tmp/$TF_VAR_prefix"
         rm -Rf $TMP_PATH     
@@ -82,14 +78,11 @@ if [ "$UI_URL" != "" ]; then
         fi 
 
         # Check (Same test is also done test_suite_shared)
-        if grep -q -i "starter" $TMP_PATH/result_html.html; then
-            echo -e "\u2705 starter detected in $UI_URL"
-            CSV_HTML_OK=1
-        elif grep -q -i "deptno" $TMP_PATH/result_html.html; then
-            echo -e "\u2705 deptno detected in $UI_URL"
+        if grep -qiE "starter|demo|hello" "$TMP_PATH/result_html.html"; then
+            echo -e "\u2705 starter or hello or deptno detected in $UI_URL"
             CSV_HTML_OK=1
         else
-            echo -e "\u274C $UI_URL does not contain starter or deptno" 
+            echo -e "\u274C $UI_URL does not contain starter or hello or deptno" 
         fi
 
         title "Testing: $UI_URL/app/info"
@@ -117,4 +110,6 @@ if [ "$UI_URL" != "" ]; then
             fi
         fi
     fi
+else
+    echo "<test_done.sh> UI_URL not detected"    
 fi

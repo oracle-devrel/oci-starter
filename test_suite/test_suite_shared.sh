@@ -3,9 +3,6 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 . $HOME/bin/env_oci_starter_testsuite.sh
 export BUILD_COUNT=1
-export COLOR_RED='\033[0;31m'
-export COLOR_GREEN='\033[0;32m'
-export COLOR_NONE='\033[0m' 
 
 # Default
 OPTION_TLS=none
@@ -84,25 +81,23 @@ build_test () {
 
   echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
   if [ -f $TMP_PATH/result_html.html ]; then
-    if grep -q -i "starter" $TMP_PATH/result_html.html; then
-      echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
-      CSV_HTML_OK=1
-    elif grep -q -i "deptno" $TMP_PATH/result_html.html; then
-      echo -e "${COLOR_GREEN}RESULT HTML: OK${COLOR_NONE}"
+    if grep -qiE "starter|demo|hello" "$TMP_PATH/result_html.html"; then
+      echo -e "\u2705 RESULT HTML: OK"
       CSV_HTML_OK=1
     else
-      echo -e "${COLOR_RED}RESULT HTML: ***** BAD ******${COLOR_NONE}"
+      echo -e "\u274C RESULT HTML - starter or hello or deptno not found. ***** BAD ******"
     fi
     if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
-      echo -e "${COLOR_GREEN}RESULT JSON: OK${COLOR_NONE}                "`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
+      echo -e "\u2705 RESULT JSON: OK"`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
       CSV_JSON_OK=1
     else
-      echo -e "${COLOR_RED}RESULT JSON: ***** BAD ******${COLOR_NONE}  "`cat $TMP_PATH/result_dept.json` | cut -c 1-100 
+      echo -e "\u274C RESULT JSON: ***** BAD ******"`cat $TMP_PATH/result_dept.json` | cut -c 1-100 
     fi
     echo "RESULT INFO:                   "`cat $TMP_PATH/result_info.html` | cut -c 1-100
   else
-    echo -e "${COLOR_RED}ERROR: No file $TMP_PATH/result_html.html${COLOR_NONE}"
+    echo -e "\u274C ERROR: No file $TMP_PATH/result_html.html"
   fi
+
   mv $TMP_PATH/result_html.html ${TEST_DIR}_${BUILD_ID}_result_html.html 2>/dev/null;
   mv $TMP_PATH/result_dept.json ${TEST_DIR}_${BUILD_ID}_result_dept.json 2>/dev/null;
   mv $TMP_PATH/result_info.html ${TEST_DIR}_${BUILD_ID}_result_info.html 2>/dev/null;
@@ -363,12 +358,13 @@ build_option() {
       rm ${TEST_DIR}_*
     fi
     mv output $TEST_DIR    
+    mv $TEST_DIR/src/done.sh $TEST_DIR/src/done_orig.sh
     cp $SCRIPT_DIR/test_done.sh $TEST_DIR/src/done.sh
     if [ -z $GENERATE_ONLY ]; then
       build_test_destroy
     fi           
   else
-    echo -e "${COLOR_RED}ERROR ./oci_starter.sh failed.${COLOR_NONE}"
+    echo -e "\u274C ERROR ./oci_starter.sh failed."
     echo "Check ${TEST_DIR}.log"
     add_errors_rerun
   fi  
