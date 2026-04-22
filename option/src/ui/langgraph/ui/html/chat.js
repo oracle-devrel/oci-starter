@@ -77,6 +77,11 @@ function hideSpinner() {
     spinnerContainer.innerHTML = '';
 }
 
+// Remove spinner (when SSE is done)
+function errorSpinner() {
+    spinnerContainer.innerHTML = 'ERROR';
+}
+
 function scrollToBottom() {
     // Scroll so the anchor div is visible
     document.getElementById('spinner-container').scrollIntoView({ behavior: "smooth" });
@@ -158,7 +163,7 @@ function startSSE(reqBody, onMessage, onDone) {
         body: JSON.stringify(reqBody)
     }).then(async response => {
         if (!response.ok || !response.body) {
-            hideSpinner();
+            errorSpinner();
             onMessage({ type: "ai", content: "Network/server error." });
             if (onDone) onDone();
             return;
@@ -196,7 +201,7 @@ function startSSE(reqBody, onMessage, onDone) {
         hideSpinner();
         if (onDone) onDone();
     }).catch(e => {
-        hideSpinner();
+        errorSpinner();
         onMessage({ type: "ai", content: "Connection error." });
         if (onDone) onDone();
     });
