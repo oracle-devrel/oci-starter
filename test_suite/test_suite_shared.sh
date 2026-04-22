@@ -247,6 +247,7 @@ build_option() {
     # Prevent to have undeleted resource when rerunning the test_suite
     if [ -d $TEST_DIR/target ]; then
         if [ "$TEST_RERUN_REFRESH" == "" ]; then
+            echo "target directory found. Destroying."
             cd $TEST_DIR
             ./starter.sh destroy --auto-approve > destroy_before_refresh.log 2>&1  
             if [ -d $TEST_DIR/target ]; then
@@ -254,6 +255,7 @@ build_option() {
                 exit 1
             fi
         else 
+            echo "TEST_RERUN_REFRESH=$TEST_RERUN_REFRESH - backup up directory."
             if [ -d /tmp/$TEST_DIR/target ]; then
                 echo "ERROR: Existing target directory detected (/tmp/$TEST_DIR/target). Refresh failed."
                 exit 1
