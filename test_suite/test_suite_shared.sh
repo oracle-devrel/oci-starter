@@ -90,12 +90,12 @@ build_test () {
       echo -e "\u274C RESULT HTML - starter or deptno or messages not found. ***** BAD ******"
     fi
     if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
-      echo -e "\u2705 RESULT JSON: deptno found - "`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
+      echo -e "\u2705 RESULT JSON: deptno found -    "`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
       CSV_JSON_OK=1
     else
       echo -e "\u274C RESULT JSON: no deptno found - "`cat $TMP_PATH/result_dept.json` | cut -c 1-100 
     fi
-    echo "\u2139 RESULT INFO:                   "`cat $TMP_PATH/result_info.html` | cut -c 1-100
+    echo -e   "\u2139 RESULT INFO:                   "`cat $TMP_PATH/result_info.html` | cut -c 1-100
   else
     echo -e "\u274C ERROR: No file $TMP_PATH/result_html.html"
   fi
