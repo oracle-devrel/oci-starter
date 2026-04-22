@@ -283,8 +283,8 @@ fi
 
 if [ -d $TEST_HOME ]; then
   pre_git_refresh
-  if [ ! -f $TEST_HOME/group_common_env.sh ]; then
-    echo "ERROR: $TEST_HOME/group_common_env.sh not detected"
+  if [ ! -f ${TEST_HOME}/group_common_env.sh ]; then
+    echo "ERROR: ${TEST_HOME}/group_common_env.sh not detected"
     exit 
   fi
 else  
