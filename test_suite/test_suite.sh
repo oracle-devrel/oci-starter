@@ -65,6 +65,14 @@ loop_db() {
   fi  
   OPTION_DB=none
   loop_shape
+
+  # Build Host Bastion
+  if [ "$OPTION_DEPLOY" == "public_compute" ] || [ "$OPTION_DEPLOY" == "kubernetes" ]; then
+    OPTION_BUILD_HOST=bastion 
+    OPTION_DB=atp 
+    loop_shape
+    OPTION_BUILD_HOST=terraform
+  fi  
 }
 
 loop_java_vm() {

@@ -15,6 +15,7 @@ OPTION_JAVA_VM=jdk
 OPTION_TSONE_ID=0
 OPTION_PYTHON_FRAMEWORK=fastapi
 OPTION_DB=atp
+OPTION_BUILD_HOST=terraform
 
 # No color for terraforms logs
 export nocolorarg=1
@@ -57,8 +58,9 @@ test_run_100() {
     done  
   END=$(date +%s.%N)
   CSV_RUN100_SECOND=`echo "scale=2;($END-$START)/1" | bc`  
-  echo "CSV_RUN100_SECOND=$CSV_RUN100_SECOND"
-  echo "CSV_RUN100_OK=$CSV_RUN100_OK"
+  echo "Speed Test Result (100 runs):"
+  echo "- Time in seconds: $CSV_RUN100_SECOND"
+  echo "- OK (results including deptno): $CSV_RUN100_OK"
 }
 
 build_test () {
@@ -88,12 +90,12 @@ build_test () {
       echo -e "\u274C RESULT HTML - starter or deptno or messages not found. ***** BAD ******"
     fi
     if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
-      echo -e "\u2705 RESULT JSON: OK"`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
+      echo -e "\u2705 RESULT JSON: deptno found - "`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
       CSV_JSON_OK=1
     else
-      echo -e "\u274C RESULT JSON: ***** BAD ******"`cat $TMP_PATH/result_dept.json` | cut -c 1-100 
+      echo -e "\u274C RESULT JSON: no deptno found - "`cat $TMP_PATH/result_dept.json` | cut -c 1-100 
     fi
-    echo "RESULT INFO:                   "`cat $TMP_PATH/result_info.html` | cut -c 1-100
+    echo "\u2139 RESULT INFO:                   "`cat $TMP_PATH/result_info.html` | cut -c 1-100
   else
     echo -e "\u274C ERROR: No file $TMP_PATH/result_html.html"
   fi
@@ -203,6 +205,9 @@ build_option() {
   if [ "$OPTION_SHAPE" != "amd" ]; then
     NAME=${NAME}-$OPTION_SHAPE
   fi  
+  if [ "$OPTION_BUILD_HOST" != "terraform" ]; then
+    NAME=${NAME}-bh
+  fi    
   if [ "$OPTION_INFRA_AS_CODE" == "resource_manager" ]; then
     NAME=${NAME}-rm
   elif [ "$OPTION_INFRA_AS_CODE" == "from_resource_manager" ]; then
@@ -271,6 +276,7 @@ build_option() {
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
        -language $OPTION_LANG \
+       -build_host $OPTION_BUILD_HOST \
        -java_framework $OPTION_JAVA_FRAMEWORK \
        -java_vm $OPTION_JAVA_VM \
        -python_framework $OPTION_PYTHON_FRAMEWORK \
@@ -301,6 +307,7 @@ build_option() {
        -deploy $OPTION_DEPLOY \
        -ui $OPTION_UI \
        -language $OPTION_LANG \
+       -build_host $OPTION_BUILD_HOST \
        -java_framework $OPTION_JAVA_FRAMEWORK \
        -java_vm $OPTION_JAVA_VM \
        -python_framework $OPTION_PYTHON_FRAMEWORK \
