@@ -13,7 +13,7 @@ echo "[2] ./test_rerun.sh <path> destroy_refresh_build"
 echo "[3] ./test_rerun.sh <path> refresh"
 read -p "Enter choice [1/4]:  " MODE_ID
 if [ "$MODE_ID" == "1" ]; then
-    ;
+    echo "-"
 elif [ "$MODE_ID" == "2" ]; then
     export TEST_RERUN_NO_DESTROY=TRUE
 elif [ "$MODE_ID" == "3" ]; then
