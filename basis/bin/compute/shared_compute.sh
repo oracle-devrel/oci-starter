@@ -137,7 +137,9 @@ install_java() {
             # cd -
             # sudo update-alternatives --set java $JAVA_LATEST_PATH/bin/java
         fi
+        export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
     fi
+    echo "export JAVA_HOME=${JAVA_HOME}" >> $HOME/.bashrc    
 
     # JMS agent deploy (to fleet_ocid )
     if [ -f jms_agent_deploy.sh ]; then
