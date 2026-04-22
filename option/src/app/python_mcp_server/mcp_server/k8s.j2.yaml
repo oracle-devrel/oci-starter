@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ prefix }}-dep
+  labels:
+      app: {{ prefix }}-mcp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ prefix }}-mcp-server
+  template:
+    metadata:
+      labels:
+        app: {{ prefix }}-mcp-server
+    spec:
+      containers:
+      - name: app
+        image: ##DOCKER_PREFIX##/{{ prefix }}-mcp-server:##DOCKER_IMG_VERSION##
+        ports:
+        - containerPort: 2025
+          name: app-port
+        env:
+        - name: DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: db_url
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: db_user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: db_password
+#        - name: POD_IP
+#          valueFrom:
+#            fieldRef:
+#              fieldPath: status.podIP
+{%- if db_type == "nosql" %}
+        - name: TF_VAR_compartment_ocid
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: TF_VAR_compartment_ocid
+        - name: TF_VAR_nosql_endpoint
+          valueFrom:
+            secretKeyRef:
+              name: {{ prefix }}-db-secret
+              key: TF_VAR_nosql_endpoint
+{%- endif %}
+      imagePullSecrets:
+      - name: ocirsecret        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ prefix }}-mcp-server-service
+spec:
+  selector:
+    app: {{ prefix }}-mcp-server
+  ports:
+  - name: http-service-port
+    protocol: TCP
+    port: 2025
+    targetPort: app-port
+---

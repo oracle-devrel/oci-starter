@@ -68,6 +68,7 @@ curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable
 chmod +x kubectl
 echo "source <(kubectl completion bash)" >> ~/.bashrc
 echo "shopt -s direxpand" >> ~/.bashrc
+echo "export LC_CTYPE=en_US.UTF-8" >> ~/.bashrc
 
 # Helm
 cd /tmp

@@ -65,6 +65,14 @@ loop_db() {
   fi  
   OPTION_DB=none
   loop_shape
+
+  # Build Host Bastion
+  if [ "$OPTION_DEPLOY" == "public_compute" ] || [ "$OPTION_DEPLOY" == "kubernetes" ]; then
+    OPTION_BUILD_HOST=bastion 
+    OPTION_DB=atp 
+    loop_shape
+    OPTION_BUILD_HOST=terraform
+  fi  
 }
 
 loop_java_vm() {
@@ -124,7 +132,16 @@ loop_lang () {
   OPTION_LANG=node 
   loop_db
   OPTION_LANG=python
+  OPTION_PYTHON_FRAMEWORK=fastapi
   loop_db
+  if [ "$OPTION_DEPLOY" != "function" ]; then
+    OPTION_PYTHON_FRAMEWORK=langgraph
+    OPTION_DB=atp 
+    loop_ui
+    OPTION_PYTHON_FRAMEWORK=responses
+    loop_ui
+    OPTION_PYTHON_FRAMEWORK=fastapi
+  fi
   OPTION_LANG=dotnet
   loop_db
   # XXXX ORDS works only with ATP (DBSystems is not test/done)

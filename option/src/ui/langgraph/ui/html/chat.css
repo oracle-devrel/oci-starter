@@ -82,6 +82,7 @@ body {
     border-bottom-right-radius: 18px;
     border-top-right-radius: 18px;
     border-top-left-radius: 18px;
+    overflow: auto;    
 }
 
 form {
@@ -259,9 +260,11 @@ button img {
     border-radius: 6px;
     cursor: pointer;
 }
+
 .hamburger:focus {
     outline: 1px solid #000;
 }
+
 nav {
     position: fixed;
     top: 0;
@@ -273,34 +276,66 @@ nav {
     transition: left .3s;
     border-top: solid 70px black;
 }
+
 nav.open {
     left: 0;
+    z-index: 2;
 }
+
 nav ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
+
 nav .section-title {
     font-weight: bold;
     margin: 16px 0 4px 18px;
     font-size: 1rem;
     color: #005aad;
 }
+
 nav li {
     padding: 12px 20px;
     cursor: pointer;
 }
+
 nav li:focus,
 nav li:hover {
     background: #efefef;
     outline: none;
 }
+
+nav .menu-language {
+    padding: 8px 20px 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+nav .menu-language label {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+nav .menu-language select {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 0.95rem;
+    background: #fff;
+}
+
+nav .menu-language select:focus {
+    outline: 1px solid #005aad;
+}
+
 #reset {
     position: fixed;
     top: 10px;
     right: 10px;    
 }
+
 #reset:hover {
     background: #fff;
 }

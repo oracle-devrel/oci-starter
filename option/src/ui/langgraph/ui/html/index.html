@@ -16,6 +16,11 @@
         <ul id="agentList"></ul>
         <div class="section-title">Users</div>
         <ul id="userList"></ul>
+        <div class="section-title">Language</div>
+        <ul id="languageList">
+            <li data-lang="en" aria-current="true" tabindex="0">English</li>
+            <li data-lang="fr" aria-current="false" tabindex="0">Français</li>
+        </ul>
     </nav>
         <div id="chat-container">
             <h2>How can I help ?</h2>
@@ -23,13 +28,13 @@
             <div id="spinner-container">
             </div>
         </div>    
-        <div id="form-container">
-            <form id="chat-form">
-                <textarea id="chat-input" rows="1" placeholder="Type your message..." autocomplete="off" required></textarea>
-                <button id="mic-button" type="button" title="Voice input" aria-label="Record voice message"><img src="images/microphone.png" alt="Microphone"></button>
-                <button type="submit"><img src="images/send.png"></button>
-            </form>
-        </div>
+    <div id="form-container">
+        <form id="chat-form">
+            <textarea id="chat-input" rows="1" placeholder="Type your message..." autocomplete="off" required></textarea>
+            <button id="mic-button" type="button" title="Voice input" aria-label="Record voice message"><img src="images/microphone.png" alt="Microphone"></button>
+            <button type="submit"><img src="images/send.png"></button>
+        </form>
+    </div>
     <div id="currentDisplay"></div>
     <div id="reset"><img src="images/edit.png"></div>
     <button class="hamburger" aria-label="Open accessible agents menu" aria-controls="agentMenu" aria-expanded="false">

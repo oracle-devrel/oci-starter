@@ -7,4 +7,4 @@ export PATH=~/.local/bin/:$PATH
 
 # Default port is 2025
 source myenv/bin/activate
-python responses.py 2>&1 | tee responses.log
+python responses.py 2>&1 | tee rest.log

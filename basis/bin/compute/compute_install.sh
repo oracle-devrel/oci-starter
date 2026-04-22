@@ -18,6 +18,15 @@ if ! grep -q "export LC_CTYPE" $HOME/.bashrc; then
     echo "export LC_CTYPE=en_US.UTF-8" >> $HOME/.bashrc
     echo "shopt -s direxpand" >> $HOME/.bashrc
 
+    if [ "$TF_VAR_your_public_ssh_key" != "" ]; then 
+        if ! grep -q "$TF_VAR_your_public_ssh_key" $HOME/.ssh/authorized_keys; then
+            echo >> $HOME/.ssh/authorized_keys
+            echo "$TF_VAR_your_public_ssh_key" >> $HOME/.ssh/authorized_keys
+        else 
+            echo "Key was already added"
+        fi
+    fi 
+
     # Disable SELinux
     # XXXXXX Since OL8, the service does not start if SELINUX=enforcing XXXXXX
     sudo setenforce 0

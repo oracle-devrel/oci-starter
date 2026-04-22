@@ -1,23 +1,26 @@
 import json
 import os
-import uuid
 from typing import Any
 
 from fastapi import FastAPI, Request
 from openai import OpenAI
 from fastapi.responses import StreamingResponse
 
-# Defaults can be overridden by AGENT_HUB_REGION.
+# OCI Auth
+from oci_genai_auth import OciInstancePrincipalAuth
+import httpx
+
 REGION = os.getenv("TF_VAR_region")
+if REGION == "eu-amsterdam-1":
+    REGION = "eu-frankfurt-1"
 MODEL_ID = "openai.gpt-oss-120b"
 # REGION = "us-chicago-1"
 # MODEL_ID = "xai.grok-4-fast-non-reasoning"
 
-BASE_URL = f"https://inference.generativeai.{REGION}.oci.oraclecloud.com/20231130/openai/v1"
-REGION = os.getenv("TF_VAR_region")
 PROJECT_OCID = os.environ.get("TF_VAR_project_ocid")
-GENAI_API_KEY = os.environ.get("TF_VAR_genai_api_key")
+COMPARTMENT_OCID = os.environ.get("TF_VAR_compartment_ocid")
 MCP_SERVER_URL = os.environ.get("MCP_SERVER_URL")
+
 SYSTEM_PROMPT = """
 INSTRUCTIONS:
 - Assist ONLY with research-related tasks, DO NOT do any math.
@@ -25,18 +28,24 @@ INSTRUCTIONS:
 - If not, use MarkDown to give a clear and short answer to the user.
 - When showing an agenda, use colored icons to show the importance based on customer score (free, low, medium, high)
 """
+
 client = OpenAI(
-    base_url=BASE_URL,
-    api_key=GENAI_API_KEY,
-    project=PROJECT_OCID,
+    base_url=f"https://inference.generativeai.{REGION}.oci.oraclecloud.com/20231130/openai/v1",
+    api_key="unused",
+    http_client=httpx.Client(
+        auth=OciInstancePrincipalAuth(),
+        headers={
+            "opc-compartment-id": COMPARTMENT_OCID,
+        },
+    ),
+    project=PROJECT_OCID
 )
+
 
 app = FastAPI()
 
-
 def log(*args, **kwargs):
     print(*args, **kwargs, flush=True)
-
 
 def get_tools() -> list[dict[str, Any]]:
     if not MCP_SERVER_URL:

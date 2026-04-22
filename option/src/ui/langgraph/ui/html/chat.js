@@ -39,7 +39,7 @@ chatInput.addEventListener('keydown', (e) => {
 function autoGrowTextarea() {
     if (!chatInput) return;
     chatInput.style.height = 'auto';
-    chatInput.style.height = `${chatInput.scrollHeight-36}px`;
+    chatInput.style.height = `${chatInput.scrollHeight - 36}px`;
 }
 chatInput.addEventListener('input', autoGrowTextarea);
 
@@ -52,16 +52,15 @@ function safeParse(json) {
     catch (e) { return {}; }
 }
 
-async function renderContent(input) 
-{
+async function renderContent(input) {
     const MERMAID_FENCE_RE = /```(?:\s*)mermaid\s*\n([\s\S]*?)\n```/i;
     if (MERMAID_FENCE_RE.test(input)) {
         const m = input.match(/```mermaid\s*([\s\S]*?)\s*```/i);
         const m2 = m[1].trim();
-        const value = await mermaid.render("diagram",m2);
+        const value = await mermaid.render("diagram", m2);
         return value.svg;
     } else {
-       return renderMarkdown(input);
+        return renderMarkdown(input);
     }
 }
 
@@ -114,19 +113,19 @@ async function renderMessage(msgObj) {
     // Human message
     if (msgObj.type === 'human') {
         innerHTML = `<div class="bubble"><div class="meta">You</div>${renderMarkdown(msgObj.content)}</div>`;
-        } else if (msgObj.type === 'ai') {
-            if (msgObj.content) {
-                innerHTML = `<div class="bubble"><div class="meta">AI</div>${await renderContent(msgObj.content)}</div>`;
-            } else if (msgObj.tool_calls && msgObj.tool_calls.length > 0) {
-                const toolNames = msgObj.tool_calls.map(t => t.name).join(' - ');
-                let bubble = `<div class="bubble"><div class="meta">Tool Calls - ${toolNames}</div>`;
-                let tools = msgObj.tool_calls.map(t =>
-                    `<tr><td>${t.name}</td><td>${JSON.stringify(t.args)}</td></tr>`
-                ).join('');
-                bubble += `<table class='tools-table'><thead><tr><th>Name</th><th>Arguments</th></tr></thead><tbody>${tools}</tbody></table>`;
-                innerHTML = bubble;
-            }
-        } else if (msgObj.type === 'tool') {
+    } else if (msgObj.type === 'ai') {
+        if (msgObj.content) {
+            innerHTML = `<div class="bubble"><div class="meta">AI</div>${await renderContent(msgObj.content)}</div>`;
+        } else if (msgObj.tool_calls && msgObj.tool_calls.length > 0) {
+            const toolNames = msgObj.tool_calls.map(t => t.name).join(' - ');
+            let bubble = `<div class="bubble"><div class="meta">Tool Calls - ${toolNames}</div>`;
+            let tools = msgObj.tool_calls.map(t =>
+                `<tr><td>${t.name}</td><td>${JSON.stringify(t.args)}</td></tr>`
+            ).join('');
+            bubble += `<table class='tools-table'><thead><tr><th>Name</th><th>Arguments</th></tr></thead><tbody>${tools}</tbody></table>`;
+            innerHTML = bubble;
+        }
+    } else if (msgObj.type === 'tool') {
         let data = msgObj.artifact?.structured_content ?? {};
         let bubble = "<div class='bubble'><div class='meta'>Tool - " + msgObj.name + "</div>";
         if (data?.response) {
@@ -150,8 +149,8 @@ function startSSE(reqBody, onMessage, onDone) {
     // SSE with POST is non-standard. We'll use fetch + stream reader
     fetch(url, {
         method: "POST",
-        headers: { 
-            "Content-Type": "application/json", 
+        headers: {
+            "Content-Type": "application/json",
             "Authorization": `User ${currentUser}`,
             "X-CSRF-TOKEN": csrfToken
         },
@@ -209,7 +208,7 @@ async function getThreadId() {
         const resp = await fetch(url, {
             method: "POST",
             body: "{}",
-            headers: { 
+            headers: {
                 "Authorization": `User ${currentUser}`,
                 "X-CSRF-TOKEN": csrfToken
             },
@@ -298,7 +297,7 @@ function renderBackendList() {
 function renderUserList() {
     const userList = document.getElementById('userList');
     userList.innerHTML = '';
-    if( csrfToken=="" ) {
+    if (csrfToken == "") {
         users.forEach(user => {
             const li = document.createElement('li');
             li.textContent = user;
@@ -310,7 +309,7 @@ function renderUserList() {
     } else {
         const li = document.createElement('li');
         li.textContent = "Logout";
-        li.addEventListener('click', () => { 
+        li.addEventListener('click', () => {
             /* window.location.href = '/openid/logout?postLogoutUrl='+window.location.origin+'/openid/chat.html'; */
             window.location.href = '/openid/logout?postLogoutUrl=https://www.oracle.com';
         });
@@ -407,12 +406,13 @@ async function fetchUserInfo() {
     });
     if (!response.ok) throw new Error('Failed to fetch UserInfo');
     csrfToken = response.headers.get('x-csrf-token');
-    console.log( `Found x-csrf-token ${csrfToken}` )    
+    console.log(`Found x-csrf-token ${csrfToken}`)
     let data = await response.json();
     currentUser = data.sub;
     updateDisplay();
 }
 
+let currentLang = 'en';
 let recognition = null;
 
 function initRecognition() {
@@ -425,11 +425,11 @@ function initRecognition() {
     recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = 'en-US';
+    recognition.lang = getLangCode(currentLang);
 
     recognition.onstart = () => {
         micButton.classList.add('recording');
-        chatInput.placeholder = 'Listening...';
+        chatInput.placeholder = getPlaceholder();
     };
 
     recognition.onresult = (event) => {
@@ -443,13 +443,38 @@ function initRecognition() {
     recognition.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
         micButton.classList.remove('recording');
-        chatInput.placeholder = 'Type your message...';
+        chatInput.placeholder = getPlaceholder();
     };
 
     recognition.onend = () => {
         micButton.classList.remove('recording');
-        chatInput.placeholder = 'Type your message...';
+        chatInput.placeholder = getPlaceholder();
     };
+}
+
+function getLangCode(lang) {
+    return lang === 'fr' ? 'fr-FR' : 'en-US';
+}
+
+function getPlaceholder() {
+    return currentLang === 'fr' ? 'Écoute...' : 'Listening...';
+}
+
+function updateLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.querySelector('h2').textContent = lang === 'fr'
+        ? 'Comment puis-je vous aider ?'
+        : 'How can I help ?';
+    chatInput.placeholder = lang === 'fr' ? 'Tapez votre message...' : 'Type your message...';
+    if (recognition) {
+        recognition.lang = getLangCode(lang);
+    }
+
+    const languageItems = document.querySelectorAll('#languageList li');
+    languageItems.forEach((item) => {
+        item.setAttribute('aria-current', item.dataset.lang === lang ? 'true' : 'false');
+    });
 }
 
 micButton.addEventListener('click', (e) => {
@@ -459,15 +484,25 @@ micButton.addEventListener('click', (e) => {
     }
 });
 
+// Language selector list in menu
+document.addEventListener('DOMContentLoaded', () => {
+    const languageItems = document.querySelectorAll('#languageList li');
+    languageItems.forEach((item) => {
+        item.addEventListener('click', () => {
+            updateLanguage(item.dataset.lang);
+        });
+    });
+});
+
 // On page load
 // If the URL is in openid, get the userinfo from IDCS via APIGW
 
 
 (async function init() {
     if (window.location.pathname.startsWith('/openid')) {
-        await fetchUserInfo(); 
-    }            
-    console.log( `before init x-csrf-token ${csrfToken}` );
+        await fetchUserInfo();
+    }
+    console.log(`before init x-csrf-token ${csrfToken}`);
     thread_id = await getThreadId();
     last_message_id = 0;
     if (!thread_id) {

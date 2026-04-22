@@ -196,9 +196,10 @@ def language_rules():
         params.pop('java_vm')
         params.pop('java_version')
     elif params.get('java_framework') == 'helidon' and params.get('java_version') != '25':
-        warning('Helidon only supports Java 17. Forcing Java version to 25')
+        warning('Helidon only supports Java 17+. Forcing Java version to 25')
         params['java_version'] = 25
-
+    if params.get('python_framework') == 'responses':
+        params['project_ocid'] = TO_FILL
 
 def kubernetes_rules():
     if 'deploy_type' in params:
@@ -293,6 +294,11 @@ def tls_rules():
             params['certificate_dir'] = TO_FILL
 
 
+def build_host_rules():
+    if params.get('build_host')=='bastion':
+        params['your_public_ssh_key'] = TO_FILL
+
+
 def apply_rules():
     zip_rules()
     group_common_rules()
@@ -305,6 +311,7 @@ def apply_rules():
     license_rules()
     shape_rules()
     tls_rules()
+    build_host_rules()
 
 
 def error(msg):
@@ -459,17 +466,20 @@ Check LICENSE file (Apache 2.0)
 ### Usage
 
 ### Commands
-- starter.sh         : Show the menu
-- starter.sh help    : Show the list of commands
-- starter.sh build   : Build the whole program: Run Terraform, Configure the DB, Build the App, Build the UI
-- starter.sh destroy : Destroy the objects created by Terraform
-- starter.sh env     : Set the env variables in BASH Shell
-
+- starter.sh             : Show the menu
+- starter.sh help        : Show the list of commands
+- starter.sh build       : Build the whole program: Run Terraform, Configure the DB, Build the App, Build the UI
+- starter.sh destroy     : Destroy the objects created by Terraform
+- starter.sh env         : Set the env variables in BASH Shell
+- starter.sh ssh bastion : SSH to the Bastion
+- ...
+                    
 ### Directories
 - src           : Sources files
-    - app       : Source of the Backend Application
-    - ui        : Source of the User Interface
-    - db        : SQL files of the database
+    - app       : Source of the Application
+        - db    : Database SQL files
+        - rest  : Backend - REST Application
+        - ui    : Frontend - User Interface
     - terraform : Terraform scripts'''
                 ]
         if params['deploy_type'] in [ 'public_compute', 'private_compute', 'instance_pool' ]:
@@ -549,7 +559,7 @@ def env_sh_contents():
     tfvars.append(f'prefix="{prefix}"')
 
     for param in env_params:
-        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model", "certificate_email", "dns_name","dns_zone_name", "tls"]:
+        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model", "certificate_email", "dns_name","dns_zone_name", "tls", "your_public_ssh_key"]:
             to_fill_params.append(param)
             tfvars.append('')
             tf_var_comment(tfvars, param)
@@ -577,7 +587,8 @@ table_comments = {
     'certificate_email': ['SSL/TLS - Email used to create the certificate'],
     'dns_name': ['SSL/TLS - Webserver DNS Name used by the installation (ex: www.mydomain.com)'],
     'dns_zone_name': ['SSL/TLS - OCI DNS Zone Name (ex:mydomain.com)'],
-    'tls': ['SSL/TLS - Method to create the certificate (new_http_01 or new_dns_01 or existing_ocid) ']  
+    'tls': ['SSL/TLS - Method to create the certificate (new_http_01 or new_dns_01 or existing_ocid) '], 
+    'your_public_ssh_key': ['Your ssh public key (associated with your private key stored in your laptop) that will be added in .ssh/authorized host in the bastion. Goal: clone the git repository on your laptop for Vibe Coding']
 }
 
 def tf_var_comment(contents, param):
@@ -863,9 +874,18 @@ def create_output_dir():
         if params.get('deploy_type') != "function" and params['language'] == "python":
             app = "python_" + params['python_framework']
             output_copy_tree("option/src/app/"+app, "src/app")
+
+            # Clone the generic app/rest directory in app/mcp_server 
             if params.get('python_framework') in [ 'langgraph', 'responses' ]:
+                output_mkdir("src/app/mcp_server")
+                # Base the MCP_SERVER on basis/app/rest and app/python/rest (to avoid to duplicate files)
+                output_copy_tree("basis/src/app/rest", "src/app/mcp_server")
+                output_copy_tree("option/src/app/python/rest", "src/app/mcp_server")
                 output_copy_tree("option/src/app/python_mcp_server", "src/app")
 
+            # OpenAI Responses API
+            if params.get('python_framework') == 'responses':
+                cp_terraform("responses.tf")
 
         # Overwrite the generic version (ex for mysql)
         family_dir = app+"_"+db_family

@@ -122,7 +122,7 @@ output "bastion_ip" {
 resource "oci_identity_policy" "starter_bastion_policy" {
     count          = var.no_policy=="true" ? 0 : 1      
     provider       = oci.home    
-    name           = "${var.prefix}-bastion-policy"
+    name           = "${var.prefix}-bastion-policy-${random_string.id.result}"
     description    = "${var.prefix} bastion policy"
     compartment_id = local.lz_serv_cmp_ocid
 
