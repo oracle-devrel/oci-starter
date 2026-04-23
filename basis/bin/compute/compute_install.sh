@@ -34,16 +34,18 @@ if ! grep -q "export LC_CTYPE" $HOME/.bashrc; then
 
     # Resize the boot volume (if >47GB)
     sudo /usr/libexec/oci-growfs -y
+fi
 
-    # Build_host = bastion
+if ! grep -q "# Build Bastion" $HOME/.bashrc; then
     if [ "$TF_VAR_build_host" == "bastion" ]; then 
-        # Kubernetes
-        if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then 
+        echo "# Build Bastion" >> $HOME/.bashrc# Build_host = bastion
+        # Kubernetes 
+        if [ "$TF_VAR_oke_ocid" != "" ]; then 
             install_docker_tools
             echo "export KUBECONFIG=$HOME/compute/kubeconfig_starter" >> $HOME/.bashrc
         fi 
-        # Kubernetes
-        if [ "$TF_VAR_language" == "java" ]; then 
+        # Java
+        if [ "$TF_VAR_language" == "java" ] || [ "$TF_VAR_oke_ocid" != "" ]; then 
             install_java
         fi         
         # Create a git branch 
