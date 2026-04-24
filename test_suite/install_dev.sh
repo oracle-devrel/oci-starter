@@ -84,8 +84,8 @@ sudo dnf install -y tmux
 
 # VIM
 cat >> $HOME/.vimrc <<'EOT' 
-set tabstop=2
+set tabstop=4
 set expandtab
-set shiftwidth=2
+set shiftwidth=4
 set paste
 EOT
