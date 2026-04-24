@@ -27,7 +27,7 @@ for APP_DIR in `app_dir_list`; do
         # Database
         title "Rebuild - $APP_NAME: Install"
         ${APP_DIR}/install.sh
-    elif [ -f $APP_DIR/install.sh ] && [ is_deploy_compute ]; then
+    elif [ -f $APP_DIR/install.sh ] && is_deploy_compute; then
         # Build in terraform - compute 
         title "Rebuild: $APP_NAME: Install"
         ${APP_DIR}/install.sh

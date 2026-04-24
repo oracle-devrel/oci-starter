@@ -229,7 +229,9 @@ install_python() {
     sudo dnf install -y python3.12 python3.12-pip python3-devel wget
     sudo update-alternatives --set python /usr/bin/python3.12
     curl -LsSf https://astral.sh/uv/install.sh | sh
-    uv venv myenv
+    if [ ! -d myenv ]; then
+        uv venv myenv
+    fi
     source myenv/bin/activate
     if [ -f requirements.txt ]; then 
       uv pip install -r requirements.txt
@@ -299,6 +301,8 @@ install_instant_client() {
     fi
 }
 export -f install_instant_client   
+
+# -- create_self_signed_ip_certificate --------------------------------------
 
 create_self_signed_ip_certificate()
 {
@@ -370,7 +374,8 @@ EOF
 }
 export -f create_self_signed_ip_certificate 
 
-# -- Install NGINX  ------------------------------------------------------------------
+# -- install_ngnix ----------------------------------------------------------
+
 install_ngnix() {
     title "NGINX"
     sudo dnf install nginx -y > /tmp/dnf_nginx.log
@@ -533,6 +538,8 @@ is_deploy_compute() {
         return 1
     fi
 }
+
+export -f is_deploy_compute
 
 # -- build_ui ---------------------------------------------------------------
 build_ui() {
