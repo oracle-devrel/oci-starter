@@ -116,7 +116,6 @@ install_java() {
             # sudo update-alternatives --set native-image $JAVA_HOME/lib/svm/bin/native-image
         fi   
         sudo update-alternatives --set java $JAVA_HOME/bin/java
-        echo "export JAVA_HOME=${JAVA_HOME}" >> $HOME/.bashrc
     else
         # JDK 
         # Needed due to concurrency
@@ -244,7 +243,9 @@ export -f install_python
 # -- install_libreoffice  ---------------------------------------------------
 install_libreoffice() {
     export STABLE_VERSIONS=`curl -s https://download.documentfoundation.org/libreoffice/stable/`
-    export LIBREOFFICE_VERSION=`echo $STABLE_VERSIONS | sed 's/.*<td valign="top">//' | sed 's/\/<\/a>.*//' | sed 's/.*\/">//'`
+    # export LIBREOFFICE_VERSION=`echo $STABLE_VERSIONS | sed 's/.*<td valign="top">//' | sed 's/\/<\/a>.*//' | sed 's/.*\/">//'`
+    # Version 26.2 is incompatible with RHEL8...
+    export LIBREOFFICE_VERSION=`echo $STABLE_VERSIONS | sed 's/.*>25.8/25.8/' | sed 's/\/<\/a>.*//' | sed 's/.*\/">//'`
     echo LIBREOFFICE_VERSION=$LIBREOFFICE_VERSION
     cd /tmp
     export LIBREOFFICE_TGZ="LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz"

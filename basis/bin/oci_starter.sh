@@ -14,6 +14,7 @@ export TARGET_DIR=$PROJECT_DIR/target
 mkdir -p $TARGET_DIR/logs
 if [ "$DATE_POSTFIX" == "" ]; then
     DATE_POSTFIX=`date '+%Y%m%d-%H%M%S'`
+    START_EPOCH=`date '+%s'`
 fi
 set -o pipefail
 
@@ -210,9 +211,8 @@ else
     exit 1
 fi
 
-created_epoch=$(date -d "$DATE_POSTFIX" +%s)
 now_epoch=$(date +%s)
-elapsed=$((now_epoch - created_epoch))
+elapsed=$((now_epoch - START_EPOCH))
 echo "Elapsed time: ${elapsed} seconds"
 
 # Return the exit code 
