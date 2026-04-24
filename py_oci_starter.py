@@ -908,7 +908,7 @@ def create_output_dir():
             if params.get('java_vm') == "graalvm":
                 params['java_docker'] = 'container-registry.oracle.com/graalvm/jdk:25'
             else:
-                params['java_docker'] = 'eclipse-temurin:25'
+                params['java_docker'] = 'container-registry.oracle.com/eclipse-temurin:25'
 
         # Check if any script exists that is NOT build_rest.sh
         has_build_rest = False
