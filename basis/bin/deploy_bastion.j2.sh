@@ -29,18 +29,18 @@ function scp_bastion() {
         if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
             cp $TARGET_DIR/kubeconfig_starter $BASTION_DIR/compute
         fi
-        {%- if test_name %}
-        # Get Lock CleanUp
-        ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$BASTION_IP "bash compute/test_bastion_lock.sh           
-        {%- endif %}
-
     elif [ -d src/app/db ]; then
         cp -R src/app/db $BASTION_DIR/app/.
     fi
     cp $TARGET_DIR/tf_env.sh $BASTION_DIR/compute/.
 
-    scp_or_rsync $BASTION_DIR/app
     scp_or_rsync $BASTION_DIR/compute    
+    {%- if test_name %}
+    # Get Lock CleanUp
+    ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$BASTION_IP "bash compute/test_bastion_lock.sh $TEST_NAME"          
+    {%- endif %}
+    scp_or_rsync $BASTION_DIR/app
+
 }
 
 

@@ -12,6 +12,7 @@ while [ "$ELAPSED" -lt "$TIMEOUT" ]; do
         # Try to create the lock atomically
         if ( set -o noclobber; > "$LOCKFILE" ) 2> /dev/null; then
             echo "Lock acquired."
+            echo "$1" >> bastion_lock_history
             rm -Rf $HOME/app/*
             exit 0
         else
