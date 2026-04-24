@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+cd $HOME
 
-LOCKFILE="$HOME/bastion_lock"
+LOCKFILE="bastion_lock"
 TIMEOUT=300
 WAIT=5
 ELAPSED=0
