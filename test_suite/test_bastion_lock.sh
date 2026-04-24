@@ -12,6 +12,7 @@ while [ "$ELAPSED" -lt "$TIMEOUT" ]; do
         # Try to create the lock atomically
         if ( set -o noclobber; > "$LOCKFILE" ) 2> /dev/null; then
             echo "Lock acquired."
+            rm -Rf $HOME/app/*
             exit 0
         else
             echo "Race condition, retrying..."
