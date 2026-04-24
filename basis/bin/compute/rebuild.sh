@@ -42,6 +42,10 @@ for APP_DIR in `app_dir_list`; do
     fi
 done
 
+if [ -f $HOME/bastion_lock ]; then
+    rm $HOME/bastion_lock
+fi
+
 end_time=$(date +%s)
 echo
 echo "<rebuild.sh> Time taken: $((end_time - start_time)) seconds"
