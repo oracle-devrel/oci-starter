@@ -17,12 +17,12 @@ if ! grep -q "export LC_CTYPE" $HOME/.bashrc; then
     # Set VI and NANO in utf8
     echo "export LC_CTYPE=en_US.UTF-8" >> $HOME/.bashrc
     echo "shopt -s direxpand" >> $HOME/.bashrc
-    cat >> $HOME/.vimrc <<'EOT' 
+    cat >> $HOME/.vimrc <<EOT
 set tabstop=4
 set expandtab
 set shiftwidth=4
 set paste
-EOT    
+EOT
 
     if [ "$TF_VAR_your_public_ssh_key" != "" ]; then 
         if ! grep -q "$TF_VAR_your_public_ssh_key" $HOME/.ssh/authorized_keys; then

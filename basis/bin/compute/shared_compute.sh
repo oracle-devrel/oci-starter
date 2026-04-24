@@ -476,7 +476,9 @@ copy_replace_apply_target_oke() {
 export -f copy_replace_apply_target_oke 
 
 # -- docker_login -----------------------------------------------------------
+
 docker_login() {
+    echo "<docker_login>"
     get_docker_prefix
     # Login only if needed
     if ! docker system info 2>/dev/null | grep -q "Username"; then
@@ -484,6 +486,7 @@ docker_login() {
     fi
     exit_on_error "Docker Login"
 }
+export -f docker_login
 
 # -- ocir_docker_push_app -------------------------------------------------------
 ocir_docker_push_app() {
