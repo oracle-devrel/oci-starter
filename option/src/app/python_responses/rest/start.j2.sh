@@ -13,4 +13,4 @@ export MCP_SERVER_URL="https://$APIGW_HOSTNAME/$TF_VAR_prefix/mcp_server/mcp"
 
 # Default port is 2025
 source myenv/bin/activate
-python responses.py 2>&1 | tee rest.log
+python rest.py 2>&1 | tee rest.log
