@@ -5,10 +5,10 @@ mermaid.initialize({ startOnLoad: false });
 
 // -- Variables ----------------------------------------------------------------- 
 
-let BASE_URL = '/app';
+let BASE_URL = 'app';
 let currentBackend = 'LangGraph';
 const backends = [
-    { name: 'LangGraph', baseUrl: '/app' }
+    { name: 'LangGraph', baseUrl: 'app' }
 ];
 let currentAgent = 'agent';
 let currentUser = 'customer';
