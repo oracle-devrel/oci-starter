@@ -66,7 +66,6 @@ if [ ! -f $KUBECONFIG ]; then
                 sleep 10
             fi
         done
-
         date
         kubectl get all -n ingress-nginx
         sleep 5
@@ -74,6 +73,9 @@ if [ ! -f $KUBECONFIG ]; then
     else
         echo "OKE Deploy: Skipping creation of ingress" 
     fi  
+fi
+if ! grep -q "TF_VAR_ingress_ip" $TARGET_DIR/tf_env.sh; then
+    echo "export TF_VAR_ingress_ip=$TF_VAR_ingress_ip" >> $TARGET_DIR/tf_env.sh
 fi
 
 # Create secrets
