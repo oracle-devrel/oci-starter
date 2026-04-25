@@ -74,7 +74,11 @@ if [ ! -f $KUBECONFIG ]; then
         echo "OKE Deploy: Skipping creation of ingress" 
     fi  
 fi
+
 if ! grep -q "TF_VAR_ingress_ip" $TARGET_DIR/tf_env.sh; then
+    if [ "$TF_VAR_ingress_ip" == "" ]; then
+        export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
+    fi 
     echo "export TF_VAR_ingress_ip=$TF_VAR_ingress_ip" >> $TARGET_DIR/tf_env.sh
 fi
 
