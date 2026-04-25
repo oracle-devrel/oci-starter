@@ -51,16 +51,16 @@ if [ "$UI_URL" != "" ]; then
 
         # Check (Same test is also done test_suite_shared)
         if grep -qiE "deptno|department" $TMP_PATH/result_dept.json; then
-            echo -e "\u2705 deptno detected"
+            echo -e "\u2705 deptno or department detected"
             break
         else 
-            echo -e "Waiting 5 secs: deptno not found"
+            echo -e "Waiting 5 secs: deptno or department not found"
         fi
         sleep 5  
         x=$(( $x + 1 ))
     done
     if [ "$x" == "20" ]; then
-        echo -e "\u2705 deptno not detected in $UI_URL/app/dept"  
+        echo -e "\u2705 deptno or department not detected in $UI_URL/app/dept"  
     fi
     echo "See $TMP_PATH/result_dept.json"
 
