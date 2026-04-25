@@ -82,8 +82,6 @@ spec:
 {%- if python_framework == "langgraph" %}
         - name: MCP_SERVER_URL
           value: "http://{{ prefix }}-mcp-server-service:2025/mcp"
-        - name: TF_VAR_region
-          value: "##TF_VAR_region##"
 {%- elif python_framework == "responses" %}
         - name: TF_VAR_project_ocid
           valueFrom:

@@ -325,6 +325,11 @@ if [ -f $STATE_FILE ]; then
         else
             export TF_VAR_docker_image_rest="busybox"      
         fi
+        if [ -f $TARGET_DIR/docker_image_mcp_server.txt ]; then
+            export TF_VAR_docker_image_mcp_server=`cat $TARGET_DIR/docker_image_mcp_server.txt`
+        else
+            export TF_VAR_docker_image_mcp_server="busybox"      
+        fi        
     fi
 
     # export all OUTPUTS of the terraform file
