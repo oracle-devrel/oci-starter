@@ -105,12 +105,12 @@ build_test () {
         echo -e "\u274C ERROR: No file $TMP_PATH/result_html.html"
     fi
 
-    mv $TMP_PATH/result_html.html ${TEST_DIR}_${BUILD_ID}_result_html.html 2>/dev/null;
-    mv $TMP_PATH/result_dept.json ${TEST_DIR}_${BUILD_ID}_result_dept.json 2>/dev/null;
-    mv $TMP_PATH/result_info.html ${TEST_DIR}_${BUILD_ID}_result_info.html 2>/dev/null;
-    mv $TMP_PATH/result_html.log  ${TEST_DIR}_${BUILD_ID}_result_html.log 2>/dev/null;
-    mv $TMP_PATH/result_dept.log  ${TEST_DIR}_${BUILD_ID}_result_dept.log 2>/dev/null;
-    mv $TMP_PATH/result_info.log  ${TEST_DIR}_${BUILD_ID}_result_info.log 2>/dev/null;
+    cp $TMP_PATH/result_html.html ${TEST_DIR}_${BUILD_ID}_result_html.html 2>/dev/null;
+    cp $TMP_PATH/result_dept.json ${TEST_DIR}_${BUILD_ID}_result_dept.json 2>/dev/null;
+    cp $TMP_PATH/result_info.html ${TEST_DIR}_${BUILD_ID}_result_info.html 2>/dev/null;
+    cp $TMP_PATH/result_html.log  ${TEST_DIR}_${BUILD_ID}_result_html.log 2>/dev/null;
+    cp $TMP_PATH/result_dept.log  ${TEST_DIR}_${BUILD_ID}_result_dept.log 2>/dev/null;
+    cp $TMP_PATH/result_info.log  ${TEST_DIR}_${BUILD_ID}_result_info.log 2>/dev/null;
 
     if [ "$CSV_JSON_OK" == "1" ]; then
         test_run_100
