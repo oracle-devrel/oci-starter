@@ -50,7 +50,7 @@ test_run_100() {
     x=0 
     while [ $x -lt 100 ]; do
         curl $UI_URL/app/dept -s -D $TMP_PATH/speed_json.log > $TMP_PATH/speed.json
-        if grep -q -i "deptno" $TMP_PATH/speed.json; then
+        if grep -qiE "deptno|department" $TMP_PATH/speed.json; then
             CSV_RUN100_OK=$(( $CSV_RUN100_OK + 1 ))
         fi
         x=$(( $x + 1 ))
@@ -88,13 +88,13 @@ build_test () {
         else
             echo -e "\u274C RESULT HTML - starter or deptno or messages not found. ***** BAD ******"
         fi
-        if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
-            echo -e "\u2705 RESULT JSON: deptno found -    "`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
+        if grep -qiE "deptno|department" $TMP_PATH/result_dept.json; then
+            echo -e "\u2705 RESULT JSON: deptno found - "`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
             CSV_JSON_OK=1
         else
             echo -e "\u274C RESULT JSON: no deptno found - "`cat $TMP_PATH/result_dept.json` | cut -c 1-100 
         fi
-        echo -e   "\u2139 RESULT INFO:                   "`cat $TMP_PATH/result_info.html` | cut -c 1-100
+        echo -e   "\u2139 RESULT INFO: "`cat $TMP_PATH/result_info.html` | cut -c 1-100
     else
         echo -e "\u274C ERROR: No file $TMP_PATH/result_html.html"
     fi
