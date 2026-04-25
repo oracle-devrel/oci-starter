@@ -16,6 +16,7 @@ REGION = os.getenv("TF_VAR_region")
 MCP_SERVER_URL = os.getenv("MCP_SERVER_URL") or "http://localhost:2025/mcp"
 if REGION == "eu-amsterdam-1":
     REGION = "eu-frankfurt-1"
+AUTH_TYPE = os.getenv("AUTH_TYPE") or "INSTANCE_PRINCIPAL"
 
 # auth = oci_openai.OciInstancePrincipalAuth()
 # llm = ChatOpenAI(
@@ -29,7 +30,7 @@ if REGION == "eu-amsterdam-1":
 # )
 
 llm = ChatOCIGenAI(
-    auth_type="API_KEY" if "LIVELABS" in os.environ else "INSTANCE_PRINCIPAL",
+    auth_type="API_KEY" if "LIVELABS" in os.environ else AUTH_TYPE,
     model_id="openai.gpt-oss-120b",
     # model_id="meta.llama-4-scout-17b-16e-instruct",
     # model_id="cohere.command-a-03-2025",
