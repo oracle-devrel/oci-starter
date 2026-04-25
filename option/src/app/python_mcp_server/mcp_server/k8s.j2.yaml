@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ prefix }}-dep
+  name: {{ prefix }}-mcp-server-dep
   labels:
       app: {{ prefix }}-mcp-server
 spec:
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: ##DOCKER_PREFIX##/{{ prefix }}-mcp-server:##DOCKER_IMG_VERSION##
+        image: ##DOCKER_PREFIX##/{{ prefix }}-mcp_server:##DOCKER_IMG_VERSION##
         ports:
         - containerPort: 2025
           name: app-port
