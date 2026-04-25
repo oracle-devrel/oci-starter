@@ -7,7 +7,7 @@ from openai import OpenAI
 from fastapi.responses import StreamingResponse
 
 # OCI Auth
-from oci_genai_auth import OciInstancePrincipalAuth
+from oci_genai_auth import OciInstancePrincipalAuth, OciResourcePrincipalAuth
 import httpx
 
 REGION = os.getenv("TF_VAR_region")
@@ -16,6 +16,10 @@ if REGION == "eu-amsterdam-1":
 MODEL_ID = "openai.gpt-oss-120b"
 # REGION = "us-chicago-1"
 # MODEL_ID = "xai.grok-4-fast-non-reasoning"
+if os.getenv("AUTH_TYPE")=="RESOURCE_PRINCIPAL": 
+    auth = OciResourcePrincipalAuth()
+else:
+    auth = OciInstancePrincipalAuth()
 
 PROJECT_OCID = os.environ.get("TF_VAR_project_ocid")
 COMPARTMENT_OCID = os.environ.get("TF_VAR_compartment_ocid")
@@ -33,7 +37,7 @@ client = OpenAI(
     base_url=f"https://inference.generativeai.{REGION}.oci.oraclecloud.com/20231130/openai/v1",
     api_key="unused",
     http_client=httpx.Client(
-        auth=OciInstancePrincipalAuth(),
+        auth=auth,
         headers={
             "opc-compartment-id": COMPARTMENT_OCID,
         },
