@@ -117,10 +117,10 @@ async function renderMessage(msgObj) {
     let innerHTML = '';
     // Human message
     if (msgObj.type === 'human') {
-        innerHTML = `<div class="bubble"><div class="meta">You</div>${renderMarkdown(msgObj.content)}</div>`;
+        innerHTML = `<div class="bubble"><div class="bubble-content"><div class="meta">You</div>${renderMarkdown(msgObj.content)}</div></div>`;
     } else if (msgObj.type === 'ai') {
         if (msgObj.content) {
-            innerHTML = `<div class="bubble"><div class="meta">AI</div>${await renderContent(msgObj.content)}</div>`;
+            innerHTML = `<div class="bubble"><div class="bubble-content"><div class="meta">AI</div>${await renderContent(msgObj.content)}</div></div>`;
         } else if (msgObj.tool_calls && msgObj.tool_calls.length > 0) {
             const toolNames = msgObj.tool_calls.map(t => t.name).join(' - ');
             let bubble = `<div class="bubble"><div class="meta">Tool Calls - ${toolNames}</div>`;

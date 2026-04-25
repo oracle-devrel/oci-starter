@@ -68,10 +68,10 @@ spec:
               key: TF_VAR_nosql_endpoint
 {%- endif %}
 {%- if python_framework == "langgraph" %}
-        - name: MCP_URL
+        - name: MCP_SERVER_URL
           value: "http://{{ prefix }}-mcp-server-service:2025/mcp"
 {%- elif python_framework == "responses" %}
-        - name: MCP_URL
+        - name: MCP_SERVER_URL
           value: "https://##TF_VAR_ingress_ip##/##TF_VAR_prefix##/mcp_server/mcp"
 {%- endif %}
       imagePullSecrets:

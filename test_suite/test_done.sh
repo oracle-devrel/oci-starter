@@ -8,7 +8,8 @@ if [ "$UI_URL" != "" ]; then
     rm -Rf $TMP_PATH     
     mkdir -p $TMP_PATH 
     echo $UI_URL > $TMP_PATH/ui_url.txt
-    
+    echo "URL = $UI_URL"
+
     if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
         kubectl wait --for=condition=ready pod ${TF_VAR_prefix}-app
         kubectl wait --for=condition=ready pod ${TF_VAR_prefix}-ui

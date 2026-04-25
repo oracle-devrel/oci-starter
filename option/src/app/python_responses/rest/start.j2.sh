@@ -6,9 +6,9 @@ export PATH=~/.local/bin/:$PATH
 . $HOME/compute/tf_env.sh
 
 {%- if deploy_type == "public_compute" %}
-export MCP_URL="http://$BASTION_IP/mcp_server/mcp"
+export MCP_SERVER_URL="http://$BASTION_IP/mcp_server/mcp"
 {%- else %}
-export MCP_URL="https://$APIGW_HOSTNAME/$PREFIX/mcp_server/mcp"
+export MCP_SERVER_URL="https://$APIGW_HOSTNAME/$PREFIX/mcp_server/mcp"
 {%- endif %}
 
 # Default port is 2025
