@@ -59,7 +59,7 @@ test_run_100() {
     CSV_RUN100_SECOND=`echo "scale=2;($END-$START)/1" | bc`  
     echo "Speed Test Result (100 runs):"
     echo "- Time in seconds: $CSV_RUN100_SECOND"
-    echo "- OK (results including deptno): $CSV_RUN100_OK"
+    echo "- OK (results including deptno or department): $CSV_RUN100_OK"
 }
 
 build_test () {
@@ -81,6 +81,7 @@ build_test () {
     TMP_PATH="/tmp/$PREFIX"
 
     echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
+    cat $TMP_PATH/ui_url.txt     
     if [ -f $TMP_PATH/result_html.html ]; then
         if grep -qiE "starter|deptno|messages" "$TMP_PATH/result_html.html"; then  
             echo -e "\u2705 RESULT HTML: OK"
@@ -88,11 +89,15 @@ build_test () {
         else
             echo -e "\u274C RESULT HTML - starter or deptno or messages not found. ***** BAD ******"
         fi
-        if grep -qiE "deptno|department" $TMP_PATH/result_dept.json; then
-            echo -e "\u2705 RESULT JSON: deptno or department found - "`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
-            CSV_JSON_OK=1
+        if [ -f $TMP_PATH/result_dept.json ]; then
+            if grep -qiE "deptno|department" $TMP_PATH/result_dept.json; then
+                echo -e "\u2705 RESULT JSON: deptno or department found - "`cat $TMP_PATH/result_dept.json` | cut -c 1-100  
+                CSV_JSON_OK=1
+            else
+                echo -e "\u274C RESULT JSON: no deptno or department found - "`cat $TMP_PATH/result_dept.json` | cut -c 1-100 
+            fi
         else
-            echo -e "\u274C RESULT JSON: no deptno or department found - "`cat $TMP_PATH/result_dept.json` | cut -c 1-100 
+            echo -e "\u274C ERROR: No file $TMP_PATH/result_dept.json"
         fi
         echo -e   "\u2139 RESULT INFO: "`cat $TMP_PATH/result_info.html` | cut -c 1-100
     else
