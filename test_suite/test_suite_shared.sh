@@ -81,7 +81,7 @@ build_test () {
     TMP_PATH="/tmp/$PREFIX"
 
     echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
-    cat $TMP_PATH/ui_url.txt     
+    echo "$(cat $TMP_PATH/ui_url.txt)/"     
     if [ -f $TMP_PATH/result_html.html ]; then
         if grep -qiE "starter|deptno|messages" "$TMP_PATH/result_html.html"; then  
             echo -e "\u2705 RESULT HTML: OK"
