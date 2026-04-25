@@ -8,7 +8,7 @@ export PATH=~/.local/bin/:$PATH
 {%- if deploy_type == "public_compute" %}
 export MCP_SERVER_URL="http://$BASTION_IP/mcp_server/mcp"
 {%- else %}
-export MCP_SERVER_URL="https://$APIGW_HOSTNAME/$PREFIX/mcp_server/mcp"
+export MCP_SERVER_URL="https://$APIGW_HOSTNAME/$TF_VAR_prefix/mcp_server/mcp"
 {%- endif %}
 
 # Default port is 2025

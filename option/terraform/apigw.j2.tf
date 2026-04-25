@@ -11,6 +11,7 @@ data "oci_apigateway_gateway" "starter_apigw" {
 locals {
   apigw_ocid = var.apigw_ocid
   apigw_ip   = try(data.oci_apigateway_gateway.starter_apigw.ip_addresses[0].ip_address,"")
+  local_apigw_hostname = data.oci_apigateway_gateway.starter_apigw.hostname
 }
 
 {%- else %}   
@@ -41,6 +42,7 @@ resource "oci_apigateway_api" "starter_api" {
 locals {
   apigw_ocid = try(oci_apigateway_gateway.starter_apigw.id, "")
   apigw_ip   = try(oci_apigateway_gateway.starter_apigw.ip_addresses[0].ip_address,"")
+  local_apigw_hostname = oci_apigateway_gateway.starter_apigw.hostname
 }
 {%- endif %}   
 
