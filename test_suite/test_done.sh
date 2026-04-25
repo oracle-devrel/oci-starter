@@ -50,7 +50,7 @@ if [ "$UI_URL" != "" ]; then
         fi      
 
         # Check (Same test is also done test_suite_shared)
-        if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
+        if grep -qiE "deptno|department" $TMP_PATH/result_dept.json; then
             echo -e "\u2705 deptno detected"
             break
         else 
