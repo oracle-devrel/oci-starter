@@ -81,7 +81,6 @@ build_test () {
     TMP_PATH="/tmp/$PREFIX"
 
     echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
-    echo "$(cat $TMP_PATH/ui_url.txt)/"     
     if [ -f $TMP_PATH/result_html.html ]; then
         if grep -qiE "starter|deptno|messages" "$TMP_PATH/result_html.html"; then  
             echo -e "\u2705 RESULT HTML: OK"
@@ -107,6 +106,7 @@ build_test () {
     else
         echo -e "\u274C ERROR: No file $TMP_PATH/result_html.html"
     fi
+    echo "URL = $(cat $TMP_PATH/ui_url.txt)/"     
 
     cp $TMP_PATH/result_html.html ${TEST_DIR}_${BUILD_ID}_result_html.html 2>/dev/null;
     cp $TMP_PATH/result_dept.json ${TEST_DIR}_${BUILD_ID}_result_dept.json 2>/dev/null;
