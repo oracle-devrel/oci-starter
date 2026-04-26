@@ -149,13 +149,15 @@ install_java() {
   # Build on Bastion
     if [ "$TF_VAR_build_host" == "bastion" ]; then 
         # sudo dnf install -y maven
-        MVN_VERSION=3.9.15
-        wget https://dlcdn.apache.org/maven/maven-3/$MVN_VERSION/binaries/apache-maven-$MVN_VERSION-bin.tar.gz
-        tar xfz apache-maven-$MVN_VERSION-bin.tar.gz
-        mv apache-maven-$MVN_VERSION $HOME/maven
-        rm apache-maven-$MVN_VERSION-bin.tar.gz
-        export PATH=$HOME/maven/bin:$PATH
-        echo "export PATH=$HOME/maven/bin:$PATH" >> $HOME/.bashrc 
+        if [ ! -d $HOME/maven ]; then
+            MVN_VERSION=3.9.15
+            wget https://dlcdn.apache.org/maven/maven-3/$MVN_VERSION/binaries/apache-maven-$MVN_VERSION-bin.tar.gz
+            tar xfz apache-maven-$MVN_VERSION-bin.tar.gz
+            mv apache-maven-$MVN_VERSION $HOME/maven
+            rm apache-maven-$MVN_VERSION-bin.tar.gz
+            export PATH=$HOME/maven/bin:$PATH
+            echo "export PATH=$HOME/maven/bin:$PATH" >> $HOME/.bashrc 
+        fi
     fi
 }
 export -f install_java
