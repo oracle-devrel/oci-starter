@@ -91,7 +91,6 @@ build_test () {
         fi
         if [ -f $TMP_PATH/result_dept.json ]; then
             if grep -qiE "deptno|department" $TMP_PATH/result_dept.json; then
-                RESULT=`cat $TMP_PATH/result_dept.json` | cut -c 1-100
                 echo -e "\u2705 RESULT JSON: deptno or department found - $(cut -c 1-100 "$TMP_PATH/result_dept.json")"
                 CSV_JSON_OK=1
             else
