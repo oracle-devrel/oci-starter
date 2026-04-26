@@ -315,6 +315,19 @@ resource "oci_core_security_list" "starter_security_list" {
     }
   }  
 
+  // MCP Server
+  ingress_security_rules {
+    protocol  = "6" // tcp
+    source    = local.cidr_vcn
+    stateless = false
+
+    tcp_options {
+      min = 2025
+      max = 2025
+    }
+  }  
+
+
   freeform_tags = local.freeform_tags
 }
 
