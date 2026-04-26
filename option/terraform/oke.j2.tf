@@ -473,6 +473,23 @@ resource oci_containerengine_addon starter_oke_addon_certmanager {
   remove_addon_resources_on_delete = "true"
 }
 
+# CertManager
+resource oci_containerengine_addon starter_oke_addon_ingress {
+  addon_name                       = "NativeIngressController"
+  cluster_id                       = oci_containerengine_cluster.starter_oke.id
+  remove_addon_resources_on_delete = "true"
+  configurations = [
+    { 
+        key = "compartmentId"
+        value = local.lz_app_cmp_ocid
+    },
+    { 
+        key = "loadBalancerSubnetId"
+        value = oci_core_subnet.starter_lb_subnet.id
+    }
+  ]
+}
+
 #----------------------------------------------------------------------------
 # OUTPUTS
 
