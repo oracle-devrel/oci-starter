@@ -154,6 +154,7 @@ install_java() {
         tar xfz apache-maven-$MVN_VERSION-bin.tar.gz
         mv apache-maven-$MVN_VERSION $HOME/maven
         rm apache-maven-$MVN_VERSION-bin.tar.gz
+        export PATH=$HOME/maven/bin:$PATH
         echo "export PATH=$HOME/maven/bin:$PATH" >> $HOME/.bashrc 
     fi
 }
