@@ -99,7 +99,11 @@ build_test () {
         else
             echo -e "\u274C ERROR: No file $TMP_PATH/result_dept.json"
         fi
-        echo -e "\u2139 RESULT INFO: - $(cut -c 1-100 "$TMP_PATH/result_info.html")"
+        if [ -f $TMP_PATH/result_info.html ]; then
+            echo -e "\u2705 RESULT INFO: - $(cut -c 1-100 "$TMP_PATH/result_info.html")"
+        else
+            echo -e "\u274C ERROR: No file $TMP_PATH/result_info.html"
+        fi
     else
         echo -e "\u274C ERROR: No file $TMP_PATH/result_html.html"
     fi

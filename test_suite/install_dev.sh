@@ -42,7 +42,14 @@ sudo update-alternatives --set java /usr/lib64/graalvm/graalvm-java25/bin/java
 echo "export JAVA_HOME=/usr/lib64/graalvm/graalvm-java25" >> $HOME/.bashrc
 
 # Maven
-sudo dnf install -y maven
+# sudo dnf install -y maven (too old version in OL8)
+MVN_VERSION=3.9.15
+wget https://dlcdn.apache.org/maven/maven-3/$MVN_VERSION/binaries/apache-maven-$MVN_VERSION-bin.tar.gz
+tar xfz apache-maven-$MVN_VERSION-bin.tar.gz
+mv apache-maven-$MVN_VERSION $HOME/maven
+rm apache-maven-$MVN_VERSION-bin.tar.gz
+export PATH=$HOME/maven/bin:$PATH
+echo "export PATH=$HOME/maven/bin:$PATH" >> $HOME/.bashrc 
 
 # Node (JET/Angular/ReactJS)
 sudo dnf module enable -y nodejs:20
