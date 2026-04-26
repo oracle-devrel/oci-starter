@@ -472,8 +472,8 @@ resource oci_containerengine_addon starter_oke_addon_certmanager {
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
   remove_addon_resources_on_delete = "true"
 }
-
-# NativeIngressController
+ 
+# NativeIngressController -
 resource oci_containerengine_addon starter_oke_addon_ingress {
   addon_name                       = "NativeIngressController"
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
