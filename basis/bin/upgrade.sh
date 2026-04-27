@@ -83,7 +83,7 @@ if [ -f src/terraform/build.tf ]; then
         # Output the required export command
         echo "export $KEY=\"$VALUE\""
         export $KEY=$VALUE
-      else
+      elif [[ "$LINE" =~ chmod ]]; then
         # Stop reading when a line does not match the expected pattern
         PARSING_STATE=2
         break
