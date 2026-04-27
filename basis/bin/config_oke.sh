@@ -57,6 +57,8 @@ if [ ! -f $KUBECONFIG ]; then
         #     wait_ingress
         fi
         
+        copy_replace_apply_target_oke src/oke/native-ingress.yaml config       
+
         # Wait for the ingress external IP
         TF_VAR_ingress_ip=""
         while [ -z $TF_VAR_ingress_ip ]; do
