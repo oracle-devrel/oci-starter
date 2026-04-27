@@ -223,7 +223,6 @@ resource "oci_core_security_list" "starter_seclist_node" {
 
   ingress_security_rules {
     description = "NodePort"
-    description = "NodePort with OCI Native Ingress"
     protocol    = "6"
     source      = "0.0.0.0/0"
     source_type = "CIDR_BLOCK"
