@@ -473,21 +473,23 @@ resource oci_containerengine_addon starter_oke_addon_certmanager {
   remove_addon_resources_on_delete = "true"
 }
  
-# NativeIngressController -
+# NativeIngressController
 resource oci_containerengine_addon starter_oke_addon_ingress {
-  addon_name                       = "NativeIngressController"
-  cluster_id                       = oci_containerengine_cluster.starter_oke.id
-  remove_addon_resources_on_delete = "true"
-  configurations = [
-    { 
+    addon_name                       = "NativeIngressController"
+    cluster_id                       = oci_containerengine_cluster.starter_oke.id
+    remove_addon_resources_on_delete = "true"
+    configurations {
         key = "compartmentId"
         value = local.lz_app_cmp_ocid
-    },
-    { 
+    }
+    configurations {
         key = "loadBalancerSubnetId"
         value = oci_core_subnet.starter_lb_subnet.id
     }
-  ]
+    configurations {
+        key = "authType"
+        value = "instance"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -514,3 +516,31 @@ locals {
 output "oke_ocid" {
   value = local.local_oke_ocid
 }
+
+# Doc: https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengsettingupnativeingresscontroller-addon-prereqs.htm#contengsettingupnativeingresscontroller-addon-permissions
+resource "oci_identity_policy" "starter_oke_policy" {
+    provider       = oci.home    
+    name           = "${var.prefix}-oke-virtual-node-policy"
+    description    = "${var.prefix}-oke-virtual-node-policy"
+    compartment_id = var.tenancy_ocid
+    statements = [
+        "allow any-user to manage load-balancers in compartment id ${local.lz_app_cmp_ocid}",   
+        "allow any-user to use virtual-network-family in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage cabundles in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage cabundle-associations in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage leaf-certificates in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to read leaf-certificate-bundles in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage leaf-certificate-versions in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage certificate-associations in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to read certificate-authorities in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage certificate-authority-associations in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to read certificate-authority-bundles in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to read public-ips in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage floating-ips in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage waf-family in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to read cluster-family in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to use tag-namespaces in compartment id ${local.lz_app_cmp_ocid}",
+    ]
+    freeform_tags = local.freeform_tags
+}
+
