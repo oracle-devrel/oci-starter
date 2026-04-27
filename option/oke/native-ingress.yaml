@@ -8,7 +8,7 @@ spec:
   subnetId: "##OKE_LB_SUBNET_OCID##"
   loadBalancerName: "##TF_VAR_prefix##-oke-lb"
   isPrivate: false
-  maxBandwidthMbps: 50
+  maxBandwidthMbps: 20
   minBandwidthMbps: 10
 ---
 apiVersion: networking.k8s.io/v1

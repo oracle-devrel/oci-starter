@@ -345,7 +345,6 @@ resource "oci_core_subnet" "starter_api_subnet" {
   freeform_tags     = local.freeform_tags
 }
 
-/*
 resource "oci_core_subnet" "starter_pod_subnet" {
   #Required
   cidr_block          = "10.0.40.0/24"
@@ -358,7 +357,6 @@ resource "oci_core_subnet" "starter_pod_subnet" {
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
   freeform_tags     = local.freeform_tags
 }
-*/
 
 #----------------------------------------------------------------------------
 # CLUSTER
@@ -437,10 +435,10 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
     }
     size = var.node_pool_size==null ? 1 : var.node_pool_size 
 
-    # node_pool_pod_network_option_details {
-    #   cni_type = "OCI_VCN_IP_NATIVE"
-    #   pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
-    # }
+    node_pool_pod_network_option_details {
+       cni_type = "OCI_VCN_IP_NATIVE"
+       pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
+    }
   }
   ssh_public_key      = local.ssh_public_key
 
@@ -511,43 +509,6 @@ output "node_pool" {
 locals {
   local_oke_ocid = oci_containerengine_cluster.starter_oke.id
   local_oke_lb_subnet_ocid = oci_core_subnet.starter_lb_subnet.id
-}
-
-resource "oci_load_balancer" "starter_oke_lb" {
-  shape          = "flexible"
-  compartment_id = local.lz_app_cmp_ocid
-  subnet_ids = [ data.oci_core_subnet.starter_web_subnet.id ]
-  shape_details {
-    #Required
-    minimum_bandwidth_in_mbps = 10
-    maximum_bandwidth_in_mbps = 100
-  }
-
-  display_name ="${var.prefix}-oke-lb"
-}
-
-resource "oci_load_balancer_backend_set" "starter_oke_backend_set" {
-  name             = "${substr(var.prefix,0,8)}-oke-bes"
-  load_balancer_id = oci_load_balancer.starter_oke_lb.id
-  policy           = "ROUND_ROBIN"
-
-  health_checker {
-    port                = "80"
-    protocol            = "HTTP"
-    response_body_regex = ".*"
-    url_path            = "/"
-  }
-}
-
-resource "oci_load_balancer_listener" "starter_oke_lb_listener" {
-  load_balancer_id         = oci_load_balancer.starter_oke_lb.id
-  name                     = "HTTP-80"
-  default_backend_set_name = oci_load_balancer_backend_set.starter_oke_backend_set.name
-  port                     = 80
-  protocol                 = "HTTP"
-{%- if tls == "new" %} 
-  path_route_set_name = oci_load_balancer_path_route_set.starter-bastion-routeset.name
-{%- endif %} 
 }
 
 {%- endif %}  
