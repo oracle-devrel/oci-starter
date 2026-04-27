@@ -5,7 +5,7 @@ metadata:
 spec:
   compartmentId: "##TF_VAR_compartment_ocid##"
   subnetId: "##OKE_LB_SUBNET_OCID##"
-  loadBalancerName: "##TF_VAR_prefix##-native-ingress-lb"
+  loadBalancerName: "##TF_VAR_prefix##-oke-lb"
   isPrivate: false
   maxBandwidthMbps: 400
   minBandwidthMbps: 100
