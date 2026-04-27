@@ -29,11 +29,11 @@ if [ ! -f $KUBECONFIG ]; then
         # echo LATEST_INGRESS_CONTROLLER=$LATEST_INGRESS_CONTROLLER
         # kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$LATEST_INGRESS_CONTROLLER/deploy/static/provider/cloud/deploy.yaml
         if [ "$TF_VAR_tls" == "new_http_01" ]; then
-            helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
-            --namespace ingress-nginx \
-            --create-namespace \
-            --set controller.enableExternalDNS=true 
-            wait_ingress
+            # helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
+            # --namespace ingress-nginx \
+            # --create-namespace \
+            # --set controller.enableExternalDNS=true 
+            # wait_ingress
 
             # ccm-letsencrypt-prod.yaml
             sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-prod.yaml > $TARGET_OKE/ccm-letsencrypt-prod.yaml
@@ -50,11 +50,11 @@ if [ ! -f $KUBECONFIG ]; then
             sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns.yaml > $TARGET_OKE/external-dns.tmp
             sed "s&##REGION##&${TF_VAR_region}&" $TARGET_OKE/external-dns.tmp > $TARGET_OKE/external-dns.yaml
             kubectl apply -f $TARGET_OKE/external-dns.yaml
-        else
-            helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
-            --namespace ingress-nginx \
-            --create-namespace 
-            wait_ingress
+        # else
+        #     helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
+        #     --namespace ingress-nginx \
+        #     --create-namespace 
+        #     wait_ingress
         fi
         
         # Wait for the ingress external IP

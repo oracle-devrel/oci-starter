@@ -510,6 +510,7 @@ output "node_pool" {
 
 locals {
   local_oke_ocid = oci_containerengine_cluster.starter_oke.id
+  local_oke_lb_subnet_ocid = oci_core_subnet.starter_lb_subnet.id
 }
 {%- endif %}  
 
