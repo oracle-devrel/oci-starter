@@ -374,6 +374,10 @@ resource "oci_containerengine_cluster" "starter_oke" {
     subnet_id             = oci_core_subnet.starter_api_subnet.id
     is_public_ip_enabled  = "true"
   }
+  cluster_pod_network_options {
+    #Required
+    cni_type = OCI_VCN_IP_NATIVE
+  }
 
   options {
     service_lb_subnet_ids = [oci_core_subnet.starter_lb_subnet.id]
@@ -435,10 +439,11 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
     }
     size = var.node_pool_size==null ? 1 : var.node_pool_size 
 
-    node_pool_pod_network_option_details {
-       cni_type = "OCI_VCN_IP_NATIVE"
-       pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
-    }
+    # node_pool_pod_network_option_details {
+    #    cni_type = "OCI_VCN_IP_NATIVE"
+    #    pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
+    # }
+
   }
   ssh_public_key      = local.ssh_public_key
 
