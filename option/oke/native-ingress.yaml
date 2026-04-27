@@ -4,7 +4,7 @@ metadata:
   name: native-ingress-class-params
 spec:
   compartmentId: "##TF_VAR_compartment_ocid##"
-  subnetId: "##TF_VAR_oke_lb_subnet_app_ocid##"
+  subnetId: "##OKE_LB_SUBNET_OCID##"
   loadBalancerName: "##TF_VAR_prefix##-native-ingress-lb"
   isPrivate: false
   maxBandwidthMbps: 400
