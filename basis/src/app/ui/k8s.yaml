@@ -19,6 +19,7 @@ kind: Service
 metadata:
   name: ##TF_VAR_prefix##-ui-service
 spec:
+  type: NodePort
   selector:
     app: ##TF_VAR_prefix##-ui
   ports:

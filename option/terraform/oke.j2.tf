@@ -117,6 +117,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
     protocol  = "all"
     stateless = "false"
   }
+
   egress_security_rules {
     description      = "Access to Kubernetes API Endpoint"
     destination      = local.oke_cidr_api
@@ -187,6 +188,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
     source_type = "CIDR_BLOCK"
     stateless   = "false"
   }
+
   ingress_security_rules {
     description = "Path discovery"
     icmp_options {
@@ -198,6 +200,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
     source_type = "CIDR_BLOCK"
     stateless   = "false"
   }
+
   ingress_security_rules {
     description = "TCP access from Kubernetes Control Plane"
     protocol    = "6"
@@ -205,6 +208,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
     source_type = "CIDR_BLOCK"
     stateless   = "false"
   }
+
   ingress_security_rules {
     description = "Inbound SSH traffic to worker nodes"
     protocol    = "6"
@@ -216,6 +220,19 @@ resource "oci_core_security_list" "starter_seclist_node" {
       min = "22"
     }
   }
+
+  ingress_security_rules {
+    description = "NodePort"
+    description = "NodePort with OCI Native Ingress"
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    source_type = "CIDR_BLOCK"
+    stateless   = "false"
+    tcp_options {
+      max = "30000"
+      min = "32767"
+    }
+  }  
 
   freeform_tags = local.freeform_tags
 }
@@ -268,6 +285,7 @@ resource oci_core_security_list starter_seclist_api {
       min = "6443"
     }
   }
+
   ingress_security_rules {
     description = "Kubernetes worker to control plane communication"
     protocol    = "6"
@@ -279,6 +297,7 @@ resource oci_core_security_list starter_seclist_api {
       min = "12250"
     }
   }
+
   ingress_security_rules {
     description = "Path discovery"
     icmp_options {
@@ -345,6 +364,7 @@ resource "oci_core_subnet" "starter_api_subnet" {
   freeform_tags     = local.freeform_tags
 }
 
+/*
 resource "oci_core_subnet" "starter_pod_subnet" {
   #Required
   cidr_block          = "10.0.40.0/24"
@@ -357,6 +377,7 @@ resource "oci_core_subnet" "starter_pod_subnet" {
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
   freeform_tags     = local.freeform_tags
 }
+*/
 
 #----------------------------------------------------------------------------
 # CLUSTER
@@ -373,10 +394,6 @@ resource "oci_containerengine_cluster" "starter_oke" {
   endpoint_config {
     subnet_id             = oci_core_subnet.starter_api_subnet.id
     is_public_ip_enabled  = "true"
-  }
-  cluster_pod_network_options {
-    #Required
-    cni_type = "OCI_VCN_IP_NATIVE"
   }
 
   options {
@@ -440,10 +457,9 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
     size = var.node_pool_size==null ? 1 : var.node_pool_size 
 
     # node_pool_pod_network_option_details {
-    #    cni_type = "OCI_VCN_IP_NATIVE"
-    #    pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
+    #   cni_type = "OCI_VCN_IP_NATIVE"
+    #   pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
     # }
-
   }
   ssh_public_key      = local.ssh_public_key
 

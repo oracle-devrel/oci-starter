@@ -3,6 +3,7 @@ apiVersion: v1
 metadata:
   name: {{ prefix }}-app-service
 spec:
+  type: NodePort
   type: ExternalName
   externalName: ##ORDS_HOST##
   ports:
