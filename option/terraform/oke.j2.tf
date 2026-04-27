@@ -520,7 +520,7 @@ output "oke_ocid" {
 # Doc: https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengsettingupnativeingresscontroller-addon-prereqs.htm#contengsettingupnativeingresscontroller-addon-permissions
 resource "oci_identity_policy" "starter_oke_policy" {
     provider       = oci.home    
-    name           = "${var.prefix}-oke-policy"
+    name           = "${var.prefix}-oke-policy-${random_string.id.result}"
     description    = "${var.prefix}-oke-policy"
     compartment_id = var.tenancy_ocid
     statements = [
