@@ -376,7 +376,7 @@ resource "oci_containerengine_cluster" "starter_oke" {
   }
   cluster_pod_network_options {
     #Required
-    cni_type = OCI_VCN_IP_NATIVE
+    cni_type = "OCI_VCN_IP_NATIVE"
   }
 
   options {
