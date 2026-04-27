@@ -542,7 +542,7 @@ resource "oci_load_balancer_backend_set" "starter_oke_backend_set" {
 resource "oci_load_balancer_listener" "starter_oke_lb_listener" {
   load_balancer_id         = oci_load_balancer.starter_oke_lb.id
   name                     = "HTTP-80"
-  default_backend_set_name = oci_load_balancer_backend_set.starter_pool_backend_set.name
+  default_backend_set_name = oci_load_balancer_backend_set.starter_oke_backend_set.name
   port                     = 80
   protocol                 = "HTTP"
 {%- if tls == "new" %} 
