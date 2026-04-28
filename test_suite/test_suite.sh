@@ -282,7 +282,7 @@ if [ "$PROJECT_DIR" != "" ]; then
 fi
 
 if [ -d $TEST_HOME ]; then
-    pre_git_refresh
+    ELAPSED=0
     while [ ! -f "${TEST_HOME}/group_common_env.sh" ] && [ $ELAPSED -lt 600 ]; do
         echo "Waiting 10 secs that group_common_env.sh is available."
         sleep 10
@@ -292,6 +292,8 @@ if [ -d $TEST_HOME ]; then
         echo "ERROR: ${TEST_HOME}/group_common_env.sh not detected after 600 secs"
         exit 1
     fi
+
+    pre_git_refresh
 else  
     pre_test_suite
 fi
