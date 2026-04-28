@@ -542,6 +542,15 @@ oke_deploy_app() {
 }
 export -f oke_deploy_app
 
+# -- oke_get_gateway_ip -----------------------------------------------------
+
+oke_get_gateway_ip() {
+    if [ "$TF_VAR_gateway_ip" == "" ]; then
+        export TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n default -o json | jq -r '.status.addresses[].value | select(startswith("10.") | not)')
+    fi
+}
+export -f oke_get_gateway_ip
+
 # -- is_deploy_compute ------------------------------------------------------
 is_deploy_compute() {
     if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ] || [ "$TF_VAR_deploy_type" == "instance_pool" ]; then

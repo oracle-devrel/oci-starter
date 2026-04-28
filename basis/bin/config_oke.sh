@@ -54,7 +54,7 @@ if [ ! -f $KUBECONFIG ]; then
         exit_on_error "Gateway not reacing Programmed State"
 
         # Get the IP
-        TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n default -o jsonpath='{.status.addresses[0].value}' 2>/dev/null)
+        oke_get_gateway_ip
         echo "Gateway ready: $TF_VAR_gateway_ip"
     else
         echo "OKE Deploy: Skipping creation of Gateway" 
