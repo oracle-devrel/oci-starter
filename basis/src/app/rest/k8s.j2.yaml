@@ -89,7 +89,7 @@ spec:
               name: tf-env-configmap
               key: TF_VAR_project_ocid
         - name: MCP_SERVER_URL
-          value: "http://##TF_VAR_ingress_ip##/##TF_VAR_prefix##/mcp_server/mcp"
+          value: "http://##TF_VAR_gateway_ip##/##TF_VAR_prefix##/mcp_server/mcp"
 {%- endif %}
       imagePullSecrets:
       - name: ocirsecret        

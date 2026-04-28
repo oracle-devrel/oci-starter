@@ -285,8 +285,8 @@ get_ui_url() {
         if [ ! -f $KUBECONFIG ]; then
         create_kubeconfig  
         fi 
-        export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
-        export UI_URL=http://${TF_VAR_ingress_ip}/${TF_VAR_prefix}
+        export TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n default -o jsonpath='{.status.addresses[0].value}' 2>/dev/null)
+        export UI_URL=http://${TF_VAR_gateway_ip}/${TF_VAR_prefix}
         if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_dns_name" != "" ]; then
         export UI_HTTP=$UI_URL
         export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
@@ -589,7 +589,7 @@ certificate_post_deploy() {
       echo "Skip: TLS - Kubernetes - HTTP_01"
     fi
   elif [ "$TF_VAR_deploy_type" == "kubernetes"  ]; then
-    # Set the TF_VAR_ingress_ip
+    # Set the TF_VAR_gateway_ip
     get_ui_url 
     $BIN_DIR/terraform_apply.sh --auto-approve -no-color
     exit_on_error "certificate_post_deploy - terraform apply"

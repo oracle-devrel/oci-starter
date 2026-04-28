@@ -365,8 +365,7 @@ if [ -f $STATE_FILE ]; then
     if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
         # OKE
         if [ -f $KUBECONFIG ]; then
-            export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
-            export INGRESS_LB_OCID=`oci lb load-balancer list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[] | select(.["ip-addresses"][0]["ip-address"]=="'$TF_VAR_ingress_ip'") | .id'`  
+            export TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n default -o jsonpath='{.status.addresses[0].value}' 2>/dev/null)    
         fi
     fi
 

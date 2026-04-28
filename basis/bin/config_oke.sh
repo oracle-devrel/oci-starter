@@ -15,7 +15,7 @@ if [ ! -f $KUBECONFIG ]; then
     # Check if Gateway Controller is installed
     kubectl get gateway oke-gateway -n default
     if [ "$?" != "0" ]; then
-        # Deploy Latest ingress-nginx
+        # Deploy Latest istio-gateway
         kubectl create clusterrolebinding starter_clst_adm --clusterrole=cluster-admin --user=$TF_VAR_current_user_ocid
         echo "OKE Deploy: Role Binding created"  
 
@@ -35,17 +35,16 @@ if [ ! -f $KUBECONFIG ]; then
             STATUS=$(kubectl get pods -n istio-system -l app=istiod -o jsonpath='{.items[0].status.phase}' 2>/dev/null)
 
             if [ "$STATUS" = "Running" ]; then
-                echo "istiod is Running!"
+                echo "Istiod is Running ($ELAPSED secs)"
                 break
             fi
-              ELAPSED=$((ELAPSED + 5 ))
-              if [ $ELAPSED -gt 300 ]; then
-                  exit_error "Istiod not started after 300 secs"
-              fi
-              echo "Waiting 5 secs..."
-              sleep 5
+            ELAPSED=$((ELAPSED + 5 ))
+            if [ $ELAPSED -gt 300 ]; then
+                exit_error "Istiod not started after 300 secs"
+            fi
+            echo "Waiting 5 secs..."
+            sleep 5
         done
-        echo "Istiod is Running ($ELAPSED secs)"
 
         # Create a Gateway
         kubectl apply -f src/oke/gateway.yaml
@@ -55,18 +54,18 @@ if [ ! -f $KUBECONFIG ]; then
         exit_on_error "Gateway not reacing Programmed State"
 
         # Get the IP
-        TF_VAR_ingress_ip=$(kubectl get gateway oke-gateway -n default -o jsonpath='{.status.addresses[0].value}' 2>/dev/null)
-        echo "Gateway ready: $TF_VAR_ingress_ip"
+        TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n default -o jsonpath='{.status.addresses[0].value}' 2>/dev/null)
+        echo "Gateway ready: $TF_VAR_gateway_ip"
     else
         echo "OKE Deploy: Skipping creation of Gateway" 
     fi  
 fi
 
-if ! grep -q "TF_VAR_ingress_ip" $TARGET_DIR/tf_env.sh; then
-    if [ "$TF_VAR_ingress_ip" == "" ]; then
-        export TF_VAR_ingress_ip=$(kubectl get gateway oke-gateway -n default -o jsonpath='{.status.addresses[0].value}' 2>/dev/null)
+if ! grep -q "TF_VAR_gateway_ip" $TARGET_DIR/tf_env.sh; then
+    if [ "$TF_VAR_gateway_ip" == "" ]; then
+        export TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n default -o jsonpath='{.status.addresses[0].value}' 2>/dev/null)
     fi 
-    echo "export TF_VAR_ingress_ip=$TF_VAR_ingress_ip" >> $TARGET_DIR/tf_env.sh
+    echo "export TF_VAR_gateway_ip=$TF_VAR_gateway_ip" >> $TARGET_DIR/tf_env.sh
 fi
 
 # Create secrets

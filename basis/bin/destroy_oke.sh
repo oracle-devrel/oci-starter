@@ -30,10 +30,10 @@ fi
 # The goal is to destroy all LoadBalancers created by OKE in OCI before to delete OKE.
 #
 # Delete all ingress, services
-kubectl delete ingress,services --all
+kubectl delete httproute,services --all
 
 # Delete the ingress controller
-helm uninstall ingress-nginx --namespace ingress-nginx
+# helm uninstall ingress-nginx --namespace ingress-nginx
 # kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.4.0/deploy/static/provider/cloud/deploy.yaml
 
 # Rename kubeconfig. Avoid to reuse if a new OKE is created for the same directory.
