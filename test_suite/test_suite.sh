@@ -6,170 +6,170 @@ export TEST_HOME=$SCRIPT_DIR/test_group_all
 export BUILD_COUNT=1
 
 loop_ui() {
-  if [ "$OPTION_LANG" == "php" ]; then
-    OPTION_UI=php 
-    build_option
-  elif [ "$OPTION_LANG" == "apex" ]; then
-    OPTION_UI=apex 
-    build_option    
-  else
-    OPTION_UI=html 
-    build_option
-    # Test all the UIs with ORDS only
-    if [ "$OPTION_DEPLOY" == "kubernetes" ] && [ "$OPTION_LANG" == "ords" ]; then
-      OPTION_UI=reactjs
-      build_option
-      OPTION_UI=angular
-      build_option
-      OPTION_UI=jet
-      build_option
-    fi 
-    if [ "$OPTION_JAVA_FRAMEWORK" == "tomcat" ]; then
-      OPTION_UI=jsp
-      build_option
-    fi  
-    if [ "$OPTION_LANG" == "node" ] && [ "$OPTION_DB" == "atp" ]; then
-      OPTION_UI=api
-      build_option
-    fi     
-  fi
+    if [ "$OPTION_LANG" == "php" ]; then
+        OPTION_UI=php 
+        build_option
+    elif [ "$OPTION_LANG" == "apex" ]; then
+        OPTION_UI=apex 
+        build_option    
+    else
+        OPTION_UI=html 
+        build_option
+        # Test all the UIs with ORDS only
+        if [ "$OPTION_DEPLOY" == "kubernetes" ] && [ "$OPTION_LANG" == "ords" ]; then
+            OPTION_UI=reactjs
+            build_option
+            OPTION_UI=angular
+            build_option
+            OPTION_UI=jet
+            build_option
+        fi 
+        if [ "$OPTION_JAVA_FRAMEWORK" == "tomcat" ]; then
+            OPTION_UI=jsp
+            build_option
+        fi  
+        if [ "$OPTION_LANG" == "node" ] && [ "$OPTION_DB" == "atp" ]; then
+            OPTION_UI=api
+            build_option
+        fi     
+    fi
 }
 
 loop_shape() {
-  if [ `arch` == "aarch64" ]; then
-    OPTION_SHAPE=ampere
-    loop_ui
-  else   
-    OPTION_SHAPE=amd 
-    loop_ui
-  fi  
+    if [ `arch` == "aarch64" ]; then
+        OPTION_SHAPE=ampere
+        loop_ui
+    else   
+        OPTION_SHAPE=amd 
+        loop_ui
+    fi  
 }
 
 loop_db() {
-  if [ "$OPTION_DEPLOY" != "instance_pool" ] ; then
-    # OPTION_DB=database 
-    # loop_ui  
-    OPTION_DB=atp 
+    if [ "$OPTION_DEPLOY" != "instance_pool" ] ; then
+        # OPTION_DB=database 
+        # loop_ui  
+        OPTION_DB=atp 
+        loop_shape
+        OPTION_DB=psql 
+        loop_shape  
+        OPTION_DB=mysql
+        loop_shape
+        OPTION_DB=opensearch
+        loop_shape
+        # NoSQL has no PHP Support
+        if [ "$OPTION_LANG" != "php" ]; then
+        OPTION_DB=nosql
+        loop_shape
+        fi 
+    fi  
+    OPTION_DB=none
     loop_shape
-    OPTION_DB=psql 
-    loop_shape  
-    OPTION_DB=mysql
-    loop_shape
-    OPTION_DB=opensearch
-    loop_shape
-    # NoSQL has no PHP Support
-    if [ "$OPTION_LANG" != "php" ]; then
-      OPTION_DB=nosql
-      loop_shape
-    fi 
-  fi  
-  OPTION_DB=none
-  loop_shape
 
-  # Build Host Bastion
-  if [ "$OPTION_DEPLOY" == "public_compute" ] || [ "$OPTION_DEPLOY" == "kubernetes" ]; then
-    OPTION_BUILD_HOST=bastion 
-    OPTION_DB=atp 
-    loop_shape
-    OPTION_BUILD_HOST=terraform
-  fi  
-}
+    # Build Host Bastion
+    if [ "$OPTION_DEPLOY" == "public_compute" ] || [ "$OPTION_DEPLOY" == "kubernetes" ]; then
+        OPTION_BUILD_HOST=bastion 
+        OPTION_DB=atp 
+        loop_shape
+        OPTION_BUILD_HOST=terraform
+    fi  
+    }
 
-loop_java_vm() {
-  OPTION_JAVA_VM=jdk 
-  loop_db
-  if [ "$OPTION_JAVA_FRAMEWORK" == "springboot" ] ; then
-    OPTION_JAVA_VM=graalvm
+    loop_java_vm() {
+    OPTION_JAVA_VM=jdk 
     loop_db
-  fi  
+    if [ "$OPTION_JAVA_FRAMEWORK" == "springboot" ] ; then
+        OPTION_JAVA_VM=graalvm
+        loop_db
+    fi  
 
-  if [ -n "$TEST_GRAALVM_NATIVE" ] && [ "$OPTION_JAVA_FRAMEWORK" != "tomcat" ] ; then
-    if [ "$OPTION_DEPLOY" == "private_compute" ] || [ "$OPTION_DEPLOY" == "kubernetes" ]; then 
-      OPTION_JAVA_VM=graalvm-native
-      loop_db
-    fi 
-  fi
+    if [ -n "$TEST_GRAALVM_NATIVE" ] && [ "$OPTION_JAVA_FRAMEWORK" != "tomcat" ] ; then
+        if [ "$OPTION_DEPLOY" == "private_compute" ] || [ "$OPTION_DEPLOY" == "kubernetes" ]; then 
+            OPTION_JAVA_VM=graalvm-native
+            loop_db
+        fi 
+    fi
 }
 
 loop_java_framework () {
-  OPTION_JAVA_FRAMEWORK=springboot 
-  loop_java_vm
-  OPTION_JAVA_FRAMEWORK=helidon 
-  loop_java_vm
-  OPTION_JAVA_FRAMEWORK=micronaut
-  loop_java_vm
-  OPTION_JAVA_VM=jdk 
-  OPTION_JAVA_FRAMEWORK=tomcat
-  loop_db
-  # Reset the value to default
-  OPTION_JAVA_FRAMEWORK=springboot
+    OPTION_JAVA_FRAMEWORK=springboot 
+    loop_java_vm
+    OPTION_JAVA_FRAMEWORK=helidon 
+    loop_java_vm
+    OPTION_JAVA_FRAMEWORK=micronaut
+    loop_java_vm
+    OPTION_JAVA_VM=jdk 
+    OPTION_JAVA_FRAMEWORK=tomcat
+    loop_db
+    # Reset the value to default
+    OPTION_JAVA_FRAMEWORK=springboot
 }
 
 loop_lang () {
-  OPTION_LANG=java 
-  OPTION_JAVA_VM=jdk 
-  if [ "$OPTION_DEPLOY" == "function" ]; then
-    # Dummy value, not used
-    OPTION_JAVA_FRAMEWORK=helidon
+    OPTION_LANG=java 
+    OPTION_JAVA_VM=jdk 
+    if [ "$OPTION_DEPLOY" == "function" ]; then
+        # Dummy value, not used
+        OPTION_JAVA_FRAMEWORK=helidon
+        loop_db
+    else
+        loop_java_framework
+    fi
+    # OCI Function has no PHP support
+    if [ "$OPTION_DEPLOY" != "function" ]; then
+        OPTION_LANG=php
+        loop_db
+    fi
+    if [ "$OPTION_DEPLOY" == "private_compute" ]; then
+        OPTION_LANG=apex
+        OPTION_DB=atp 
+        loop_shape
+        OPTION_DB=database 
+        loop_shape
+    fi    
+    OPTION_LANG=go
+    loop_db  
+    OPTION_LANG=node 
     loop_db
-  else
-    loop_java_framework
-  fi
-  # OCI Function has no PHP support
-  if [ "$OPTION_DEPLOY" != "function" ]; then
-    OPTION_LANG=php
-    loop_db
-  fi
-  if [ "$OPTION_DEPLOY" == "private_compute" ]; then
-    OPTION_LANG=apex
-    OPTION_DB=atp 
-    loop_shape
-    OPTION_DB=database 
-    loop_shape
-  fi    
-  OPTION_LANG=go
-  loop_db  
-  OPTION_LANG=node 
-  loop_db
-  OPTION_LANG=python
-  OPTION_PYTHON_FRAMEWORK=fastapi
-  loop_db
-  if [ "$OPTION_DEPLOY" != "function" ]; then
-    OPTION_PYTHON_FRAMEWORK=langgraph
-    OPTION_DB=atp 
-    loop_ui
-    OPTION_PYTHON_FRAMEWORK=responses
-    loop_ui
+    OPTION_LANG=python
     OPTION_PYTHON_FRAMEWORK=fastapi
-  fi
-  OPTION_LANG=dotnet
-  loop_db
-  # XXXX ORDS works only with ATP (DBSystems is not test/done)
-  OPTION_LANG=ords
-  OPTION_DB=atp 
-  loop_ui
+    loop_db
+    if [ "$OPTION_DEPLOY" != "function" ]; then
+        OPTION_PYTHON_FRAMEWORK=langgraph
+        OPTION_DB=atp 
+        loop_ui
+        OPTION_PYTHON_FRAMEWORK=responses
+        loop_ui
+        OPTION_PYTHON_FRAMEWORK=fastapi
+    fi
+    OPTION_LANG=dotnet
+    loop_db
+    # XXXX ORDS works only with ATP (DBSystems is not test/done)
+    OPTION_LANG=ords
+    OPTION_DB=atp 
+    loop_ui
 }
 
 loop_compute_other() {
-  # Public compute / LiveLabs Green Button
-  OPTION_SHAPE=amd
-  OPTION_LANG=java
-  OPTION_JAVA_VM=jdk
-  OPTION_JAVA_FRAMEWORK=springboot
-  OPTION_DEPLOY=public_compute
-  OPTION_UI=html
-  OPTION_DB=db_free
-  build_option  
-  OPTION_DB=mysql
-  build_option   
+    # Public compute / LiveLabs Green Button
+    OPTION_SHAPE=amd
+    OPTION_LANG=java
+    OPTION_JAVA_VM=jdk
+    OPTION_JAVA_FRAMEWORK=springboot
+    OPTION_DEPLOY=public_compute
+    OPTION_UI=html
+    OPTION_DB=db_free
+    build_option  
+    OPTION_DB=mysql
+    build_option   
 
-  # Resource Manager
-  OPTION_DEPLOY=private_compute
-  OPTION_DB_INSTALL=default
-  OPTION_DB=atp
-  OPTION_INFRA_AS_CODE=resource_manager
-  build_option   
-  OPTION_INFRA_AS_CODE=terraform_local
+    # Resource Manager
+    OPTION_DEPLOY=private_compute
+    OPTION_DB_INSTALL=default
+    OPTION_DB=atp
+    OPTION_INFRA_AS_CODE=resource_manager
+    build_option   
+    OPTION_INFRA_AS_CODE=terraform_local
 
   # From Resource Manager
 #   OPTION_INFRA_AS_CODE=from_resource_manager
@@ -185,110 +185,115 @@ loop_compute_other() {
 #   build_option   
 #   OPTION_INFRA_AS_CODE=terraform_local
 
-  # Pluggable DB 
-  OPTION_DB=pdb
-  build_option   
+    # Pluggable DB 
+    OPTION_DB=pdb
+    build_option   
 
-  # Helidon 4
-  OPTION_JAVA_FRAMEWORK=helidon4 
-  OPTION_DB=atp
-  build_option  
+    # Helidon 4
+    OPTION_JAVA_FRAMEWORK=helidon4 
+    OPTION_DB=atp
+    build_option  
 
-  # Java Compute ATP / No Compartment
-  # XXX Not possible in tenancy XXX
+    # Java Compute ATP / No Compartment
+    # XXX Not possible in tenancy XXX
 }
 
 loop_tls_deploy() {
-  # Maybe remove one compute when all is working
-  OPTION_DEPLOY=public_compute
-  build_option  
-  OPTION_DEPLOY=private_compute
-  build_option  
-  OPTION_DEPLOY=kubernetes
-  build_option  
-  OPTION_DEPLOY=instance_pool
-  build_option  
-  OPTION_DEPLOY=container_instance
-  build_option  
-  OPTION_DEPLOY=function
-  build_option  
+    # Maybe remove one compute when all is working
+    OPTION_DEPLOY=public_compute
+    build_option  
+    OPTION_DEPLOY=private_compute
+    build_option  
+    OPTION_DEPLOY=kubernetes
+    build_option  
+    OPTION_DEPLOY=instance_pool
+    build_option  
+    OPTION_DEPLOY=container_instance
+    build_option  
+    OPTION_DEPLOY=function
+    build_option  
 }
 
 loop_tls() {
-  # TLS
-  OPTION_GROUP_NAME=none
-  OPTION_LANG=java
-  OPTION_JAVA_VM=jdk
-  OPTION_JAVA_FRAMEWORK=springboot
-  OPTION_UI=html
-  OPTION_DB=none
-  OPTION_TLS=existing_dir
-  loop_tls_deploy
-  # existing_ocid is part of existing_dir
+    # TLS
+    OPTION_GROUP_NAME=none
+    OPTION_LANG=java
+    OPTION_JAVA_VM=jdk
+    OPTION_JAVA_FRAMEWORK=springboot
+    OPTION_UI=html
+    OPTION_DB=none
+    OPTION_TLS=existing_dir
+    loop_tls_deploy
+    # existing_ocid is part of existing_dir
 
-  OPTION_DEPLOY=public_compute
-  OPTION_TLS=new_http_01
-  build_option  
-  OPTION_DB_INSTALL=default
+    OPTION_DEPLOY=public_compute
+    OPTION_TLS=new_http_01
+    build_option  
+    OPTION_DB_INSTALL=default
 
-  OPTION_TLS=new_http_01
-  OPTION_DEPLOY=kubernetes
-  build_option  
+    OPTION_TLS=new_http_01
+    OPTION_DEPLOY=kubernetes
+    build_option  
 
-  OPTION_TLS=new_dns_01
-  OPTION_DEPLOY=container_instance
-  build_option  
+    OPTION_TLS=new_dns_01
+    OPTION_DEPLOY=container_instance
+    build_option  
 
-  OPTION_GROUP_NAME=dummy
-  OPTION_TLS=none 
+    OPTION_GROUP_NAME=dummy
+    OPTION_TLS=none 
 }
 
 loop_deploy() {
-  # Maybe remove one compute type when all is working    
-  OPTION_DEPLOY=public_compute
-  loop_lang  
-  OPTION_DEPLOY=private_compute
-  loop_compute_other
-  loop_lang  
-  OPTION_DEPLOY=kubernetes
-  loop_lang
-  OPTION_DEPLOY=instance_pool 
-  OPTION_LANG=java
-  OPTION_JAVA_FRAMEWORK=springboot
-  OPTION_DB=atp 
-  loop_shape  
-  OPTION_DEPLOY=container_instance 
-  loop_lang
-  OPTION_DEPLOY=function 
-  loop_lang
+    # Maybe remove one compute type when all is working    
+    OPTION_DEPLOY=public_compute
+    loop_lang  
+    OPTION_DEPLOY=private_compute
+    loop_compute_other
+    loop_lang  
+    OPTION_DEPLOY=kubernetes
+    loop_lang
+    OPTION_DEPLOY=instance_pool 
+    OPTION_LANG=java
+    OPTION_JAVA_FRAMEWORK=springboot
+    OPTION_DB=atp 
+    loop_shape  
+    OPTION_DEPLOY=container_instance 
+    loop_lang
+    OPTION_DEPLOY=function 
+    loop_lang
 
-  loop_tls
+    loop_tls
 }
 
 generate_only() {
-  if [ -d $TEST_HOME ]; then    
-    echo "$TEST_HOME directory detected"
-  else
-    echo "ERROR: $TEST_HOME does not exist"
-    exit
-  fi
-  rm -rf $TEST_HOME/compute $TEST_HOME/kubernetes $TEST_HOME/container_instance $TEST_HOME/function
-  export GENERATE_ONLY=true
+    if [ -d $TEST_HOME ]; then    
+        echo "$TEST_HOME directory detected"
+    else
+        echo "ERROR: $TEST_HOME does not exist"
+        exit
+    fi
+    rm -rf $TEST_HOME/compute $TEST_HOME/kubernetes $TEST_HOME/container_instance $TEST_HOME/function
+    export GENERATE_ONLY=true
 }
 
 if [ "$PROJECT_DIR" != "" ]; then
-  echo "ERROR: PROJECT_DIR set. Exiting."
-  exit 1
+    echo "ERROR: PROJECT_DIR set. Exiting."
+    exit 1
 fi
 
 if [ -d $TEST_HOME ]; then
-  pre_git_refresh
-  if [ ! -f ${TEST_HOME}/group_common_env.sh ]; then
-    echo "ERROR: ${TEST_HOME}/group_common_env.sh not detected"
-    exit 
-  fi
+    pre_git_refresh
+    while [ ! -f "${TEST_HOME}/group_common_env.sh" ] && [ $ELAPSED -lt 600 ]; do
+        echo "Waiting 10 secs that group_common_env.sh is available."
+        sleep 10
+        ELAPSED=$((ELAPSED + 10))
+    done
+    if [ ! -f "${TEST_HOME}/group_common_env.sh" ]; then
+        echo "ERROR: ${TEST_HOME}/group_common_env.sh not detected after 600 secs"
+        exit 1
+    fi
 else  
-  pre_test_suite
+    pre_test_suite
 fi
 # generate_only
 cd $TEST_HOME
