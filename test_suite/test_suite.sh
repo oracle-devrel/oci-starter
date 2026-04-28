@@ -283,13 +283,13 @@ fi
 
 if [ -d $TEST_HOME ]; then
     ELAPSED=0
-    while [ ! -f "${TEST_HOME}/group_common_env.sh" ] && [ $ELAPSED -lt 1800 ]; do
+    while [ ! -f "${TEST_HOME}/group_common_env.sh" ] && [ $ELAPSED -lt 3600 ]; do
         echo "Waiting 10 secs that group_common_env.sh is available."
         sleep 10
         ELAPSED=$((ELAPSED + 10))
     done
     if [ ! -f "${TEST_HOME}/group_common_env.sh" ]; then
-        echo "ERROR: ${TEST_HOME}/group_common_env.sh not detected after 1800 secs"
+        echo "ERROR: ${TEST_HOME}/group_common_env.sh not detected after 3600 secs"
         exit 1
     fi
 
