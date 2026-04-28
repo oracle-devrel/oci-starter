@@ -490,25 +490,7 @@ resource oci_containerengine_addon starter_oke_addon_certmanager {
   cluster_id                       = oci_containerengine_cluster.starter_oke.id
   remove_addon_resources_on_delete = "true"
 }
- 
-# NativeIngressController
-resource oci_containerengine_addon starter_oke_addon_ingress {
-    addon_name                       = "NativeIngressController"
-    cluster_id                       = oci_containerengine_cluster.starter_oke.id
-    remove_addon_resources_on_delete = "true"
-    configurations {
-        key = "compartmentId"
-        value = local.lz_app_cmp_ocid
-    }
-    configurations {
-        key = "loadBalancerSubnetId"
-        value = oci_core_subnet.starter_lb_subnet.id
-    }
-    configurations {
-        key = "authType"
-        value = "instance"
-    }
-}
+
 
 #----------------------------------------------------------------------------
 # OUTPUTS
@@ -542,7 +524,7 @@ resource "oci_identity_policy" "starter_oke_policy" {
     provider       = oci.home    
     name           = "${var.prefix}-oke-policy-${random_string.id.result}"
     description    = "${var.prefix}-oke-policy"
-    compartment_id = var.tenancy_ocid
+    compartment_id = local.lz_app_cmp_ocid
     statements = [
         "allow any-user to manage load-balancers in compartment id ${local.lz_app_cmp_ocid}",   
         "allow any-user to use virtual-network-family in compartment id ${local.lz_app_cmp_ocid}",

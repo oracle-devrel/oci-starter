@@ -1,0 +1,17 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: my-gateway
+  namespace: test-gateway
+  annotations:
+    # OCI specific annotation for Network Load Balancer (Layer 4)
+    oci.oraclecloud.com/load-balancer-type: "nlb"
+spec:
+  gatewayClassName: istio
+  listeners:
+  - name: http
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: Same
