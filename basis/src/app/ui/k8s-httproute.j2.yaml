@@ -1,0 +1,32 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: ##TF_VAR_prefix##-ui-route
+{%- if tls == "new_http_01" %}
+  annotations:
+    # These remain controller-specific (not part of Gateway API)
+    cert-manager.io/issuer: "letsencrypt-prod"
+    external-dns.alpha.kubernetes.io/hostname: ##TF_VAR_dn_name##
+{%- endif %}
+spec:
+  parentRefs:
+  - name: oke-gateway
+{%- if tls == "new_http_01" %}
+  hostnames:
+  - "##TF_VAR_dn_name##"
+{%- endif %}
+  rules:
+  - matches:
+    - path:
+        type: RegularExpression
+        value: /##TF_VAR_prefix##(/|$)(.*)
+
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /$2
+    backendRefs:
+    - name: ##TF_VAR_prefix##-ui-service
+      port: 80

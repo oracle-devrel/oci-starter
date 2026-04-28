@@ -29,7 +29,23 @@ if [ ! -f $KUBECONFIG ]; then
         oci ce cluster list-addons --cluster-id $OKE_OCID
         # Wait istiod
         echo "Waiting for istiod pod to be Running..."
-        kubectl wait --for=condition=Ready pod -l app=istiod -n istio-system --timeout=300s
+
+        ELAPSED=0
+        while true; do
+            STATUS=$(kubectl get pods -n istio-system -l app=istiod -o jsonpath='{.items[0].status.phase}' 2>/dev/null)
+
+            if [ "$STATUS" = "Running" ]; then
+                echo "istiod is Running!"
+                break
+            fi
+              ELAPSED=$((ELAPSED + 5 ))
+              if [ $ELAPSED -gt 300 ]; then
+                  exit_error "Istiod not started after 300 secs"
+              fi
+              echo "Waiting 5 secs..."
+              sleep 5
+        done
+        echo "Istiod is Running ($ELAPSED secs)"
 
         # Create a Gateway
         kubectl apply -f src/oke/gateway.yaml

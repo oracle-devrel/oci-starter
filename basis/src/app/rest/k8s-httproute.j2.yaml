@@ -1,0 +1,58 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: ##TF_VAR_prefix##-rest-route
+spec:
+  parentRefs:
+  - name: oke-gateway
+  hostnames:
+{%- if tls == "new_http_01" %}
+  - "##TF_VAR_dns_name##"
+{%- endif %}
+  rules:
+  - matches:
+    - path:
+        type: RegularExpression
+        value: /##TF_VAR_prefix##/app(/|$)(.*)
+    filters:
+{%- if language in [ "apex", "ords" ] %}    
+    - type: RequestHeaderModifier
+      requestHeaderModifier:
+        set:
+        - name: Host
+          value: ##ORDS_HOST##          
+{%- endif %}
+{%- if language == "apex" %}
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /ords/r/apex_app/apex_app/$2
+       
+{%- elif language == "ords" %}
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /ords/starter/module/$2
+{%- elif language == "java" and java_framework == "tomcat" %}
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /starter-1.0/$2
+{%- else %}
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /$2
+{%- endif %}
+    backendRefs:
+    - name: ##TF_VAR_prefix##-rest-service
+      port:
+{%- if language in [ "apex", "ords" ] %}
+        443
+{%- else %}
+        80
+{%- endif %}
