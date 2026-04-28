@@ -60,7 +60,6 @@ kind: Service
 metadata:
   name: {{ prefix }}-mcp-server-service
 spec:
-  type: NodePort
   selector:
     app: {{ prefix }}-mcp-server
   ports:

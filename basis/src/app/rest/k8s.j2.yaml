@@ -99,7 +99,6 @@ kind: Service
 metadata:
   name: {{ prefix }}-rest-service
 spec:
-  type: NodePort
   selector:
     app: {{ prefix }}-rest
   ports:
