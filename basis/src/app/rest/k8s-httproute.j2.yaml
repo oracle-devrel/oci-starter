@@ -12,8 +12,8 @@ spec:
   rules:
   - matches:
     - path:
-        type: RegularExpression
-        value: /##TF_VAR_prefix##/app(/|$)(.*)
+        type: PathPrefix
+        value: /##TF_VAR_prefix##/app
     filters:
 {%- if language in [ "apex", "ords" ] %}    
     - type: RequestHeaderModifier
@@ -22,32 +22,37 @@ spec:
         - name: Host
           value: ##ORDS_HOST##          
 {%- endif %}
+
 {%- if language == "apex" %}
     - type: URLRewrite
       urlRewrite:
         path:
-          type: ReplaceFullPath
-          replaceFullPath: /ords/r/apex_app/apex_app/$2
-       
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /ords/r/apex_app/apex_app
+
 {%- elif language == "ords" %}
     - type: URLRewrite
       urlRewrite:
         path:
-          type: ReplaceFullPath
-          replaceFullPath: /ords/starter/module/$2
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /ords/starter/module
+
 {%- elif language == "java" and java_framework == "tomcat" %}
     - type: URLRewrite
       urlRewrite:
         path:
-          type: ReplaceFullPath
-          replaceFullPath: /starter-1.0/$2
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /starter-1.0
+
 {%- else %}
     - type: URLRewrite
       urlRewrite:
         path:
-          type: ReplaceFullPath
-          replaceFullPath: /$2
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /
+
 {%- endif %}
+
     backendRefs:
     - name: ##TF_VAR_prefix##-rest-service
       port:

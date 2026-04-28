@@ -18,15 +18,15 @@ spec:
   rules:
   - matches:
     - path:
-        type: RegularExpression
-        value: /##TF_VAR_prefix##(/|$)(.*)
-
+        type: PathPrefix
+        value: /##TF_VAR_prefix##
     filters:
     - type: URLRewrite
       urlRewrite:
         path:
-          type: ReplaceFullPath
-          replaceFullPath: /$2
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /
     backendRefs:
     - name: ##TF_VAR_prefix##-ui-service
       port: 80
+
