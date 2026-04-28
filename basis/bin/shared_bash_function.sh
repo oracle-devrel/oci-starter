@@ -285,7 +285,7 @@ get_ui_url() {
         if [ ! -f $KUBECONFIG ]; then
         create_kubeconfig  
         fi 
-        export TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n default -o jsonpath='{.status.addresses[0].value}' 2>/dev/null)
+        oke_get_gateway_ip
         export UI_URL=http://${TF_VAR_gateway_ip}/${TF_VAR_prefix}
         if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_dns_name" != "" ]; then
         export UI_HTTP=$UI_URL

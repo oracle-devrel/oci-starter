@@ -62,9 +62,7 @@ if [ ! -f $KUBECONFIG ]; then
 fi
 
 if ! grep -q "TF_VAR_gateway_ip" $TARGET_DIR/tf_env.sh; then
-    if [ "$TF_VAR_gateway_ip" == "" ]; then
-        export TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n default -o jsonpath='{.status.addresses[0].value}' 2>/dev/null)
-    fi 
+    oke_get_gateway_ip
     echo "export TF_VAR_gateway_ip=$TF_VAR_gateway_ip" >> $TARGET_DIR/tf_env.sh
 fi
 
