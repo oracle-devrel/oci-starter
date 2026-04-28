@@ -72,6 +72,7 @@ locals {
   
 #----------------------------------------------------------------------------
 # SECURITY LISTS
+# See: https://docs.oracle.com/en-us/iaas/Content/ContEng/Concepts/contengnetworkconfigexample.htm
 
 resource "oci_core_security_list" "starter_seclist_lb" {
   compartment_id = local.lz_network_cmp_ocid
@@ -230,6 +231,18 @@ resource "oci_core_security_list" "starter_seclist_node" {
     tcp_options {
       min = "30000"
       max = "32767"
+    }
+  }  
+
+  ingress_security_rules {
+    description = "Allow load balancer to communicate with kube-proxy on worker nodes."
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    source_type = "CIDR_BLOCK"
+    stateless   = "false"
+    tcp_options {
+      min = "10256"
+      max = "10256"
     }
   }  
 
