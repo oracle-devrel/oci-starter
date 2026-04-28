@@ -23,7 +23,7 @@ for APP_DIR in `app_dir_list`; do
         # Build in bastion
         $APP_NAME/build.sh
     fi
-    if [ "APP_NAME" == "db" ]; then
+    if [ "$APP_NAME" == "db" ]; then
         # Database
         title "Rebuild - $APP_NAME: Install"
         ${APP_DIR}/install.sh
