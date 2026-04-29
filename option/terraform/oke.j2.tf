@@ -482,6 +482,11 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
     source_type = "IMAGE"
   }
 
+  node_eviction_node_pool_settings  {
+    eviction_grace_duration = "0"
+    is_force_delete_after_grace_duration = "true"
+  }
+
   node_config_details {
     #Required
     placement_configs {
