@@ -500,7 +500,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
   }
 
   node_eviction_node_pool_settings  {
-    eviction_grace_duration = "0"
+    eviction_grace_duration = "PT0S"
     is_force_delete_after_grace_duration = "true"
   }
 
