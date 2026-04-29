@@ -67,15 +67,13 @@ locals {
     && can(regex("OKE-${local.k8s_version}", s.sourceName))
   ]
 
-  oke_image_id = element(
+  oke_image_id = length(local.oke_images) > 0 ? element(
     [
       for s in sort(local.oke_images[*].sourceName) :
       one([for x in local.oke_images : x.imageId if x.sourceName == s])
     ],
     length(local.oke_images) - 1
-  )
-
-  latest_image_id = length(local.matching_images) > 0 ? local.matching_images[0].image_id : data.oci_core_images.oraclelinux.images.0.id
+  ) : data.oci_core_images.oraclelinux.images.0.id
 
   # all_images = "${data.oci_core_images.shape_specific_images.images}"
   # all_sources = "${data.oci_containerengine_node_pool_option.starter_node_pool_option.sources}"
