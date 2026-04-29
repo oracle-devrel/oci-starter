@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-. $SCRIPT_DIR/../starter.sh env -no-auto -silent
-. $BIN_DIR/build_common.sh
+. $SCRIPT_DIR/../starter.sh env -silent
 cd $PROJECT_DIR
 
 title "OKE Destroy"
