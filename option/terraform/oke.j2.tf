@@ -60,13 +60,21 @@ locals {
   oke_latest_stable_version=local.oke_stable_versions[length(local.oke_stable_versions)-1]
   k8s_version = replace(local.oke_latest_stable_version, "v", "")
 
-  // Does not work for ARM64... XXXXXXXX
-  oke_images = [
+  # Get the image id from data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions
+  # Ex: Oracle-Linux-8.10-2026.02.28-0-OKE-1.35.2-1392 -> ocid.....
+  oke_images_amd = [
     for s in data.oci_containerengine_node_pool_option.starter_node_pool_option.sources : s
       if !can(regex("aarch64|GPU", s.source_name))
       && can(regex("OKE-${local.k8s_version}", s.source_name))
       && can(regex("Linux-8", s.source_name))
   ]
+  oke_images_ampere = [
+    for s in data.oci_containerengine_node_pool_option.starter_node_pool_option.sources : s
+      if can(regex("aarch64", s.source_name))
+      && can(regex("OKE-${local.k8s_version}", s.source_name))
+      && can(regex("Linux-8", s.source_name))
+  ]
+  oke_images = (var.instance_shape=="VM.Standard.A1.Flex")?local.oke_images_ampere:local.oke_images_amd
 
   oke_image_id = length(local.oke_images) > 0 ? element(
     [

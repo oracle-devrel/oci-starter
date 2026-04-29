@@ -30,6 +30,7 @@ fi
 # The goal is to destroy all LoadBalancers created by OKE in OCI before to delete OKE.
 #
 # Delete all ingress, services
+kubectl delete -f src/oke/gateway.yaml
 kubectl delete httproute,services --all
 
 # Delete the ingress controller
