@@ -84,6 +84,10 @@ locals {
   # image_id = tolist(setintersection( toset(local.compartment_images), toset(local.oracle_linux_images)))[0]
   image_id = data.oci_core_images.oraclelinux.images.0.id
 }
+
+output latest_image_id {
+    value=local.latest_image_id
+}
   
 #----------------------------------------------------------------------------
 # SECURITY LISTS
