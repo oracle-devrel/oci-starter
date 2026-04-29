@@ -37,16 +37,6 @@ data "oci_containerengine_cluster_option" "starter_cluster_option" {
   cluster_option_id = "all"
 }
 
-# Do not use versions ending with .0 (K8s Preview versions)
-locals {
-  oke_stable_versions = [
-    for v in data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions : v
-    if !endswith(v, ".0")
-  ]
-  # oke_latest_stable_version=local.oke_stable_versions[length(local.oke_stable_versions)-1]
-  # oke_latest_stable_version=local.oke_stable_versions[length(local.oke_stable_versions)-1]
-}
-
 data "oci_containerengine_node_pool_option" "starter_node_pool_option" {
   node_pool_option_id = "all"
 }
@@ -63,6 +53,30 @@ data "oci_core_images" "shape_specific_images" {
 }
 
 locals {
+  oke_stable_versions = [
+    for v in data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions : v
+    if !endswith(v, ".0")
+  ]
+  oke_latest_stable_version=local.oke_stable_versions[length(local.oke_stable_versions)-1]
+  k8s_version = replace(local.oke_latest_stable_version, "v", "")
+
+  // Does not work for ARM64... XXXXXXXX
+  oke_images = [
+    for s in oke_stable_versions : s
+    if !can(regex("aarch64|GPU", s.sourceName))
+    && can(regex("OKE-${local.k8s_version}", s.sourceName))
+  ]
+
+  oke_image_id = element(
+    [
+      for s in sort(local.oke_images[*].sourceName) :
+      one([for x in local.oke_images : x.imageId if x.sourceName == s])
+    ],
+    length(local.oke_images) - 1
+  )
+
+  latest_image_id = length(local.matching_images) > 0 ? local.matching_images[0].image_id : data.oci_core_images.oraclelinux.images.0.id
+
   # all_images = "${data.oci_core_images.shape_specific_images.images}"
   # all_sources = "${data.oci_containerengine_node_pool_option.starter_node_pool_option.sources}"
   # compartment_images = [for image in local.all_images : image.id if length(regexall("Oracle-Linux-[0-9]*.[0-9]*-20[0-9]*",image.display_name)) > 0 ]
