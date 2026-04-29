@@ -4,13 +4,13 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $BIN_DIR/build_common.sh
 cd $PROJECT_DIR
 
+title "OKE Destroy"
+
 if [ ! -f $PROJECT_DIR/src/terraform/oke.tf ]; then
   echo "oke.tf not found"
   echo "Nothing to delete. This was an existing OKE installation"
   exit
 fi  
-
-echo "OKE DESTROY"
 
 if [ "$1" != "--auto-approve" ]; then
   error_exit "Please call this script via ./starter.sh destroy"

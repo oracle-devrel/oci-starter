@@ -87,7 +87,6 @@ if [ "$TF_VAR_infra_as_code" != "from_resource_manager" ]; then
 
     # OKE
   if [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
-    title "OKE Destroy"
     $BIN_DIR/destroy_oke.sh --auto-approve
   fi
 
