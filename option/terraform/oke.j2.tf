@@ -62,7 +62,7 @@ locals {
 
   // Does not work for ARM64... XXXXXXXX
   oke_images = [
-    for s in local.oke_stable_versions : s
+    for s in data.oci_containerengine_node_pool_option.starter_cluster_option.sources : s
     if !can(regex("aarch64|GPU", s.sourceName))
     && can(regex("OKE-${local.k8s_version}", s.sourceName))
   ]
