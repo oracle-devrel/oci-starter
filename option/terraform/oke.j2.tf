@@ -63,14 +63,15 @@ locals {
   // Does not work for ARM64... XXXXXXXX
   oke_images = [
     for s in data.oci_containerengine_node_pool_option.starter_node_pool_option.sources : s
-    if !can(regex("aarch64|GPU", s.sourceName))
-    && can(regex("OKE-${local.k8s_version}", s.sourceName))
+      if !can(regex("aarch64|GPU", s.source_name))
+      && can(regex("OKE-${local.k8s_version}", s.source_name))
+      && can(regex("Linux-8", s.source_name))
   ]
 
   oke_image_id = length(local.oke_images) > 0 ? element(
     [
-      for s in sort(local.oke_images[*].sourceName) :
-      one([for x in local.oke_images : x.imageId if x.sourceName == s])
+      for s in sort(local.oke_images[*].source_name) :
+      one([for x in local.oke_images : x.image_id if x.source_name == s])
     ],
     length(local.oke_images) - 1
   ) : data.oci_core_images.oraclelinux.images.0.id
@@ -80,15 +81,9 @@ locals {
   # compartment_images = [for image in local.all_images : image.id if length(regexall("Oracle-Linux-[0-9]*.[0-9]*-20[0-9]*",image.display_name)) > 0 ]
   # oracle_linux_images = [for source in local.all_sources : source.image_id if length(regexall("Oracle-Linux-[0-9]*.[0-9]*-20[0-9]*",source.source_name)) > 0]
   # image_id = tolist(setintersection( toset(local.compartment_images), toset(local.oracle_linux_images)))[0]
-  image_id = data.oci_core_images.oraclelinux.images.0.id
+  # image_id = data.oci_core_images.oraclelinux.images.0.id
 }
 
-output oke_image_id2 {
-    value=local.oke_image_id
-}
-output image_id {
-    value=local.image_id
-}  
 
 #----------------------------------------------------------------------------
 # SECURITY LISTS
