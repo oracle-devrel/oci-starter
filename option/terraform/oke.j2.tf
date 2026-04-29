@@ -482,11 +482,6 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
     source_type = "IMAGE"
   }
 
-  node_eviction_node_pool_settings  {
-    eviction_grace_duration = "0"
-    is_force_delete_after_grace_duration = "true"
-  }
-
   node_config_details {
     #Required
     placement_configs {
@@ -503,6 +498,12 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
     #   pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
     # }
   }
+
+  node_eviction_node_pool_settings  {
+    eviction_grace_duration = "0"
+    is_force_delete_after_grace_duration = "true"
+  }
+
   ssh_public_key      = local.ssh_public_key
 
   freeform_tags = local.freeform_tags
