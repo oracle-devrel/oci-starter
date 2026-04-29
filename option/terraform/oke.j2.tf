@@ -43,7 +43,8 @@ locals {
     for v in data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions : v
     if !endswith(v, ".0")
   ]
-  oke_latest_stable_version=local.oke_stable_versions[length(local.oke_stable_versions)-1]
+  # oke_latest_stable_version=local.oke_stable_versions[length(local.oke_stable_versions)-1]
+  # oke_latest_stable_version=local.oke_stable_versions[length(local.oke_stable_versions)-1]
 }
 
 data "oci_containerengine_node_pool_option" "starter_node_pool_option" {
@@ -254,7 +255,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
 resource oci_core_security_list starter_seclist_api {
   compartment_id = local.lz_network_cmp_ocid
   vcn_id         = data.oci_core_vcn.starter_vcn.id
-  display_name   = "${var.prefix}-seclist-node"
+  display_name   = "${var.prefix}-seclist-api"
 
   egress_security_rules {
     description      = "Allow Kubernetes Control Plane to communicate with OKE"
@@ -352,7 +353,7 @@ resource "oci_core_subnet" "starter_lb_subnet" {
 
   # Provider code tries to maintain compatibility with old versions.
   # security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
-  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id]
+  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_seclist_lb.id]
   display_name      = "${var.prefix}-oke-lb-subnet"
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
