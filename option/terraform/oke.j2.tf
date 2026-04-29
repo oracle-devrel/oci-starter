@@ -83,8 +83,8 @@ locals {
   image_id = data.oci_core_images.oraclelinux.images.0.id
 }
 
-output latest_image_id {
-    value=local.latest_image_id
+output oke_image_id {
+    value=local.oke_image_id
 }
   
 #----------------------------------------------------------------------------
