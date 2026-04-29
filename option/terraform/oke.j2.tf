@@ -456,6 +456,8 @@ resource "oci_containerengine_cluster" "starter_oke" {
     # }
   }
 
+  depends_on = [ oci_identity_policy.starter_oke_policy ]
+
   freeform_tags = local.freeform_tags
 }
 
