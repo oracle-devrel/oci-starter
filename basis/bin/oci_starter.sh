@@ -213,7 +213,7 @@ fi
 
 now_epoch=$(date +%s)
 elapsed=$((now_epoch - START_EPOCH))
-echo "Elapsed time: ${elapsed} seconds"
+echo "Elapsed time: ${elapsed} secs"
 
 # Return the exit code 
 exit ${PIPESTATUS[0]}
