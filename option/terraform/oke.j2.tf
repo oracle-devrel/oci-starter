@@ -83,10 +83,13 @@ locals {
   image_id = data.oci_core_images.oraclelinux.images.0.id
 }
 
-output oke_image_id {
+output oke_image_id2 {
     value=local.oke_image_id
 }
-  
+output image_id {
+    value=local.image_id
+}  
+
 #----------------------------------------------------------------------------
 # SECURITY LISTS
 # See: https://docs.oracle.com/en-us/iaas/Content/ContEng/Concepts/contengnetworkconfigexample.htm
