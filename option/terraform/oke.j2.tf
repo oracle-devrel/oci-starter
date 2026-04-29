@@ -470,7 +470,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
 
   node_source_details {
     #Required
-    image_id    = local.image_id
+    image_id    = local.oke_image_id
     source_type = "IMAGE"
   }
 
