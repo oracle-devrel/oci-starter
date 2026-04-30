@@ -51,7 +51,7 @@ if [ ! -f $KUBECONFIG ]; then
         # Wait 
         echo "Waiting for Gateway to be ready..."
         kubectl wait --for=condition=Programmed gateway/oke-gateway -n default --timeout=120s
-        exit_on_error "Gateway not reacing Programmed State"
+        exit_on_error "Gateway Programmed State"
 
         # Get the IP
         oke_get_gateway_ip
