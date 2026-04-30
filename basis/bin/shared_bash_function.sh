@@ -58,7 +58,7 @@ build_function() {
 # Create KUBECONFIG file
 create_kubeconfig() {
     oci ce cluster create-kubeconfig --cluster-id $OKE_OCID --file $KUBECONFIG --region $TF_VAR_region --token-version 2.0.0  --kube-endpoint PUBLIC_ENDPOINT
-    exit_on_error "create_kubeconfig - failed.... $OKE_OCID / $TF_VAR_region"
+    exit_on_error "create_kubeconfig - $OKE_OCID / $TF_VAR_region"
     chmod 600 $KUBECONFIG
 }
 
