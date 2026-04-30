@@ -7,11 +7,20 @@ if [ "$#" -lt 1 ]; then
     exit 1
 fi
 
-echo "Mode"
-echo "[1] ./test_rerun.sh <path> destroy_refresh_build_destroy"
-echo "[2] ./test_rerun.sh <path> destroy_refresh_build"
-echo "[3] ./test_rerun.sh <path> refresh"
-read -p "Enter choice [1/4]:  " MODE_ID
+if [ "$2" == "destroy_refresh_build_destroy" ]; then
+     MODE_ID=1
+elif [ "$2" == "destroy_refresh_build" ]; then
+     MODE_ID=2
+elif [ "$2" == "refresh" ]; then
+     MODE_ID=3
+else      
+    echo "Mode"
+    echo "[1] ./test_rerun.sh <path> destroy_refresh_build_destroy"
+    echo "[2] ./test_rerun.sh <path> destroy_refresh_build"
+    echo "[3] ./test_rerun.sh <path> refresh"
+    read -p "Enter choice [1/3]:  " MODE_ID
+fi
+
 if [ "$MODE_ID" == "1" ]; then
     echo "-"
 elif [ "$MODE_ID" == "2" ]; then
