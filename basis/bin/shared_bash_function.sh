@@ -58,7 +58,7 @@ build_function() {
 # Create KUBECONFIG file
 create_kubeconfig() {
     oci ce cluster create-kubeconfig --cluster-id $OKE_OCID --file $KUBECONFIG --region $TF_VAR_region --token-version 2.0.0  --kube-endpoint PUBLIC_ENDPOINT
-    exit_on_error "create_kubeconfig - failed.... $OKE_OCID / $TF_VAR_region"
+    exit_on_error "create_kubeconfig - $OKE_OCID / $TF_VAR_region"
     chmod 600 $KUBECONFIG
 }
 
@@ -285,8 +285,8 @@ get_ui_url() {
         if [ ! -f $KUBECONFIG ]; then
         create_kubeconfig  
         fi 
-        export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
-        export UI_URL=http://${TF_VAR_ingress_ip}/${TF_VAR_prefix}
+        oke_get_gateway_ip
+        export UI_URL=http://${TF_VAR_gateway_ip}/${TF_VAR_prefix}
         if [ "$TF_VAR_tls" != "" ] && [ "$TF_VAR_dns_name" != "" ]; then
         export UI_HTTP=$UI_URL
         export UI_URL=https://${TF_VAR_dns_name}/${TF_VAR_prefix}
@@ -589,7 +589,7 @@ certificate_post_deploy() {
       echo "Skip: TLS - Kubernetes - HTTP_01"
     fi
   elif [ "$TF_VAR_deploy_type" == "kubernetes"  ]; then
-    # Set the TF_VAR_ingress_ip
+    # Set the TF_VAR_gateway_ip
     get_ui_url 
     $BIN_DIR/terraform_apply.sh --auto-approve -no-color
     exit_on_error "certificate_post_deploy - terraform apply"

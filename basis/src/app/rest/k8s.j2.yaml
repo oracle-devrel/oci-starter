@@ -67,6 +67,30 @@ spec:
               name: {{ prefix }}-db-secret
               key: TF_VAR_nosql_endpoint
 {%- endif %}
+{%- if python_framework in [ "langgraph", "responses" ] %}
+        - name: TF_VAR_region
+          valueFrom:
+            configMapKeyRef:
+              name: tf-env-configmap
+              key: TF_VAR_region
+        - name: TF_VAR_compartment_ocid
+          valueFrom:
+            configMapKeyRef:
+              name: tf-env-configmap
+              key: TF_VAR_compartment_ocid
+{%- endif %}
+{%- if python_framework == "langgraph" %}
+        - name: MCP_SERVER_URL
+          value: "http://{{ prefix }}-mcp-server-service:2025/mcp"
+{%- elif python_framework == "responses" %}
+        - name: TF_VAR_project_ocid
+          valueFrom:
+            configMapKeyRef:
+              name: tf-env-configmap
+              key: TF_VAR_project_ocid
+        - name: MCP_SERVER_URL
+          value: "http://##TF_VAR_gateway_ip##/##TF_VAR_prefix##/mcp_server/mcp"
+{%- endif %}
       imagePullSecrets:
       - name: ocirsecret        
 ---

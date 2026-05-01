@@ -37,15 +37,6 @@ data "oci_containerengine_cluster_option" "starter_cluster_option" {
   cluster_option_id = "all"
 }
 
-# Do not use versions ending with .0 (K8s Preview versions)
-locals {
-  oke_stable_versions = [
-    for v in data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions : v
-    if !endswith(v, ".0")
-  ]
-  oke_latest_stable_version=local.oke_stable_versions[length(local.oke_stable_versions)-1]
-}
-
 data "oci_containerengine_node_pool_option" "starter_node_pool_option" {
   node_pool_option_id = "all"
 }
@@ -62,16 +53,49 @@ data "oci_core_images" "shape_specific_images" {
 }
 
 locals {
+  oke_stable_versions = [
+    for v in data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions : v
+    if !endswith(v, ".0")
+  ]
+  oke_latest_stable_version=local.oke_stable_versions[length(local.oke_stable_versions)-1]
+  k8s_version = replace(local.oke_latest_stable_version, "v", "")
+
+  # Get the image id from data.oci_containerengine_cluster_option.starter_cluster_option.kubernetes_versions
+  # Ex: Oracle-Linux-8.10-2026.02.28-0-OKE-1.35.2-1392 -> ocid.....
+  oke_images_amd = [
+    for s in data.oci_containerengine_node_pool_option.starter_node_pool_option.sources : s
+      if !can(regex("aarch64|GPU", s.source_name))
+      && can(regex("OKE-${local.k8s_version}", s.source_name))
+      && can(regex("Linux-8", s.source_name))
+  ]
+  oke_images_ampere = [
+    for s in data.oci_containerengine_node_pool_option.starter_node_pool_option.sources : s
+      if can(regex("aarch64", s.source_name))
+      && can(regex("OKE-${local.k8s_version}", s.source_name))
+      && can(regex("Linux-8", s.source_name))
+  ]
+  oke_images = (var.instance_shape=="VM.Standard.A1.Flex")?local.oke_images_ampere:local.oke_images_amd
+
+  oke_image_id = length(local.oke_images) > 0 ? element(
+    [
+      for s in sort(local.oke_images[*].source_name) :
+      one([for x in local.oke_images : x.image_id if x.source_name == s])
+    ],
+    length(local.oke_images) - 1
+  ) : data.oci_core_images.oraclelinux.images.0.id
+
   # all_images = "${data.oci_core_images.shape_specific_images.images}"
   # all_sources = "${data.oci_containerengine_node_pool_option.starter_node_pool_option.sources}"
   # compartment_images = [for image in local.all_images : image.id if length(regexall("Oracle-Linux-[0-9]*.[0-9]*-20[0-9]*",image.display_name)) > 0 ]
   # oracle_linux_images = [for source in local.all_sources : source.image_id if length(regexall("Oracle-Linux-[0-9]*.[0-9]*-20[0-9]*",source.source_name)) > 0]
   # image_id = tolist(setintersection( toset(local.compartment_images), toset(local.oracle_linux_images)))[0]
-  image_id = data.oci_core_images.oraclelinux.images.0.id
+  # image_id = data.oci_core_images.oraclelinux.images.0.id
 }
-  
+
+
 #----------------------------------------------------------------------------
 # SECURITY LISTS
+# See: https://docs.oracle.com/en-us/iaas/Content/ContEng/Concepts/contengnetworkconfigexample.htm
 
 resource "oci_core_security_list" "starter_seclist_lb" {
   compartment_id = local.lz_network_cmp_ocid
@@ -117,6 +141,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
     protocol  = "all"
     stateless = "false"
   }
+
   egress_security_rules {
     description      = "Access to Kubernetes API Endpoint"
     destination      = local.oke_cidr_api
@@ -124,8 +149,8 @@ resource "oci_core_security_list" "starter_seclist_node" {
     protocol  = "6"
     stateless = "false"
     tcp_options {
-      max = "6443"
       min = "6443"
+      max = "6443"
     }
   }
   egress_security_rules {
@@ -135,8 +160,8 @@ resource "oci_core_security_list" "starter_seclist_node" {
     protocol  = "6"
     stateless = "false"
     tcp_options {
-      max = "12250"
       min = "12250"
+      max = "12250"
     }
   }
   egress_security_rules {
@@ -157,8 +182,8 @@ resource "oci_core_security_list" "starter_seclist_node" {
     protocol  = "6"
     stateless = "false"
     tcp_options {
-      max = "443"
       min = "443"
+      max = "443"
     }
   }
   egress_security_rules {
@@ -187,6 +212,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
     source_type = "CIDR_BLOCK"
     stateless   = "false"
   }
+
   ingress_security_rules {
     description = "Path discovery"
     icmp_options {
@@ -198,6 +224,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
     source_type = "CIDR_BLOCK"
     stateless   = "false"
   }
+
   ingress_security_rules {
     description = "TCP access from Kubernetes Control Plane"
     protocol    = "6"
@@ -205,6 +232,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
     source_type = "CIDR_BLOCK"
     stateless   = "false"
   }
+
   ingress_security_rules {
     description = "Inbound SSH traffic to worker nodes"
     protocol    = "6"
@@ -212,10 +240,34 @@ resource "oci_core_security_list" "starter_seclist_node" {
     source_type = "CIDR_BLOCK"
     stateless   = "false"
     tcp_options {
-      max = "22"
       min = "22"
+      max = "22"
     }
   }
+
+  ingress_security_rules {
+    description = "NodePort"
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    source_type = "CIDR_BLOCK"
+    stateless   = "false"
+    tcp_options {
+      min = "30000"
+      max = "32767"
+    }
+  }  
+
+  ingress_security_rules {
+    description = "Allow load balancer to communicate with kube-proxy on worker nodes."
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    source_type = "CIDR_BLOCK"
+    stateless   = "false"
+    tcp_options {
+      min = "10256"
+      max = "10256"
+    }
+  }  
 
   freeform_tags = local.freeform_tags
 }
@@ -225,7 +277,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
 resource oci_core_security_list starter_seclist_api {
   compartment_id = local.lz_network_cmp_ocid
   vcn_id         = data.oci_core_vcn.starter_vcn.id
-  display_name   = "${var.prefix}-seclist-node"
+  display_name   = "${var.prefix}-seclist-api"
 
   egress_security_rules {
     description      = "Allow Kubernetes Control Plane to communicate with OKE"
@@ -268,6 +320,7 @@ resource oci_core_security_list starter_seclist_api {
       min = "6443"
     }
   }
+
   ingress_security_rules {
     description = "Kubernetes worker to control plane communication"
     protocol    = "6"
@@ -279,6 +332,7 @@ resource oci_core_security_list starter_seclist_api {
       min = "12250"
     }
   }
+
   ingress_security_rules {
     description = "Path discovery"
     icmp_options {
@@ -321,7 +375,7 @@ resource "oci_core_subnet" "starter_lb_subnet" {
 
   # Provider code tries to maintain compatibility with old versions.
   # security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
-  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id]
+  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_seclist_lb.id]
   display_name      = "${var.prefix}-oke-lb-subnet"
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
@@ -402,6 +456,8 @@ resource "oci_containerengine_cluster" "starter_oke" {
     # }
   }
 
+  depends_on = [ oci_identity_policy.starter_oke_policy ]
+
   freeform_tags = local.freeform_tags
 }
 
@@ -422,7 +478,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
 
   node_source_details {
     #Required
-    image_id    = local.image_id
+    image_id    = local.oke_image_id
     source_type = "IMAGE"
   }
 
@@ -442,6 +498,12 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
     #   pod_subnet_ids = [ oci_core_subnet.starter_pod_subnet.id ]
     # }
   }
+
+  node_eviction_node_pool_settings  {
+    eviction_grace_duration = "PT0S"
+    is_force_delete_after_grace_duration = "true"
+  }
+
   ssh_public_key      = local.ssh_public_key
 
   freeform_tags = local.freeform_tags
@@ -473,6 +535,7 @@ resource oci_containerengine_addon starter_oke_addon_certmanager {
   remove_addon_resources_on_delete = "true"
 }
 
+
 #----------------------------------------------------------------------------
 # OUTPUTS
 
@@ -491,9 +554,39 @@ output "node_pool" {
 
 locals {
   local_oke_ocid = oci_containerengine_cluster.starter_oke.id
+  local_oke_lb_subnet_ocid = oci_core_subnet.starter_lb_subnet.id
 }
+
 {%- endif %}  
 
 output "oke_ocid" {
   value = local.local_oke_ocid
 }
+
+# Doc: https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengsettingupnativeingresscontroller-addon-prereqs.htm#contengsettingupnativeingresscontroller-addon-permissions
+resource "oci_identity_policy" "starter_oke_policy" {
+    provider       = oci.home    
+    name           = "${var.prefix}-oke-policy-${random_string.id.result}"
+    description    = "${var.prefix}-oke-policy"
+    compartment_id = local.lz_app_cmp_ocid
+    statements = [
+        "allow any-user to manage load-balancers in compartment id ${local.lz_app_cmp_ocid}",   
+        "allow any-user to use virtual-network-family in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage cabundles in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage cabundle-associations in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage leaf-certificates in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to read leaf-certificate-bundles in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage leaf-certificate-versions in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage certificate-associations in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to read certificate-authorities in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage certificate-authority-associations in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to read certificate-authority-bundles in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to read public-ips in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage floating-ips in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to manage waf-family in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to read cluster-family in compartment id ${local.lz_app_cmp_ocid}",
+        "allow any-user to use tag-namespaces in compartment id ${local.lz_app_cmp_ocid}",
+    ]
+    freeform_tags = local.freeform_tags
+}
+

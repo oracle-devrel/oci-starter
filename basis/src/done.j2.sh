@@ -18,8 +18,12 @@ if [ "$UI_URL" != "" ]; then
     if [ "$UI_HTTP" != "" ]; then
         append_done "- HTTP : $UI_HTTP/"
     fi
-    append_done "- REST: $UI_URL/app/dept"
-    append_done "- REST: $UI_URL/app/info"    
+    if [ "$TF_VAR_ui_type" == "langgraph" ]; then
+        append_done "- REST: $UI_URL/app/threads"
+    else
+        append_done "- REST: $UI_URL/app/dept"
+        append_done "- REST: $UI_URL/app/info"    
+    fi
     {%- if language=="java" and java_framework=="tomcat" %}
     append_done "- REST: $UI_URL/app/index.jsp"
     {%- endif %}    

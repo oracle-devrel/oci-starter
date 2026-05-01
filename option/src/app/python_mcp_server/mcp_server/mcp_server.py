@@ -24,8 +24,8 @@ def send_email(to: str, subject: str, body: str) -> dict[str, str]:
 def get_dept() -> list[dict[str, Any]]:
     """Return all rows from the DEPT table."""
     log( "<get_dept>")
-    user = os.getenv("TF_VAR_db_user")
-    password = os.getenv("TF_VAR_db_password")
+    user = os.getenv("DB_USER")
+    password = os.getenv("DB_PASSWORD")
     dsn = os.getenv("DB_URL")
 
     if not user or not password or not dsn:

@@ -116,7 +116,6 @@ install_java() {
             # sudo update-alternatives --set native-image $JAVA_HOME/lib/svm/bin/native-image
         fi   
         sudo update-alternatives --set java $JAVA_HOME/bin/java
-        echo "export JAVA_HOME=${JAVA_HOME}" >> $HOME/.bashrc
     else
         # JDK 
         # Needed due to concurrency
@@ -137,7 +136,9 @@ install_java() {
             # cd -
             # sudo update-alternatives --set java $JAVA_LATEST_PATH/bin/java
         fi
+        export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
     fi
+    echo "export JAVA_HOME=${JAVA_HOME}" >> $HOME/.bashrc    
 
     # JMS agent deploy (to fleet_ocid )
     if [ -f jms_agent_deploy.sh ]; then
@@ -147,7 +148,16 @@ install_java() {
 
   # Build on Bastion
     if [ "$TF_VAR_build_host" == "bastion" ]; then 
-        sudo dnf install -y maven
+        # sudo dnf install -y maven
+        if [ ! -d $HOME/maven ]; then
+            MVN_VERSION=3.9.15
+            wget https://dlcdn.apache.org/maven/maven-3/$MVN_VERSION/binaries/apache-maven-$MVN_VERSION-bin.tar.gz
+            tar xfz apache-maven-$MVN_VERSION-bin.tar.gz
+            mv apache-maven-$MVN_VERSION $HOME/maven
+            rm apache-maven-$MVN_VERSION-bin.tar.gz
+            export PATH=$HOME/maven/bin:$PATH
+            echo "export PATH=$HOME/maven/bin:$PATH" >> $HOME/.bashrc 
+        fi
     fi
 }
 export -f install_java
@@ -228,7 +238,9 @@ install_python() {
     sudo dnf install -y python3.12 python3.12-pip python3-devel wget
     sudo update-alternatives --set python /usr/bin/python3.12
     curl -LsSf https://astral.sh/uv/install.sh | sh
-    uv venv myenv
+    if [ ! -d myenv ]; then
+        uv venv myenv
+    fi
     source myenv/bin/activate
     if [ -f requirements.txt ]; then 
       uv pip install -r requirements.txt
@@ -242,7 +254,9 @@ export -f install_python
 # -- install_libreoffice  ---------------------------------------------------
 install_libreoffice() {
     export STABLE_VERSIONS=`curl -s https://download.documentfoundation.org/libreoffice/stable/`
-    export LIBREOFFICE_VERSION=`echo $STABLE_VERSIONS | sed 's/.*<td valign="top">//' | sed 's/\/<\/a>.*//' | sed 's/.*\/">//'`
+    # export LIBREOFFICE_VERSION=`echo $STABLE_VERSIONS | sed 's/.*<td valign="top">//' | sed 's/\/<\/a>.*//' | sed 's/.*\/">//'`
+    # Version 26.2 is incompatible with RHEL8...
+    export LIBREOFFICE_VERSION=`echo $STABLE_VERSIONS | sed 's/.*>25.8/25.8/' | sed 's/\/<\/a>.*//' | sed 's/.*\/">//'`
     echo LIBREOFFICE_VERSION=$LIBREOFFICE_VERSION
     cd /tmp
     export LIBREOFFICE_TGZ="LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_rpm.tar.gz"
@@ -296,6 +310,8 @@ install_instant_client() {
     fi
 }
 export -f install_instant_client   
+
+# -- create_self_signed_ip_certificate --------------------------------------
 
 create_self_signed_ip_certificate()
 {
@@ -367,7 +383,8 @@ EOF
 }
 export -f create_self_signed_ip_certificate 
 
-# -- Install NGINX  ------------------------------------------------------------------
+# -- install_ngnix ----------------------------------------------------------
+
 install_ngnix() {
     title "NGINX"
     sudo dnf install nginx -y > /tmp/dnf_nginx.log
@@ -468,7 +485,9 @@ copy_replace_apply_target_oke() {
 export -f copy_replace_apply_target_oke 
 
 # -- docker_login -----------------------------------------------------------
+
 docker_login() {
+    echo "<docker_login>"
     get_docker_prefix
     # Login only if needed
     if ! docker system info 2>/dev/null | grep -q "Username"; then
@@ -476,6 +495,7 @@ docker_login() {
     fi
     exit_on_error "Docker Login"
 }
+export -f docker_login
 
 # -- ocir_docker_push_app -------------------------------------------------------
 ocir_docker_push_app() {
@@ -516,11 +536,20 @@ oke_deploy_app() {
     if [ -f k8s.yaml ]; then
         copy_replace_apply_target_oke k8s.yaml $APP
     fi
-    if [ -f k8s-ingress.yaml ]; then
-        copy_replace_apply_target_oke k8s-ingress.yaml $APP
+    if [ -f k8s-httproute.yaml ]; then
+        copy_replace_apply_target_oke k8s-httproute.yaml $APP
     fi
 }
 export -f oke_deploy_app
+
+# -- oke_get_gateway_ip -----------------------------------------------------
+
+oke_get_gateway_ip() {
+    if [ "$TF_VAR_gateway_ip" == "" ]; then
+        export TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n default -o json | jq -r '.status.addresses[].value | select(startswith("10.") | not)')
+    fi
+}
+export -f oke_get_gateway_ip
 
 # -- is_deploy_compute ------------------------------------------------------
 is_deploy_compute() {
@@ -530,6 +559,8 @@ is_deploy_compute() {
         return 1
     fi
 }
+
+export -f is_deploy_compute
 
 # -- build_ui ---------------------------------------------------------------
 build_ui() {

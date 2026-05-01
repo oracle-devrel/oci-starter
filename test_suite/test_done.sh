@@ -8,7 +8,8 @@ if [ "$UI_URL" != "" ]; then
     rm -Rf $TMP_PATH     
     mkdir -p $TMP_PATH 
     echo $UI_URL > $TMP_PATH/ui_url.txt
-    
+    echo "URL = $UI_URL"
+
     if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
         kubectl wait --for=condition=ready pod ${TF_VAR_prefix}-app
         kubectl wait --for=condition=ready pod ${TF_VAR_prefix}-ui
@@ -49,17 +50,17 @@ if [ "$UI_URL" != "" ]; then
         fi      
 
         # Check (Same test is also done test_suite_shared)
-        if grep -q -i "deptno" $TMP_PATH/result_dept.json; then
-            echo -e "\u2705 deptno detected"
+        if grep -qiE "deptno|department" $TMP_PATH/result_dept.json; then
+            echo -e "\u2705 deptno or department detected"
             break
         else 
-            echo -e "Waiting 5 secs: deptno not found"
+            echo -e "Waiting 5 secs: deptno or department not found"
         fi
         sleep 5  
         x=$(( $x + 1 ))
     done
     if [ "$x" == "20" ]; then
-        echo -e "\u2705 deptno not detected in $UI_URL/app/dept"  
+        echo -e "\u2705 deptno or department not detected in $UI_URL/app/dept"  
     fi
     echo "See $TMP_PATH/result_dept.json"
 

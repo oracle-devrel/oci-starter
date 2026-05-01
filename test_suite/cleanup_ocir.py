@@ -22,7 +22,7 @@ def main():
     # List all container repositories
     repos = list_call_get_all_results(
         artifacts_client.list_container_repositories,
-        compartment_ocid=compartment_ocid
+        compartment_id=compartment_ocid
     ).data
 
     if not repos:
@@ -35,7 +35,7 @@ def main():
         # List all image versions in the repository
         images = list_call_get_all_results(
             artifacts_client.list_container_images,
-            compartment_ocid=compartment_ocid,
+            compartment_id=compartment_ocid,
             repository_id=repo.id
         ).data
 

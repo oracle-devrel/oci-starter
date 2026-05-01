@@ -1,0 +1,9 @@
+{
+    "addonName": "Istio",
+    "configurations": [
+        {
+            "key": "enableIngressGateway",
+            "value": "false"
+        }
+    ]
+}

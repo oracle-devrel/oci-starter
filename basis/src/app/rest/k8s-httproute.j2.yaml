@@ -1,0 +1,91 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: ##TF_VAR_prefix##-rest-route
+spec:
+  parentRefs:
+  - name: oke-gateway
+  hostnames:
+{%- if tls == "new_http_01" %}
+  - "##TF_VAR_dns_name##"
+{%- endif %}
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /##TF_VAR_prefix##/app
+    filters:
+{%- if language in [ "apex", "ords" ] %}    
+    - type: RequestHeaderModifier
+      requestHeaderModifier:
+        set:
+        - name: Host
+          value: ##ORDS_HOST##
+{%- endif %}
+
+{%- if language == "apex" %}
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /ords/r/apex_app/apex_app
+
+{%- elif language == "ords" %}
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /ords/starter/module
+
+{%- elif language == "java" and java_framework == "tomcat" %}
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /starter-1.0
+
+{%- else %}
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /
+
+{%- endif %}
+
+    backendRefs:
+    - name: ##TF_VAR_prefix##-rest-service
+      port:
+{%- if language in [ "apex", "ords" ] %}
+        443
+{%- else %}
+        80
+{%- endif %}
+
+{%- if language in [ "apex", "ords" ] %}    
+---
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: ##TF_VAR_prefix##-service-entry
+spec:
+  hosts:
+  - ##ORDS_HOST##
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS
+  resolution: DNS
+  location: MESH_EXTERNAL
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: ##TF_VAR_prefix##-destination-rule
+spec:
+  host: ##ORDS_HOST##
+  trafficPolicy:
+    tls:
+      mode: SIMPLE
+      sni: ##ORDS_HOST##
+{%- endif %}      

@@ -23,11 +23,11 @@ for APP_DIR in `app_dir_list`; do
         # Build in bastion
         $APP_NAME/build.sh
     fi
-    if [ "APP_NAME" == "db" ]; then
+    if [ "$APP_NAME" == "db" ]; then
         # Database
         title "Rebuild - $APP_NAME: Install"
         ${APP_DIR}/install.sh
-    elif [ -f $APP_DIR/install.sh ] && [ is_deploy_compute ]; then
+    elif [ -f $APP_DIR/install.sh ] && is_deploy_compute; then
         # Build in terraform - compute 
         title "Rebuild: $APP_NAME: Install"
         ${APP_DIR}/install.sh
@@ -41,6 +41,10 @@ for APP_DIR in `app_dir_list`; do
         echo "Rebuild - TF_VAR_deploy_type: $TF_VAR_deploy_type is not supported. It requires terraform to redeploy."
     fi
 done
+
+if [ -f $HOME/bastion_lock ]; then
+    rm $HOME/bastion_lock
+fi
 
 end_time=$(date +%s)
 echo

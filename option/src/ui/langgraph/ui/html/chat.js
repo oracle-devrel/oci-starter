@@ -5,10 +5,10 @@ mermaid.initialize({ startOnLoad: false });
 
 // -- Variables ----------------------------------------------------------------- 
 
-let BASE_URL = '/app';
+let BASE_URL = 'app';
 let currentBackend = 'LangGraph';
 const backends = [
-    { name: 'LangGraph', baseUrl: '/app' }
+    { name: 'LangGraph', baseUrl: 'app' }
 ];
 let currentAgent = 'agent';
 let currentUser = 'customer';
@@ -77,6 +77,11 @@ function hideSpinner() {
     spinnerContainer.innerHTML = '';
 }
 
+// Remove spinner (when SSE is done)
+function errorSpinner() {
+    spinnerContainer.innerHTML = 'ERROR';
+}
+
 function scrollToBottom() {
     // Scroll so the anchor div is visible
     document.getElementById('spinner-container').scrollIntoView({ behavior: "smooth" });
@@ -112,10 +117,10 @@ async function renderMessage(msgObj) {
     let innerHTML = '';
     // Human message
     if (msgObj.type === 'human') {
-        innerHTML = `<div class="bubble"><div class="meta">You</div>${renderMarkdown(msgObj.content)}</div>`;
+        innerHTML = `<div class="bubble"><div class="bubble-content"><div class="meta">You</div>${renderMarkdown(msgObj.content)}</div></div>`;
     } else if (msgObj.type === 'ai') {
         if (msgObj.content) {
-            innerHTML = `<div class="bubble"><div class="meta">AI</div>${await renderContent(msgObj.content)}</div>`;
+            innerHTML = `<div class="bubble"><div class="bubble-content"><div class="meta">AI</div>${await renderContent(msgObj.content)}</div></div>`;
         } else if (msgObj.tool_calls && msgObj.tool_calls.length > 0) {
             const toolNames = msgObj.tool_calls.map(t => t.name).join(' - ');
             let bubble = `<div class="bubble"><div class="meta">Tool Calls - ${toolNames}</div>`;
@@ -158,7 +163,7 @@ function startSSE(reqBody, onMessage, onDone) {
         body: JSON.stringify(reqBody)
     }).then(async response => {
         if (!response.ok || !response.body) {
-            hideSpinner();
+            errorSpinner();
             onMessage({ type: "ai", content: "Network/server error." });
             if (onDone) onDone();
             return;
@@ -196,7 +201,7 @@ function startSSE(reqBody, onMessage, onDone) {
         hideSpinner();
         if (onDone) onDone();
     }).catch(e => {
-        hideSpinner();
+        errorSpinner();
         onMessage({ type: "ai", content: "Connection error." });
         if (onDone) onDone();
     });

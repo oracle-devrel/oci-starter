@@ -92,7 +92,7 @@ no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
                       '-atp_ocid', '-db_ocid', '-db_compartment_ocid', '-pdb_ocid', '-mysql_ocid', '-psql_ocid', '-opensearch_ocid', '-nosql_ocid',
                       '-db_user', '-fnapp_ocid', '-apigw_ocid', '-bastion_ocid', '-auth_token', '-tls',
                       '-subnet_ocid','-web_subnet_ocid','-app_subnet_ocid','-db_subnet_ocid','-shape','-db_install',
-                      '-ui', '-deploy', '-database', '-license']
+                      '-ui', '-deploy', '-database', '-license', '-test_name']
 
 # hidden_options - allowed but not advertised
 hidden_options = ['-zip', '-group_common','-group_name']
@@ -861,6 +861,9 @@ def create_output_dir():
         if params.get('deploy_type') == "function":
             output_copy_tree("option/src/app/fn/fn_common", "src/app")
 
+        if params.get('test_name'):
+            output_copy("test_suite/test_bastion_lock.sh", "bin/compute")
+
         # Generic version for Oracle DB
         if os.path.exists("option/src/app/"+app):
             output_copy_tree("option/src/app/"+app, "src/app")
@@ -905,7 +908,7 @@ def create_output_dir():
             if params.get('java_vm') == "graalvm":
                 params['java_docker'] = 'container-registry.oracle.com/graalvm/jdk:25'
             else:
-                params['java_docker'] = 'eclipse-temurin:25'
+                params['java_docker'] = 'docker.io/library/eclipse-temurin:25'
 
         # Check if any script exists that is NOT build_rest.sh
         has_build_rest = False

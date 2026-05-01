@@ -8,72 +8,62 @@ title "Config OKE"
 export TARGET_OKE=$TARGET_DIR/oke
 mkdir -p $TARGET_OKE
 
-function wait_ingress() {
-    # Wait for the ingress deployment
-    echo "Waiting for Ingress Controller Pods..."
-    kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=600s
-    kubectl wait --namespace ingress-nginx --for=condition=Complete job/ingress-nginx-admission-patch  
-}
-
 # One time configuration
 if [ ! -f $KUBECONFIG ]; then
     create_kubeconfig
     
-    # Check if Ingress Controller is installed
-    kubectl get service ingress-nginx-controller -n ingress-nginx
+    # Check if Gateway Controller is installed
+    kubectl get gateway oke-gateway -n default
     if [ "$?" != "0" ]; then
-        # Deploy Latest ingress-nginx
+        # Deploy Latest istio-gateway
         kubectl create clusterrolebinding starter_clst_adm --clusterrole=cluster-admin --user=$TF_VAR_current_user_ocid
         echo "OKE Deploy: Role Binding created"  
-        # LATEST_INGRESS_CONTROLLER=`curl --silent "https://api.github.com/repos/kubernetes/ingress-nginx/releases/latest" | jq -r .name`
-        # echo LATEST_INGRESS_CONTROLLER=$LATEST_INGRESS_CONTROLLER
-        # kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$LATEST_INGRESS_CONTROLLER/deploy/static/provider/cloud/deploy.yaml
-        if [ "$TF_VAR_tls" == "new_http_01" ]; then
-            helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
-            --namespace ingress-nginx \
-            --create-namespace \
-            --set controller.enableExternalDNS=true 
-            wait_ingress
 
-            # ccm-letsencrypt-prod.yaml
-            sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-prod.yaml > $TARGET_OKE/ccm-letsencrypt-prod.yaml
-            kubectl apply -f $TARGET_OKE/ccm-letsencrypt-prod.yaml --timeout=600s
-            sed "s&##CERTIFICATE_EMAIL##&${TF_VAR_certificate_email}&" src/oke/tls/ccm-letsencrypt-staging.yaml > $TARGET_OKE/ccm-letsencrypt-staging.yaml
-            kubectl apply -f $TARGET_OKE/ccm-letsencrypt-staging.yaml
+        # See: https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengworkingwithistioaddonforgatewayapi.htm
 
-            # external-dns-config.yaml
-            sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns-config.yaml > $TARGET_OKE/external-dns-config.tmp
-            sed "s&##REGION##&${TF_VAR_region}&" $TARGET_OKE/external-dns-config.tmp > $TARGET_OKE/external-dns-config.yaml
-            kubectl create secret generic external-dns-config --from-file=$TARGET_OKE/external-dns-config.yaml
+        # Install Gateway API CRDs
+        kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml
+        kubectl get crd gateways.gateway.networking.k8s.io
+        # Deploy the Istio cluster add-on
+        oci ce cluster install-addon --addon-name Istio --cluster-id $OKE_OCID --from-json file://src/oke/istio_addon.json
+        oci ce cluster list-addons --cluster-id $OKE_OCID
+        # Wait istiod
+        echo "Waiting for istiod pod to be Running..."
 
-            # external-dns.yaml
-            sed "s&##COMPARTMENT_OCID##&${TF_VAR_compartment_ocid}&" src/oke/tls/external-dns.yaml > $TARGET_OKE/external-dns.tmp
-            sed "s&##REGION##&${TF_VAR_region}&" $TARGET_OKE/external-dns.tmp > $TARGET_OKE/external-dns.yaml
-            kubectl apply -f $TARGET_OKE/external-dns.yaml
-        else
-            helm install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx \
-            --namespace ingress-nginx \
-            --create-namespace 
-            wait_ingress
-        fi
-        
-        # Wait for the ingress external IP
-        TF_VAR_ingress_ip=""
-        while [ -z $TF_VAR_ingress_ip ]; do
-            echo "Waiting for Ingress IP..."
-            TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
-            if [ -z "$TF_VAR_ingress_ip" ]; then
-                sleep 10
+        ELAPSED=0
+        while true; do
+            STATUS=$(kubectl get pods -n istio-system -l app=istiod -o jsonpath='{.items[0].status.phase}' 2>/dev/null)
+
+            if [ "$STATUS" = "Running" ]; then
+                echo "Istiod is Running ($ELAPSED secs)"
+                break
             fi
+            ELAPSED=$((ELAPSED + 5 ))
+            if [ $ELAPSED -gt 300 ]; then
+                exit_error "Istiod not started after 300 secs"
+            fi
+            echo "Waiting 5 secs..."
+            sleep 5
         done
 
-        date
-        kubectl get all -n ingress-nginx
-        sleep 5
-        echo "Ingress ready: $TF_VAR_ingress_ip"
+        # Create a Gateway
+        kubectl apply -f src/oke/gateway.yaml
+        # Wait 
+        echo "Waiting for Gateway to be ready..."
+        kubectl wait --for=condition=Programmed gateway/oke-gateway -n default --timeout=120s
+        exit_on_error "Gateway Programmed State"
+
+        # Get the IP
+        oke_get_gateway_ip
+        echo "Gateway ready: $TF_VAR_gateway_ip"
     else
-        echo "OKE Deploy: Skipping creation of ingress" 
+        echo "OKE Deploy: Skipping creation of Gateway" 
     fi  
+fi
+
+if ! grep -q "TF_VAR_gateway_ip" $TARGET_DIR/tf_env.sh; then
+    oke_get_gateway_ip
+    echo "export TF_VAR_gateway_ip=$TF_VAR_gateway_ip" >> $TARGET_DIR/tf_env.sh
 fi
 
 # Create secrets

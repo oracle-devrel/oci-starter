@@ -325,6 +325,11 @@ if [ -f $STATE_FILE ]; then
         else
             export TF_VAR_docker_image_rest="busybox"      
         fi
+        if [ -f $TARGET_DIR/docker_image_mcp_server.txt ]; then
+            export TF_VAR_docker_image_mcp_server=`cat $TARGET_DIR/docker_image_mcp_server.txt`
+        else
+            export TF_VAR_docker_image_mcp_server="busybox"      
+        fi        
     fi
 
     # export all OUTPUTS of the terraform file
@@ -360,8 +365,7 @@ if [ -f $STATE_FILE ]; then
     if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ -f $PROJECT_DIR/src/terraform/oke.tf ]; then
         # OKE
         if [ -f $KUBECONFIG ]; then
-            export TF_VAR_ingress_ip=`kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
-            export INGRESS_LB_OCID=`oci lb load-balancer list --compartment-id $TF_VAR_compartment_ocid | jq -r '.data[] | select(.["ip-addresses"][0]["ip-address"]=="'$TF_VAR_ingress_ip'") | .id'`  
+            oke_get_gateway_ip  
         fi
     fi
 

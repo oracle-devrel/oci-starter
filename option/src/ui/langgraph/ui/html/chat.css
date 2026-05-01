@@ -82,8 +82,13 @@ body {
     border-bottom-right-radius: 18px;
     border-top-right-radius: 18px;
     border-top-left-radius: 18px;
+    overflow: visible;    
+}
+
+.bubble-content {
     overflow: auto;    
 }
+
 
 form {
     display: flex;
