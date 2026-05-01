@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 if [ "$PROJECT_DIR" == "" ]; then
-  echo "ERROR: PROJECT_DIR undefined. Please use starter.sh"
-  exit 1
+    echo "ERROR: PROJECT_DIR undefined. Please use starter.sh"
+    exit 1
 fi  
 cd $PROJECT_DIR
 . starter.sh env -no-auto
@@ -11,8 +11,8 @@ cd $PROJECT_DIR
 ocir_docker_push
 
 if [ "$CALLED_BY_TERRAFORM" == "" ]; then
-  # Run terraform a second time
-  cd $PROJECT_DIR
-  . starter.sh env 
-  $BIN_DIR/terraform_apply.sh --auto-approve -no-color
+    # Run terraform a second time
+    cd $PROJECT_DIR
+    . starter.sh env 
+    $BIN_DIR/terraform_apply.sh --auto-approve -no-color
 fi
