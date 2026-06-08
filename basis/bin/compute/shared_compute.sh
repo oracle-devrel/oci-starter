@@ -581,7 +581,7 @@ export -f oke_deploy_app
 
 oke_get_gateway_ip() {
     if [ "$TF_VAR_gateway_ip" == "" ]; then
-        export TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n default -o json | jq -r '.status.addresses[].value | select(startswith("10.") | not)')
+        export TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n gateway -o json | jq -r '.status.addresses[].value | select(startswith("10.") | not)')
     fi
 }
 export -f oke_get_gateway_ip
