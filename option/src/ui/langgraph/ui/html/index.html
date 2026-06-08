@@ -3,42 +3,67 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Chat Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCI Enterprise AI - Demo</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="chat.css">
 </head>
 
 <body>
-    <nav id="agentMenu" aria-label="Accessible agents and users">
-        <div class="section-title">Backend</div>
-        <ul id="backendList"></ul>
-        <div class="section-title">Agents</div>
-        <ul id="agentList"></ul>
-        <div class="section-title">Users</div>
-        <ul id="userList"></ul>
-        <div class="section-title">Language</div>
-        <ul id="languageList">
-            <li data-lang="en" aria-current="true" tabindex="0">English</li>
-            <li data-lang="fr" aria-current="false" tabindex="0">Français</li>
-        </ul>
-    </nav>
-        <div id="chat-container">
-            <h2>How can I help ?</h2>
-            <div id="messages"></div>
-            <div id="spinner-container">
+    <main class="experience-shell">
+        <section class="visual-pane" aria-hidden="true">
+            <div class="visual-caption">
+                <span>OCI Enterprise AI</span>
+                <strong>Chat</strong>
             </div>
-        </div>    
-    <div id="form-container">
-        <form id="chat-form">
-            <textarea id="chat-input" rows="1" placeholder="Type your message..." autocomplete="off" required></textarea>
-            <button id="mic-button" type="button" title="Voice input" aria-label="Record voice message"><img src="images/microphone.png" alt="Microphone"></button>
-            <button type="submit"><img src="images/send.png"></button>
-        </form>
-    </div>
-    <div id="currentDisplay"></div>
-    <div id="reset"><img src="images/edit.png"></div>
-    <button class="hamburger" aria-label="Open accessible agents menu" aria-controls="agentMenu" aria-expanded="false">
-    </button>
+        </section>
+
+        <section class="chat-stage" aria-labelledby="page-title">
+            <header class="chat-header">
+                <div class="brand-lockup">
+                </div>
+
+                <div class="header-actions">
+                    <div id="languageList" class="language-switch" role="group" aria-label="Language">
+                        <button type="button" data-lang="en" aria-current="true">EN</button>
+                        <button type="button" data-lang="fr" aria-current="false">FR</button>
+                    </div>
+                    <button id="reset" class="icon-button" type="button" aria-label="Start a new conversation">
+                        <img src="images/edit.png" alt="">
+                    </button>
+                </div>
+            </header>
+
+            <section class="chat-card" aria-label="Chat">
+                <div id="chat-container">
+                    <div class="chat-intro">
+                        <image class="brand-mark" src="images/logo21.png">
+                        <div class="chat-intro2">
+                            <p class="eyebrow">At your service</p>
+                            <h2>How may I help?</h2>
+                        </div>
+                    </div>
+                    <div id="messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+                    <div id="spinner-container"></div>
+                </div>
+
+                <div id="form-container">
+                    <form id="chat-form">
+                        <textarea id="chat-input" rows="1" placeholder="Type your message..." autocomplete="off" required></textarea>
+                        <button id="mic-button" type="button" title="Voice input" aria-label="Record voice message">
+                            <img src="images/microphone.png" alt="">
+                        </button>
+                        <button type="submit" aria-label="Send message">
+                            <img src="images/send.png" alt="">
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <div id="currentDisplay" class="sr-only" aria-live="polite"></div>
+        </section>
+    </main>
+
     <script type="module" src="chat.js"></script>
 </body>
 

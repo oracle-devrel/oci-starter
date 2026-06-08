@@ -150,11 +150,21 @@ install_java() {
     if [ "$TF_VAR_build_host" == "bastion" ]; then 
         # sudo dnf install -y maven
         if [ ! -d $HOME/maven ]; then
-            MVN_VERSION=3.9.15
-            wget https://dlcdn.apache.org/maven/maven-3/$MVN_VERSION/binaries/apache-maven-$MVN_VERSION-bin.tar.gz
-            tar xfz apache-maven-$MVN_VERSION-bin.tar.gz
-            mv apache-maven-$MVN_VERSION $HOME/maven
-            rm apache-maven-$MVN_VERSION-bin.tar.gz
+            BASE_URL="https://dlcdn.apache.org/maven/maven-3"
+            LATEST_VERSION=$(
+                wget -qO- "$BASE_URL/" |
+                grep -oE 'href="[0-9]+\.[0-9]+\.[0-9]+/' |
+                sed 's|href="||;s|/||' |
+                sort -V |
+                tail -1
+            )
+            FILE="apache-maven-${LATEST_VERSION}-bin.tar.gz"
+            URL="${BASE_URL}/${LATEST_VERSION}/binaries/${FILE}"
+            echo "Downloading Maven ${LATEST_VERSION}..."
+            wget -nv "$URL"
+            tar xfz $FILE
+            mv apache-maven-${LATEST_VERSION} $HOME/maven
+            rm $FILE
             export PATH=$HOME/maven/bin:$PATH
             echo "export PATH=$HOME/maven/bin:$PATH" >> $HOME/.bashrc 
         fi
@@ -391,9 +401,9 @@ install_ngnix() {
 
     # Default: location /app/ { proxy_pass http://localhost:8080 }
     if [ -f nginx_app.locations ]; then
-        cp nginx_app.locations $TARGET_DIR/nginx_app.locations
-        file_replace_variables $TARGET_DIR/nginx_app.locations
-        sudo cp $TARGET_DIR/nginx_app.locations /etc/nginx/conf.d/.
+        cp nginx_app.locations /tmp/nginx_app.locations
+        file_replace_variables /tmp/nginx_app.locations
+        sudo cp /tmp/nginx_app.locations /etc/nginx/conf.d/.
         if grep -q nginx_app /etc/nginx/nginx.conf; then
             echo "Include nginx_app.locations is already there"
         else
@@ -433,6 +443,31 @@ install_ngnix() {
     sudo dnf install -y psmisc
 }
 export -f install_ngnix 
+
+# -- install_nodejs -----------------------------------------------------
+
+install_nodejs() {
+    sudo dnf module enable -y nodejs:20
+    sudo dnf module install -y nodejs
+}
+export -f install_nodejs     
+
+# -- install_cline_cli -----------------------------------------------------
+# https://docs.cline.bot/cline-cli/installation
+
+install_cline_cli() {
+    install_nodejs
+    sudo npm install -g cline
+    cline version
+    if [ "$TF_VAR_genai_api_key" == "" ] || [ "$TF_VAR_genai_model" == "" ] || [ "$TF_VAR_region" == "" ]; then
+        echo "<install_cline_cli> SKIP: Missing variables TF_VAR_genai_api_key=$TF_VAR_genai_api_key / TF_VAR_genai_model=$TF_VAR_genai_model / TF_VAR_region=$TF_VAR_region"
+    else 
+        # cline auth -p openai -k $TF_VAR_genai_api_key -b https://inference.generativeai.${TF_VAR_region}.oci.oraclecloud.com -m $TF_VAR_genai_model
+        cline auth -p openai -k $TF_VAR_genai_api_key -b https://inference.generativeai.${TF_VAR_region}.oci.oraclecloud.com -m openai.gpt-oss-120b
+    fi 
+    # xai.grok-4-1-fast-non-reasoning
+}
+export -f install_cline_cli 
 
 # -- Install Docker tools ---------------------------------------------------
 
@@ -636,3 +671,34 @@ build_rsync() {
     fi    
 }
 export -f build_rsync
+
+# -- livelab_oci_config ------------------------------------------------------------
+
+# Create a OCI Config for LiveLab (that does not support instance principal)
+livelab_oci_config()
+{
+   if [ "$LIVELABS" != "" ]; then
+     mkdir -p $HOME/.oci
+
+     # OCI Config file
+     cat > $HOME/.oci/config << EOF
+[DEFAULT]
+user=$TF_VAR_current_user_ocid
+fingerprint=$FINGERPRINT
+tenancy=$TF_VAR_tenancy_ocid
+region=$TF_VAR_region
+key_file=/home/opc/.oci/oci_api_key.pem
+EOF
+     echo "livelab_oci_config: .oci/config created"
+
+     # oci_api_key.pem
+     cat > $HOME/.oci/oci_api_key.pem << EOF
+$OCI_API_KEY_PEM
+OCI_API_KEY
+
+EOF
+    chmod 600 $HOME/.oci/config
+    chmod 600 $HOME/.oci/oci_api_key.pem
+  fi
+}
+export -f livelab_oci_config

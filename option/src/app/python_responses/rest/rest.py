@@ -111,10 +111,7 @@ def runs_stream(thread_id: str, payload: dict[str, Any], request: Request):
     message_id = int(THREADS[thread_id].get("next_message_id", 1))
     if message_id == 1:
         log("<runs_stream> SYSTEM_PROMPT")
-        input_payload = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": question},
-        ]
+        input_payload = SYSTEM_PROMPT + '\n' + question
     else:
         input_payload = question  # just the user message  if message_id=1:
 

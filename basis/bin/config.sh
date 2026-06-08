@@ -164,6 +164,45 @@ if declare -p | grep -q "__TO_FILL__"; then
         fi      
     fi
 
+    # PUBLIC_IP_FILTER
+    if [ "$TF_VAR_public_ip_filter" == "__TO_FILL__" ]; then
+        title "Config - Public IP Filter"
+        echo "The setup will include an Internet Gateway that allows HTTP and HTTPS traffic on ports 80 and 443 from the internet."
+        echo "What is the IP Range of the machines who can access these ports:"
+        echo "[1] all the machines on the internet -> 0.0.0.0/0"
+        echo "[2] just my laptop"
+        echo "[3] other"
+        read -rp "Choose an option [1-3]: " choice
+
+        case "$choice" in
+            1)
+                export TF_VAR_public_ip_filter="0.0.0.0/0"
+                ;;
+            2)
+                echo ""
+                echo "Open a browser and find your public IP address using a site like:"
+                echo "  https://ifconfig.me"
+                echo "  https://whatismyipaddress.com"
+                echo ""
+
+                read -rp "Enter your public IP address: " USER_IP
+                export TF_VAR_public_ip_filter="${USER_IP}/32"
+                ;;
+            3)
+                read -rp "Enter the IP range (example: 192.168.1.0/24): " IP_RANGE
+                export TF_VAR_public_ip_filter="$IP_RANGE"
+                ;;
+            *)
+                echo "Invalid option."
+                exit 1
+                ;;
+        esac
+
+        echo "TF_VAR_public_ip_filter=${TF_VAR_public_ip_filter}"
+        store_terraform_tfvars public_ip_filter $TF_VAR_public_ip_filter 
+    fi
+
+
     # LICENSE_MODEL
     if [ "$TF_VAR_license_model" == "__TO_FILL__" ]; then
         title "Config - License Model"  
@@ -269,6 +308,7 @@ if declare -p | grep -q "__TO_FILL__"; then
     read_ocid TF_VAR_fnapp_ocid "Function Application" ocid1.fnapp
     read_ocid TF_VAR_log_group_ocid "Log Group" ocid1.loggroup
     read_ocid TF_VAR_bastion_ocid "Bastion Instance" ocid1.instance
+    read_ocid TF_VAR_project_ocid "Generative AI Project" ocid1.generativeaiproject
     # ? # read_ocid TF_VAR_vault_secret_authtoken_ocid "Enter your Private Subnet OCID" ocid1.subnet
 
     # -- terraform.tfvars

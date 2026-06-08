@@ -50,7 +50,7 @@ if [ ! -f $KUBECONFIG ]; then
         kubectl apply -f src/oke/gateway.yaml
         # Wait 
         echo "Waiting for Gateway to be ready..."
-        kubectl wait --for=condition=Programmed gateway/oke-gateway -n default --timeout=120s
+        kubectl wait --for=condition=Programmed gateway/oke-gateway -n gateway --timeout=120s
         exit_on_error "Gateway Programmed State"
 
         # Get the IP

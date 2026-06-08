@@ -442,7 +442,7 @@ pre_test_suite() {
     GROUP_NAME="ts${SHAPE_GROUP}"
 
     cd $TEST_HOME/oci-starter
-    ./oci_starter.sh -group_name $GROUP_NAME -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -shape $SHAPE_GROUP
+    ./oci_starter.sh -group_name $GROUP_NAME -group_common atp,mysql,psql,opensearch,nosql,database,fnapp,apigw,oke -compartment_ocid $EX_COMPARTMENT_OCID -db_password $TEST_DB_PASSWORD -shape $SHAPE_GROUP -ui_type none -language none
     exit_on_error "oci_starter.sh"
     mv output/group_common ../group_common
     cd $TEST_HOME/group_common

@@ -10,6 +10,7 @@ import time
 import pprint
 import httpx
 import oci_openai 
+from typing import Any
 
 COMPARTMENT_OCID = os.getenv("TF_VAR_compartment_ocid")
 REGION = os.getenv("TF_VAR_region")
@@ -35,19 +36,30 @@ llm = ChatOCIGenAI(
     # model_id="meta.llama-4-scout-17b-16e-instruct",
     # model_id="cohere.command-a-03-2025",
     service_endpoint="https://inference.generativeai."+REGION+".oci.oraclecloud.com",
-    # model_id="xai.grok-4-fast-reasoning",
+    # model_id="xai.grok-4.3",
     # service_endpoint="https://inference.generativeai.us-chicago-1.oci.oraclecloud.com",
     compartment_id=COMPARTMENT_OCID,
-    is_stream=True,
+    is_stream=False,
     model_kwargs={"temperature": 0}
 )
+
+def remove_empty_parameter_names(args: dict[str, Any] | None) -> dict[str, Any]:
+    """Remove tool arguments whose parameter name is empty or only whitespace."""
+    if not args:
+        return {}
+
+    return {
+        key: value
+        for key, value in args.items()
+        if isinstance(key, str) and key.strip()
+    }
 
 # See https://docs.langchain.com/oss/python/langchain/mcp#accessing-runtime-context
 async def inject_user_context(
     request: MCPToolCallRequest,
     handler,
 ):
-    """Inject user credentials into MCP tool calls."""
+    """Inject user credentials into MCP tool calls and keep agent runs alive on tool errors."""
     print( "--- request ----" )
     pprint.pprint( request )
     runtime = request.runtime
@@ -57,8 +69,36 @@ async def inject_user_context(
     print( f"<inject_user_context> user_id={user_id}", flush=True )
     # print( f"<inject_user_context> auth_header={auth_header}", flush=True )
     # modified_request = request.override( headers = { "Authorization": f"User {user_id}" } )
-    modified_request = request.override( headers = { "Authorization": auth_header } )
-    return await handler(modified_request)
+    cleaned_args = remove_empty_parameter_names(request.args)
+    modified_request = request.override(
+        args=cleaned_args,
+        headers={ "Authorization": auth_header },
+    )
+    try:
+        return await handler(modified_request)
+    except Exception as first_error:
+        message = str(first_error)
+        print(f"<inject_user_context> tool call failed: {message}", flush=True)
+
+        # Retry once only for likely transient errors.
+        transient_markers = ["timeout", "temporar", "connection reset", "503", "502", "429"]
+        if any(marker in message.lower() for marker in transient_markers):
+            print("<inject_user_context> retrying transient tool error once", flush=True)
+            await asyncio.sleep(0.5)
+            try:
+                return await handler(modified_request)
+            except Exception as second_error:
+                message = str(second_error)
+                print(f"<inject_user_context> retry failed: {message}", flush=True)
+
+        # For validation/format errors, return structured payload instead of raising,
+        # so the agent can reason on the error and try a corrected tool call.
+        return {
+            "status": "tool_error",
+            "retryable_by_agent": True,
+            "error": message,
+            "guidance": "Tool call failed. Adjust parameters based on this error and retry with corrected values.",
+        }
 
 async def init( agent_name, prompt, tools_list, callback_handler=None ) -> StateGraph:
 
@@ -79,6 +119,13 @@ async def init( agent_name, prompt, tools_list, callback_handler=None ) -> State
             tools = await client.get_tools()
             print( "-- tools ------------------------------------------------------------")
             pprint.pprint( tools )
+            # Filter tools.
+            tools_filtered = []
+            for tool in tools:
+                if tools_list==None or tool.name in tools_list:
+                    tools_filtered.append( tool )
+            print( "-- tools_filtered ---------------------------------------------------")
+            pprint.pprint( tools_filtered )
             break
         except Exception as e:
             print(f"Connection failed {attempt}: {e}")            
@@ -91,13 +138,11 @@ async def init( agent_name, prompt, tools_list, callback_handler=None ) -> State
 
     agent = create_react_agent(
         model=llm,
-        tools=tools,
+        tools=tools_filtered,
         prompt=prompt,
         name=agent_name
     ) 
-
-    return agent
-
+    return agent    
 prompt = """You are an agent that use the tools you got access to.
 
 INSTRUCTIONS:
@@ -108,5 +153,3 @@ INSTRUCTIONS:
 """
 
 agent = asyncio.run(init("agent", prompt, None))
-
-

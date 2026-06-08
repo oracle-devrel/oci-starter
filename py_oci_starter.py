@@ -206,6 +206,7 @@ def kubernetes_rules():
       params['deploy_type'] = longhand('deploy_type', {'oke': 'kubernetes', 'ci': 'container_instance'})
 
 def vcn_rules():
+    params['public_ip_filter'] = TO_FILL
     if 'subnet_ocid' in params:
         params['web_subnet_ocid'] = params['subnet_ocid']
         params['app_subnet_ocid'] = params['subnet_ocid']
@@ -559,7 +560,7 @@ def env_sh_contents():
     tfvars.append(f'prefix="{prefix}"')
 
     for param in env_params:
-        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model", "certificate_email", "dns_name","dns_zone_name", "tls", "your_public_ssh_key"]:
+        if param.endswith("_ocid") or param in ["db_password", "auth_token", "license_model", "certificate_email", "dns_name","dns_zone_name", "tls", "public_ip_filter", "your_public_ssh_key"]:
             to_fill_params.append(param)
             tfvars.append('')
             tf_var_comment(tfvars, param)
@@ -579,6 +580,7 @@ def env_sh_contents():
 
 table_comments = {
     'prefix': ['Prefix to all resources created by terraform'],
+    'public_ip_filter': ['IP Range that can access port like 80/443 on the internet. Typically:', '- All internet - 0.0.0.0/0', '- or <your_laptop_ip>/32. Get your Laptop IP, by example, using https://whatismyipaddress.com'],
     'auth_token': ['See doc: https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm'],
     'db_password': ['Min length 12 characters, 2 lowercase, 2 uppercase, 2 numbers, 2 special characters. Ex: LiveLab__12345'],
     'license_model': ['BRING_YOUR_OWN_LICENSE or LICENSE_INCLUDED'],
@@ -588,7 +590,7 @@ table_comments = {
     'dns_name': ['SSL/TLS - Webserver DNS Name used by the installation (ex: www.mydomain.com)'],
     'dns_zone_name': ['SSL/TLS - OCI DNS Zone Name (ex:mydomain.com)'],
     'tls': ['SSL/TLS - Method to create the certificate (new_http_01 or new_dns_01 or existing_ocid) '], 
-    'your_public_ssh_key': ['Your ssh public key (associated with your private key stored in your laptop) that will be added in .ssh/authorized host in the bastion. Goal: clone the git repository on your laptop for Vibe Coding']
+    'your_public_ssh_key': ['Your ssh public key (associated with your private key stored in your laptop) that will be added in .ssh/authorized host in the bastion.', 'Goal: clone the git repository on your laptop for Vibe Coding']
 }
 
 def tf_var_comment(contents, param):

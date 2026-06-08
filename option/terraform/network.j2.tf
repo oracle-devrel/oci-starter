@@ -1,4 +1,8 @@
 # --- Network ---
+variable "public_ip_filter" {
+  description = "IP Range that can access the public network"
+  default = "0.0.0.0/0"  
+}
 {%- if vcn_ocid is defined %}
 # Existing VCN and Subnets
 variable "vcn_ocid" {
@@ -55,10 +59,6 @@ data "oci_core_subnet" "starter_db_subnet" {
 {%- else %}
 */
 {%- endif %}
-variable "public_ip_filter" {
-  description = "IP Range that can access the public network"
-  default = "0.0.0.0/0"  
-}
 
 # New VCN and Subnets
 locals {

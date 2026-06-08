@@ -5,9 +5,11 @@ start_time=$(date +%s)
 . ./shared_compute.sh
 title "Rebuild (in alphabetical order)"
 
-TARGET_OKE="$HOME/target/oke"
-mkdir -p $TARGET_OKE
-export DOCKER_LOGGED=false
+if [ "$TF_VAR_build_host" == "bastion" ]; then 
+    TARGET_OKE="$HOME/target/oke"
+    mkdir -p $TARGET_OKE
+    export DOCKER_LOGGED=false
+fi
 
 chmod +x */*.sh
 
