@@ -52,7 +52,6 @@ function setup_bastion_dir() {
 }
 
 function scp_bastion() {
-    {%- if test_name and deploy_type!="public_compute" %}
     # If 
     # - During TestSuite
     # - Public_compute got his own bastion (=compute) and does not need to lock it.
@@ -62,10 +61,11 @@ function scp_bastion() {
     ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$BASTION_IP "echo"   
     RESULT=$?       
     if [ $RESULT -eq 0 ]; then
-        echo "Success - SSH Bastion"
+        echo "Success - SSH Bastion - echo"
     else
         return 1 
     fi
+    {%- if test_name and deploy_type!="public_compute" %}
     ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$BASTION_IP "bash compute/test_bastion_lock.sh $TEST_NAME"   
     RESULT=$?       
     if [ $RESULT -eq 0 ]; then
