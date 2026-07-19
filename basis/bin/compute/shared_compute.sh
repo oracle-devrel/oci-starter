@@ -389,7 +389,6 @@ server {
     location / {
     }
 
-    include conf.d/nginx_app.locations;
     error_page 404 /404.html;
         location = /40x.html {
     }
@@ -422,16 +421,10 @@ install_ngnix() {
     sudo dnf install nginx -y > /tmp/dnf_nginx.log
 
     # Default: location /app/ { proxy_pass http://localhost:8080 }
-    if [ -f nginx_app.locations ]; then
-        cp nginx_app.locations /tmp/nginx_app.locations
-        file_replace_variables /tmp/nginx_app.locations
-        sudo cp /tmp/nginx_app.locations /etc/nginx/conf.d/.
-        if grep -q nginx_app /etc/nginx/nginx.conf; then
-            echo "Include nginx_app.locations is already there"
-        else
-            echo "Adding nginx_app.locations"
-            sudo awk -i inplace '/404.html/ && !x {print "        include conf.d/nginx_app.locations;"; x=1} 1' /etc/nginx/nginx.conf
-        fi
+    if [ -f nginx_app.conf ]; then
+        cp nginx_app.conf /tmp/nginx_app.conf
+        file_replace_variables /tmp/nginx_app.conf
+        sudo cp /tmp/nginx_app.conf /etc/nginx/default.d/.
     fi
 
     # TLS

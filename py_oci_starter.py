@@ -1018,7 +1018,7 @@ def create_output_dir():
         output_remove('src/app/rest/start.j2.sh')
         output_remove('src/app/rest/install.sh')
         output_remove('src/app/rest/env.j2.sh')
-        output_remove('src/app/nginx_app.locations')
+        output_remove('src/app/nginx_app.conf')
     else:         
         output_remove('src/app/*/Dockerfile')
 
