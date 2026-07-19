@@ -12,6 +12,7 @@ echo "ARCH=$ARCH"
 # Shared Install Function
 . ./shared_compute.sh
 title "Compute Install"
+dnf_makecache
 
 if ! grep -q "export LC_CTYPE" $HOME/.bashrc; then
     # Set VI and NANO in utf8
@@ -119,6 +120,7 @@ Type=simple
 ExecStart=/home/opc/app/$APP_DIR/start.sh
 TimeoutStartSec=0
 User=opc
+Environment=XDG_RUNTIME_DIR=/run/user/1000
 
 [Install]
 WantedBy=default.target

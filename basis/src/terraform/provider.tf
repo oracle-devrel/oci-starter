@@ -19,8 +19,14 @@ locals {
   home_region = coalesce( try( lookup( local.region_map, data.oci_identity_tenancy.tenant_details.home_region_key ), var.home_region ), var.region )
 }
 
+# .oci/config profile name 
+variable config_file_profile {
+  default = "DEFAULT"
+}
+
 # Provider Home Region
 provider "oci" {
   alias  = "home"
   region = local.home_region
+  config_file_profile = var.config_file_profile
 }

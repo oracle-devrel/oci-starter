@@ -69,7 +69,7 @@ locals {
 data "oci_core_images" "oraclelinux" {
   compartment_id = var.compartment_ocid
   operating_system = "Oracle Linux"
-  operating_system_version = "8"
+  operating_system_version = "10"
   filter {
     name = "display_name"
     values = [local.regex_linux]

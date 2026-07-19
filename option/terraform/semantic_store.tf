@@ -77,7 +77,7 @@ resource "oci_database_tools_database_tools_private_endpoint" "starter_database_
   compartment_id      = local.lz_db_cmp_ocid
   display_name        = "${var.prefix}-dbtools-private-endpoint"
   endpoint_service_id = data.oci_database_tools_database_tools_endpoint_service.starter_database_tools_endpoint_service.id
-  subnet_id           = oci_core_subnet.starter_db_subnet.id
+  subnet_id           = data.oci_core_subnet.starter_db_subnet.id
 
   #Optional
   description         = "Private Endpoint to ATP"
@@ -86,7 +86,7 @@ resource "oci_database_tools_database_tools_private_endpoint" "starter_database_
 data "oci_database_tools_database_tools_private_endpoints" "starter_database_tools_private_endpoints" {
   compartment_id  = local.lz_db_cmp_ocid
   state           = "ACTIVE"
-  subnet_id       = oci_core_subnet.starter_db_subnet.id
+  subnet_id       = data.oci_core_subnet.starter_db_subnet.id
   display_name    = oci_database_tools_database_tools_private_endpoint.starter_database_tools_private_endpoint.display_name
 }
 

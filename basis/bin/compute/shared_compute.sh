@@ -69,6 +69,28 @@ exit_on_error() {
 }
 export -f exit_on_error
 
+# -- dnf_makecache ----------------------------------------------------------
+dnf_makecache() {
+    # Wait that the machine is ready
+    title "dnf makecache"
+    success=0
+    for i in {1..10}; do
+        if sudo dnf makecache; then
+            success=1
+            echo "DNF MakeCache: Success"
+            break
+        fi
+        echo "Waiting 10 secs for yum repositories... ($i/10)"
+        sleep 10
+    done
+
+    if [ "$success" -eq 0 ]; then
+        echo "ERROR: Yum repositories are still not reachable after 100 seconds."
+        exit 1
+    fi
+}
+export -f dnf_makecache
+
 # -- replace_db_user_password_in_file ----------------------------------------
 replace_db_user_password_in_file() {
     # Replace DB_USER DB_PASSWORD
@@ -469,6 +491,58 @@ install_cline_cli() {
 }
 export -f install_cline_cli 
 
+# -- install_opencode -----------------------------------------------------
+# https://opencode.ai/docs/
+
+install_opencode() {
+    curl -fsSL https://opencode.ai/install | bash
+    # xai.grok-4-1-fast-non-reasoning
+    cat << EOF > opencode.json
+{
+  "\$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "myprovider": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "OCI",
+      "options": {
+        "baseURL": "https://inference.generativeai.us-chicago-1.oci.oraclecloud.com",
+        "apiKey": "{env:TF_VAR_genai_api_key}"
+      },
+      "models": {
+        "grok": {
+          "name": "xai.grok-4.3"
+        }
+      }
+    }
+  }
+}
+EOF
+  
+    mkdir -p ~/.local/share/opencode
+    cat > ~/.local/share/opencode/auth.json << EOF
+{
+  "oci": {
+    "apiKey": "$TF_VAR_genai_api_key"
+  }
+}
+EOF
+
+    chmod 600 ~/.local/share/opencode/auth.json
+}
+export -f install_opencode 
+
+# -- Install Docker-CE ------------------------------------------------------
+
+install_docker_ce() {
+    # Docker-CE
+    sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+    sudo dnf install -y docker-ce
+    sudo usermod -aG docker opc
+    sudo systemctl enable docker
+    sudo systemctl start docker
+}
+export -f install_docker_ce
+
 # -- Install Docker tools ---------------------------------------------------
 
 install_docker_tools() {
@@ -493,6 +567,7 @@ install_docker_tools() {
     curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH_PREFIX}/kubectl
     chmod +x kubectl
     echo "source <(kubectl completion bash)" >> ~/.bashrc
+    cd -
 }
 export -f install_docker_tools
 
