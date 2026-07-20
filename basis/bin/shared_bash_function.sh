@@ -623,8 +623,12 @@ function scp_via_bastion() {
   local dst="$2"
   local i=0
 
-  # Assumes the destination is remote: user@host:/path
-  local remote="${dst%%:*}"
+  # Determine which side is remote
+  if [[ "$dst" == opc@* ]]; then
+    remote="${dst%%:*}"
+  else
+    remote="${src%%:*}"
+  fi
 
   while true; do
     # Try rsync first
