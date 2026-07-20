@@ -462,8 +462,9 @@ export -f install_ngnix
 # -- install_nodejs -----------------------------------------------------
 
 install_nodejs() {
-    sudo dnf module enable -y nodejs:20
-    sudo dnf module install -y nodejs
+    # sudo dnf module enable -y nodejs:20
+    # sudo dnf module install -y nodejs
+    sudo dnf install -y nodejs 
 }
 export -f install_nodejs     
 
