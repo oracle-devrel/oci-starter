@@ -634,8 +634,9 @@ function scp_via_bastion() {
 
   while true; do
     # Try rsync first
-    echo rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" "$src" "$dst"
-    if rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" "$src" "$dst"
+    echo rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" $src $dst
+    ls 
+    if rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" $src $dst
     then
       echo "Success - rsync - scp_via_bastion"
       break
@@ -645,17 +646,14 @@ function scp_via_bastion() {
     ssh -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" "$remote" "sudo dnf install -y rsync" || true
 
     # Retry rsync
-    if rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" "$src" "$dst"
+    if rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" $src $dst
     then
       echo "Success - rsync - scp_via_bastion"
       break
     fi
 
     # Fall back to scp
-    if scp -r \
-      -o StrictHostKeyChecking=no \
-      -oProxyCommand="$BASTION_PROXY_COMMAND" \
-      "$src" "$dst"
+    if scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" $src $dst
     then
       echo "Success - scp - scp_via_bastion"
       break
