@@ -8,10 +8,10 @@ cd $SCRIPT_DIR
 
 . /home/opc/compute/tf_env.sh
 
-wget https://repo.mysql.com//mysql80-community-release-el8-9.noarch.rpm
-yum -y install mysql80-community-release-el8-9.noarch.rpm
-yum repolist enabled | grep "mysql.*-community.*"
-yum -y module disable mysql
+# wget https://repo.mysql.com//mysql80-community-release-el8-9.noarch.rpm
+# yum -y install mysql80-community-release-el8-9.noarch.rpm
+# yum repolist enabled | grep "mysql.*-community.*"
+# yum -y module disable mysql
 dnf -y install mysql-community-server
 systemctl start mysqld 
 

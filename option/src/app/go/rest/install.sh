@@ -15,8 +15,7 @@ fi
 
 # Install last version of GoLang
 # https://yum.oracle.com/oracle-linux-golang.html
-sudo dnf module enable go-toolset:ol8addon
-sudo dnf module install -y go-toolset
+sudo dnf install -y go
 # sudo dnf install -y git gcc 
 
 go get .
