@@ -611,35 +611,6 @@ certificate_run_certbot_http_01()
 }
 
 # SCP via Bastion
-# $1: source 
-# $2: destination
-function scp_via_bastion() {
-  eval "$(ssh-agent -s)"
-  ssh-add $TF_VAR_ssh_private_path
-
-  # Try 5 times to copy the files / wait 5 secs between each try
-  echo "scp_via_bastion"
-  i=0
-  while [ true ]; do
-    if command -v rsync &> /dev/null; then
-      # Using RSYNC allow to reapply the same command several times easily. 
-      rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" $1 $2
-    else
-      scp -r -o StrictHostKeyChecking=no -oProxyCommand="$BASTION_PROXY_COMMAND" $1 $2
-    fi  
-    if [ $? -eq 0 ]; then
-      echo "Success - scp_via_bastion"
-      break;
-    elif [ "$i" == "5" ]; then
-      echo "ERROR: scp_via_bastion: Maximum number of scp retries (5). Ending."
-      error_exit
-    fi
-  sleep 5
-  i=$(($i+1))
-  done
-}
-
-# SCP via Bastion
 # $1: source
 # $2: destination
 function scp_via_bastion() {
@@ -663,6 +634,7 @@ function scp_via_bastion() {
 
   while true; do
     # Try rsync first
+    echo rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" "$src" "$dst"
     if rsync -av -e "ssh -o StrictHostKeyChecking=no -oProxyCommand=\"$BASTION_PROXY_COMMAND\"" "$src" "$dst"
     then
       echo "Success - rsync - scp_via_bastion"
