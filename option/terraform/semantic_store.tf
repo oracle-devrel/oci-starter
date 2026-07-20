@@ -123,7 +123,7 @@ resource "oci_database_tools_database_tools_connection" "starter_dbtools_connect
   }
   related_resource {
     entity_type = "DATABASE"
-    identifier  = oci_database_autonomous_database.starter_atp.id
+    identifier  = data.oci_database_autonomous_database.starter_atp.id
   }
   private_endpoint_id = oci_database_tools_database_tools_private_endpoint.starter_database_tools_private_endpoint.id
 }
@@ -147,7 +147,7 @@ resource "oci_database_tools_database_tools_connection" "starter_dbtools_connect
   }
   related_resource {
     entity_type = "DATABASE"
-    identifier  = oci_database_autonomous_database.starter_atp.id
+    identifier  = data.oci_database_autonomous_database.starter_atp.id
   }
   private_endpoint_id = oci_database_tools_database_tools_private_endpoint.starter_database_tools_private_endpoint.id
 }
