@@ -545,7 +545,7 @@ install_docker_tools() {
     sudo touch /etc/containers/nodocker
 
     # oci cli
-    sudo dnf install -y git python36-oci-cli
+    sudo dnf install -y git python-oci-cli
     oci setup repair-file-permissions --file $HOME/.oci/config
     oci setup repair-file-permissions --file $HOME/.oci/oci_api_key.pem    
     echo "export OCI_CLI_AUTH=instance_principal" >> ~/.bashrc  

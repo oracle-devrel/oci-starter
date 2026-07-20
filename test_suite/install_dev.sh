@@ -26,7 +26,7 @@ sudo systemctl enable docker
 sudo systemctl start docker
 
 # GIT - OCICLI
-sudo dnf install -y git python36-oci-cli
+sudo dnf install -y git python-oci-cli
 
 oci setup repair-file-permissions --file $HOME/.oci/config
 oci setup repair-file-permissions --file $HOME/.oci/oci_api_key.pem
