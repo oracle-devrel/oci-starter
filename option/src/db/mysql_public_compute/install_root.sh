@@ -12,11 +12,15 @@ cd $SCRIPT_DIR
 # yum -y install mysql80-community-release-el8-9.noarch.rpm
 # yum repolist enabled | grep "mysql.*-community.*"
 # yum -y module disable mysql
-exit
-dnf -y install mysql-server
-systemctl start mysqld 
+dnf config-manager --set-enabled mysql-9.7-lts-community
+dnf install mysql-community-server \
+  --best \
+  --allowerasing \
+  --setopt=install_weak_deps=False \
+  --exclude='mariadb11.8*'
 
-dnf -y install mysql-community-shell
+systemctl start mysqld 
+dnf -y install mysql-shell
 export TMP_PASSWORD=`grep 'temporary password' /var/log/mysqld.log | sed 's/.*: //g'` 
 mysqlsh root@localhost --password=$TMP_PASSWORD --sql << EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';
