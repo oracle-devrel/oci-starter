@@ -12,6 +12,7 @@ cd $SCRIPT_DIR
 # yum -y install mysql80-community-release-el8-9.noarch.rpm
 # yum repolist enabled | grep "mysql.*-community.*"
 # yum -y module disable mysql
+dnf install https://repo.mysql.com/mysql84-community-release-el10.rpm
 dnf -y install mysql-community-server
 systemctl start mysqld 
 
@@ -24,9 +25,6 @@ EOF
 # Open the Firewall
 # firewall-cmd --zone=public --add-port=3306/tcp --permanent
 # firewall-cmd --reload
-
-# Install mysql-shell
-sudo dnf install -y mysql-shell
 
 # Install the tables
 mysqlsh $DB_USER@$DB_URL --password=$DB_PASSWORD --sql < mysql.sql

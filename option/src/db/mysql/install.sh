@@ -4,6 +4,7 @@ cd $SCRIPT_DIR
 . $HOME/compute/shared_compute.sh
 
 # Install mysql-shell
+sudo dnf install https://repo.mysql.com/mysql84-community-release-el10.rpm
 sudo dnf install -y mysql-shell
 
 # Install the tables
