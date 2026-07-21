@@ -4,9 +4,7 @@ locals {
     genai_region = var.region == "eu-amsterdam-1" ? "eu-frankfurt-1" : local.home_region
 }
 
-resource "null_resource" "genai_project" {
-    provider       = oci.genai 
-    
+resource "null_resource" "genai_project" {   
     triggers = {
         project_id_filename = local.project_id_filename
     }
@@ -25,7 +23,7 @@ resource "null_resource" "genai_project" {
             --wait-interval-seconds 10 \
             --max-wait-seconds 120 \
             --query 'data.resources[0].identifier' \
-            --region "${genai_region}"
+            --region "${local.genai_region}"
             --raw-output
         )"
 
