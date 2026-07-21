@@ -16,7 +16,7 @@ dnf -y install https://repo.mysql.com/mysql84-community-release-el10.rpm
 dnf -y install mysql-community-server
 systemctl start mysqld 
 
-dnf -y install mysql-shell
+dnf -y install mysql-community-shell
 export TMP_PASSWORD=`grep 'temporary password' /var/log/mysqld.log | sed 's/.*: //g'` 
 mysqlsh root@localhost --password=$TMP_PASSWORD --sql << EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';
