@@ -4,6 +4,12 @@ locals {
     genai_region = var.region == "eu-amsterdam-1" ? "eu-frankfurt-1" : local.home_region
 }
 
+provider "oci" {
+    alias  = "genai"
+    region = local.genai_region
+    config_file_profile = var.config_file_profile
+}
+
 resource "null_resource" "genai_project" {   
     triggers = {
         project_id_filename = local.project_id_filename

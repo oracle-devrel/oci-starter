@@ -887,7 +887,7 @@ def create_output_dir():
                 output_copy_tree("option/src/app/python_mcp_server", "src/app")
                 # GenAI Project used mostly for Responses API (but also Vector Stores, ...)
                 cp_terraform("genai_project.tf")
-                cp_terraform("semantic_store.tf")
+                # cp_terraform("semantic_store.tf")
 
         # Overwrite the generic version (ex for mysql)
         family_dir = app+"_"+db_family
