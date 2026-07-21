@@ -23,7 +23,7 @@ resource "null_resource" "genai_project" {
             --wait-interval-seconds 10 \
             --max-wait-seconds 120 \
             --query 'data.resources[0].identifier' \
-            --region "${local.genai_region}"
+            --region "${local.genai_region}" \
             --raw-output
         )"
 
