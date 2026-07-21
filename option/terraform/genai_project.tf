@@ -3,7 +3,15 @@ locals {
     project_id_filename = "${local.project_dir}/target/tf_genai_project.ocid"
 }
 
+provider "oci" {
+  alias  = "genai"
+  region = local.home_region == "eu-amsterdam-1" ? "eu-frankfurt-1" : local.home_region
+  config_file_profile = var.config_file_profile
+}
+
 resource "null_resource" "genai_project" {
+    provider       = oci.genai 
+    
     triggers = {
         project_id_filename = local.project_id_filename
     }
