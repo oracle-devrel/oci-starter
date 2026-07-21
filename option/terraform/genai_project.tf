@@ -55,6 +55,7 @@ resource "null_resource" "genai_project" {
             --force \
             --wait-for-state SUCCEEDED \
             --wait-interval-seconds 10 \
+            --region "${local.genai_region}" \            
             --max-wait-seconds 120
 
             rm -f "$PROJECT_ID_FILE"
