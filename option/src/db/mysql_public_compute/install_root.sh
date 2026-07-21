@@ -12,15 +12,32 @@ cd $SCRIPT_DIR
 # yum -y install mysql80-community-release-el8-9.noarch.rpm
 # yum repolist enabled | grep "mysql.*-community.*"
 # yum -y module disable mysql
-dnf config-manager --set-enabled mysql-9.7-lts-community
-dnf install mysql-community-server \
-  --best \
-  --allowerasing \
-  --setopt=install_weak_deps=False \
-  --exclude='mariadb11.8*'
+tee /etc/yum.repos.d/mysql97-community.repo > /dev/null <<'EOF'
+[ol10_mysql97_community]
+name=Oracle Linux 10 MySQL 9.7 Community
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL10/MySQL97/community/x86_64/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.oracle.com/RPM-GPG-KEY-oracle-ol10
+EOF
 
+tee /etc/yum.repos.d/mysql97-community.repo > /dev/null <<'EOF'
+[ol10_mysql97_tools_community]
+name=Oracle Linux 10 MySQL 9.7 Tools Community
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL10/MySQL97/tools/community/x86_64/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.oracle.com/RPM-GPG-KEY-oracle-ol10
+EOF
+
+dnf clean all
+dnf makecache
+
+sudo dnf install -y mysql-community-server
 systemctl start mysqld 
+
 dnf -y install mysql-shell
+
 export TMP_PASSWORD=`grep 'temporary password' /var/log/mysqld.log | sed 's/.*: //g'` 
 mysqlsh root@localhost --password=$TMP_PASSWORD --sql << EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';

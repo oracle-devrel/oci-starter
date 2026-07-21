@@ -69,7 +69,11 @@ locals {
 data "oci_core_images" "oraclelinux" {
   compartment_id = var.compartment_ocid
   operating_system = "Oracle Linux"
+{%- if language == "php" %}
+  operating_system_version = "8"
+{%- else %}
   operating_system_version = "10"
+{%- endif %}
   filter {
     name = "display_name"
     values = [local.regex_linux]
