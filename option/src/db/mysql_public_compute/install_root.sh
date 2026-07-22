@@ -39,8 +39,10 @@ systemctl start mysqld
 dnf -y install mysql-shell
 
 export TMP_PASSWORD=`grep 'temporary password' /var/log/mysqld.log | sed 's/.*: //g'` 
-mysqlsh root@localhost --password=$TMP_PASSWORD --sql << EOF
-ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD', 'root'@'localhost' PASSWORD EXPIRE NEVER;;
+mysql --connect-expired-password   -u root   -p"$TMP_PASSWORD" <<EOF
+ALTER USER 'root'@'localhost'
+IDENTIFIED BY '$DB_PASSWORD'
+PASSWORD EXPIRE NEVER;
 EOF
 
 # Open the Firewall
