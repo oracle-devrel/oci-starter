@@ -40,6 +40,7 @@ dnf -y install mysql-shell
 
 export TMP_PASSWORD=`grep 'temporary password' /var/log/mysqld.log | sed 's/.*: //g'` 
 mysqlsh root@localhost --password=$TMP_PASSWORD --sql << EOF
+SET PASSWORD = PASSWORD('$DB_PASSWORD');
 ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';
 EOF
 
@@ -49,3 +50,5 @@ EOF
 
 # Install the tables
 mysqlsh $DB_USER@$DB_URL --password=$DB_PASSWORD --sql < mysql.sql
+
+

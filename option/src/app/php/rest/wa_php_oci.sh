@@ -1,5 +1,7 @@
 # Use by PUBLIC_COMPUTE and DOCKER installation (K8s/Container Instance/Fn)
 # https://jira-sd.mc1.oracleiaas.com/browse/YUM-5781
+# To try:
+# https://medium.com/oracledevs/oracle-database-and-php-oci8-3-4-1-is-now-available-in-both-pecl-and-pie-e29bb75e7220
 
 if [[ `arch` == "aarch64" ]]; then
     dnf install -y oracle-release-el8
