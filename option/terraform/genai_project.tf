@@ -49,13 +49,14 @@ resource "null_resource" "genai_project" {
 
         if [ -f "$PROJECT_ID_FILE" ]; then
             project_id="$(cat "$PROJECT_ID_FILE")"
+            genai_region="eu-frankfurt-1"
 
             oci generative-ai generative-ai-project delete \
             --generative-ai-project-id "$project_id" \
             --force \
             --wait-for-state SUCCEEDED \
             --wait-interval-seconds 10 \
-            --region "${local.genai_region}" \            
+            --region "$genai_region" \            
             --max-wait-seconds 120
 
             rm -f "$PROJECT_ID_FILE"
