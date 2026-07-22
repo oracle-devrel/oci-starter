@@ -40,8 +40,7 @@ dnf -y install mysql-shell
 
 export TMP_PASSWORD=`grep 'temporary password' /var/log/mysqld.log | sed 's/.*: //g'` 
 mysqlsh root@localhost --password=$TMP_PASSWORD --sql << EOF
-SET PASSWORD = PASSWORD('$DB_PASSWORD');
-ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD', 'root'@'localhost' PASSWORD EXPIRE NEVER;;
 EOF
 
 # Open the Firewall
