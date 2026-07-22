@@ -68,6 +68,8 @@ build_test () {
     cd $TEST_HOME
     cd $TEST_DIR
     pwd
+    TMP_PATH="/tmp/$PREFIX"
+    rm -Rf $TMP_PATH
     ./starter.sh build --auto-approve > build_$BUILD_ID.log 2>&1
 
     CSV_NAME=$PREFIX
@@ -78,7 +80,6 @@ build_test () {
     CSV_JSON_OK=0
     CSV_RUN100_SECOND=0
     CSV_RUN100_OK=0
-    TMP_PATH="/tmp/$PREFIX"
 
     echo "build_secs_$BUILD_ID=$SECONDS" >> ${TEST_DIR}_time.txt
     if [ -f $TMP_PATH/result_html.html ]; then
