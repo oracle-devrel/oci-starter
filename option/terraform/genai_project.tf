@@ -13,6 +13,7 @@ provider "oci" {
 resource "null_resource" "genai_project" {   
     triggers = {
         project_id_filename = local.project_id_filename
+        genai_region = local.genai_region
     }
 
     provisioner "local-exec" {
@@ -43,20 +44,20 @@ resource "null_resource" "genai_project" {
         interpreter = ["/bin/bash", "-c"]
         environment = {
             PROJECT_ID_FILE = self.triggers.project_id_filename
+            GENAI_REGION = self.triggers.genai_region
         }
         command = <<-EOT
         set -euo pipefail
 
         if [ -f "$PROJECT_ID_FILE" ]; then
             project_id="$(cat "$PROJECT_ID_FILE")"
-            genai_region="eu-frankfurt-1"
 
             oci generative-ai generative-ai-project delete \
             --generative-ai-project-id "$project_id" \
             --force \
             --wait-for-state SUCCEEDED \
             --wait-interval-seconds 10 \
-            --region "$genai_region" \
+            --region "$$GENAI_REGION" \
             --max-wait-seconds 120
 
             rm -f "$PROJECT_ID_FILE"
