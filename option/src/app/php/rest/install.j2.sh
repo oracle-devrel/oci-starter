@@ -24,8 +24,10 @@ cd $SCRIPT_DIR
 
 . $HOME/compute/tf_env.sh
 
-chmod +x wa_php_oci.sh
-sudo ./wa_php_oci.sh
+# chmod +x wa_php_oci.sh
+# sudo ./wa_php_oci.sh
+chmod +x php_oci_ol10.sh
+sudo ./php_oci_ol10.sh
 
 {%- if db_family == "psql" %}
 sudo yum install -y php-pgsql

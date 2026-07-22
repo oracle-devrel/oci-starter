@@ -330,13 +330,14 @@ install_instant_client() {
         sudo dnf install -y oracle-release-el8 
         sudo dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-sqlplus oracle-instantclient19.19-tools
     else
-        export INSTANT_VERSION=23.26.0.0.0-1
+        export INSTANT_VERSION=23.26.2.0.0-2.el10.x86_64
         cd /tmp
         if [ ! -f /tmp/oracle-instantclient-basic-${INSTANT_VERSION}.el8.x86_64.rpm ]; then
-            wget -nv https://download.oracle.com/otn_software/linux/instantclient/2326000/oracle-instantclient-basic-${INSTANT_VERSION}.el8.x86_64.rpm
-            wget -nv https://download.oracle.com/otn_software/linux/instantclient/2326000/oracle-instantclient-sqlplus-${INSTANT_VERSION}.el8.x86_64.rpm
-            wget -nv https://download.oracle.com/otn_software/linux/instantclient/2326000/oracle-instantclient-tools-${INSTANT_VERSION}.el8.x86_64.rpm
-            sudo dnf install -y oracle-instantclient-basic-${INSTANT_VERSION}.el8.x86_64.rpm oracle-instantclient-sqlplus-${INSTANT_VERSION}.el8.x86_64.rpm oracle-instantclient-tools-${INSTANT_VERSION}.el8.x86_64.rpm
+            wget -nv https://download.oracle.com/otn_software/linux/instantclient/2326200v2/oracle-instantclient-basic-${INSTANT_VERSION}.rpm
+            wget -nv https://download.oracle.com/otn_software/linux/instantclient/2326200v2/oracle-instantclient-sqlplus-${INSTANT_VERSION}.rpm
+            wget -nv https://download.oracle.com/otn_software/linux/instantclient/2326200v2/oracle-instantclient-tools-${INSTANT_VERSION}.rpm
+            wget -nv https://download.oracle.com/otn_software/linux/instantclient/2326200v2/oracle-instantclient-devel-${INSTANT_VERSION}.rpm
+            sudo dnf install -y oracle-instantclient-basic-${INSTANT_VERSION}.rpm oracle-instantclient-sqlplus-${INSTANT_VERSION}.rpm oracle-instantclient-tools-${INSTANT_VERSION}.rpm oracle-instantclient-devel-${INSTANT_VERSION}.rpm
         fi 
         cd -
     fi
