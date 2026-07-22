@@ -44,6 +44,3 @@ ln -s /var/log/php-fpm/error.log .
 # Enable Service
 systemctl enable httpd
 systemctl enable php-fpm
-
-
-
