@@ -387,8 +387,6 @@ server {
 
     # Load configuration files for the default server block.
     include /etc/nginx/default.d/*.conf;
-    location / {
-    }
 
     error_page 404 /404.html;
         location = /40x.html {
