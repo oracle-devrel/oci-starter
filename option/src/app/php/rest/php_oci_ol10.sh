@@ -5,7 +5,7 @@
 
 install_instant_client
 
-ORACLE_HOME=/usr/lib/oracle/23/client64
+ORACLE_HOME=/usr/lib/oracle/26/client64
 
 mkdir -p /run/php-fpm
 
