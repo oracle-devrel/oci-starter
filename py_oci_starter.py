@@ -877,7 +877,7 @@ def create_output_dir():
         if params.get('deploy_type') != "function" and params['language'] == "python":
             if params['python_framework'] == 'responses':
                # Responses sample is build on top of LangGraph one
-               output_copy_tree("option/src/app/python_langraph", "src/app")
+               output_copy_tree("option/src/app/python_langgraph", "src/app")
 
             app = "python_" + params['python_framework']
             output_copy_tree("option/src/app/"+app, "src/app")
