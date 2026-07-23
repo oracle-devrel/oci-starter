@@ -15,6 +15,7 @@ while [ "$ELAPSED" -lt "$TIMEOUT" ]; do
     else
         # Try to create the lock atomically
         if ( set -o noclobber; > "$LOCKFILE" ) 2> /dev/null; then
+            echo "Lock hold by: $NAME" > $LOCKFILE
             echo "Lock acquired."
             sed -i "s/$NAME/$NAME - $ELAPSED secs/" bastion_lock_waiting     
             rm -Rf $HOME/app/*
