@@ -541,10 +541,13 @@ export -f install_docker_ce
 # -- Install Docker tools ---------------------------------------------------
 
 install_docker_tools() {
-    # docker 
-    sudo dnf install -y docker
-    sudo touch /etc/containers/nodocker
-
+    # Docker 
+    # sudo dnf install -y docker
+    # sudo touch /etc/containers/nodocker
+    
+    # Install Docker CE and not podman since podman compose is very unstable
+    install_docker_ce
+    
     # oci cli
     sudo dnf install -y git python-oci-cli
     oci setup repair-file-permissions --file $HOME/.oci/config
