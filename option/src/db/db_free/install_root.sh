@@ -9,9 +9,9 @@ cd $SCRIPT_DIR
 . /home/opc/compute/tf_env.sh
 
 if [ `arch` != "aarch64" ]; then
-  FREEDB_RPM=oracle-database-free-23ai-1.0-1.el8.x86_64.rpm
+  FREEDB_RPM=oracle-ai-database-free-26ai-23.26.2-1.el10.x86_64.rpm
 else
-  FREEDB_RPM=oracle-database-free-23ai-1.0-1.el8.aarch64.rpm
+  FREEDB_RPM=oracle-ai-database-free-26ai-23.26.2-1.el9.aarch64.rpm
 fi
 
 if [ -f ${FREEDB_RPM} ]; then
@@ -19,22 +19,20 @@ if [ -f ${FREEDB_RPM} ]; then
   exit
 fi 
 
-dnf install -y oraclelinux-developer-release-el8
-dnf config-manager --set-enabled ol8_developer 
-sudo dnf install -y oracle-database-preinstall-23ai
+dnf -y install oracle-ai-database-preinstall-26ai
 
 wget -nv https://download.oracle.com/otn-pub/otn_software/db-free/${FREEDB_RPM} 
 dnf -y localinstall ${FREEDB_RPM} 
 
 # echo DB_PASSWORD=$DB_PASSWORD
-(echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-23ai configure
+(echo "${DB_PASSWORD}"; echo "${DB_PASSWORD}";) | /etc/init.d/oracle-free-26ai configure
 
 cat >> /home/oracle/.bash_profile << EOF
 
 # Setup Oracle Free environment
 export ORACLE_SID=FREE 
 export ORAENV_ASK=NO 
-. /opt/oracle/product/23ai/dbhomeFree/bin/oraenv
+. /opt/oracle/product/26ai/dbhomeFree/bin/oraenv
 unset ORAENV_ASK
 EOF
 
@@ -80,5 +78,5 @@ firewall-cmd --reload
 
 # export ORACLE_SID=FREE 
 # export ORAENV_ASK=NO 
-# . /opt/oracle/product/23c/dbhomeFree/bin/oraenv
+# . /opt/oracle/product/26ai/dbhomeFree/bin/oraenv
 
