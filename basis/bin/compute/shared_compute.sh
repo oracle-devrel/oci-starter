@@ -332,7 +332,7 @@ install_instant_client() {
     else
         export INSTANT_VERSION=23.26.2.0.0-2.el10.x86_64
         cd /tmp
-        if [ ! -f /tmp/oracle-instantclient-basic-${INSTANT_VERSION}.el8.x86_64.rpm ]; then
+        if [ ! -f /tmp/oracle-instantclient-basic-${INSTANT_VERSION}.rpm ]; then
             wget -nv https://download.oracle.com/otn_software/linux/instantclient/2326200v2/oracle-instantclient-basic-${INSTANT_VERSION}.rpm
             wget -nv https://download.oracle.com/otn_software/linux/instantclient/2326200v2/oracle-instantclient-sqlplus-${INSTANT_VERSION}.rpm
             wget -nv https://download.oracle.com/otn_software/linux/instantclient/2326200v2/oracle-instantclient-tools-${INSTANT_VERSION}.rpm
