@@ -2,16 +2,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
-# ORACLE Instant Client 
-if [[ "$JDBC_URL" == *"jdbc:oracle"* ]]; then
-    if [[ `arch` == "aarch64" ]]; then
-        sudo dnf install -y oracle-release-el8
-        sudo dnf install -y oracle-instantclient19.19-basic oracle-instantclient19.19-devel
-    else
-        sudo dnf install -y oracle-instantclient-release-el8
-        sudo dnf install -y oracle-instantclient-basic oracle-instantclient-devel
-    fi
-fi
+install_instant_client
 
 # Install last version of GoLang
 # https://yum.oracle.com/oracle-linux-golang.html
