@@ -344,6 +344,30 @@ install_instant_client() {
 }
 export -f install_instant_client   
 
+# -- install_mysql_repo  ------------------------------------------------
+
+install_mysql_repo() {
+    sudo tee /etc/yum.repos.d/mysql97-community.repo > /dev/null <<'EOF'
+[ol10_mysql97_community]
+name=Oracle Linux 10 MySQL 9.7 Community
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL10/MySQL97/community/x86_64/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.oracle.com/RPM-GPG-KEY-oracle-ol10
+EOF
+
+    sudo tee /etc/yum.repos.d/mysql97-tools-community.repo > /dev/null <<'EOF'
+[ol10_mysql97_tools_community]
+name=Oracle Linux 10 MySQL 9.7 Tools Community
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL10/MySQL97/tools/community/x86_64/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.oracle.com/RPM-GPG-KEY-oracle-ol10
+EOF
+    sudo dnf makecache
+}
+export -f install_mysql_repo  
+
 # -- create_self_signed_ip_certificate --------------------------------------
 
 create_self_signed_ip_certificate()
