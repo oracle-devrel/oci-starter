@@ -13,7 +13,7 @@ cd $SCRIPT_DIR
 # yum repolist enabled | grep "mysql.*-community.*"
 # yum -y module disable mysql
 
-install_mysql_repo
+install_mysql_yum_repo
 
 sudo dnf install -y mysql-community-server
 systemctl start mysqld 
