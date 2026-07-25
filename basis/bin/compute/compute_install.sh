@@ -52,7 +52,8 @@ EOT
     fi
 
     # Workaround : Force the ol8_oci_included (sometimes it is deactivated)
-    sudo dnf config-manager --enable ol8_oci_included    
+    sudo dnf config-manager --enable ol8_oci_included  
+    sudo dnf install -y unzip  
 fi
 
 if ! grep -q "# Build Bastion" $HOME/.bashrc; then
