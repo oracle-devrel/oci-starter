@@ -20,6 +20,13 @@ systemctl start mysqld
 dnf -y install mysql-shell
 
 export TMP_PASSWORD=`grep 'temporary password' /var/log/mysqld.log | sed 's/.*: //g'` 
+echo $TMP_PASSWORD 
+cat <<EOF
+ALTER USER 'root'@'localhost'
+IDENTIFIED BY '$DB_PASSWORD'
+PASSWORD EXPIRE NEVER;
+EOF
+
 mysql --connect-expired-password   -u root   -p"$TMP_PASSWORD" <<EOF
 ALTER USER 'root'@'localhost'
 IDENTIFIED BY '$DB_PASSWORD'
