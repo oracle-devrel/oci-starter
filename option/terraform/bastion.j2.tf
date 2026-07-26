@@ -83,7 +83,7 @@ resource "oci_core_instance" "starter_bastion" {
   source_details {
     source_type = "image"
     # boot_volume_size_in_gbs = "50" 
-{%- if test_name %}    
+{%- if prefix == "tsamd" %}    
     boot_volume_size_in_gbs = "100" 
 {%- endif %}    
     source_id   = data.oci_core_images.oraclelinux.images.0.id

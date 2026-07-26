@@ -5,8 +5,7 @@
 #!/bin/bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
-
-. /home/opc/compute/tf_env.sh
+. /home/opc/compute/shared_compute.sh
 
 # wget https://repo.mysql.com//mysql80-community-release-el8-9.noarch.rpm
 # yum -y install mysql80-community-release-el8-9.noarch.rpm
