@@ -6,6 +6,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 . /home/opc/compute/shared_compute.sh
+. /home/opc/compute/tf_env.sh
 
 # wget https://repo.mysql.com//mysql80-community-release-el8-9.noarch.rpm
 # yum -y install mysql80-community-release-el8-9.noarch.rpm
@@ -20,13 +21,6 @@ systemctl start mysqld
 dnf -y install mysql-shell
 
 export TMP_PASSWORD=`grep 'temporary password' /var/log/mysqld.log | sed 's/.*: //g'` 
-echo $TMP_PASSWORD 
-cat <<EOF
-ALTER USER 'root'@'localhost'
-IDENTIFIED BY '$DB_PASSWORD'
-PASSWORD EXPIRE NEVER;
-EOF
-
 mysql --connect-expired-password   -u root   -p"$TMP_PASSWORD" <<EOF
 ALTER USER 'root'@'localhost'
 IDENTIFIED BY '$DB_PASSWORD'
