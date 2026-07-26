@@ -1,3 +1,15 @@
+# Provider GenAI Region
+
+locals {
+  local_genai_region = var.current_region!="eu-amsterdam-1" ? var.current_region : "eu-frankfurt-1"
+}
+
+provider "oci" {
+    alias  = "genai"
+    region = local.local_genai_region
+    config_file_profile = var.config_file_profile
+}
+
 // -- Vault -----------------------------------------------------------------
 // Create only if necessary. The vault and key are precious resource that should be shared.
 
@@ -10,7 +22,8 @@ variable "vault_key_ocid" {
 }
 
 resource "oci_kms_vault" "starter_vault" {
-  count = var.vault_ocid=="" ? 1 : 0
+  provider       = oci.genai
+  count          = var.vault_ocid=="" ? 1 : 0
   compartment_id = local.lz_app_cmp_ocid
   display_name   = "${var.prefix}-vault"
   vault_type     = "DEFAULT"
@@ -21,8 +34,10 @@ data "oci_kms_vault" "starter_vault" {
 }
 
 resource "oci_kms_key" "starter_key" {
+  provider            = oci.genai
+
   #Required
-  count = var.vault_key_ocid=="" ? 1 : 0
+  count               = var.vault_key_ocid=="" ? 1 : 0
   compartment_id      = local.lz_app_cmp_ocid
   display_name        = "${var.prefix}-key"
   management_endpoint = data.oci_kms_vault.starter_vault.management_endpoint
@@ -43,6 +58,8 @@ locals {
 // Name with random_string.id is needed since a secret goes to "Pending deletion"
 
 resource "oci_vault_secret" "starter_secret_atp" {
+  provider = oci.genai
+  
   #Required
   compartment_id = local.lz_app_cmp_ocid
   secret_content {
@@ -73,6 +90,8 @@ data "oci_database_tools_database_tools_endpoint_service" "starter_database_tool
 // -- Private Endpoint  -----------------------------------------------------
 
 resource "oci_database_tools_database_tools_private_endpoint" "starter_database_tools_private_endpoint" {
+  provider            = oci.genai
+  
   #Required
   compartment_id      = local.lz_db_cmp_ocid
   display_name        = "${var.prefix}-dbtools-private-endpoint"
@@ -106,6 +125,7 @@ output "private_endpoint_d" {
 
 # Connection - Resource
 resource "oci_database_tools_database_tools_connection" "starter_dbtools_connection" {
+  provider          = oci.genai
   compartment_id    = local.lz_db_cmp_ocid
   display_name      = "${var.prefix}-dbtools-connection"
   type              = "ORACLE_DATABASE"
@@ -130,6 +150,7 @@ resource "oci_database_tools_database_tools_connection" "starter_dbtools_connect
 
 # Connection - Resource
 resource "oci_database_tools_database_tools_connection" "starter_dbtools_connection2" {
+  provider          = oci.genai
   compartment_id    = local.lz_db_cmp_ocid
   display_name      = "${var.prefix}-dbtools-connection2"
   type              = "ORACLE_DATABASE"
@@ -184,6 +205,8 @@ output "database_tools_connections2" {
 // -- Semantic Store ------------------------------------------------------------
 
 resource "oci_generative_ai_semantic_store" "starter_semantic_store" {
+  provider = oci.genai
+
   #Required
   compartment_id = local.lz_db_cmp_ocid
   data_source {
