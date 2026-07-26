@@ -13,7 +13,7 @@ provider "oci" {
 resource "null_resource" "genai_project" {   
     triggers = {
         project_id_filename = local.project_id_filename
-        genai_region = local.genai_region
+        genai_region = local.local_genai_region
     }
 
     provisioner "local-exec" {
@@ -30,7 +30,7 @@ resource "null_resource" "genai_project" {
             --wait-interval-seconds 10 \
             --max-wait-seconds 120 \
             --query 'data.resources[0].identifier' \
-            --region "${local.genai_region}" \
+            --region "${local.local_genai_region}" \
             --raw-output
         )"
 
