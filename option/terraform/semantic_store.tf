@@ -1,15 +1,3 @@
-# Provider GenAI Region
-
-locals {
-  local_genai_region = var.current_region!="eu-amsterdam-1" ? var.current_region : "eu-frankfurt-1"
-}
-
-provider "oci" {
-    alias  = "genai"
-    region = local.local_genai_region
-    config_file_profile = var.config_file_profile
-}
-
 // -- Vault -----------------------------------------------------------------
 // Create only if necessary. The vault and key are precious resource that should be shared.
 

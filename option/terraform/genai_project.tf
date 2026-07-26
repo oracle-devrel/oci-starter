@@ -1,12 +1,12 @@
 # Temporary solution to generate a PROJECT_OCID in terraform
 locals {
     project_id_filename = "${local.project_dir}/target/tf_genai_project.ocid"
-    genai_region = var.region == "eu-amsterdam-1" ? "eu-frankfurt-1" : local.home_region
+    local_genai_region = var.region == "eu-amsterdam-1" ? "eu-frankfurt-1" : local.home_region
 }
 
 provider "oci" {
     alias  = "genai"
-    region = local.genai_region
+    region = local.local_genai_region
     config_file_profile = var.config_file_profile
 }
 
