@@ -85,7 +85,10 @@ if ! grep -q "# Build Bastion" $HOME/.bashrc; then
         chmod +x ~/app.git/hooks/post-receive
 
         # Cline CLI
-        install_cline_cli        
+        install_cline_cli      
+        
+        # OpenCode
+        install_opencode
     fi
 fi
 
