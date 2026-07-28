@@ -512,39 +512,52 @@ export -f install_cline_cli
 # https://opencode.ai/docs/
 
 install_opencode() {
+    echo "<install_opencode>"
     curl -fsSL https://opencode.ai/install | bash
-    # xai.grok-4-1-fast-non-reasoning
-    cat << EOF > opencode.json
+
+    mkdir -p ~/.local/share/opencode
+
+    local base_url="https://inference.generativeai.us-chicago-1.oci.oraclecloud.com/20231130/actions/v1"
+    local model_id="xai.grok-4.3"
+    local model_name="Grok 4.3"
+
+
+    if [ -n "${TF_VAR_genai_endpoint_ocid:-}" ]; then
+        local oci_region
+        oci_region="$(printf '%s' "$TF_VAR_genai_endpoint_ocid" | cut -d. -f4)"
+        base_url="https://inference.generativeai.${oci_region}.oci.oraclecloud.com/20231130/actions/v1"
+        model_id="$TF_VAR_genai_endpoint_ocid"
+        model_name="DAC"
+    fi
+
+    mkdir -p $HOME/.config/opencode
+    cat > $HOME/.config/opencode/opencode.json <<EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "myprovider": {
+    "oci-genai": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OCI",
+      "name": "OCI Generative AI",
       "options": {
-        "baseURL": "https://inference.generativeai.us-chicago-1.oci.oraclecloud.com",
-        "apiKey": "{env:TF_VAR_genai_api_key}"
+        "baseURL": "${base_url}",
+        "apiKey": "{file:~/.config/opencode/oci-genai-api-key}"
       },
       "models": {
-        "grok": {
-          "name": "xai.grok-4.3"
+        "${model_id}": {
+          "name": "${model_name}"
         }
       }
     }
-  }
+  },
+  "model": "oci-genai/${model_id}"
 }
 EOF
-  
-    mkdir -p ~/.local/share/opencode
-    cat > ~/.local/share/opencode/auth.json << EOF
-{
-  "oci": {
-    "apiKey": "$TF_VAR_genai_api_key"
-  }
-}
-EOF
+    echo "<install_opencode> ~/.config/opencode/opencode.json created" 
+    echo "$TF_VAR_genai_api_key" > ~/.config/opencode/oci-genai-api-key
+    chmod 600 ~/.config/opencode/oci-genai-api-key
+    echo "<install_opencode> ~/.config/opencode/oci-genai-api-key created" 
 
-    chmod 600 ~/.local/share/opencode/auth.json
+    export PATH=/home/opc/.opencode/bin:$PATH    
 }
 export -f install_opencode 
 

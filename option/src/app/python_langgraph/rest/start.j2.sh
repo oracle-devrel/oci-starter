@@ -11,7 +11,7 @@ export MCP_SERVER_URL="https://$APIGW_HOSTNAME/$TF_VAR_prefix/mcp_server/mcp"
 # Responses API can also access internet MCP servers
 export MCP_SERVER_URL="http://$BASTION_IP/mcp_server/mcp"
 {%- else %}
-export MCP_SERVER_URL="https://127.0.0.1:2025/mcp"
+export MCP_SERVER_URL="http://127.0.0.1:2025/mcp"
 {%- endif %}
 
 source myenv/bin/activate
