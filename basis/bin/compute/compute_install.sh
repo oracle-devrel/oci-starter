@@ -51,8 +51,8 @@ EOT
         sudo bash -c "echo \".$region\" > /etc/dnf/vars/ociregion"
     fi
 
-    # Workaround : Force the ol8_oci_included (sometimes it is deactivated)
-    sudo dnf config-manager --enable ol8_oci_included  
+    # Workaround : Force the ol10_oci_included (sometimes it is deactivated)
+    sudo dnf config-manager --enable ol10_oci_included  
     sudo dnf install -y unzip  
 fi
 
