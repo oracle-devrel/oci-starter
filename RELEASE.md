@@ -214,6 +214,9 @@ New version
 - Upgrade of 
   - MySQL -> 9.7
   - NodeJS -> 22
+  - DB Free 26ai 26.2
+  - Python 3.12
 - Replaced Podman by docker-ce after too many error with podman-compose
 - network.tf is not compatible per default with new and existing network
 - Several OKE fixes with Gateway
+- New LangGraph demos
