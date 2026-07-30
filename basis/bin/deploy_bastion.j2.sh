@@ -8,6 +8,16 @@ cd $PROJECT_DIR
 
 function scp_or_rsync() {
     if command -v rsync &> /dev/null; then
+
+        # Check whether rsync exists (Not installed by default on OL10)
+        if ! ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path "opc@$BASTION_IP" 'command -v rsync >/dev/null 2>&1'; then
+            echo "rsync not found. Installing..."
+
+            ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path "opc@$BASTION_IP" 'sudo dnf install -y rsync' || {
+                error_exit "Failed to install rsync"
+            }
+        fi
+
         rsync -av -e "ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path" $1 opc@$BASTION_IP:.
     else
         scp -r -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path $1 opc@$BASTION_IP:/home/opc/.
@@ -42,7 +52,6 @@ function setup_bastion_dir() {
 }
 
 function scp_bastion() {
-    {%- if test_name and deploy_type!="public_compute" %}
     # If 
     # - During TestSuite
     # - Public_compute got his own bastion (=compute) and does not need to lock it.
@@ -52,10 +61,11 @@ function scp_bastion() {
     ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$BASTION_IP "echo"   
     RESULT=$?       
     if [ $RESULT -eq 0 ]; then
-        echo "Success - SSH Bastion"
+        echo "Success - SSH Bastion - echo"
     else
         return 1 
     fi
+    {%- if test_name and deploy_type!="public_compute" %}
     ssh -o StrictHostKeyChecking=no -i $TF_VAR_ssh_private_path opc@$BASTION_IP "bash compute/test_bastion_lock.sh $TEST_NAME"   
     RESULT=$?       
     if [ $RESULT -eq 0 ]; then

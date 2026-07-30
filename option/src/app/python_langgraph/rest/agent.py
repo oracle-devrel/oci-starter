@@ -6,42 +6,39 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_mcp_adapters.interceptors import MCPToolCallRequest
 import asyncio
 import os
-import time
 import pprint
 import httpx
 import oci_openai 
 from typing import Any
+from config import DEFAULT_AGENT_PROMPT, config
+from search import get_search_tools
 
-COMPARTMENT_OCID = os.getenv("TF_VAR_compartment_ocid")
-REGION = os.getenv("TF_VAR_region")
-MCP_SERVER_URL = os.getenv("MCP_SERVER_URL") or "http://localhost:2025/mcp"
-if REGION == "eu-amsterdam-1":
-    REGION = "eu-frankfurt-1"
-AUTH_TYPE = os.getenv("AUTH_TYPE") or "INSTANCE_PRINCIPAL"
+def build_llm_openai():
+    auth = oci_openai.OciInstancePrincipalAuth()
+    return ChatOpenAI(
+        model="xai.grok-4-fast-reasoning",
+        api_key="OCI",
+        base_url="https://inference.generativeai.us-chicago-1.oci.oraclecloud.com/20231130/actions/v1",
+        http_client=httpx.Client(
+            auth=auth,
+            headers={"CompartmentId": config("COMPARTMENT_OCID")}
+        ),
+    )
 
-# auth = oci_openai.OciInstancePrincipalAuth()
-# llm = ChatOpenAI(
-#     model="xai.grok-4-fast-reasoning",
-#     api_key="OCI",
-#     base_url="https://inference.generativeai.us-chicago-1.oci.oraclecloud.com/20231130/actions/v1",
-#     http_client=httpx.Client(
-#         auth=auth,
-#         headers={"CompartmentId": COMPARTMENT_OCID}
-#     ),
-# )
+def build_llm() -> ChatOCIGenAI:
+    return ChatOCIGenAI(
+        auth_type="API_KEY" if "LIVELABS" in os.environ else config("AUTH_TYPE"),
+        model_id=config("GENAI_MODEL"),
+        # model_id="meta.llama-4-scout-17b-16e-instruct",
+        # model_id="cohere.command-a-03-2025",
+        service_endpoint="https://inference.generativeai."+config("REGION")+".oci.oraclecloud.com",
+        # model_id="xai.grok-4.3",
+        # service_endpoint="https://inference.generativeai.us-chicago-1.oci.oraclecloud.com",
+        compartment_id=config("COMPARTMENT_OCID"),
+        is_stream=False,
+        model_kwargs={"temperature": 0}
+    )
 
-llm = ChatOCIGenAI(
-    auth_type="API_KEY" if "LIVELABS" in os.environ else AUTH_TYPE,
-    model_id="openai.gpt-oss-120b",
-    # model_id="meta.llama-4-scout-17b-16e-instruct",
-    # model_id="cohere.command-a-03-2025",
-    service_endpoint="https://inference.generativeai."+REGION+".oci.oraclecloud.com",
-    # model_id="xai.grok-4.3",
-    # service_endpoint="https://inference.generativeai.us-chicago-1.oci.oraclecloud.com",
-    compartment_id=COMPARTMENT_OCID,
-    is_stream=False,
-    model_kwargs={"temperature": 0}
-)
 
 def remove_empty_parameter_names(args: dict[str, Any] | None) -> dict[str, Any]:
     """Remove tool arguments whose parameter name is empty or only whitespace."""
@@ -70,10 +67,14 @@ async def inject_user_context(
     # print( f"<inject_user_context> auth_header={auth_header}", flush=True )
     # modified_request = request.override( headers = { "Authorization": f"User {user_id}" } )
     cleaned_args = remove_empty_parameter_names(request.args)
-    modified_request = request.override(
-        args=cleaned_args,
-        headers={ "Authorization": auth_header },
-    )
+    # Forward the original request credentials to every MCP tool call.
+    if config("MCP_AUTH_TYPE")=="STATIC_BEARER_TOKEN":
+        headers = {"Authorization": "Bearer " + config("MCP_STATIC_BEARER_TOKEN") }
+    elif config("MCP_AUTH_TYPE")=="NONE" and not auth_header:
+        headers = {}
+    else:
+        headers = {"Authorization": auth_header}
+    modified_request = request.override(args=cleaned_args, headers=headers)
     try:
         return await handler(modified_request)
     except Exception as first_error:
@@ -100,18 +101,31 @@ async def inject_user_context(
             "guidance": "Tool call failed. Adjust parameters based on this error and retry with corrected values.",
         }
 
-async def init( agent_name, prompt, tools_list, callback_handler=None ) -> StateGraph:
+async def init( agent_name, prompt, callback_handler=None ) -> StateGraph:
 
+    # Build the graph once at process startup; app.py streams runs from this object.
     # Waiting is important, since after reboot the MCP server could start afterwards.
     delay = 10
-    for attempt in range(1, 30):
+    client = None
+    agent_tools = list(get_search_tools())
+    llm = build_llm()
+    if not config("MCP_SERVER_URL"):
+        print("MCP_SERVER_URL is not configured; starting agent without MCP tools")
+        return create_react_agent(
+            model=llm,
+            tools=agent_tools,
+            prompt=prompt,
+            name=agent_name
+        )
+
+    for attempt in range(1, 10):
         try:
             print(f"Connecting to MCP {attempt}...")
             client = MultiServerMCPClient(
                 {
                     "McpServer": {
                         "transport": "streamable_http",
-                        "url": MCP_SERVER_URL,                     
+                        "url": config("MCP_SERVER_URL"),
                     },
                 },
                 tool_interceptors=[inject_user_context],
@@ -119,37 +133,47 @@ async def init( agent_name, prompt, tools_list, callback_handler=None ) -> State
             tools = await client.get_tools()
             print( "-- tools ------------------------------------------------------------")
             pprint.pprint( tools )
-            # Filter tools.
-            tools_filtered = []
-            for tool in tools:
-                if tools_list==None or tool.name in tools_list:
-                    tools_filtered.append( tool )
-            print( "-- tools_filtered ---------------------------------------------------")
-            pprint.pprint( tools_filtered )
+            agent_tools = [*agent_tools, *tools]
+            print( "-- agent_tools ------------------------------------------------------")
+            pprint.pprint( agent_tools )
             break
         except Exception as e:
             print(f"Connection failed {attempt}: {e}")            
             print(f"Waiting for {delay} seconds before the next attempt...")
-            time.sleep(delay)
+            await asyncio.sleep(delay)
 
     if client==None:
-        print("ERROR: connection to MCP Failed")
-        exit(1)
+        raise RuntimeError("ERROR: connection to MCP Failed")
 
     agent = create_react_agent(
         model=llm,
-        tools=tools_filtered,
+        tools=agent_tools,
         prompt=prompt,
         name=agent_name
     ) 
     return agent    
-prompt = """You are an agent that use the tools you got access to.
 
-INSTRUCTIONS:
-- Assist ONLY with research-related tasks, DO NOT do any math.
-- When using a MCP tool, take care not to  pass empty parameters name like "", or {"":{}}
-- To draw a diagram, use mermaid   
-- If not, use MarkDown to give a clear and short answer to the user.
-"""
+async def build_agent() -> StateGraph:
+    return await init("agent", config("AGENT_PROMPT") or DEFAULT_AGENT_PROMPT)
 
-agent = asyncio.run(init("agent", prompt, None))
+
+class AgentRuntime:
+    def __init__(self, graph: StateGraph):
+        self._graph = graph
+        self._reload_lock = asyncio.Lock()
+
+    async def astream(self, *args, **kwargs):
+        graph = self._graph
+        async for state in graph.astream(*args, **kwargs):
+            yield state
+
+    async def reload(self) -> None:
+        async with self._reload_lock:
+            self._graph = await build_agent()
+
+
+agent = AgentRuntime(asyncio.run(build_agent()))
+
+
+async def reload_agent_config() -> None:
+    await agent.reload()

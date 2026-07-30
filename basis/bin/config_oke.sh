@@ -70,15 +70,8 @@ fi
 kubectl delete secret ${TF_VAR_prefix}-db-secret --ignore-not-found=true
 kubectl create secret generic ${TF_VAR_prefix}-db-secret --from-literal=db_user=$TF_VAR_db_user --from-literal=db_password=$TF_VAR_db_password --from-literal=db_url=$DB_URL --from-literal=jdbc_url=$JDBC_URL --from-literal=TF_VAR_compartment_ocid=$TF_VAR_compartment_ocid --from-literal=TF_VAR_nosql_endpoint=$TF_VAR_nosql_endpoint
 
-kubectl delete secret ocirsecret  --ignore-not-found=true
-if [ "$TF_VAR_auth_token" == "" ]; then
-    # Create a temporary docker auth_token (valid for 1 hour)... 
-    export TOKEN=`oci raw-request --region $TF_VAR_region --http-method GET --target-uri "https://${OCIR_HOST}/20180419/docker/token" | jq -r .data.token`
-    echo "TOKEN=$TOKEN" | cut -c 1-50
-    kubectl create secret docker-registry ocirsecret --docker-server=$OCIR_HOST --docker-username="BEARER_TOKEN" --docker-password="$TOKEN" --docker-email="$TF_VAR_email"
-else
-    kubectl create secret docker-registry ocirsecret --docker-server=$OCIR_HOST --docker-username="$OBJECT_STORAGE_NAMESPACE/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
-fi  
+# Create ocirsecret with DOCKER_TOKEN 
+k8s_create_ocirsecret
 
 # TF_ENV
 tf_env_configmap

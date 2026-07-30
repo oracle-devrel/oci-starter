@@ -198,8 +198,6 @@ def language_rules():
     elif params.get('java_framework') == 'helidon' and params.get('java_version') != '25':
         warning('Helidon only supports Java 17+. Forcing Java version to 25')
         params['java_version'] = 25
-    if params.get('python_framework') == 'responses':
-        params['project_ocid'] = TO_FILL
 
 def kubernetes_rules():
     if 'deploy_type' in params:
@@ -877,6 +875,10 @@ def create_output_dir():
             output_copy_tree("option/src/app/"+app, "src/app")
 
         if params.get('deploy_type') != "function" and params['language'] == "python":
+            if params['python_framework'] == 'responses':
+               # Responses sample is build on top of LangGraph one
+               output_copy_tree("option/src/app/python_langgraph", "src/app")
+
             app = "python_" + params['python_framework']
             output_copy_tree("option/src/app/"+app, "src/app")
 
@@ -887,10 +889,9 @@ def create_output_dir():
                 output_copy_tree("basis/src/app/rest", "src/app/mcp_server")
                 output_copy_tree("option/src/app/python/rest", "src/app/mcp_server")
                 output_copy_tree("option/src/app/python_mcp_server", "src/app")
-
-            # OpenAI Responses API
-            if params.get('python_framework') == 'responses':
-                cp_terraform("responses.tf")
+                # GenAI Project used mostly for Responses API (but also Vector Stores, ...)
+                cp_terraform("genai_project.tf")
+                cp_terraform("semantic_store.tf")
 
         # Overwrite the generic version (ex for mysql)
         family_dir = app+"_"+db_family
@@ -1021,7 +1022,7 @@ def create_output_dir():
         output_remove('src/app/rest/start.j2.sh')
         output_remove('src/app/rest/install.sh')
         output_remove('src/app/rest/env.j2.sh')
-        output_remove('src/app/nginx_app.locations')
+        output_remove('src/app/nginx_app.conf')
     else:         
         output_remove('src/app/*/Dockerfile')
 

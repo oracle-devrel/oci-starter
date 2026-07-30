@@ -1,9 +1,11 @@
 # Need Full docker image to have access to dnf 
-FROM oraclelinux:8
+FROM oraclelinux:10
 
 WORKDIR /app
-COPY wa_php_oci.sh /app
-RUN  /app/wa_php_oci.sh && \
+
+COPY php_oci_ol10.sh /app
+RUN  dnf install -y wget sudo && \
+     /app/php_oci_ol10.sh && \
      {%- if db_family == "psql" %}
      yum install -y php-pgsql && \
      {%- endif %}     

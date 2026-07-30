@@ -5,7 +5,7 @@ cd $SCRIPT_DIR
 
 # Install oci-sdk
 sudo dnf -y install oraclelinux-developer-release-el8
-sudo dnf -y install python36-oci-cli
+sudo dnf -y install python-oci-cli
 
 # OCI CLI config file
 mkdir -p $HOME/.oci

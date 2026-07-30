@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ prefix }}-dep
+  name: ##TF_VAR_prefix##-dep
   labels:
-      app: {{ prefix }}-rest
+      app: ##TF_VAR_prefix##-rest
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ prefix }}-rest
+      app: ##TF_VAR_prefix##-rest
   template:
     metadata:
       labels:
-        app: {{ prefix }}-rest
+        app: ##TF_VAR_prefix##-rest
     spec:
       containers:
       - name: app
-        image: ##DOCKER_PREFIX##/{{ prefix }}-rest:##DOCKER_IMG_VERSION##
+        image: ##DOCKER_PREFIX##/##TF_VAR_prefix##-rest:##DOCKER_IMG_VERSION##
         ports:
         - containerPort: 8080
           name: app-port
@@ -26,30 +26,30 @@ spec:
         - name: JAVAX_SQL_DATASOURCE_DS1_DATASOURCE_URL
           valueFrom:
             secretKeyRef:
-              name: {{ prefix }}-db-secret
+              name: ##TF_VAR_prefix##-db-secret
               key: jdbc_url
 {%- endif %}
         - name: JDBC_URL
           valueFrom:
             secretKeyRef:
-              name: {{ prefix }}-db-secret
+              name: ##TF_VAR_prefix##-db-secret
               key: jdbc_url
 {%- else %}        
         - name: DB_URL
           valueFrom:
             secretKeyRef:
-              name: {{ prefix }}-db-secret
+              name: ##TF_VAR_prefix##-db-secret
               key: db_url
 {%- endif %}      
         - name: DB_USER
           valueFrom:
             secretKeyRef:
-              name: {{ prefix }}-db-secret
+              name: ##TF_VAR_prefix##-db-secret
               key: db_user
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ prefix }}-db-secret
+              name: ##TF_VAR_prefix##-db-secret
               key: db_password
 #        - name: POD_IP
 #          valueFrom:
@@ -59,12 +59,12 @@ spec:
         - name: TF_VAR_compartment_ocid
           valueFrom:
             secretKeyRef:
-              name: {{ prefix }}-db-secret
+              name: ##TF_VAR_prefix##-db-secret
               key: TF_VAR_compartment_ocid
         - name: TF_VAR_nosql_endpoint
           valueFrom:
             secretKeyRef:
-              name: {{ prefix }}-db-secret
+              name: ##TF_VAR_prefix##-db-secret
               key: TF_VAR_nosql_endpoint
 {%- endif %}
 {%- if python_framework in [ "langgraph", "responses" ] %}
@@ -81,7 +81,7 @@ spec:
 {%- endif %}
 {%- if python_framework == "langgraph" %}
         - name: MCP_SERVER_URL
-          value: "http://{{ prefix }}-mcp-server-service:2025/mcp"
+          value: "http://##TF_VAR_prefix##-mcp-server-service:2025/mcp"
 {%- elif python_framework == "responses" %}
         - name: TF_VAR_project_ocid
           valueFrom:
@@ -97,10 +97,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ prefix }}-rest-service
+  name: ##TF_VAR_prefix##-rest-service
 spec:
   selector:
-    app: {{ prefix }}-rest
+    app: ##TF_VAR_prefix##-rest
   ports:
   - name: http-service-port
     protocol: TCP

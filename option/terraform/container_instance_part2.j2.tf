@@ -37,7 +37,7 @@ resource oci_container_instances_container_instance starter_container_instance {
             {%- if python_framework == "langgraph" %}
             "MCP_SERVER_URL" = "http://localhost:2025/mcp"
             {%- elif python_framework == "responses" %}
-            "TF_VAR_project_ocid" = var.project_ocid
+            "TF_VAR_project_ocid" = local.local_project_ocid
             "MCP_SERVER_URL" = "https://${local.local_apigw_hostname}/${var.prefix}/mcp_server/mcp"
             {%- endif %}
         }    

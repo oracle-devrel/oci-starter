@@ -9,6 +9,10 @@ from fastapi.responses import StreamingResponse
 # OCI Auth
 from oci_genai_auth import OciInstancePrincipalAuth, OciResourcePrincipalAuth
 import httpx
+from config import (
+    config_router,
+    get_effective_config,
+)
 
 REGION = os.getenv("TF_VAR_region")
 if REGION == "eu-amsterdam-1":
@@ -21,7 +25,7 @@ if os.getenv("AUTH_TYPE")=="RESOURCE_PRINCIPAL":
 else:
     auth = OciInstancePrincipalAuth()
 
-PROJECT_OCID = os.environ.get("TF_VAR_project_ocid")
+PROJECT_OCID = os.environ.get("TF_VAR_project_ocid") or os.environ.get("PROJECT_OCID")
 COMPARTMENT_OCID = os.environ.get("TF_VAR_compartment_ocid")
 MCP_SERVER_URL = os.environ.get("MCP_SERVER_URL")
 
@@ -47,31 +51,55 @@ client = OpenAI(
 
 
 app = FastAPI()
+app.include_router(config_router)
 
 def log(*args, **kwargs):
     print(*args, **kwargs, flush=True)
 
-def get_tools() -> list[dict[str, Any]]:
-    if not MCP_SERVER_URL:
+def _token_without_bearer(value: str | None) -> str:
+    token = (value or "").strip()
+    if token.lower().startswith("bearer "):
+        return token[7:].strip()
+    return token
+
+
+def _bearer_token_from_header(authorization: str | None) -> str:
+    if not authorization or not authorization.lower().startswith("bearer "):
+        return ""
+    return authorization[7:].strip()
+
+
+def get_tools(authorization: str | None = None) -> list[dict[str, Any]]:
+    config = get_effective_config()
+    mcp_server_url = config.get("MCP_SERVER_URL") or MCP_SERVER_URL
+    if not mcp_server_url:
         return []
-    return [
-        {
-            "type": "mcp",
-            "server_label": "mcp",
-            "server_url": MCP_SERVER_URL,
-            "require_approval": "never",
-        }
-    ]
+
+    tool: dict[str, Any] = {
+        "type": "mcp",
+        "server_label": "mcp",
+        "server_url": mcp_server_url,
+        "require_approval": "never",
+    }
+
+    if (config.get("MCP_AUTH_TYPE") or "").upper() == "BEARER":
+        token = _token_without_bearer(config.get("MCP_BEARER_TOKEN"))
+        token = token or _bearer_token_from_header(authorization)
+        if token:
+            tool["authorization"] = token
+
+    return [tool]
+
 
 # Simple in-memory state for demo compatibility with chat.js protocol.
 THREADS: dict[str, dict[str, Any]] = {}
 
 @app.get("/chat")
-def chat(q: str):
+def chat(q: str, request: Request):
     response = client.responses.create(
         model=MODEL_ID,
         temperature=0.0,
-        tools=get_tools(),
+        tools=get_tools(request.headers.get("authorization")),
         input=q,
     )
     return response.output_text
@@ -118,15 +146,11 @@ def runs_stream(thread_id: str, payload: dict[str, Any], request: Request):
     response_kwargs: dict[str, Any] = {
         "model": MODEL_ID,
         "temperature": 0.0,
-        "tools": get_tools(),     
+        "tools": get_tools(authorization),
         "input": input_payload,
         "stream": True,
         "conversation": thread_id
     }
-
-    if authorization and authorization.lower().startswith("bearer "):
-        response_kwargs["extra_headers"] = {"Authorization": authorization}
-        log("<runs_stream> forwarding bearer authorization header")
 
     def _to_dict(obj: Any) -> dict[str, Any]:
         if obj is None:

@@ -5,6 +5,7 @@ metadata:
 spec:
   parentRefs:
   - name: oke-gateway
+    namespace: gateway  
   hostnames:
 {%- if tls == "new_http_01" %}
   - "##TF_VAR_dns_name##"

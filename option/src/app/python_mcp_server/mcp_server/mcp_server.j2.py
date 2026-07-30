@@ -44,6 +44,37 @@ def get_dept() -> list[dict[str, Any]]:
     finally:
         connection.close()
 
+
+{%- if deploy_type=="hosted_app" %}
+# Hosted App
+# Wrap MCP server in FastAPI to answer to health and ready URLs
+from fastapi import FastAPI, Response
+from fastmcp.utilities.lifespan import combine_lifespans
+import uvicorn
+
+# Make the MCP app serve on /mcp
+mcp_app = mcp.http_app(path="/mcp")
+
+# Parent app for health checks + MCP
+app = FastAPI(
+    root_path="/actions/invoke",
+    lifespan=combine_lifespans(mcp_app.lifespan),
+)
+
+@app.get("/health")
+async def health():
+    return Response(content="OK", status_code=200, media_type="text/plain")
+
+@app.get("/ready")
+async def ready():
+    return Response(content="OK", status_code=200, media_type="text/plain")
+
+# Mount MCP under /mcp
+app.mount("/", mcp_app)
+
 if __name__ == "__main__":
-    # mcp.run(transport="stdio")  # Run the server, using standard input/output for communication
+    uvicorn.run(app, host="0.0.0.0", root_path="/actions/invoke", port=8080, access_log=True, log_level="info")    
+{%- else %}
+if __name__ == "__main__":
     mcp.run(transport="http", host="0.0.0.0", port=2025)
+{%- endif %}

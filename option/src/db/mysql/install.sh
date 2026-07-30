@@ -4,6 +4,7 @@ cd $SCRIPT_DIR
 . $HOME/compute/shared_compute.sh
 
 # Install mysql-shell
+install_mysql_yum_repo
 sudo dnf install -y mysql-shell
 
 # Install the tables

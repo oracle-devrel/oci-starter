@@ -1,0 +1,193 @@
+.config-shell {
+    grid-template-columns: minmax(240px, 26vw) minmax(0, 1fr);
+}
+
+.config-stage {
+    justify-content: flex-start;
+}
+
+.config-stage .chat-header {
+    align-items: center;
+}
+
+.config-stage h1 {
+    font-size: clamp(2rem, 4vw, 3.7rem);
+    line-height: 1;
+}
+
+.config-panel {
+    width: min(100%, 920px);
+    margin: 0 auto;
+    border: 1px solid rgba(73, 56, 39, .24);
+    border-radius: 8px;
+    background: rgba(255, 252, 245, .92);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+}
+
+.config-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: clamp(18px, 3vw, 30px);
+}
+
+.config-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+.config-loading {
+    min-height: 72px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink-soft);
+    font-size: .82rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.config-loading-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--brass);
+    animation: pulseAnim 1.1s cubic-bezier(.4, 0, .6, 1) infinite;
+}
+
+.config-field {
+    display: grid;
+    grid-template-columns: minmax(150px, 220px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: center;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+}
+
+.config-field label {
+    color: var(--ink-soft);
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.config-field input,
+.config-field select,
+.config-field textarea {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 12px;
+    border: 1px solid rgba(73, 56, 39, .24);
+    border-radius: 6px;
+    background: #fffaf0;
+    color: var(--ink);
+}
+
+.config-field textarea {
+    height: clamp(180px, 30vh, 360px);
+    resize: vertical;
+    overflow-y: auto;
+    line-height: 1.4;
+}
+
+.config-optional-control {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+}
+
+.config-optional-control .config-enable-checkbox {
+    width: 18px;
+    min-height: 0;
+    height: 18px;
+    padding: 0;
+    margin: 0;
+    accent-color: var(--ink);
+}
+
+.config-optional-control input:not([type="checkbox"]),
+.config-optional-control select,
+.config-optional-control textarea {
+    min-width: 0;
+}
+
+.config-optional-control input:disabled,
+.config-optional-control select:disabled,
+.config-optional-control textarea:disabled {
+    color: rgba(60, 49, 40, .52);
+    background: rgba(241, 231, 214, .55);
+}
+
+.config-field input:focus-visible,
+.config-field select:focus-visible,
+.config-field textarea:focus-visible {
+    outline: 2px solid var(--brass);
+    outline-offset: 3px;
+}
+
+.config-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-top: 22px;
+}
+
+#save-config,
+#close-config {
+    width: auto;
+    height: auto;
+    min-height: 44px;
+    padding: 0 22px;
+    border: 1px solid var(--ink);
+    border-radius: 6px;
+    background: var(--ink);
+    color: #fff9ee;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+#close-config {
+    border-color: rgba(73, 56, 39, .24);
+    background: #fffaf0;
+    color: var(--ink);
+}
+
+#save-config:hover,
+#close-config:hover {
+    border-color: var(--brass);
+    transform: translateY(-1px);
+}
+
+#config-status {
+    min-height: 1.4em;
+    color: var(--ink-soft);
+}
+
+@media (max-width: 700px) {
+    .config-field {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        align-items: stretch;
+    }
+
+    .config-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .config-optional-control {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .config-optional-control input:not([type="checkbox"]),
+    .config-optional-control select,
+    .config-optional-control textarea {
+        grid-column: 1 / -1;
+    }
+}

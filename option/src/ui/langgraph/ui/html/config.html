@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCI Enterprise AI - Configuration</title>
+    <link rel="stylesheet" href="chat.css">
+    <link rel="stylesheet" href="config.css">
+</head>
+
+<body>
+    <main class="experience-shell config-shell">
+        <section class="visual-pane" aria-hidden="true">
+            <div class="visual-caption">
+                <span>OCI Enterprise AI</span>
+                <strong>Config</strong>
+            </div>
+        </section>
+
+        <section class="chat-stage config-stage" aria-labelledby="page-title">
+            <header class="chat-header">
+                <div class="brand-lockup">
+                    <h1 id="page-title">Configuration</h1>
+                </div>
+
+            </header>
+
+            <section class="config-panel" aria-label="Configuration">
+                <form id="config-form" class="config-form" aria-busy="true">
+                    <div id="config-fields" class="config-fields">
+                        <div class="config-loading" role="status" aria-live="polite">
+                            <span class="config-loading-dot" aria-hidden="true"></span>
+                            <span>Loading configuration...</span>
+                        </div>
+                    </div>
+                    <div class="config-actions">
+                        <button id="save-config" type="submit">Save</button>
+                        <button id="close-config" type="button">Close</button>
+                        <span id="config-status" role="status" aria-live="polite"></span>
+                    </div>
+                </form>
+            </section>
+        </section>
+    </main>
+
+    <script type="module" src="config.js"></script>
+</body>
+
+</html>

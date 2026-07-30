@@ -224,13 +224,13 @@ async function renderMessage(msgObj) {
     if (msgType === 'human') {
         innerHTML = `<div class="bubble"><div class="meta">You</div>${renderMarkdown(msgObj.content)}</div>`;
     } else if (msgType === 'ai') {
-        if (msgObj.content) {
-            innerHTML = `<div class="bubble"><div class="meta">AI</div>${await renderContent(msgObj.content)}</div>`;
-        } else if (msgObj.tool_calls && msgObj.tool_calls.length > 0) {
+        if (msgObj.tool_calls && msgObj.tool_calls.length > 0) {
             const buttons = msgObj.tool_calls.map(toolCall =>
                 createToolButton(`Call: ${toolCall.name || 'tool'}`, renderToolCallBody(toolCall))
             );
             renderToolEventLine(el, buttons);
+        } else if (msgObj.content) {
+            innerHTML = `<div class="bubble"><div class="meta">AI</div>${await renderContent(msgObj.content)}</div>`;
         }
     } else if (msgType === 'tool') {
         renderToolEventLine(el, [
@@ -273,10 +273,10 @@ function startSSE(reqBody, onMessage, onDone) {
             let chunk = new TextDecoder().decode(value);
             pending += chunk;
             // Handle SSE events: lines like `data: {...}\n\n`
-            let parts = pending.split('\r\n\r\n');
+            let parts = pending.replaceAll('\r\n', '\n').split('\n\n');
             pending = parts.pop(); // Last piece (possibly incomplete)
             for (let part of parts) {
-                let lines = part.split('\r\n');
+                let lines = part.split('\n');
                 for (let line of lines) {
                     let match = line.match(/^data:\s*(.*)$/m);
                     if (match) {

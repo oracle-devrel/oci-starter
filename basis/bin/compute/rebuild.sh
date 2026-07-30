@@ -18,9 +18,12 @@ for APP_DIR in `app_dir_list`; do
     APP_NAME="${APP_DIR//\//-}"
     title "Rebuild - App: $APP_NAME"
     if [ -f ${APP_NAME}/build.sh ]; then
-        if [ -f ${APP_NAME}/Dockerfile ] && [ "DOCKER_LOGGED" == "false" ]; then 
-            export DOCKER_LOGGED=true
-            docker_login
+        if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
+            if  [ "$DOCKER_LOGGED" == "false" ]; then 
+                export DOCKER_LOGGED=true
+                docker_login
+                k8s_create_ocirsecret
+            fi
         fi
         # Build in bastion
         $APP_NAME/build.sh

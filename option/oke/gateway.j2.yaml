@@ -19,7 +19,7 @@ spec:
     protocol: HTTP
     allowedRoutes:
       namespaces:
-        from: Same
+        from: All
 {%- if tls == "new_http_01" %}
   - name: https
     port: 443

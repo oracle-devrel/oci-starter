@@ -12,7 +12,7 @@ langchain_oci
 langchain_community
 langchain_openai
 oci-openai
-langgraph-cli[inmem]
+langgraph-cli
 langchain_mcp_adapters
 
 # OAuth Caching 

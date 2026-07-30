@@ -88,11 +88,11 @@ if [ "$UI_URL" != "" ]; then
         rm $TMP_PATH/cookie.txt
     fi  
     if [ "$TF_VAR_language" == "apex" ]; then
-        wget $UI_URL/app/info -o $TMP_PATH/result_info.log -O $TMP_PATH/result.info
+        wget $UI_URL/app/info -o $TMP_PATH/result_info.log -O $TMP_PATH/result_info.html
     else
         curl $UI_URL/app/info -b $TMP_PATH/cookie.txt -c $TMP_PATH/cookie.txt -L --retry 5 --retry-max-time 20 -D $TMP_PATH/result_info.log > $TMP_PATH/result_info.html
     fi      
-    echo "See $TMP_PATH/result.info"
+    echo "See $TMP_PATH/result_info.html"
 
     if [ "$TF_VAR_deploy_type" == "public_compute" ] || [ "$TF_VAR_deploy_type" == "private_compute" ]; then
         # Get the compute logs

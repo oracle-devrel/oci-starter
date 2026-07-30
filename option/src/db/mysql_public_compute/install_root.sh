@@ -5,28 +5,33 @@
 #!/bin/bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
-
+. /home/opc/compute/shared_compute.sh
 . /home/opc/compute/tf_env.sh
 
-wget https://repo.mysql.com//mysql80-community-release-el8-9.noarch.rpm
-yum -y install mysql80-community-release-el8-9.noarch.rpm
-yum repolist enabled | grep "mysql.*-community.*"
-yum -y module disable mysql
-dnf -y install mysql-community-server
+# wget https://repo.mysql.com//mysql80-community-release-el8-9.noarch.rpm
+# yum -y install mysql80-community-release-el8-9.noarch.rpm
+# yum repolist enabled | grep "mysql.*-community.*"
+# yum -y module disable mysql
+
+install_mysql_yum_repo
+
+sudo dnf install -y mysql-community-server
 systemctl start mysqld 
 
 dnf -y install mysql-shell
+
 export TMP_PASSWORD=`grep 'temporary password' /var/log/mysqld.log | sed 's/.*: //g'` 
-mysqlsh root@localhost --password=$TMP_PASSWORD --sql << EOF
-ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';
+mysql --connect-expired-password   -u root   -p"$TMP_PASSWORD" <<EOF
+ALTER USER 'root'@'localhost'
+IDENTIFIED BY '$DB_PASSWORD'
+PASSWORD EXPIRE NEVER;
 EOF
 
 # Open the Firewall
 # firewall-cmd --zone=public --add-port=3306/tcp --permanent
 # firewall-cmd --reload
 
-# Install mysql-shell
-sudo dnf install -y mysql-shell
-
 # Install the tables
 mysqlsh $DB_USER@$DB_URL --password=$DB_PASSWORD --sql < mysql.sql
+
+
