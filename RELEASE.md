@@ -205,3 +205,15 @@ New version
 - docker-img:later -> docker-img:##DOCKER_IMG_VERSION## to be sure to redeploy to oke if a change is done
 - replace all env.sh by $HOME/compute/share_compute.sh -> tf_env.sh
 - python_framework = fastapi, langchain, responses ( + MCP server )
+
+# 5.1
+
+- dnf_makecache to try to avoid issue if the machine is not fully started yet (to improve)
+- OL10
+- Vibe Coding: install_opencode
+- Upgrade of 
+  - MySQL -> 9.7
+  - NodeJS -> 22
+- Replaced Podman by docker-ce after too many error with podman-compose
+- network.tf is not compatible per default with new and existing network
+- Several OKE fixes with Gateway
