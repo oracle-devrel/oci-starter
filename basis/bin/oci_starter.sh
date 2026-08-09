@@ -118,12 +118,21 @@ elif [ "$ARG1" == "destroy" ]; then
         $BIN_DIR/destroy_all.sh ${@:2} 2>&1 | tee $LOG_NAME
     fi
 elif [ "$ARG1" == "ssh" ]; then
+    if [ "$ARG3" == "--help" ] || [ "$ARG3" == "-h" ]; then
+        echo "Usage: ./starter.sh ssh $ARG2 [command]"
+        echo
+        echo "Open an interactive SSH session to the $ARG2, or run a command on it."
+        echo
+        echo "Example: ./starter.sh ssh $ARG2 'hostname && uptime'"
+        exit 0
+    fi
+
     if [ "$ARG2" == "compute" ]; then
-        $BIN_DIR/ssh_compute.sh
+        $BIN_DIR/ssh_compute.sh "${@:3}"
     elif [ "$ARG2" == "bastion" ]; then
-        $BIN_DIR/ssh_bastion.sh
+        $BIN_DIR/ssh_bastion.sh "${@:3}"
     elif [ "$ARG2" == "db_node" ]; then
-        $BIN_DIR/ssh_db_node.sh
+        $BIN_DIR/ssh_db_node.sh "${@:3}"
     else 
         echo "Unknown command: $ARG1 $ARG2"
     fi    

@@ -6,4 +6,4 @@ fi
 cd $PROJECT_DIR
 . starter.sh env
 
-ssh opc@$BASTION_IP -i $TF_VAR_ssh_private_path
+ssh opc@$BASTION_IP -i $TF_VAR_ssh_private_path "$@"

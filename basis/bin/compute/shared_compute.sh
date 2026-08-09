@@ -556,7 +556,7 @@ EOF
     chmod 600 ~/.config/opencode/oci-genai-api-key
     echo "<install_opencode> ~/.config/opencode/oci-genai-api-key created" 
 
-    export PATH=/home/opc/.opencode/bin:$PATH    
+    export PATH=$HOME/.opencode/bin:$PATH    
 }
 export -f install_opencode 
 
@@ -876,3 +876,20 @@ port_wait() {
     fi
 }
 export -f port_wait
+
+# -- get_region_domain -----------------------------------------------------
+get_region_domain() {
+    local metadata_file=/tmp/instance.json
+    local region_domain
+
+    if curl --connect-timeout 1 --max-time 2 -fs \
+        -H 'Authorization: Bearer Oracle' \
+        -L http://169.254.169.254/opc/v2/instance/ \
+        > "$metadata_file" \
+        && region_domain=$(jq -er '.regionInfo.realmDomainComponent' "$metadata_file" 2>/dev/null); then
+        export REGION_DOMAIN="$region_domain"
+    else
+        export REGION_DOMAIN=oraclecloud.com
+    fi
+}
+export -f get_region_domain
