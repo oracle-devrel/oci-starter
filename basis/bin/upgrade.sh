@@ -215,6 +215,37 @@ if [ ! -f src/terraform/repository.tf ]; then
   echo "Container Repository in compartment: copied the new file repository.tf"
 fi
 
+# New src/app structure
+if [ ! -d src/ui ]; then
+
+    if [ -d src/app ]; then
+      mkdir src/app/app
+      mv src/app/* src/app/app
+      cd src/app/app/
+      mv src/* .
+      rmdir src/
+      mv build_app.sh build.sh
+      cd -
+    fi
+
+    if [ -d src/ui ]; then
+      mv src/ui src/app/.
+      cd src/app/ui/
+      mv build_ui.sh build.sh
+      cd -
+    fi
+
+    if [ -d src/ui ]; then
+      mv src/db/* src/app/.
+      cd src/app/db/
+      mv db_install.sh install.sh
+      cd -
+    fi
+fi
+
+
+
+
 echo "Done. New version in directory upgrade"
 echo 
 
