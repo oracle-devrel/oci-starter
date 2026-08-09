@@ -878,7 +878,6 @@ port_wait() {
 export -f port_wait
 
 # -- get_region_domain -----------------------------------------------------
-
 get_region_domain() {
     local metadata_file=/tmp/instance.json
     local region_domain
