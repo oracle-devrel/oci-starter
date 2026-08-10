@@ -893,3 +893,18 @@ get_region_domain() {
     fi
 }
 export -f get_region_domain
+
+# -- has_to_fill_variables --------------------------------------------------
+has_to_fill_variables() {
+    local variable
+
+    for variable in $(compgen -v); do
+        [ "$variable" = "BASH_EXECUTION_STRING" ] && continue
+        if [ "${!variable}" = "__TO_FILL__" ]; then
+            return 0
+        fi
+    done
+
+    return 1
+}
+export -f has_to_fill_variables

@@ -4,7 +4,7 @@ if [ "$PROJECT_DIR" = "" ]; then
     exit 1
 fi
 
-if declare -p | grep -q "__TO_FILL__"; then
+if has_to_fill_variables; then
     title "CONFIG.SH"
     
     accept_request() {
@@ -315,11 +315,17 @@ if declare -p | grep -q "__TO_FILL__"; then
     # Do not stop if __TO_FILL__ are not replaced if TF_VAR_group_name exist in env variable
     # XXX -> It would be safer to check also for TF_VAR_xxx containing __TO_FILL__ too
 
-    if declare -p | grep -q "__TO_FILL__"; then
+    if has_to_fill_variables; then
         echo
         echo "ERROR: missing environment variables"
         echo
-        declare -p | grep __TO_FILL__
+        local variable
+        for variable in $(compgen -v); do
+            [ "$variable" = "BASH_EXECUTION_STRING" ] && continue
+            if [ "${!variable}" = "__TO_FILL__" ]; then
+                echo "- $variable"
+            fi
+        done
         echo
         echo "Edit the file terraform.tfvars. Some variables needs to be filled:" 
         cat $PROJECT_DIR/terraform.tfvars | grep __TO_FILL__
