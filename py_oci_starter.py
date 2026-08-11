@@ -111,7 +111,7 @@ def allowed_options():
 
 allowed_values = {
     'language': {'java', 'node', 'python', 'dotnet', 'go', 'php', 'ords', 'apex', 'none'},
-    'deploy_type': { 'public_compute', 'private_compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic'},
+    'deploy_type': { 'public_compute', 'private_compute', 'instance_pool', 'kubernetes', 'function', 'container_instance', 'hpc', 'datascience', 'oic', 'hosted_app'},
     'java_framework': {'springboot', 'helidon', 'helidon4', 'tomcat', 'micronaut'},
     'java_vm': {'jdk', 'graalvm', 'graalvm-native'},
     'java_version': {'8', '11', '17', '21', '25'},
@@ -346,7 +346,7 @@ starter.sh
    -db_ocid (optional)
    -db_password (mandatory)
    -db_user (default admin)
-   -deploy (mandatory) public_compute | compute | kubernetes | function | container_instance
+   -deploy (mandatory) public_compute | compute | kubernetes | function | container_instance | hosted_app
    -fnapp_ocid (optional)
    -group_common (optional) atp | database | mysql | psql | opensearch | nosql | fnapp | apigw | oke | jms
    -group_name (optional)
@@ -1007,18 +1007,24 @@ def create_output_dir():
             # output_mkdir src/container_instance
             cp_terraform_apigw(None)
 
+        elif params.get('deploy_type') == "hosted_app":
+            cp_terraform("hosted_app.j2.tf")
+            if 'group_common' not in params:
+                cp_terraform("hosted_app_policy.tf")
+            cp_terraform_apigw(None)
+
     if params.get('tls'):
         cp_terraform("tls.j2.tf")
         if params.get('deploy_type') == 'kubernetes' and params.get('tls') != 'new_http_01':
             cp_terraform_apigw("apigw_kubernetes_tls_part2.tf")
 
-    if params.get('deploy_type') in ["kubernetes","container_instance","function"]:
+    if params.get('deploy_type') in ["kubernetes","container_instance","function","hosted_app"]:
         cp_terraform("repository.j2.tf")
 
     # CleanUp - Keep the minimum number of deployment files in the main app directory 
     if params.get('deploy_type')!="kubernetes":
         output_remove('src/app/*/k8s*')
-    if params.get('deploy_type') in ["kubernetes","container_instance","function"]:
+    if params.get('deploy_type') in ["kubernetes","container_instance","function","hosted_app"]:
         output_remove('src/app/rest/start.j2.sh')
         output_remove('src/app/rest/install.sh')
         output_remove('src/app/rest/env.j2.sh')
@@ -1096,8 +1102,8 @@ def create_group_common_dir():
     if 'public_compute' in a_group_common:
         cp_terraform_existing("compute_ocid", "compute.j2.tf")
 
-    # Container Instance Common
     cp_terraform("container_instance_policy.tf")
+    cp_terraform("hosted_app_policy.tf")
 
 #----------------------------------------------------------------------------
 

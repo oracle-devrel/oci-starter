@@ -12,9 +12,11 @@ echo "ARCH=$ARCH"
 # Shared Install Function
 . ./shared_compute.sh
 title "Compute Install"
-dnf_makecache
 
 if ! grep -q "export LC_CTYPE" $HOME/.bashrc; then
+    # Build the DNF Cache
+    dnf_makecache
+
     # Set VI and NANO in utf8
     echo "export LC_CTYPE=en_US.UTF-8" >> $HOME/.bashrc
     echo "shopt -s direxpand" >> $HOME/.bashrc
@@ -58,7 +60,7 @@ fi
 
 if ! grep -q "# Build Bastion" $HOME/.bashrc; then
     if [ "$TF_VAR_build_host" == "bastion" ]; then 
-        echo "# Build Bastion" >> $HOME/.bashrc# Build_host = bastion
+        echo "# Build Bastion" >> $HOME/.bashrc
         # Kubernetes 
         if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then 
             install_docker_tools

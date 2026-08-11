@@ -2,6 +2,8 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
+. $HOME/compute/shared_compute.sh
+
 install_instant_client
 
 # Install last version of GoLang
