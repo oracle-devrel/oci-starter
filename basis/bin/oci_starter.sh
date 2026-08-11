@@ -75,13 +75,7 @@ elif [ "$ARG1" == "help" ]; then
 
 elif [ "$ARG1" == "build" ]; then
     if [ "$ARG2" == "app" ]; then
-        # Build all apps
-        for APP_NAME in `app_name_list_build`; do
-            src/app/$APP_NAME/build.sh ${@:2}
-            exit_on_error "Build App $APP_NAME"
-        done
-    elif [ "$ARG2" == "ui" ]; then
-        $PROJECT_DIR/src/app/build_ui.sh ${@:2}
+        build_deploy_apps
     else
         export LOG_NAME=$TARGET_DIR/logs/build.${DATE_POSTFIX}.log
         # Show the log and save it to target/build.log and target/logs
@@ -136,7 +130,7 @@ elif [ "$ARG1" == "ssh" ]; then
     else 
         echo "Unknown command: $ARG1 $ARG2"
     fi    
-elif [ "$ARG1" == "rebuild" ]; then
+elif [ "$ARG1" == "destroy_build" ]; then
     . $BIN_DIR/shared_bash_function.sh
 
     # Destroy

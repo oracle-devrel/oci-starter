@@ -669,11 +669,37 @@ function scp_via_bastion() {
   done
 }
 
-
-
-
 # done.txt
 FILE_DONE=$TARGET_DIR/done.txt
 append_done() {
   echo "$1" >> $FILE_DONE
+}
+
+build_deploy_apps() {
+    # Build all apps
+    if [ "$TF_VAR_build_host" != "bastion" ]; then
+        for APP_NAME in `app_name_list_build`; do
+            src/app/$APP_NAME/build.sh
+            exit_on_error "Build App $APP_NAME"
+        done
+    fi 
+
+    # Build the DB tables (via Bastion)
+    if [ -d src/app/db ] || [ "$TF_VAR_deploy_type" == "public_compute" ]; then
+        title "Deploy Bastion"
+        $BIN_DIR/deploy_bastion.sh
+        exit_on_error "Deploy Bastion"   
+    fi  
+
+    # Deploy
+    title "Deploy $TF_VAR_deploy_type"
+    if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
+        echo "Skipping. Done via Deploy Bastion."
+    elif [ "$TF_VAR_deploy_type" == "private_compute" ] || [ "$TF_VAR_deploy_type" == "instance_pool" ]; then
+        $BIN_DIR/deploy_compute.sh
+        exit_on_error "Deploy $TF_VAR_deploy_type"
+    elif [ "$TF_VAR_deploy_type" == "container_instance" ]; then
+        $BIN_DIR/deploy_ci.sh
+        exit_on_error "Deploy $TF_VAR_deploy_type"
+    fi
 }

@@ -29,6 +29,5 @@ else
         exit_on_error
         docker build -t ${TF_VAR_prefix}-${APP_NAME}:latest . 
     fi
-    exit_on_error "docker build"
-    {{ m.deploy_oke() }}
+    {{ m.post_build_docker() }}
 fi  
