@@ -58,7 +58,7 @@ fi
 
 if ! grep -q "# Build Bastion" $HOME/.bashrc; then
     if [ "$TF_VAR_build_host" == "bastion" ]; then 
-        echo "# Build Bastion" >> $HOME/.bashrc# Build_host = bastion
+        echo "# Build Bastion" >> $HOME/.bashrc
         # Kubernetes 
         if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then 
             install_docker_tools

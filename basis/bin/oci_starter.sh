@@ -75,6 +75,7 @@ elif [ "$ARG1" == "help" ]; then
 
 elif [ "$ARG1" == "build" ]; then
     if [ "$ARG2" == "app" ]; then
+        . ./starter.sh env -silent
         build_deploy_apps
     else
         export LOG_NAME=$TARGET_DIR/logs/build.${DATE_POSTFIX}.log
