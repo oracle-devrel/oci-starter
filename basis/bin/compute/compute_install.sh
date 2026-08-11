@@ -12,9 +12,11 @@ echo "ARCH=$ARCH"
 # Shared Install Function
 . ./shared_compute.sh
 title "Compute Install"
-dnf_makecache
 
 if ! grep -q "export LC_CTYPE" $HOME/.bashrc; then
+    # Build the DNF Cache
+    dnf_makecache
+
     # Set VI and NANO in utf8
     echo "export LC_CTYPE=en_US.UTF-8" >> $HOME/.bashrc
     echo "shopt -s direxpand" >> $HOME/.bashrc
