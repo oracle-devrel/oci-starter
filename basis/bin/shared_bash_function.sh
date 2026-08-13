@@ -190,48 +190,48 @@ group_common_contain() {
 get_user_details() {
     if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
         if [ "$OCI_TENANCY" != "" ]; then 
-        # Cloud Shell
-        export TF_VAR_tenancy_ocid=$OCI_TENANCY
-        export TF_VAR_region=$OCI_REGION
-        # Good way to get the home_region is to get it via oci iam tenancy get --tenancy-id xxx -> home_region PREFIX (ex:FRA)
-        # That needs then to be converted from prefix to name via the region list (->eu-frankfurt-1). See provider.tf.
-        export TF_VAR_home_region=`echo $OCI_CS_HOST_OCID | sed "s/.*\.oc[0-9]*\.//" | sed "s/\..*//"`      
-        if [[ "$OCI_CS_USER_OCID" == *"ocid1.saml2idp"* ]]; then
-            # Ex: ocid1.saml2idp.oc1..aaaaaaaaexfmggau73773/user@domain.com -> oracleidentitycloudservice/user@domain.com
-            # Split the string in 2 
-            IFS='/' read -r -a array <<< "$OCI_CS_USER_OCID"
-            IDP_NAME=`oci iam identity-provider get --identity-provider-id=${array[0]} | jq -r .data.name`
-            IDP_NAME_LOWER=${IDP_NAME,,}
-            export TF_VAR_username="$IDP_NAME_LOWER/${array[1]}"
-        elif [[ "$OCI_CS_USER_OCID" == *"ocid1.user"* ]]; then
-            export TF_VAR_current_user_ocid="$OCI_CS_USER_OCID"
+            # Cloud Shell
+            export TF_VAR_tenancy_ocid=$OCI_TENANCY
+            export TF_VAR_region=$OCI_REGION
+            # Good way to get the home_region is to get it via oci iam tenancy get --tenancy-id xxx -> home_region PREFIX (ex:FRA)
+            # That needs then to be converted from prefix to name via the region list (->eu-frankfurt-1). See provider.tf.
+            export TF_VAR_home_region=`echo $OCI_CS_HOST_OCID | sed "s/.*\.oc[0-9]*\.//" | sed "s/\..*//"`      
+            if [[ "$OCI_CS_USER_OCID" == *"ocid1.saml2idp"* ]]; then
+                # Ex: ocid1.saml2idp.oc1..aaaaaaaaexfmggau73773/user@domain.com -> oracleidentitycloudservice/user@domain.com
+                # Split the string in 2 
+                IFS='/' read -r -a array <<< "$OCI_CS_USER_OCID"
+                IDP_NAME=`oci iam identity-provider get --identity-provider-id=${array[0]} | jq -r .data.name`
+                IDP_NAME_LOWER=${IDP_NAME,,}
+                export TF_VAR_username="$IDP_NAME_LOWER/${array[1]}"
+            elif [[ "$OCI_CS_USER_OCID" == *"ocid1.user"* ]]; then
+                export TF_VAR_current_user_ocid="$OCI_CS_USER_OCID"
+            else 
+                export TF_VAR_username=$OCI_CS_USER_OCID
+            fi
         else 
-            export TF_VAR_username=$OCI_CS_USER_OCID
-        fi
-        else 
-        echo "Called From Resource Manager"
-        export CALLED_BY_TERRAFORM="TRUE"
-        # Exported by build.tf
-        export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
-        export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
-        export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)      
+            echo "Called From Resource Manager"
+            export CALLED_BY_TERRAFORM="TRUE"
+            # Exported by build.tf
+            export TF_VAR_ssh_private_path=$TARGET_DIR/ssh_key_starter
+            export TF_VAR_ssh_public_key=$(cat $TARGET_DIR/ssh_key_starter.pub)
+            export TF_VAR_ssh_private_key=$(cat $TARGET_DIR/ssh_key_starter)      
         fi
     elif [ -f $HOME/.oci/config ]; then
         ## Get the [DEFAULT] config
         if [ -z "$OCI_CLI_PROFILE" ]; then
-        OCI_PRO=DEFAULT
+            OCI_PRO=DEFAULT
         else 
-        OCI_PRO=$OCI_CLI_PROFILE
+            OCI_PRO=$OCI_CLI_PROFILE
         fi    
         sed -n -e "/\[$OCI_PRO\]/,$$p" $HOME/.oci/config > /tmp/ociconfig
-        export TF_VAR_current_user_ocid=`sed -n 's/user=//p' /tmp/ociconfig |head -1`
-        export TF_VAR_fingerprint=`sed -n 's/fingerprint=//p' /tmp/ociconfig |head -1`
-        export TF_VAR_private_key_path=`sed -n 's/key_file=//p' /tmp/ociconfig |head -1`
-        export TF_VAR_region=`sed -n 's/region=//p' /tmp/ociconfig |head -1`
+        export TF_VAR_current_user_ocid="$(sed -n -E 's/^[[:space:]]*user[[:space:]]*=[[:space:]]*//p' /tmp/ociconfig | head -1)"
+        export TF_VAR_fingerprint="$(sed -n -E 's/^[[:space:]]*fingerprint[[:space:]]*=[[:space:]]*//p' /tmp/ociconfig | head -1)"
+        export TF_VAR_private_key_path="$(sed -n -E 's/^[[:space:]]*key_file[[:space:]]*=[[:space:]]*//p' /tmp/ociconfig | head -1)"
+        export TF_VAR_region="$(sed -n -E 's/^[[:space:]]*region[[:space:]]*=[[:space:]]*//p' /tmp/ociconfig | head -1)"
+        export TF_VAR_tenancy_ocid="$(sed -n -E 's/^[[:space:]]*tenancy[[:space:]]*=[[:space:]]*//p' /tmp/ociconfig | head -1)"
         # Good way to get the home_region is to get it via oci iam tenancy get --tenancy-id xxx -> home_region PREFIX (ex:FRA)
         # That needs then to be converted from prefix to name via the region list (->eu-frankfurt-1). See provider.tf.
         # export TF_VAR_home_region=$TF_VAR_region
-        export TF_VAR_tenancy_ocid=`sed -n 's/tenancy=//p' /tmp/ociconfig |head -1`  
         # echo TF_VAR_current_user_ocid=$TF_VAR_current_user_ocid
         # echo TF_VAR_fingerprint=$TF_VAR_fingerprint
         # echo TF_VAR_private_key_path=$TF_VAR_private_key_path
