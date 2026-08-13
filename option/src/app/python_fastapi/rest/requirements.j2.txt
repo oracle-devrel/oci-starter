@@ -1,5 +1,4 @@
 {% import "python.j2_macro" as m with context %}
-Flask
-flask-cors
-waitress
+fastapi
+uvicorn[standard]
 {{ m.requirements() }}   

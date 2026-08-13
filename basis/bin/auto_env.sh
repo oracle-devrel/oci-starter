@@ -141,12 +141,29 @@ if [ "$MISMATCH_PLATFORM" != "" ]; then
     exit 1
 fi
 
+# Check commands that are typically missing
 if ! command -v jq &> /dev/null; then
     error_exit "Unix command jq not found. Please install it."
 fi
 
 if ! command -v rsync &> /dev/null; then
     error_exit "Unix command rsync not found. Please install it."
+fi
+
+if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
+    if ! command -v docker &> /dev/null; then
+        if ! command -v podman &> /dev/null; then
+            error_exit "Unix command docker or podman not found. Please install one of them."
+        else 
+            alias docker=podman 
+        fi
+    fi
+fi
+
+if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
+    if ! command -v kubectl &> /dev/null; then
+        error_exit "Unix command kubectl not found. Please install it."
+    fi
 fi
 
 # Enable BASH history for Stack Trace.

@@ -1,25 +1,40 @@
 {% import "python.j2_macro" as m with context %}
 import os
 import traceback
-from flask import Flask
-from flask import jsonify
-from flask_cors import CORS
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, PlainTextResponse
+
 {{ m.import() }}
 
-app = Flask(__name__)
-CORS(app)
+app = FastAPI()
 
-@app.route('/dept')
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/dept")
 def dept():
-    {{ m.dept() }}     
-    response = jsonify(a)
-    response.status_code = 200
-    return response   
+    {{ m.dept() }}
+    return a
 
-@app.route('/info')
+
+@app.get("/info", response_class=PlainTextResponse)
 def info():
-        return "Python - Flask - {{ dbName }}"          
+    return "Python - FastAPI - {{ dbName }}"
+
 
 if __name__ == "__main__":
-    from waitress import serve    
-    serve(app, host="0.0.0.0", port=8080)
+    import uvicorn
+
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8080
+    )
