@@ -544,7 +544,7 @@ def env_sh_contents():
 
     env_params = env_param_list()
     print(env_params)
-    tfvars= ['# -- Variables ---------------------------------------------']
+    tfvars= ['# -- Variables ---------------------------------------------', '# Values can be overwritten by $HOME/.oci_starter_profile']
 
     if 'group_name' in params:
         prefix = params["group_name"]

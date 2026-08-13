@@ -760,7 +760,7 @@ build_ui() {
     else
         # Kubernetes and Container Instances
         docker image rm ${TF_VAR_prefix}-ui:latest 
-        docker build -t ${TF_VAR_prefix}-ui:latest .
+        docker build --platform "${DOCKER_BUILD_PLATFORM:-linux/amd64}" -t ${TF_VAR_prefix}-ui:latest .
         if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
             oke_deploy_app ui
         fi
