@@ -116,15 +116,22 @@ rs_echo() {
 
 resource_manager_variables_json () {
   rs_echo "Create $VAR_FILE_PATH"  
-  # Transforms the variables in a JSON format
-  # This is a complex way to get them. But it works for multi line variables like TF_VAR_private_key
-  excluded=$(env | sed -n 's/^\([A-Z_a-z][0-9A-Z_a-z]*\)=.*/\1/p' | grep -v 'TF_VAR_')
-  # Nasty WA trick for OCI Stack and OCI Devops (not a proper fix)
-  excluded="$excluded maven.home OLDPWD"
-  sh -c 'unset $1; export -p' sh "$excluded" > $TARGET_DIR/tf_var.sh 2>/dev/null
+  # Produce a JSON map of the Terraform variables. Python's JSON encoder is
+  # portable across macOS and Linux and correctly preserves multiline values
+  # such as SSH keys.
+  python3 - "$VAR_FILE_PATH" <<'PY'
+import json
+import os
+import sys
 
-  echo -n "{" > $VAR_FILE_PATH
-  cat $TARGET_DIR/tf_var.sh | sed "s/export TF_VAR_/\"/g" | sed "s/=\"/\": \"/g" | sed ':a;N;$!ba;s/\"\n/\", /g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/$/}/'>> $VAR_FILE_PATH  
+variables = {
+    name.removeprefix("TF_VAR_"): value
+    for name, value in os.environ.items()
+    if name.startswith("TF_VAR_")
+}
+with open(sys.argv[1], "w", encoding="utf-8") as output:
+    json.dump(variables, output)
+PY
 }
 
 # Used in both infra_as_code = resource_manager and from_resource_manager

@@ -100,7 +100,12 @@ complete -F _starter_completions ./starter.sh
 
 # Check the SHAPE
 unset MISMATCH_PLATFORM
-if [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
+if [ "$(uname -s)" = "Darwin" ]; then
+    # Cross compile on MacOSX. (Todo: Maybe docker buildx inspect --bootstrap could be more generic)
+    if [ "$TF_VAR_instance_shape" != "VM.Standard.A1.Flex" ]; then
+        export DOCKER_DEFAULT_PLATFORM=linux/amd64
+    fi
+elif [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
     if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
         # Resource Manager run on ARM processor. So, docker is in ARM mode too...
         export TF_VAR_instance_shape="VM.Standard.A1.Flex"
