@@ -1,11 +1,13 @@
+FROM ghcr.io/astral-sh/uv:latest AS uv
+
 FROM python:3-bookworm
 
-RUN pip install --upgrade pip
+COPY --from=uv /uv /uvx /bin/
 
 WORKDIR /app
-ENV PATH="/app/.local/bin:${PATH}"
+COPY requirements.txt ./
+RUN uv pip install --system -r requirements.txt
+
 COPY ./ /app/
-RUN pip3 install -r requirements.txt
 
 ENTRYPOINT ["python3","mcp_server.py"]
-

@@ -13,8 +13,7 @@ if [ ! -f $KUBECONFIG ]; then
     create_kubeconfig
     
     # Check if Gateway Controller is installed
-    kubectl get gateway oke-gateway -n default
-    if [ "$?" != "0" ]; then
+    if ! kubectl get gateway oke-gateway -n gateway >/dev/null 2>&1; then    
         # Deploy Latest istio-gateway
         kubectl create clusterrolebinding starter_clst_adm --clusterrole=cluster-admin --user=$TF_VAR_current_user_ocid
         echo "OKE Deploy: Role Binding created"  

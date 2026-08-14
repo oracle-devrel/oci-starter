@@ -85,7 +85,8 @@ default_options = {
     '-db_password' : TO_FILL,
     '-oke_type' : 'managed',
     '-security' : 'none',
-    '-build_host' : 'terraform'
+    '-build_host' : 'terraform',
+    '-kubernetes': 'oke'
 }
 
 no_default_options = ['-compartment_ocid', '-oke_ocid', '-vcn_ocid',
