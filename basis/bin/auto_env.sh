@@ -128,8 +128,6 @@ complete -F _starter_completions ./starter.sh
 
 # Check the SHAPE
 unset MISMATCH_PLATFORM
-echo "aaa DEPLOY_WITH_DOCKER=$DEPLOY_WITH_DOCKER"
-alias docker
 if [ "$DEPLOY_WITH_DOCKER" == "true" ]; then
     if [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
         # Resource Manager run on ARM processor. So, docker is in ARM mode too...
@@ -148,7 +146,7 @@ if [ "$DEPLOY_WITH_DOCKER" == "true" ]; then
         HOST_ARCHITECTURE=$(uname -m)
         
         if [[ " $HOST_ARCHITECTURES " != *" $HOST_ARCHITECTURE "* ]]; then
-            echo "Docker cross-platform build - Host Architecture $HOST_ARCHITECTURE not in $HOST_ARCHITECTURES"        
+            auto_echo "Docker cross-platform build - Host Architecture $HOST_ARCHITECTURE not in $HOST_ARCHITECTURES"        
             # A non-native image can be built only when the active Buildx builder supports it.
             if docker buildx inspect --bootstrap 2>/dev/null | grep -Eq "(^|[[:space:],])${DOCKER_TARGET_PLATFORM}([,[:space:]]|$)"; then
                 export DOCKER_DEFAULT_PLATFORM=$DOCKER_TARGET_PLATFORM
