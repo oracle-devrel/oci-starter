@@ -1,13 +1,11 @@
-{%- if oke_ocid is defined %}
 variable "oke_ocid" {
-  description = "Existing OKE (Kubernetes) OCID"  
+  description = "Existing OKE cluster OCID. Leave null to create a cluster."
+  default     = null
 }
 
 locals {
-  local_oke_ocid = var.oke_ocid
+  create_oke = var.oke_ocid == null
 }
-
-{%- else %}  
 
 #----------------------------------------------------------------------------
 # VARIABLES
@@ -98,6 +96,7 @@ locals {
 # See: https://docs.oracle.com/en-us/iaas/Content/ContEng/Concepts/contengnetworkconfigexample.htm
 
 resource "oci_core_security_list" "starter_seclist_lb" {
+  count = local.create_oke ? 1 : 0
   compartment_id = local.lz_network_cmp_ocid
   vcn_id         = data.oci_core_vcn.starter_vcn.id
   display_name   = "${var.prefix}-seclist-lb"
@@ -130,6 +129,7 @@ resource "oci_core_security_list" "starter_seclist_lb" {
 #----------------------------------------------------------------------------
 
 resource "oci_core_security_list" "starter_seclist_node" {
+  count = local.create_oke ? 1 : 0
   compartment_id = local.lz_network_cmp_ocid
   vcn_id         = data.oci_core_vcn.starter_vcn.id
   display_name   = "${var.prefix}-seclist-node"
@@ -275,6 +275,7 @@ resource "oci_core_security_list" "starter_seclist_node" {
 #----------------------------------------------------------------------------
 
 resource oci_core_security_list starter_seclist_api {
+  count = local.create_oke ? 1 : 0
   compartment_id = local.lz_network_cmp_ocid
   vcn_id         = data.oci_core_vcn.starter_vcn.id
   display_name   = "${var.prefix}-seclist-api"
@@ -352,6 +353,7 @@ resource oci_core_security_list starter_seclist_api {
 # SUBNETS
 
 resource "oci_core_subnet" "starter_nodepool_subnet" {
+  count = local.create_oke ? 1 : 0
   #Required
   availability_domain = data.oci_identity_availability_domain.ad1.name
   cidr_block          = local.oke_cidr_nodepool
@@ -359,8 +361,8 @@ resource "oci_core_subnet" "starter_nodepool_subnet" {
   vcn_id              = data.oci_core_vcn.starter_vcn.id
 
   # Provider code tries to maintain compatibility with old versions.
-  # security_list_ids = [oci_core_security_list.starter_seclist_node.id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
-  security_list_ids = [oci_core_security_list.starter_seclist_node.id,data.oci_core_vcn.starter_vcn.default_security_list_id]
+  # security_list_ids = [oci_core_security_list.starter_seclist_node[0].id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
+  security_list_ids = [oci_core_security_list.starter_seclist_node[0].id,data.oci_core_vcn.starter_vcn.default_security_list_id]
   display_name      = "${var.prefix}-oke-nodepool-subnet"
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
@@ -368,6 +370,7 @@ resource "oci_core_subnet" "starter_nodepool_subnet" {
 }
 
 resource "oci_core_subnet" "starter_lb_subnet" {
+  count = local.create_oke ? 1 : 0
   #Required
   cidr_block          = local.oke_cidr_loadbalancer
   compartment_id      = local.lz_network_cmp_ocid
@@ -375,7 +378,7 @@ resource "oci_core_subnet" "starter_lb_subnet" {
 
   # Provider code tries to maintain compatibility with old versions.
   # security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
-  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_seclist_lb.id]
+  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_seclist_lb[0].id]
   display_name      = "${var.prefix}-oke-lb-subnet"
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
@@ -384,14 +387,15 @@ resource "oci_core_subnet" "starter_lb_subnet" {
 }
 
 resource "oci_core_subnet" "starter_api_subnet" {
+  count = local.create_oke ? 1 : 0
   #Required
   cidr_block          = local.oke_cidr_api
   compartment_id      = local.lz_network_cmp_ocid
   vcn_id              = data.oci_core_vcn.starter_vcn.id
 
   # Provider code tries to maintain compatibility with old versions.
-  # security_list_ids = [oci_core_security_list.starter_seclist_api.id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
-  security_list_ids = [oci_core_security_list.starter_seclist_api.id,data.oci_core_vcn.starter_vcn.default_security_list_id]
+  # security_list_ids = [oci_core_security_list.starter_seclist_api[0].id,data.oci_core_vcn.starter_vcn.default_security_list_id,oci_core_security_list.starter_security_list.id]
+  security_list_ids = [oci_core_security_list.starter_seclist_api[0].id,data.oci_core_vcn.starter_vcn.default_security_list_id]
   display_name      = "${var.prefix}-oke-api-subnet"
   route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
 
@@ -401,6 +405,7 @@ resource "oci_core_subnet" "starter_api_subnet" {
 
 /*
 resource "oci_core_subnet" "starter_pod_subnet" {
+  count = local.create_oke ? 1 : 0
   #Required
   cidr_block          = "10.0.40.0/24"
   compartment_id      = local.lz_network_cmp_ocid
@@ -418,6 +423,7 @@ resource "oci_core_subnet" "starter_pod_subnet" {
 # CLUSTER
 
 resource "oci_containerengine_cluster" "starter_oke" {
+  count = local.create_oke ? 1 : 0
   #Required
   compartment_id     = local.lz_app_cmp_ocid
   kubernetes_version = local.oke_latest_stable_version
@@ -427,12 +433,12 @@ resource "oci_containerengine_cluster" "starter_oke" {
 
   #Optional
   endpoint_config {
-    subnet_id             = oci_core_subnet.starter_api_subnet.id
+    subnet_id             = oci_core_subnet.starter_api_subnet[0].id
     is_public_ip_enabled  = "true"
   }
 
   options {
-    service_lb_subnet_ids = [oci_core_subnet.starter_lb_subnet.id]
+    service_lb_subnet_ids = [oci_core_subnet.starter_lb_subnet[0].id]
     #Optional
     add_ons {
       #Optional
@@ -465,8 +471,9 @@ resource "oci_containerengine_cluster" "starter_oke" {
 # NODE POOL
 
 resource "oci_containerengine_node_pool" "starter_node_pool" {
+  count = local.create_oke ? 1 : 0
   #Required
-  cluster_id         = oci_containerengine_cluster.starter_oke.id
+  cluster_id         = oci_containerengine_cluster.starter_oke[0].id
   compartment_id     = local.lz_app_cmp_ocid
   kubernetes_version = local.oke_latest_stable_version
   name               = "${var.prefix}-pool"
@@ -487,7 +494,7 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
     placement_configs {
       #Required
       availability_domain = data.oci_identity_availability_domain.ad1.name
-      subnet_id           = oci_core_subnet.starter_nodepool_subnet.id
+      subnet_id           = oci_core_subnet.starter_nodepool_subnet[0].id
       #optional
       fault_domains = ["FAULT-DOMAIN-1", "FAULT-DOMAIN-3"]
     }
@@ -516,55 +523,33 @@ resource "oci_containerengine_node_pool" "starter_node_pool" {
 # Database Operator
 # resource oci_containerengine_addon starter_oke_addon_dboperator {
   addon_name                       = "OracleDatabaseOperator"
-  cluster_id                       = oci_containerengine_cluster.starter_oke.id
+  cluster_id                       = oci_containerengine_cluster.starter_oke[0].id
   remove_addon_resources_on_delete = "true"
 }
 */
 
 # WebLogic Operator
 resource oci_containerengine_addon starter_oke_addon_wlsoperator {
+  count = local.create_oke ? 1 : 0
   addon_name                       = "WeblogicKubernetesOperator"
-  cluster_id                       = oci_containerengine_cluster.starter_oke.id
+  cluster_id                       = oci_containerengine_cluster.starter_oke[0].id
   remove_addon_resources_on_delete = "true"
 }
 
 # CertManager
 resource oci_containerengine_addon starter_oke_addon_certmanager {
+  count = local.create_oke ? 1 : 0
   addon_name                       = "CertManager"
-  cluster_id                       = oci_containerengine_cluster.starter_oke.id
+  cluster_id                       = oci_containerengine_cluster.starter_oke[0].id
   remove_addon_resources_on_delete = "true"
 }
 
-
 #----------------------------------------------------------------------------
-# OUTPUTS
-
-output "node_pool" {
-  value = {
-    id                 = oci_containerengine_node_pool.starter_node_pool.id
-    kubernetes_version = oci_containerengine_node_pool.starter_node_pool.kubernetes_version
-    name               = oci_containerengine_node_pool.starter_node_pool.name
-    subnet_ids         = oci_containerengine_node_pool.starter_node_pool.subnet_ids
-    nodes              = oci_containerengine_node_pool.starter_node_pool.nodes
-  }
-}
-
-#----------------------------------------------------------------------------
-# LOCALS
-
-locals {
-  local_oke_ocid = oci_containerengine_cluster.starter_oke.id
-  local_oke_lb_subnet_ocid = oci_core_subnet.starter_lb_subnet.id
-}
-
-{%- endif %}  
-
-output "oke_ocid" {
-  value = local.local_oke_ocid
-}
+# Policy
 
 # Doc: https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengsettingupnativeingresscontroller-addon-prereqs.htm#contengsettingupnativeingresscontroller-addon-permissions
 resource "oci_identity_policy" "starter_oke_policy" {
+    count          = local.create_oke ? 1 : 0    
     provider       = oci.home    
     name           = "${var.prefix}-oke-policy-${random_string.id.result}"
     description    = "${var.prefix}-oke-policy"
@@ -589,4 +574,18 @@ resource "oci_identity_policy" "starter_oke_policy" {
     ]
     freeform_tags = local.freeform_tags
 }
+
+#----------------------------------------------------------------------------
+# LOCALS
+
+locals {
+  local_oke_ocid = local.create_oke ? oci_containerengine_cluster.starter_oke[0].id : var.oke_ocid
+  local_oke_lb_subnet_ocid = local.create_oke ? oci_core_subnet.starter_lb_subnet[0].id : null
+}
+
+output "oke_ocid" {
+  value = local.local_oke_ocid
+}
+
+
 

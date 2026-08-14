@@ -19,6 +19,17 @@ spec:
   rules:
   - matches:
     - path:
+        type: Exact
+        value: /##TF_VAR_prefix##
+    filters:
+    - type: RequestRedirect
+      requestRedirect:
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /##TF_VAR_prefix##/
+        statusCode: 301
+  - matches:
+    - path:
         type: PathPrefix
         value: /##TF_VAR_prefix##
     filters:
