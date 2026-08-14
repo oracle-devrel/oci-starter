@@ -91,56 +91,6 @@ else
     auto_echo "4 SKIP    ../group_common_env.sh                Group of Projects" 
 fi
 
-# Autocomplete in bash
-_starter_completions()
-{
-    COMPREPLY=($(compgen -W "build ssh terraform destroy generate deploy env help" "${COMP_WORDS[1]}"))
-}
-complete -F _starter_completions ./starter.sh
-
-# Check the SHAPE
-unset MISMATCH_PLATFORM
-if [ "$(uname -s)" = "Darwin" ]; then
-    # Cross compile on MacOSX. (Todo: Maybe docker buildx inspect --bootstrap could be more generic)
-    if [ "$TF_VAR_instance_shape" != "VM.Standard.A1.Flex" ]; then
-        export DOCKER_DEFAULT_PLATFORM=linux/amd64
-    fi
-elif [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
-    if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
-        # Resource Manager run on ARM processor. So, docker is in ARM mode too...
-        export TF_VAR_instance_shape="VM.Standard.A1.Flex"
-    fi
-elif [ "$TF_VAR_instance_shape" == "VM.Standard.A1.Flex" ]; then
-    if [ `arch` != "aarch64" ]; then
-        if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
-            MISMATCH_PLATFORM="ERROR: ARM (Ampere) build using Containers (Kubernetes / Cointainer Instance / Function) needs to run on ARM processor"
-            DESIRED_PLATFORM="ARM (aarch64)"
-        fi      
-    fi
-elif [ `arch` != "x86_64" ]; then
-    if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
-        MISMATCH_PLATFORM="ERROR: X86_64 (AMD/Intel) build using Containers (Kubernetes / Cointainer Instance / Function) needs to run on X86 (AMD/Intel) processor"
-        DESIRED_PLATFORM="X86_64"
-    fi   
-fi 
-
-if [ "$MISMATCH_PLATFORM" != "" ]; then
-    echo $MISMATCH_PLATFORM
-    echo
-    if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
-        echo "Cloud Shell is not running in the correct Architecture. Please change it in the menu above."
-        echo
-        echo "Action:"
-        echo "- Click the menu 'Actions' on top of Cloud Shell"
-        echo "- Choose 'Architecture"
-        echo "  - Choose $DESIRED_PLATFORM"
-        echo "  - Click 'Confirm'"
-        echo "- Restart the build"
-    fi
-    echo "Exiting. Please use the right CPU Architecture."
-    exit 1
-fi
-
 # Check commands that are typically missing
 if ! command -v jq &> /dev/null; then
     error_exit "Unix command jq not found. Please install it."
@@ -151,6 +101,7 @@ if ! command -v rsync &> /dev/null; then
 fi
 
 if [ "$TF_VAR_deploy_type" == "kubernetes" ] || [ "$TF_VAR_deploy_type" == "container_instance" ] || [ "$TF_VAR_deploy_type" == "function" ]; then
+    export DEPLOY_WITH_DOCKER="true"
     if ! command -v docker &> /dev/null; then
         if ! command -v podman &> /dev/null; then
             error_exit "Unix command docker or podman not found. Please install one of them."
@@ -163,6 +114,61 @@ fi
 if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
     if ! command -v kubectl &> /dev/null; then
         error_exit "Unix command kubectl not found. Please install it."
+    fi
+fi
+
+# Autocomplete in bash
+_starter_completions()
+{
+    COMPREPLY=($(compgen -W "build ssh terraform destroy generate deploy env help" "${COMP_WORDS[1]}"))
+}
+complete -F _starter_completions ./starter.sh
+
+# Check the SHAPE
+unset MISMATCH_PLATFORM
+if [ "$DEPLOY_WITH_DOCKER" == "true" ]; then
+    if [ "$TF_VAR_infra_as_code" == "from_resource_manager" ]; then
+        # Resource Manager run on ARM processor. So, docker is in ARM mode too...
+        export TF_VAR_instance_shape="VM.Standard.A1.Flex"
+    else
+        if [ "$TF_VAR_instance_shape" == "VM.Standard.A1.Flex" ]; then
+            DOCKER_TARGET_PLATFORM="linux/arm64"
+            DESIRED_PLATFORM="ARM (aarch64)"
+            HOST_ARCHITECTURES="arm64 aarch64"
+        else
+            DOCKER_TARGET_PLATFORM="linux/amd64"
+            DESIRED_PLATFORM="X86_64"
+            HOST_ARCHITECTURES="x86_64 amd64"
+        fi
+
+        HOST_ARCHITECTURE=$(uname -m)
+        if [[ " $HOST_ARCHITECTURES " != *" $HOST_ARCHITECTURE "* ]]; then
+            auto_echo "Docker cross-platform build - Host Architecture $HOST_ARCHITECTURE not in $HOST_ARCHITECTURES"        
+            # A non-native image can be built only when the active Buildx builder supports it.
+            if docker buildx inspect --bootstrap 2>/dev/null | grep -Eq "(^|[[:space:],])${DOCKER_TARGET_PLATFORM}([,[:space:]]|$)"; then
+                export DOCKER_DEFAULT_PLATFORM=$DOCKER_TARGET_PLATFORM
+                auto_echo "Docker cross-platform build -  Host Architecture $HOST_ARCHITECTURE - DOCKER_DEFAULT_PLATFORM $DOCKER_TARGET_PLATFORM"
+            else
+                MISMATCH_PLATFORM="ERROR: Cannot build ${DOCKER_TARGET_PLATFORM} images on ${HOST_ARCHITECTURE}. The active Docker Buildx builder does not support cross-compilation for this platform."
+            fi
+        fi
+
+        if [ "$MISMATCH_PLATFORM" != "" ]; then
+            echo $MISMATCH_PLATFORM
+            echo
+            if [ "$OCI_CLI_CLOUD_SHELL" == "True" ];  then
+                echo "Cloud Shell is not running in the correct Architecture. Please change it in the menu above."
+                echo
+                echo "Action:"
+                echo "- Click the menu 'Actions' on top of Cloud Shell"
+                echo "- Choose 'Architecture"
+                echo "  - Choose $DESIRED_PLATFORM"
+                echo "  - Click 'Confirm'"
+                echo "- Restart the build"
+            fi
+            echo "Exiting. Please use the right CPU Architecture."
+            exit 1
+        fi
     fi
 fi
 
