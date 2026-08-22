@@ -13,5 +13,5 @@ exit_on_error
 if is_deploy_compute; then
     build_rsync target
 else
-    docker_build ${APP_NAME}
+    docker_build $APP_NAME
 fi  
