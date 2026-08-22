@@ -613,11 +613,11 @@ export -f get_docker_prefix
 
 # -- docker_build ------------------------------------------------------------
 docker_build() {
-    APP_NAME=$1
+    local APP=$1
     if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
-        docker build --platform $DOCKER_DEFAULT_PLATFORM -f Dockerfile.native -t ${TF_VAR_prefix}-${APP_NAME}:latest . 
+        docker build --platform $DOCKER_DEFAULT_PLATFORM -f Dockerfile.native -t ${TF_VAR_prefix}-${APP}:latest . 
     else
-        docker build --platform $DOCKER_DEFAULT_PLATFORM -t ${TF_VAR_prefix}-${APP_NAME}:latest . 
+        docker build --platform $DOCKER_DEFAULT_PLATFORM -t ${TF_VAR_prefix}-${APP}:latest . 
     fi    
     exit_on_error "Docker Build $APP"
     ocir_docker_push_app ${APP}
