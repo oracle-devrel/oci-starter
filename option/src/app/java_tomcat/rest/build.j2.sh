@@ -10,5 +10,5 @@ if is_deploy_compute; then
     cp nginx_app.conf $TARGET_DIR/compute/compute
     build_rsync target
 else
-    {{ m.build_docker() }}
+    docker_build $APP_NAME
 fi  

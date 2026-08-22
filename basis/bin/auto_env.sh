@@ -150,7 +150,7 @@ if [ "$DEPLOY_WITH_DOCKER" == "true" ]; then
             # A non-native image can be built only when the active Buildx builder supports it.
             if docker buildx inspect --bootstrap 2>/dev/null | grep -Eq "(^|[[:space:],])${DOCKER_TARGET_PLATFORM}([,[:space:]]|$)"; then
                 export DOCKER_DEFAULT_PLATFORM=$DOCKER_TARGET_PLATFORM
-                auto_echo "Docker cross-platform build -  Host Architecture $HOST_ARCHITECTURE - DOCKER_DEFAULT_PLATFORM $DOCKER_TARGET_PLATFORM"
+                auto_echo "Docker cross-platform build - Host Architecture $HOST_ARCHITECTURE - DOCKER_DEFAULT_PLATFORM $DOCKER_TARGET_PLATFORM"
             else
                 MISMATCH_PLATFORM="ERROR: Cannot build ${DOCKER_TARGET_PLATFORM} images on ${HOST_ARCHITECTURE}. The active Docker Buildx builder does not support cross-compilation for this platform."
             fi

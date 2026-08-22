@@ -611,6 +611,22 @@ get_docker_prefix() {
 }
 export -f get_docker_prefix 
 
+# -- docker_build ------------------------------------------------------------
+docker_build() {
+    APP_NAME=$1
+    if [ "$TF_VAR_java_vm" == "graalvm-native" ]; then
+        docker build --platform $DOCKER_DEFAULT_PLATFORM -f Dockerfile.native -t ${TF_VAR_prefix}-${APP_NAME}:latest . 
+    else
+        docker build --platform $DOCKER_DEFAULT_PLATFORM -t ${TF_VAR_prefix}-${APP_NAME}:latest . 
+    fi    
+    exit_on_error "Docker Build $APP"
+    ocir_docker_push_app ${APP}
+    if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
+        oke_deploy_app ${APP}
+    fi
+}
+export -f docker_build
+
 # -- copy_replace_apply_target_oke ------------------------------------------
 
 # Apply k8s file after replacing the variables 
@@ -663,14 +679,19 @@ export -f docker_login
 # -- k8s_create_ocirsecret --------------------------------------------------
 
 k8s_create_ocirsecret() {
-    echo "<k8s_create_ocirsecret>"
+    if [ "$K8S_OCIRSECRET_CREATED" == "true" ]; then
+        return
+    fi
+
+    title "OKE - Create ocirsecret"
     kubectl delete secret ocirsecret  --ignore-not-found=true
     if [ "$TF_VAR_auth_token" == "" ]; then
         docker_token         
-        kubectl create secret docker-registry ocirsecret --docker-server=$OCIR_HOST --docker-username="BEARER_TOKEN" --docker-password="$DOCKER_TOKEN" --docker-email="$TF_VAR_email"
+        kubectl create secret docker-registry ocirsecret --docker-server=$OCIR_HOST --docker-username="BEARER_TOKEN" --docker-password="$DOCKER_TOKEN" --docker-email="$TF_VAR_email" || return 1
     else
-        kubectl create secret docker-registry ocirsecret --docker-server=$OCIR_HOST --docker-username="$OBJECT_STORAGE_NAMESPACE/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email"
+        kubectl create secret docker-registry ocirsecret --docker-server=$OCIR_HOST --docker-username="$OBJECT_STORAGE_NAMESPACE/$TF_VAR_username" --docker-password="$TF_VAR_auth_token" --docker-email="$TF_VAR_email" || return 1
     fi  
+    export K8S_OCIRSECRET_CREATED=true
 }
 export -f k8s_create_ocirsecret
 
@@ -678,6 +699,7 @@ export -f k8s_create_ocirsecret
 ocir_docker_push_app() {
     # Docker Login
     APP=$1
+    title "OCIR Docker Push - $APP" 
     docker_login
     export DOCKER_IMG_VERSION=$(date +%Y-%m-%d-%H-%M-%S)
     docker tag ${TF_VAR_prefix}-${APP} ${DOCKER_PREFIX}/${TF_VAR_prefix}-${APP}:${DOCKER_IMG_VERSION}
@@ -704,12 +726,10 @@ export -f ocir_docker_push
 
 # -- oke_deploy_app ------------------------------------------------------------
 oke_deploy_app() {
-    APP=$1
-    if [ -f Dockerfile ]; then
-        title "OCIR Docker Push - $APP"  
-        ocir_docker_push_app $APP
-    fi    
+    APP=$1  
     title "Deploy to OKE - $APP"  
+    # Refresh on first build
+    k8s_create_ocirsecret
     if [ -f k8s.yaml ]; then
         copy_replace_apply_target_oke k8s.yaml $APP
     fi
@@ -720,7 +740,6 @@ oke_deploy_app() {
 export -f oke_deploy_app
 
 # -- oke_get_gateway_ip -----------------------------------------------------
-
 oke_get_gateway_ip() {
     if [ "$TF_VAR_gateway_ip" == "" ]; then
         export TF_VAR_gateway_ip=$(kubectl get gateway oke-gateway -n gateway -o json | jq -r '.status.addresses[].value | select(startswith("10.") | not)')
@@ -736,7 +755,6 @@ is_deploy_compute() {
         return 1
     fi
 }
-
 export -f is_deploy_compute
 
 # -- build_ui ---------------------------------------------------------------
@@ -759,11 +777,7 @@ build_ui() {
         fi
     else
         # Kubernetes and Container Instances
-        docker image rm ${TF_VAR_prefix}-ui:latest 
-        docker build -t ${TF_VAR_prefix}-ui:latest .
-        if [ "$TF_VAR_deploy_type" == "kubernetes" ]; then
-            oke_deploy_app ui
-        fi
+        docker_build ui
     fi 
 }
 export -f build_ui 
@@ -788,7 +802,6 @@ java_build_common() {
 export -f java_build_common 
 
 # -- build_rsync ------------------------------------------------------------
-
 build_rsync() {
     if [ "$IS_BASTION" != "" ]; then
         return
