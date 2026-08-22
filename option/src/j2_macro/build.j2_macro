@@ -27,9 +27,3 @@ fi
         oke_deploy_app ${APP_NAME}
     fi
 {%- endmacro -%}
-
-{% macro build_docker() -%}
-    docker image rm ${TF_VAR_prefix}-${APP_NAME}:latest
-    docker build -t ${TF_VAR_prefix}-${APP_NAME}:latest .
-    {{ post_build_docker() }}
-{%- endmacro -%}

@@ -6,5 +6,5 @@
 if is_deploy_compute; then
     build_rsync .
 else
-    {{ m.build_docker() }}
+    docker_build $APP_NAME
 fi  
